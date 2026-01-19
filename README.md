@@ -1,5 +1,5 @@
 
-![description](ulearn_app/public/UlearnI.png)
+![description](ulearn_app/public/UlearnLogo.png)
 
 
 # Ulearn
