@@ -146,6 +146,14 @@ hooks/                                # Custom React hooks
 types/                                # TypeScript type definitions
 
   user.ts                             # Types for User, Teacher, Student
+
+
+
+
+
+
+
+  
   quiz.ts                             # Types for Quiz, Question, Answer
   results.ts                          # Types for Result, Score, Statistics
   common.ts                           # Shared types (IDs, roles, enums, etc.)
