@@ -144,16 +144,7 @@ hooks/                                # Custom React hooks
   useIsClient.ts                      # Hook to check if we are on the client side
 
 types/                                # TypeScript type definitions
-
-  user.ts                             # Types for User, Teacher, Student
-
-
-
-
-
-
-
-  
+  user.ts                             # Types for User, Teacher, Student  
   quiz.ts                             # Types for Quiz, Question, Answer
   results.ts                          # Types for Result, Score, Statistics
   common.ts                           # Shared types (IDs, roles, enums, etc.)
