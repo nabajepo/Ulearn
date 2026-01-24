@@ -1,22 +1,21 @@
 @import "tailwindcss";
 
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    text-decoration: none;
+    border: none;
+    outline: none;
+    scroll-behavior: smooth;
+    font-family: "Poppins", sans-serif;
+}
+
 :root {
   --background: #ffffff;
   --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --main-color:#2a0369;
+  --bg-color: hwb(0 100% 0% / 0.219);
 }
 
 body {
@@ -24,3 +23,259 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+section {
+    min-height: 100vh;
+    padding: 10rem 5%;
+}
+h1 {
+  font-size: 2.6rem;
+  font-weight: 700;
+  color: var(--main-color);
+  margin-bottom: 1rem;
+  line-height: 1.2;
+}
+h2 {
+  font-size: 2.3rem;
+  font-weight: 600;
+  color: var(--main-color);
+  margin-top: 2.5rem;
+  margin-bottom: 1rem;
+  line-height: 1.3;
+}
+h3 {
+  font-size: 1.9rem;
+  font-weight: 600;
+  color: var(--main-color);
+  margin-top: 1.6rem;
+  margin-bottom: 0.5rem;
+  line-height: 1.3;
+}
+h4 {
+  font-size: 1.6rem;
+  font-weight: 600;
+  color: var(--main-color);
+  margin-top: 1.6rem;
+  margin-bottom: 0.5rem;
+  line-height: 1.3;
+}
+
+ul {
+  margin: 1rem 0;
+  padding-left: 1.2rem;
+}
+
+li {
+  font-size: 2rem;
+  line-height: 1.6;
+  color: var(--foreground);
+  margin-bottom: .5rem;
+}
+p{
+  color: var(--foreground);
+  font-size: 2rem;
+}
+/* scrollbar */
+::-webkit-scrollbar{
+    width: 20px;
+}
+::-webkit-scrollbar-thumb{
+    background:var(--main-color) ;
+}
+::-webkit-scrollbar-track{
+    background:var(--bg-color);
+}
+/*------HEADER-------*/
+.header_ulearn {
+    position: fixed;
+    width: 100%;
+    top: 0;
+    left: 0;
+    padding: 2rem 5%;
+    background: var(--bg-color);
+    backdrop-filter: blur(50rem);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 100;
+}
+/*NAME*/
+.header_ulearn .name{
+    font-size: 2.5rem;
+    color: var(--foreground);
+    font-weight: 800;
+    cursor: pointer;
+    transition: 0.3s ease;
+    background-image: url("/backgroundImage.png");
+    background-size: 300% 300%;
+    color: transparent;
+    animation: animate 8s ease infinite;
+    -webkit-background-clip: text;
+    background-clip: text;
+}
+@keyframes animate{
+    0%{
+        background-position: 0%;
+    }
+    50%{
+        background-position: 100%;
+    }
+    100%{
+        background-position: 0%;
+    }
+}
+
+.header_ulearn .name:hover{
+    transform: scale(1.3);
+}
+/*NAVBAR*/
+.navbar {
+  display: flex;
+  gap: 2rem;
+}
+.navbar .navName{
+    font-size: 2rem;
+    color: var(--foreground);
+    margin-left: 3.5rem;
+    cursor: pointer;
+    font-weight: 500;
+    transition: 0.3s ease;
+    padding-bottom: 3px;
+    border-bottom: 2px solid transparent;
+}
+.navbar .navName:hover{
+    color: var(--main-color); 
+    font-weight: 800;
+    border-bottom: 2px solid var(--main-color);
+}
+
+.navbar .navSectionBoxLink{
+    position: absolute;
+    top:100%;
+    right: 0;
+    background: var(--main-color);
+    padding: 8px;
+    border-radius: 10px;
+    box-shadow:2px 2px 5px var(--main-color);
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+    min-width: 100px;
+    border:1px solid var(--background);
+    margin-left: 1rem;
+}
+
+.navbar .navSectionBoxLink .navLink{
+    cursor: pointer;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.9rem;
+    padding: 1rem;
+    margin: 1rem 0.5rem;
+    color: var(--background);
+    gap:2rem;
+    padding-bottom: 3px;
+    border-bottom: 2px solid transparent;
+}
+.navbar .navSectionBoxLink .navLink:hover{
+   border-bottom: 2px solid var(--background);
+}
+
+/*Home*/
+/*name animation */
+#home-logo {
+    overflow: hidden;                
+    white-space: nowrap;             
+    border-right: 2px solid var(--main-color);  
+    width: 0;                        
+    animation: typewriter 10s steps(20) infinite; 
+}  
+.home-class{
+    background-image: url("/backgroundImage.png");
+    background-size: 300% 300%;
+    color: transparent;
+    animation: animate 8s ease infinite;
+    -webkit-background-clip: text;
+    background-clip: text;
+}
+@keyframes typewriter {
+    0%   { width: 0; }         
+    50%  { width: 17ch; }      
+    100% { width: 0; }         
+}  
+@keyframes blink-caret {
+    0%, 100% { border-color: transparent; }
+}  
+
+/* Get Started Button*/
+.get-start{
+  display: inline-block;
+  padding: 8px 16px;
+  border: 2px solid var(--background);    
+  color: var(--background);               
+  border-radius: 10px;       
+  text-decoration: none;     
+  transition: all 0.25s ease;
+  cursor: pointer;
+  background: var(--main-color);
+  font-weight: 500;
+}
+
+.get-start:hover{
+  background: var(--background);          
+  color: var(--main-color);              
+  border-color: var(--main-color);        
+}
+
+/*Media*/
+/*
+@media (max-width: 768px) {
+    html {
+        font-size: 50%; 
+    }
+    h1 {
+        font-size: 1rem;
+        font-weight: 700;
+        color: var(--main-color);
+        margin-bottom: 1rem;
+        line-height: 1.2;
+    }
+    h2 {
+        font-size: 1rem;
+        font-weight: 600;
+        color: var(--main-color);
+        margin-top: 2.5rem;
+        margin-bottom: 1rem;
+        line-height: 1.3;
+    }
+    h3 {
+        font-size: 1.9rem;
+        font-weight: 600;
+        color: var(--main-color);
+        margin-top: 1.6rem;
+        margin-bottom: 0.5rem;
+        line-height: 1.3;
+    }
+    h4 {
+        font-size: 0.2rem;
+        font-weight: 600;
+        color: var(--main-color);
+        margin-top: 1.6rem;
+        margin-bottom: 0.5rem;
+        line-height: 1.3;
+    }
+    ul {
+        margin: 0.3rem 0;
+        padding-left: 1.2rem;
+    }
+    li {
+        font-size: 0.3rem;
+        line-height: 1.6;
+        color: var(--foreground);
+        margin-bottom: .5rem;
+    }
+    p{
+        color: var(--foreground);
+        font-size: 0.2rem;
+    }
+}      
+
+*/
