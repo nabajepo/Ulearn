@@ -23,6 +23,7 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
 section {
     min-height: 100vh;
     padding: 10rem 5%;
@@ -206,9 +207,9 @@ p{
 }  
 
 /* Get Started Button*/
-.get-start{
+.btn-app{
   display: inline-block;
-  padding: 8px 16px;
+  padding: 15px 15px;
   border: 2px solid var(--background);    
   color: var(--background);               
   border-radius: 10px;       
@@ -217,12 +218,13 @@ p{
   cursor: pointer;
   background: var(--main-color);
   font-weight: 500;
+  margin-top: 15px;
 }
 
-.get-start:hover{
+.btn-app:hover{
   background: var(--background);          
   color: var(--main-color);              
-  border-color: var(--main-color);        
+  border-color: var(--main-color);      
 }
 
 /*Media*/

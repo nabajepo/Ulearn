@@ -1,7 +1,7 @@
 import Link from "next/link";
 import SectionBox from "@/components/SectionBox";
 import { SignInButtonBox } from "@/components/SignInButtonBox";
-import { SignInButton } from "@clerk/nextjs";
+import Reveal from "@/components/Reveal";
 
 // Home page 
 export default function Home() {
@@ -18,6 +18,7 @@ export default function Home() {
          </nav>
       </header>
       {/* HERO / HOME */}
+      <Reveal>
       <section id="home" className="section">
         <h1 id="home-logo" className="home-class">Welcome to Ulearn</h1>
         <h2>Transforming Quizzes into Real Learning Experiences</h2>
@@ -27,8 +28,10 @@ export default function Home() {
          In future versions, ULearn will introduce real-time competition modes, automated evaluation for open-ended responses, gamified progression systems, advanced analytics dashboards, teacher feedback workflows, and collaborative learning features — turning assessment into a shared, motivating, and data-driven experience for both students and teachers. The long-term vision is to make evaluations not just a way to measure learning, but a way to accelerate learning.
         </p>
       </section>
+      </Reveal>
 
       {/* HOW IT WORKS */}
+      <Reveal>
       <section id="howItWorks" className="section">
         <h2>How It Works ?</h2>
         <p>
@@ -36,8 +39,10 @@ export default function Home() {
           In its current version, ULearn stores each quiz, submission, and grading result for a period of three days in the database to allow teachers to verify answers, complete manual grading, and adjust scores if necessary. After this period, the system automatically clears the stored data to preserve privacy, optimize storage, and maintain a clean evaluation cycle. Future versions will introduce persistent historical records, advanced analytics, and long-term performance tracking across subjects and semesters.
         </p>
       </section>
+      </Reveal>
 
       {/* FAQ */}
+      <Reveal>
       <section id="faq" className="section">
         <h2>FAQ</h2>
         <article>
@@ -78,21 +83,24 @@ export default function Home() {
           </p>
          </article>
       </section>
-
+      </Reveal>
 
       {/* Feedback */}
+      <Reveal>
       <section id="feedback" className="section">
         <h2>Feedback</h2>
         <p>This place is for feedback</p>
-       
       </section>
+      </Reveal>
 
       {/* GET STARTED */}
+      <Reveal>
       <section id="start" className="section">
         <h2>Get Started</h2>
         <p>Create your first quiz and start training with your class or team.</p>
-        <SignInButtonBox text="Get Started" classNameC="get-start"/>
+        <SignInButtonBox text="Get Started" classNameC="btn-app"/>
       </section>
+      </Reveal>
     </>
   );
 }
