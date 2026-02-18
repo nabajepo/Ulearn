@@ -16,6 +16,12 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Ulearn",
   description: "Ulearn is a web-based platform where teachers can create quizzes, correct student answers, deliver scores, and track student progress.",
+  
+  viewport: {
+    width: "device-width",
+    initialScale: 1,
+  },
+
   icons:{
     icon:"/iconImage.png", //browser
     apple:"/iconImage.png", //apple
