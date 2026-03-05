@@ -162,7 +162,7 @@ types/
   common.ts
 ```
 ---
-Status
+## Status
 
 🚧 Work in Progress — Ulearn is actively being developed.
 
