@@ -19,7 +19,6 @@ Future versions will introduce competitive learning modes such as **real-time ch
 - TypeScript
 - React
 
-> (Add here later: Auth / DB / deployment, if you connect them.)
 
 ---
 
