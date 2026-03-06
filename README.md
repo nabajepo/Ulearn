@@ -1,10 +1,30 @@
-
 # Ulearn
-Ulearn is a web-based platform where teachers can create quizzes, correct student answers, deliver scores, and track student progress.
-Future versions will introduce competitive learning modes such as real-time challenges, rankings, and team events to make learning more engaging.
 
-# Project - Tree
+Ulearn is a web-based learning platform where **teachers can create quizzes**, **correct student answers**, **deliver scores**, and **track student progress**.
 
+Future versions will introduce competitive learning modes such as **real-time challenges**, **rankings**, and **team events** to make learning more engaging.
+
+---
+
+## Key Features
+- Teacher quiz creation and management
+- Student submissions and correction workflow
+- Score delivery and performance tracking
+- Dashboard-style organization (protected routes)
+
+---
+
+## Tech Stack
+- Next.js (App Router)
+- TypeScript
+- React
+
+
+---
+
+## Project Tree
+
+```txt
 app/                                  # Next.js App Router (routes, layouts, pages)
   layout.tsx                          # Root layout (applies to all pages)
   page.tsx                            # Landing page (public home page)
@@ -68,82 +88,90 @@ app/                                  # Next.js App Router (routes, layouts, pag
     auth/
       route.ts                        # Auth-related API (if you don't use external auth)
 
-
 components/                           # Reusable UI components
-
-  layout/                             # Layout building blocks
-    Navbar.tsx                        # Top navigation bar
-    Sidebar.tsx                       # Sidebar for the dashboard
-    Footer.tsx                        # Footer for public pages
-    PageHeader.tsx                    # Title / subtitle header for pages
-
-  auth/                               # Components used on login/register pages
-    AuthForm.tsx                      # Generic authentication form
-    LoginForm.tsx                     # Login form logic
-    RegisterForm.tsx                  # Registration form logic (optional)
-
-  quiz/                               # Components related to quizzes
-    QuizForm.tsx                      # Form to create / edit quizzes
-    QuestionItem.tsx                  # Single question display
-    AnswerOptions.tsx                 # UI for answers (QCM, text input, etc.)
-    QuizList.tsx                      # List of quizzes (table or cards)
-
-  students/                           # Components related to students
-    StudentTable.tsx                  # Table of students
-    StudentCard.tsx                   # Small card with student summary
-
-  results/                            # Components to display performance
-    ResultsTable.tsx                  # Table of scores
-    ResultsSummary.tsx                # Summary (averages, best score, etc.)
-    PerformanceChart.tsx              # Chart.js component for graphs
-
-  ui/                                 # Generic UI components (buttons, inputs, etc.)
-    Button.tsx                        # Custom button component
-    Input.tsx                         # Custom input component
-    Select.tsx                        # Select/dropdown component
-    Modal.tsx                         # Modal (for confirmations, details, etc.)
-    Badge.tsx                         # Badge for status or roles
-    Card.tsx                          # Card component used everywhere
-
-  common/
-    LoadingSpinner.tsx                # Loading indicator
-    ErrorMessage.tsx                  # Error display component
-    EmptyState.tsx                    # Display when there is no data yet
-
-
-lib/                                  # Helper functions, business logic, utilities
+  layout/
+    Navbar.tsx
+    Sidebar.tsx
+    Footer.tsx
+    PageHeader.tsx
 
   auth/
-    authGuard.ts                      # Function to protect private routes (check session)
-    getCurrentUser.ts                 # Helper to fetch the currently logged-in user
+    AuthForm.tsx
+    LoginForm.tsx
+    RegisterForm.tsx
+
+  quiz/
+    QuizForm.tsx
+    QuestionItem.tsx
+    AnswerOptions.tsx
+    QuizList.tsx
+
+  students/
+    StudentTable.tsx
+    StudentCard.tsx
+
+  results/
+    ResultsTable.tsx
+    ResultsSummary.tsx
+    PerformanceChart.tsx
+
+  ui/
+    Button.tsx
+    Input.tsx
+    Select.tsx
+    Modal.tsx
+    Badge.tsx
+    Card.tsx
+
+  common/
+    LoadingSpinner.tsx
+    ErrorMessage.tsx
+    EmptyState.tsx
+
+lib/                                  # Helper functions, business logic, utilities
+  auth/
+    authGuard.ts
+    getCurrentUser.ts
 
   db/
-    client.ts                         # Database client (e.g., Prisma or other)
-    quizRepository.ts                 # Functions to interact with quizzes in the DB
-    resultsRepository.ts              # DB logic for results and stats
-    usersRepository.ts                # DB logic for users (teachers/students)
+    client.ts
+    quizRepository.ts
+    resultsRepository.ts
+    usersRepository.ts
 
   validators/
-    quizSchema.ts                     # Validation schema for quiz creation (e.g. Zod/Yup)
-    answerSchema.ts                   # Validation for answers submitted by students
+    quizSchema.ts
+    answerSchema.ts
 
   utils/
-    date.ts                           # Date formatting helpers
-    scoring.ts                        # Logic to compute scores
-    pagination.ts                     # Helpers for paginated lists
-    logger.ts                         # Logging utilities (for debugging)
+    date.ts
+    scoring.ts
+    pagination.ts
+    logger.ts
 
-hooks/                                # Custom React hooks
+hooks/
+  useAuth.ts
+  useQuizForm.ts
+  useNotifications.ts
+  useIsClient.ts
 
-  useAuth.ts                          # Hook to get current user and auth status
-  useQuizForm.ts                      # Hook to manage quiz form state and validation
-  useNotifications.ts                 # Hook to handle notifications (toast, etc.)
-  useIsClient.ts                      # Hook to check if we are on the client side
+types/
+  user.ts
+  quiz.ts
+  results.ts
+  common.ts
+```
+---
+## Status
 
-types/                                # TypeScript type definitions
-  user.ts                             # Types for User, Teacher, Student  
-  quiz.ts                             # Types for Quiz, Question, Answer
-  results.ts                          # Types for Result, Score, Statistics
-  common.ts                           # Shared types (IDs, roles, enums, etc.)
+🚧 Work in Progress — Ulearn is actively being developed.
 
+Planned improvements:
 
+- Real-time competition mode
+
+- Rankings and dynamic leaderboards
+
+- Team-based events
+
+- More analytics and progress insights
