@@ -227,6 +227,241 @@ p{
   border-color: var(--main-color);      
 }
 
+/* ===================== FEEDBACK ===================== */
+
+#feedback {
+  min-height: auto;
+}
+
+#feedback .sc {
+  width: 100%;
+  max-width: 100%;
+  margin: 2rem 0 0 0;
+  padding: 2rem;
+  border-radius: 1.6rem;
+  border: 1px solid rgba(42, 3, 105, 0.15);
+  background: rgba(255, 255, 255, 0.82);
+  box-shadow: 0 16px 40px rgba(42, 3, 105, 0.08);
+}
+
+.sc__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1.6rem;
+  margin-bottom: 1.8rem;
+  flex-wrap: wrap;
+}
+
+.sc__title {
+  font-size: 1.9rem;
+  font-weight: 700;
+  color: var(--main-color);
+  margin: 0;
+}
+
+.sc__subtitle {
+  font-size: 1.4rem;
+  color: var(--foreground);
+  opacity: 0.75;
+  margin-top: 0.5rem;
+}
+
+.sc__avg {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 1.2rem;
+  border-radius: 1.2rem;
+  border: 1px solid rgba(42, 3, 105, 0.12);
+  background: rgba(42, 3, 105, 0.04);
+  flex-shrink: 0;
+}
+
+.sc__avgNumber {
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--main-color);
+}
+
+.sc__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.4rem;
+  width: 100%;
+}
+
+.sc__card {
+  width: 100%;
+  min-height: 150px;
+  padding: 1.4rem;
+  border-radius: 1.4rem;
+  border: 1px solid rgba(42, 3, 105, 0.12);
+  background: var(--background);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.sc__card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 24px rgba(42, 3, 105, 0.1);
+}
+
+.sc__cardTop {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 0.9rem;
+  flex-wrap: wrap;
+}
+
+.sc__stars {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  flex-wrap: wrap;
+}
+
+.sc__star {
+  font-size: 1.8rem;
+  color: var(--main-color);
+  opacity: 0.22;
+}
+
+.sc__star.is-on {
+  color: var(--main-color);
+  opacity: 1;
+}
+
+.sc__ratingText {
+  margin-left: 0.7rem;
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--main-color);
+}
+
+.sc__date {
+  font-size: 1.2rem;
+  color: var(--foreground);
+  opacity: 0.65;
+}
+
+.sc__comment {
+  font-size: 1.5rem;
+  line-height: 1.6;
+  color: var(--foreground);
+  white-space: pre-wrap;
+  margin: 0;
+}
+
+.sc__empty,
+.sc__state {
+  width: 100%;
+  padding: 2.2rem;
+  border-radius: 1.4rem;
+  border: 1px dashed rgba(42, 3, 105, 0.25);
+  background: rgba(42, 3, 105, 0.03);
+  text-align: center;
+}
+
+.sc__emptyIcon {
+  font-size: 3rem;
+  color: var(--main-color);
+  margin-bottom: 0.8rem;
+}
+
+.sc__emptyTitle,
+.sc__stateTitle {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--main-color);
+  margin: 0 0 0.8rem 0;
+}
+
+.sc__emptyText,
+.sc__stateText {
+  font-size: 1.5rem;
+  color: var(--foreground);
+  opacity: 0.85;
+  margin: 0;
+  line-height: 1.6;
+}
+
+.sc__state--error {
+  border-color: rgba(180, 0, 0, 0.2);
+  background: rgba(255, 0, 0, 0.03);
+}
+
+/* Large screens */
+@media (min-width: 1400px) {
+  .sc__grid {
+    grid-template-columns: repeat(3, minmax(280px, 1fr));
+  }
+}
+
+/* Tablets */
+@media (max-width: 992px) {
+  #feedback .sc {
+    padding: 1.8rem;
+  }
+
+  .sc__grid {
+    grid-template-columns: repeat(2, minmax(240px, 1fr));
+  }
+}
+
+/* Mobiles */
+@media (max-width: 768px) {
+  #feedback .sc {
+    padding: 1.5rem;
+  }
+
+  .sc__header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .sc__avg {
+    justify-content: flex-start;
+    width: fit-content;
+  }
+
+  .sc__grid {
+    grid-template-columns: 1fr;
+  }
+
+  .sc__card {
+    min-height: auto;
+  }
+}
+
+/* Small mobiles */
+@media (max-width: 480px) {
+  #feedback .sc {
+    padding: 1.2rem;
+  }
+
+  .sc__title {
+    font-size: 1.7rem;
+  }
+
+  .sc__subtitle,
+  .sc__ratingText,
+  .sc__date {
+    font-size: 1.2rem;
+  }
+
+  .sc__avgNumber {
+    font-size: 1.8rem;
+  }
+
+  .sc__comment,
+  .sc__emptyText,
+  .sc__stateText {
+    font-size: 1.4rem;
+  }
+}
+
 /* =========================
    Responsive / Media Queries
    ========================= */

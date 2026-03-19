@@ -22,7 +22,7 @@ export default function SectionBox() {
           <Link href="#home" onClick={() => scrollToSection("home")} className="navLink">Home</Link>
           <Link href="#howItWorks" onClick={() => scrollToSection("howItWorks")} className="navLink">How it Works?</Link>
           <Link href="#faq" onClick={() => scrollToSection("faq")} className="navLink">FAQ</Link>
-          <Link href="#feedback" onClick={() => scrollToSection("feedback")} className="navLink">Feedback</Link>
+          <Link href="#feedback" onClick={() => scrollToSection("feedback")} className="navLink">Feedbacks</Link>
           <Link href="#start" onClick={() => scrollToSection("start")} className="navLink" >Get Started</Link>
         </div>
       )}

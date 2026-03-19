@@ -1,7 +1,8 @@
 import Link from "next/link";
-import SectionBox from "@/components/SectionBox";
-import { SignInButtonBox } from "@/components/SignInButtonBox";
 import Reveal from "@/components/Reveal";
+import SectionBox from "@/components/SectionBox";
+import ShowFeedbacks from "@/components/ShowFeedbacks";
+import { SignInButtonBox } from "@/components/SignInButtonBox"; 
 
 // Home page 
 export default function Home() {
@@ -85,11 +86,11 @@ export default function Home() {
       </section>
       </Reveal>
 
-      {/* Feedback */}
+      {/* Feedbacks */}
       <Reveal>
       <section id="feedback" className="section">
-        <h2>Feedback</h2>
-        <p>This place is for feedback</p>
+        <h2>Feedbacks</h2>
+        <ShowFeedbacks />
       </section>
       </Reveal>
 

@@ -1,26 +1,56 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { collection, addDoc, getDocs } from "firebase/firestore";
-import { database } from "@/lib/firebase_config";
+import { addDoc, collection } from "firebase/firestore";
+import { db } from "@/lib/firebase";
 
-export default function Home() {
-  const [names, setNames] = useState<string[]>([]);
+export default function TestPage() {
+  const insertFeedbacks = async () => {
+    try {
+      const feedbacks = [
+        {
+          rating: 5,
+          comment: "Amazing platform, very engaging!",
+          createdAt: new Date().toISOString(),
+        },
+        {
+          rating: 4,
+          comment: "Very good but needs harder questions.",
+          createdAt: new Date().toISOString(),
+        },
+        {
+          rating: 3,
+          comment: "Good overall experience.",
+          createdAt: new Date().toISOString(),
+        },
+        {
+          rating: 5,
+          comment: "I love the competition mode!",
+          createdAt: new Date().toISOString(),
+        },
+        {
+          rating: 4,
+          comment: "Great UI and smooth experience.",
+          createdAt: new Date().toISOString(),
+        },
+      ];
 
- 
+      for (const f of feedbacks) {
+        await addDoc(collection(db, "feedbacks"), f);
+      }
 
-  async function addStudent() {
-    console.log("Hello");
-    await addDoc(collection(database, "students"), {
-      name: "Jean",
-      createdAt: Date.now(),
-    });
-    
-}
+      alert("✅ 5 feedbacks ajoutés !");
+    } catch (error) {
+      console.error(error);
+      alert("❌ Erreur insertion");
+    }
+  };
 
   return (
-    <main style={{ padding: 20 }}>
-      <button onClick={addStudent}>Add student</button>
-    </main>
+    <div style={{ padding: 20 }}>
+      <h1>Insert Feedbacks</h1>
+      <button onClick={insertFeedbacks}>
+        Ajouter 5 feedbacks
+      </button>
+    </div>
   );
 }
