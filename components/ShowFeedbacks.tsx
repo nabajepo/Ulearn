@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { collection, getDocs, orderBy, query } from "firebase/firestore";
+import { collection, getDocs, limit, orderBy, query } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 
 type FeedbackItem = {
@@ -36,19 +36,24 @@ export default function ShowFeedbacks() {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    const loadFeedbacks = async () => {
+    async function loadFeedbacks() {
       try {
         setLoading(true);
         setError("");
 
-        const q = query(collection(db, "feedbacks"), orderBy("createdAt", "desc"));
+        const q = query(
+          collection(db, "feedbacks"),
+          orderBy("createdAt", "desc"),
+          limit(6)
+        );
+
         const snapshot = await getDocs(q);
 
-        const data: FeedbackItem[] = snapshot.docs.map((doc) => {
-          const raw = doc.data();
+        const data: FeedbackItem[] = snapshot.docs.map((docSnap) => {
+          const raw = docSnap.data();
 
           return {
-            id: doc.id,
+            id: docSnap.id,
             rating: typeof raw.rating === "number" ? raw.rating : 0,
             comment: typeof raw.comment === "string" ? raw.comment : "",
             createdAt:
@@ -65,15 +70,13 @@ export default function ShowFeedbacks() {
       } finally {
         setLoading(false);
       }
-    };
+    }
 
     loadFeedbacks();
   }, []);
 
   const stats = useMemo(() => {
-    if (feedbacks.length === 0) {
-      return { avg: 0, count: 0 };
-    }
+    if (feedbacks.length === 0) return { avg: 0, count: 0 };
 
     const sum = feedbacks.reduce((acc, f) => acc + clampRating(f.rating), 0);
 
@@ -114,8 +117,8 @@ export default function ShowFeedbacks() {
           <h3 className="sc__title">Students Feedbacks</h3>
           <p className="sc__subtitle">
             {stats.count === 0
-              ? "0 reviews"
-              : `${stats.count} review${stats.count > 1 ? "s" : ""}`}
+              ? "No reviews yet"
+              : `${stats.count} recent review${stats.count > 1 ? "s" : ""}`}
           </p>
         </div>
 
@@ -130,7 +133,7 @@ export default function ShowFeedbacks() {
           <div className="sc__emptyIcon">★</div>
           <h4 className="sc__emptyTitle">No feedback yet</h4>
           <p className="sc__emptyText">
-            There are currently no comments in the feedback section.
+            Student feedback will appear here once reviews are added.
           </p>
         </div>
       ) : (
