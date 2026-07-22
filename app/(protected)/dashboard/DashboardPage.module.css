@@ -1,0 +1,169 @@
+.page {
+  min-height: 100vh;
+  background: var(--page-gradient);
+}
+
+.header {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  align-items: center;
+  padding: 0.9rem 5%;
+  border-bottom: 1px solid var(--border-color);
+  background: rgba(255, 255, 255, 0.94);
+  backdrop-filter: blur(22px);
+}
+
+.brand {
+  justify-self: start;
+}
+
+.brand h1 {
+  color: var(--main-color);
+  font-size: 2.4rem;
+  font-weight: 900;
+  letter-spacing: -1px;
+}
+
+.brand p {
+  color: rgba(23, 23, 23, 0.75);
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.timer {
+  width: 300px;
+  justify-self: center;
+  padding: 0.5rem 2rem;
+  border: 1px solid var(--border-color);
+  border-radius: 14px;
+  background: var(--soft-purple);
+  text-align: center;
+}
+
+.timer span {
+  display: block;
+  margin-bottom: 0.3rem;
+  color: rgba(23, 23, 23, 0.65);
+  font-size: 0.8rem;
+}
+
+.timer strong {
+  display: block;
+  color: var(--main-color);
+  font-size: 1.2rem;
+}
+
+.userButton {
+  justify-self: end;
+  margin-right: 10px;
+}
+
+.main {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 2rem;
+  padding: 4rem 5%;
+}
+
+.card {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 2rem;
+  padding: 2.5rem;
+  border: 1px solid var(--border-color);
+  border-radius: 28px;
+  background: #ffffff;
+  box-shadow: var(--shadow);
+}
+
+.disabled {
+  opacity: 0.72;
+}
+
+.icon {
+  width: 110px;
+  height: 110px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--soft-purple);
+  color: var(--main-color);
+  font-size: 3rem;
+  font-weight: 900;
+}
+
+.card h2 {
+  margin-bottom: 1rem;
+  color: var(--main-color);
+  font-size: 2rem;
+  font-weight: 800;
+}
+
+.card small {
+  display: block;
+  margin-top: 1rem;
+  opacity: 0.7;
+}
+
+.blockedPage {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  background: #ffffff;
+}
+
+.blockedBox {
+  width: min(520px, 100%);
+  padding: 3rem;
+  border: 1px solid var(--border-color);
+  border-radius: 30px;
+  background: #ffffff;
+  text-align: center;
+  box-shadow: var(--shadow);
+}
+
+.blockedBox h1 {
+  margin-bottom: 1rem;
+  color: var(--main-color);
+  font-size: 2.6rem;
+}
+
+@media (max-width: 900px) {
+  .main {
+    grid-template-columns: 1fr;
+  }
+
+  .header {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .brand,
+  .timer,
+  .userButton {
+    justify-self: stretch;
+  }
+
+  .userButton {
+    justify-self: end;
+  }
+}
+
+@media (max-width: 600px) {
+  .card {
+    grid-template-columns: 1fr;
+  }
+
+  .icon {
+    width: 80px;
+    height: 80px;
+  }
+
+  .timer {
+    width: 100%;
+  }
+}

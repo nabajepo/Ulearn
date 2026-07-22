@@ -1,0 +1,594 @@
+.page {
+  min-height: 100vh;
+  padding: 1rem 0.5%;
+  background: var(--page-gradient);
+}
+
+.card {
+  width: min(1920px, 99vw);
+  margin: 0 auto;
+  padding: 2rem 1.8rem;
+
+  border: 1px solid var(--border-color);
+  border-radius: 24px;
+
+  background: #ffffff;
+  box-shadow: var(--shadow);
+}
+
+.heading {
+  margin-top: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.badge {
+  display: inline-flex;
+  margin-bottom: 0.85rem;
+  padding: 0.45rem 0.8rem;
+
+  border-radius: 999px;
+
+  background: var(--soft-purple);
+  color: var(--main-color);
+
+  font-size: 0.85rem;
+  font-weight: 800;
+}
+
+.heading h1 {
+  margin-bottom: 0.65rem;
+
+  color: var(--main-color);
+  font-size: clamp(2.4rem, 4vw, 3.4rem);
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: -1.5px;
+}
+
+.heading p {
+  max-width: 900px;
+
+  color: rgba(23, 23, 23, 0.68);
+  font-size: 1rem;
+}
+
+/* =========================================================
+   Four-column desktop layout
+   ========================================================= */
+
+.form {
+  display: grid;
+  grid-template-columns:
+    minmax(280px, 1.05fr)
+    minmax(280px, 1fr)
+    minmax(500px, 1.55fr)
+    minmax(320px, 1.1fr);
+  gap: 0.9rem;
+  align-items: stretch;
+}
+
+.column {
+  min-width: 0;
+
+  display: flex;
+  flex-direction: column;
+  gap: 1.3rem;
+
+  padding: 1.25rem;
+
+  border: 1px solid var(--border-color);
+  border-radius: 20px;
+
+  background: #ffffff;
+}
+
+.generalColumn {
+  background:
+    linear-gradient(
+      145deg,
+      rgba(42, 3, 105, 0.025),
+      #ffffff 40%
+    );
+}
+
+.availabilityColumn {
+  background:
+    linear-gradient(
+      145deg,
+      rgba(42, 3, 105, 0.035),
+      #ffffff 42%
+    );
+}
+
+.scheduleColumn {
+  background:
+    linear-gradient(
+      145deg,
+      rgba(42, 3, 105, 0.045),
+      #ffffff 45%
+    );
+}
+
+.optionsColumn {
+  background:
+    linear-gradient(
+      145deg,
+      rgba(42, 3, 105, 0.035),
+      #ffffff 42%
+    );
+}
+
+.columnHeader {
+  min-height: 62px;
+
+  display: flex;
+  align-items: flex-start;
+  gap: 0.8rem;
+
+  padding-bottom: 1rem;
+
+  border-bottom: 1px solid var(--border-color);
+}
+
+.columnHeader > span {
+  width: 34px;
+  height: 34px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+
+  border-radius: 11px;
+
+  background: var(--soft-purple);
+  color: var(--main-color);
+
+  font-size: 0.82rem;
+  font-weight: 900;
+}
+
+.columnHeader h2 {
+  margin-bottom: 0.3rem;
+
+  color: var(--main-color);
+  font-size: 1.15rem;
+  font-weight: 900;
+}
+
+.columnHeader p {
+  color: rgba(23, 23, 23, 0.58);
+  font-size: 0.78rem;
+  line-height: 1.45;
+}
+
+/* =========================================================
+   Form fields
+   ========================================================= */
+
+.column > label,
+.dateTimeGrid label {
+  display: grid;
+  gap: 0.5rem;
+
+  color: var(--main-color);
+  font-size: 0.9rem;
+  font-weight: 800;
+}
+
+.form input,
+.form textarea,
+.form select {
+  width: 100%;
+  min-height: 52px;
+  padding: 0.95rem 1rem;
+
+  border: 1px solid var(--border-color);
+  border-radius: 13px;
+
+  background: #ffffff;
+  color: var(--foreground);
+
+  font-size: 0.95rem;
+  font-weight: 600;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    background 0.2s ease;
+}
+
+.form input:hover,
+.form textarea:hover,
+.form select:hover {
+  border-color: rgba(42, 3, 105, 0.34);
+}
+
+.form input:focus,
+.form textarea:focus,
+.form select:focus {
+  border-color: var(--main-color);
+  box-shadow: 0 0 0 3px var(--soft-purple);
+}
+
+.form textarea {
+  min-height: 210px;
+  resize: vertical;
+  line-height: 1.6;
+}
+
+.helperText {
+  color: rgba(23, 23, 23, 0.57);
+  font-size: 0.73rem;
+  font-weight: 600;
+  line-height: 1.5;
+}
+
+/* =========================================================
+   Informational box
+   ========================================================= */
+
+.infoBox {
+  margin-top: auto;
+  padding: 1rem;
+
+  border: 1px dashed var(--border-color);
+  border-radius: 14px;
+
+  background: var(--soft-purple);
+}
+
+.infoBox strong {
+  display: block;
+  margin-bottom: 0.35rem;
+
+  color: var(--main-color);
+  font-size: 0.84rem;
+}
+
+.infoBox p {
+  color: rgba(23, 23, 23, 0.62);
+  font-size: 0.76rem;
+  line-height: 1.55;
+}
+
+/* =========================================================
+   Schedule
+   ========================================================= */
+
+.dateTimeGroup {
+  min-width: 0;
+  padding: 1rem;
+
+  border: 1px solid var(--border-color);
+  border-radius: 17px;
+
+  background: rgba(42, 3, 105, 0.018);
+}
+
+.dateTimeGroup legend {
+  padding: 0 0.45rem;
+
+  color: var(--main-color);
+  font-size: 0.93rem;
+  font-weight: 900;
+}
+
+.groupDescription {
+  margin-bottom: 0.8rem;
+
+  color: rgba(23, 23, 23, 0.6);
+  font-size: 0.72rem;
+  line-height: 1.5;
+}
+
+.dateTimeGrid {
+  display: grid;
+  grid-template-columns:
+    minmax(190px, 1.8fr)
+    minmax(82px, 0.75fr)
+    minmax(82px, 0.75fr)
+    minmax(85px, 0.75fr);
+  gap: 0.6rem;
+  align-items: end;
+}
+
+.dateTimeGrid label {
+  font-size: 0.72rem;
+}
+
+.dateTimeGrid input,
+.dateTimeGrid select {
+  min-height: 46px;
+  padding: 0.75rem;
+  font-size: 0.82rem;
+}
+
+.preview {
+  margin-top: 0.8rem;
+  padding: 0.8rem 0.9rem;
+
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+
+  background: #ffffff;
+  color: rgba(23, 23, 23, 0.68);
+
+  font-size: 0.76rem;
+  font-weight: 600;
+  line-height: 1.5;
+}
+
+.preview strong {
+  color: var(--main-color);
+}
+
+/* =========================================================
+   Student duration
+   ========================================================= */
+
+.durationInput {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+
+  overflow: hidden;
+
+  border: 1px solid var(--border-color);
+  border-radius: 13px;
+
+  background: #ffffff;
+}
+
+.durationInput input {
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.durationInput input:focus {
+  box-shadow: none;
+}
+
+.durationInput span {
+  display: flex;
+  align-items: center;
+
+  padding: 0 0.9rem;
+
+  border-left: 1px solid var(--border-color);
+
+  background: var(--soft-purple);
+  color: var(--main-color);
+
+  font-size: 0.78rem;
+  font-weight: 800;
+}
+
+.sessionDurationBox {
+  padding: 1rem;
+
+  border: 1px solid var(--border-color);
+  border-radius: 15px;
+
+  background: var(--soft-purple);
+}
+
+.sessionDurationBox span {
+  display: block;
+  margin-bottom: 0.35rem;
+
+  color: rgba(23, 23, 23, 0.62);
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+.sessionDurationBox strong {
+  display: block;
+  margin-bottom: 0.5rem;
+
+  color: var(--main-color);
+  font-size: 1.05rem;
+  font-weight: 900;
+}
+
+.sessionDurationBox p {
+  color: rgba(23, 23, 23, 0.62);
+  font-size: 0.73rem;
+  line-height: 1.5;
+}
+
+/* =========================================================
+   Student options
+   ========================================================= */
+
+.options {
+  display: grid;
+  gap: 0.65rem;
+  margin-top: 0.2rem;
+}
+
+.options h3 {
+  margin-bottom: 0.25rem;
+
+  color: var(--main-color);
+  font-size: 1rem;
+  font-weight: 900;
+}
+
+.options label {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.7rem;
+
+  padding: 0.8rem;
+
+  border: 1px solid transparent;
+  border-radius: 13px;
+
+  color: var(--foreground);
+  cursor: pointer;
+
+  transition:
+    border-color 0.2s ease,
+    background 0.2s ease;
+}
+
+.options label:hover {
+  border-color: var(--border-color);
+  background: var(--soft-purple);
+}
+
+.options input {
+  width: 18px;
+  height: 18px;
+  min-height: 0;
+
+  margin-top: 0.1rem;
+  flex-shrink: 0;
+
+  accent-color: var(--main-color);
+  cursor: pointer;
+}
+
+.options label > span {
+  display: grid;
+  gap: 0.2rem;
+}
+
+.options strong {
+  color: var(--main-color);
+  font-size: 0.8rem;
+}
+
+.options small {
+  color: rgba(23, 23, 23, 0.59);
+  font-size: 0.68rem;
+  font-weight: 600;
+  line-height: 1.45;
+}
+
+/* =========================================================
+   Message and actions
+   ========================================================= */
+
+.message {
+  grid-column: 1 / -1;
+
+  padding: 1rem 1.1rem;
+
+  border: 1px solid var(--border-color);
+  border-radius: 14px;
+
+  background: var(--soft-purple);
+  color: var(--main-color);
+
+  font-size: 0.9rem;
+  font-weight: 800;
+  line-height: 1.5;
+}
+
+.formActions {
+  grid-column: 1 / -1;
+
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 0.85rem;
+
+  padding-top: 0.5rem;
+}
+
+/* =========================================================
+   Large displays
+   ========================================================= */
+
+@media (min-width: 1800px) {
+  .card {
+    padding-left: 2.5rem;
+    padding-right: 2.5rem;
+  }
+
+  .form {
+    gap: 1.1rem;
+  }
+
+  .column {
+    padding: 1.45rem;
+  }
+}
+
+/* =========================================================
+   Responsive layout
+   ========================================================= */
+
+@media (max-width: 1250px) {
+  .form {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .scheduleColumn,
+  .optionsColumn {
+    grid-column: auto;
+  }
+}
+
+@media (max-width: 920px) {
+  .page {
+    padding: 1.5rem 1rem;
+  }
+
+  .card {
+    width: 100%;
+    padding: 1.6rem;
+  }
+
+  .form {
+    grid-template-columns: 1fr;
+  }
+
+  .scheduleColumn,
+  .optionsColumn,
+  .formActions,
+  .message {
+    grid-column: auto;
+  }
+}
+
+@media (max-width: 600px) {
+  .card {
+    padding: 1.2rem;
+    border-radius: 21px;
+  }
+
+  .column {
+    padding: 1rem;
+  }
+
+  .dateTimeGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .dateField {
+    grid-column: 1 / -1;
+  }
+
+  .formActions {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .formActions :global(.app-button) {
+    width: 100%;
+    min-width: 0;
+  }
+}
+
+@media (max-width: 420px) {
+  .dateTimeGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .dateField {
+    grid-column: auto;
+  }
+}

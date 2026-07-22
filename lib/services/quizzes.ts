@@ -6,74 +6,101 @@ import {
   deleteDoc,
   doc,
   getDoc,
-  getDocs,
-  query,
   updateDoc,
-  where,
 } from "firebase/firestore";
 
 import { db } from "@/lib/firebase";
 import { LIMITS } from "@/lib/services/limits";
-import { decreaseActiveQuizzes, increaseQuizStats } from "@/lib/services/stats";
+import { increaseQuizStats, decreaseActiveQuizzes } from "@/lib/services/stats";
 import { getTeacher, updateTeacherQuiz } from "@/lib/services/users";
 
-/**
- * Quiz status for ULearn V1.
- *
- * draft:
- * The teacher can still edit the quiz.
- *
- * launched:
- * The quiz is active and students can answer.
- * Once launched, the quiz cannot be edited.
- */
-export type QuizStatus = "draft" | "launched";
+export type QuizStatus = "draft" | "launched" | "closed";
+export type QuizAvailabilityMode = "open_window" | "scheduled_session";
 
-/**
- * Quiz structure stored in Firestore.
- */
 export type Quiz = {
   id: string;
   teacherId: string;
   title: string;
   description: string;
   status: QuizStatus;
+
+  availabilityMode: QuizAvailabilityMode;
+  availableFrom: string | null;
+  availableUntil: string | null;
+  timeLimitMinutes: number;
+
+  allowBackNavigation: boolean;
+  shuffleQuestions: boolean;
+  shuffleChoices: boolean;
+
   totalQuestions: number;
   qcmQuestions: number;
   developmentQuestions: number;
   maxStudents: number;
+
   createdAt: string;
   updatedAt: string;
   launchedAt: string | null;
+  closedAt: string | null;
 };
 
-/**
- * Data needed to create a quiz.
- */
 export type CreateQuizInput = {
   teacherId: string;
   title: string;
   description: string;
+  availabilityMode: QuizAvailabilityMode;
+  availableFrom: string | null;
+  availableUntil: string | null;
+  timeLimitMinutes: number;
+  allowBackNavigation: boolean;
+  shuffleQuestions: boolean;
+  shuffleChoices: boolean;
 };
+
+export type UpdateQuizInput = Omit<CreateQuizInput, "teacherId">;
 
 const QUIZZES_COLLECTION = "quizzes";
 
-/**
- * Returns the Firestore reference for one quiz.
- */
 function quizRef(quizId: string) {
   return doc(db, QUIZZES_COLLECTION, quizId);
 }
 
-/**
- * Gets one quiz by quiz ID.
- */
+function validateQuizInput(input: {
+  title: string;
+  availabilityMode: QuizAvailabilityMode;
+  availableFrom: string | null;
+  availableUntil: string | null;
+  timeLimitMinutes: number;
+}) {
+  if (!input.title.trim()) return "Quiz title is required.";
+
+  if (input.timeLimitMinutes <= 0) return "Time limit must be greater than 0.";
+
+  if (input.timeLimitMinutes > 1440) {
+    return "Time limit cannot be more than 24 hours.";
+  }
+
+  if (input.availabilityMode === "scheduled_session") {
+    if (!input.availableFrom || !input.availableUntil) {
+      return "Start date and end date are required for scheduled quizzes.";
+    }
+
+    if (new Date(input.availableUntil) <= new Date(input.availableFrom)) {
+      return "End date must be after start date.";
+    }
+  }
+
+  if (input.availabilityMode === "open_window" && !input.availableUntil) {
+    return "Submission deadline is required.";
+  }
+
+  return null;
+}
+
 export async function getQuiz(quizId: string): Promise<Quiz | null> {
   const snapshot = await getDoc(quizRef(quizId));
 
-  if (!snapshot.exists()) {
-    return null;
-  }
+  if (!snapshot.exists()) return null;
 
   const data = snapshot.data();
 
@@ -82,71 +109,82 @@ export async function getQuiz(quizId: string): Promise<Quiz | null> {
     teacherId: typeof data.teacherId === "string" ? data.teacherId : "",
     title: typeof data.title === "string" ? data.title : "",
     description: typeof data.description === "string" ? data.description : "",
-    status: data.status === "launched" ? "launched" : "draft",
+    status:
+      data.status === "launched"
+        ? "launched"
+        : data.status === "closed"
+        ? "closed"
+        : "draft",
+
+    availabilityMode:
+      data.availabilityMode === "scheduled_session"
+        ? "scheduled_session"
+        : "open_window",
+
+    availableFrom:
+      typeof data.availableFrom === "string" ? data.availableFrom : null,
+
+    availableUntil:
+      typeof data.availableUntil === "string" ? data.availableUntil : null,
+
+    timeLimitMinutes:
+      typeof data.timeLimitMinutes === "number" ? data.timeLimitMinutes : 60,
+
+    allowBackNavigation:
+      typeof data.allowBackNavigation === "boolean"
+        ? data.allowBackNavigation
+        : true,
+
+    shuffleQuestions:
+      typeof data.shuffleQuestions === "boolean"
+        ? data.shuffleQuestions
+        : false,
+
+    shuffleChoices:
+      typeof data.shuffleChoices === "boolean" ? data.shuffleChoices : false,
+
     totalQuestions:
       typeof data.totalQuestions === "number" ? data.totalQuestions : 0,
+
     qcmQuestions:
       typeof data.qcmQuestions === "number" ? data.qcmQuestions : 0,
+
     developmentQuestions:
       typeof data.developmentQuestions === "number"
         ? data.developmentQuestions
         : 0,
+
     maxStudents:
       typeof data.maxStudents === "number"
         ? data.maxStudents
         : LIMITS.MAX_STUDENTS_PER_QUIZ,
+
     createdAt: typeof data.createdAt === "string" ? data.createdAt : "",
     updatedAt: typeof data.updatedAt === "string" ? data.updatedAt : "",
     launchedAt: typeof data.launchedAt === "string" ? data.launchedAt : null,
+    closedAt: typeof data.closedAt === "string" ? data.closedAt : null,
   };
 }
 
-/**
- * Gets the active quiz linked to a teacher.
- */
-export async function getTeacherQuiz(teacherId: string): Promise<Quiz | null> {
-  const teacher = await getTeacher(teacherId);
-
-  if (!teacher || !teacher.quizId) {
-    return null;
-  }
-
-  return await getQuiz(teacher.quizId);
-}
-
-/**
- * Checks if a teacher already has a quiz.
- */
-export async function teacherHasQuiz(teacherId: string) {
-  const teacher = await getTeacher(teacherId);
-  return Boolean(teacher?.quizId);
-}
-
-/**
- * Creates a quiz for a teacher.
- *
- * In ULearn V1:
- * - one teacher can only create one quiz
- * - the quiz starts as draft
- * - the teacher can edit it before launching
- */
 export async function createQuiz(input: CreateQuizInput) {
   const teacher = await getTeacher(input.teacherId);
 
   if (!teacher) {
-    return {
-      success: false,
-      quiz: null,
-      message: "Teacher not found.",
-    };
+    return { success: false, quiz: null, message: "Teacher not found." };
   }
 
   if (teacher.quizId) {
     return {
       success: false,
       quiz: null,
-      message: "This teacher already has a quiz.",
+      message: "You already have one quiz.",
     };
+  }
+
+  const validationError = validateQuizInput(input);
+
+  if (validationError) {
+    return { success: false, quiz: null, message: validationError };
   }
 
   const now = new Date().toISOString();
@@ -156,13 +194,25 @@ export async function createQuiz(input: CreateQuizInput) {
     title: input.title.trim(),
     description: input.description.trim(),
     status: "draft",
+
+    availabilityMode: input.availabilityMode,
+    availableFrom: input.availableFrom,
+    availableUntil: input.availableUntil,
+    timeLimitMinutes: input.timeLimitMinutes,
+
+    allowBackNavigation: input.allowBackNavigation,
+    shuffleQuestions: input.shuffleQuestions,
+    shuffleChoices: input.shuffleChoices,
+
     totalQuestions: 0,
     qcmQuestions: 0,
     developmentQuestions: 0,
     maxStudents: LIMITS.MAX_STUDENTS_PER_QUIZ,
+
     createdAt: now,
     updatedAt: now,
     launchedAt: null,
+    closedAt: null,
   };
 
   const quizDoc = await addDoc(collection(db, QUIZZES_COLLECTION), quizData);
@@ -172,105 +222,62 @@ export async function createQuiz(input: CreateQuizInput) {
 
   return {
     success: true,
-    quiz: {
-      id: quizDoc.id,
-      ...quizData,
-    },
+    quiz: { id: quizDoc.id, ...quizData },
     message: "Quiz created successfully.",
   };
 }
 
-/**
- * Updates quiz basic information.
- *
- * A launched quiz cannot be edited.
- */
-export async function updateQuizInfo(
-  quizId: string,
-  data: {
-    title?: string;
-    description?: string;
-  }
-) {
+export async function updateQuiz(quizId: string, input: UpdateQuizInput) {
   const quiz = await getQuiz(quizId);
 
   if (!quiz) {
+    return { success: false, message: "Quiz not found." };
+  }
+
+  if (quiz.status !== "draft") {
     return {
       success: false,
-      message: "Quiz not found.",
+      message: "Only draft quizzes can be edited.",
     };
   }
 
-  if (quiz.status === "launched") {
-    return {
-      success: false,
-      message: "A launched quiz cannot be edited.",
-    };
+  const validationError = validateQuizInput(input);
+
+  if (validationError) {
+    return { success: false, message: validationError };
   }
 
   await updateDoc(quizRef(quizId), {
-    ...(data.title !== undefined && { title: data.title.trim() }),
-    ...(data.description !== undefined && {
-      description: data.description.trim(),
-    }),
+    title: input.title.trim(),
+    description: input.description.trim(),
+    availabilityMode: input.availabilityMode,
+    availableFrom: input.availableFrom,
+    availableUntil: input.availableUntil,
+    timeLimitMinutes: input.timeLimitMinutes,
+    allowBackNavigation: input.allowBackNavigation,
+    shuffleQuestions: input.shuffleQuestions,
+    shuffleChoices: input.shuffleChoices,
     updatedAt: new Date().toISOString(),
   });
 
-  return {
-    success: true,
-    message: "Quiz updated successfully.",
-  };
+  return { success: true, message: "Quiz updated successfully." };
 }
 
-/**
- * Updates question counters inside the quiz document.
- *
- * This will be used by questions.ts whenever a question is added or deleted.
- */
-export async function updateQuizQuestionCounters(
-  quizId: string,
-  counters: {
-    totalQuestions: number;
-    qcmQuestions: number;
-    developmentQuestions: number;
-  }
-) {
-  await updateDoc(quizRef(quizId), {
-    ...counters,
-    updatedAt: new Date().toISOString(),
-  });
-}
-
-/**
- * Launches a quiz.
- *
- * Rules:
- * - the quiz must exist
- * - the quiz must be in draft mode
- * - the quiz must have at least one question
- * - after launch, it cannot be edited
- */
 export async function launchQuiz(quizId: string) {
   const quiz = await getQuiz(quizId);
 
   if (!quiz) {
-    return {
-      success: false,
-      message: "Quiz not found.",
-    };
+    return { success: false, message: "Quiz not found." };
   }
 
-  if (quiz.status === "launched") {
-    return {
-      success: false,
-      message: "Quiz is already launched.",
-    };
+  if (quiz.status !== "draft") {
+    return { success: false, message: "Only draft quizzes can be launched." };
   }
 
   if (quiz.totalQuestions <= 0) {
     return {
       success: false,
-      message: "You must add at least one question before launching the quiz.",
+      message: "Add at least one question before launching the quiz.",
     };
   }
 
@@ -280,77 +287,35 @@ export async function launchQuiz(quizId: string) {
     updatedAt: new Date().toISOString(),
   });
 
-  return {
-    success: true,
-    message: "Quiz launched successfully.",
-  };
+  return { success: true, message: "Quiz launched successfully." };
 }
 
-/**
- * Deletes a quiz.
- *
- * Important:
- * This deletes the quiz document only.
- * Later, questions.ts will also help delete questions linked to the quiz.
- */
+export async function closeQuiz(quizId: string) {
+  const quiz = await getQuiz(quizId);
+
+  if (!quiz) {
+    return { success: false, message: "Quiz not found." };
+  }
+
+  await updateDoc(quizRef(quizId), {
+    status: "closed",
+    closedAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  });
+
+  return { success: true, message: "Quiz closed successfully." };
+}
+
 export async function deleteQuiz(quizId: string) {
   const quiz = await getQuiz(quizId);
 
   if (!quiz) {
-    return {
-      success: true,
-      message: "Quiz does not exist.",
-    };
+    return { success: true, message: "Quiz already deleted." };
   }
 
   await deleteDoc(quizRef(quizId));
   await updateTeacherQuiz(quiz.teacherId, null);
   await decreaseActiveQuizzes();
 
-  return {
-    success: true,
-    message: "Quiz deleted successfully.",
-  };
-}
-
-/**
- * Finds quizzes by teacher ID.
- *
- * This is useful if the teacher document loses quizId
- * or if we later allow more than one quiz per teacher.
- */
-export async function getQuizzesByTeacherId(teacherId: string): Promise<Quiz[]> {
-  const q = query(
-    collection(db, QUIZZES_COLLECTION),
-    where("teacherId", "==", teacherId)
-  );
-
-  const snapshot = await getDocs(q);
-
-  return snapshot.docs.map((docSnap) => {
-    const data = docSnap.data();
-
-    return {
-      id: docSnap.id,
-      teacherId: typeof data.teacherId === "string" ? data.teacherId : "",
-      title: typeof data.title === "string" ? data.title : "",
-      description: typeof data.description === "string" ? data.description : "",
-      status: data.status === "launched" ? "launched" : "draft",
-      totalQuestions:
-        typeof data.totalQuestions === "number" ? data.totalQuestions : 0,
-      qcmQuestions:
-        typeof data.qcmQuestions === "number" ? data.qcmQuestions : 0,
-      developmentQuestions:
-        typeof data.developmentQuestions === "number"
-          ? data.developmentQuestions
-          : 0,
-      maxStudents:
-        typeof data.maxStudents === "number"
-          ? data.maxStudents
-          : LIMITS.MAX_STUDENTS_PER_QUIZ,
-      createdAt: typeof data.createdAt === "string" ? data.createdAt : "",
-      updatedAt: typeof data.updatedAt === "string" ? data.updatedAt : "",
-      launchedAt: typeof data.launchedAt === "string" ? data.launchedAt : null,
-    };
-  });
+  return { success: true, message: "Quiz deleted successfully." };
 }
