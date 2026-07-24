@@ -127,7 +127,7 @@ export default function DashboardPage() {
               disabled={hasQuiz || Boolean(navigationTarget)}
               onClick={() => navigateTo("/quiz/create", "create")}
             >
-              {hasQuiz ? "Quiz Already Created" : "Create New Quiz"}
+              {hasQuiz ? "Quiz Already Created" : "Create New Quiz  →"}
             </button>
 
             <small>
@@ -159,7 +159,7 @@ export default function DashboardPage() {
                 }
               }}
             >
-              {hasQuiz ? "Open Quiz →" : "No Quiz Yet"}
+              {hasQuiz ? "Open Quiz  →" : "No Quiz Yet"}
             </button>
 
             <small>
