@@ -22,7 +22,10 @@ import {
   updateTeacherQuiz,
 } from "@/lib/services/users";
 
-export type QuizStatus = "draft" | "launched" | "closed";
+export type QuizStatus =
+  | "draft"
+  | "launched"
+  | "closed";
 
 export type QuizAvailabilityMode =
   | "open_window"
@@ -38,7 +41,6 @@ export type Quiz = {
   status: QuizStatus;
 
   timeZone: string;
-
   availabilityMode: QuizAvailabilityMode;
 
   availableFrom: string | null;
@@ -49,6 +51,18 @@ export type Quiz = {
   allowBackNavigation: boolean;
   shuffleQuestions: boolean;
   shuffleChoices: boolean;
+
+  /*
+   * Result visibility settings.
+   *
+   * showResultsToStudents:
+   * Students may see their final score once grading is complete.
+   *
+   * showCorrectAnswers:
+   * Students may also review correct answers once grading is complete.
+   */
+  showResultsToStudents: boolean;
+  showCorrectAnswers: boolean;
 
   totalQuestions: number;
   qcmQuestions: number;
@@ -70,7 +84,6 @@ export type CreateQuizInput = {
   description: string;
 
   timeZone: string;
-
   availabilityMode: QuizAvailabilityMode;
 
   availableFrom: string | null;
@@ -81,14 +94,22 @@ export type CreateQuizInput = {
   allowBackNavigation: boolean;
   shuffleQuestions: boolean;
   shuffleChoices: boolean;
+
+  showResultsToStudents: boolean;
+  showCorrectAnswers: boolean;
 };
 
-export type UpdateQuizInput = Omit<CreateQuizInput, "teacherId">;
+export type UpdateQuizInput =
+  Omit<CreateQuizInput, "teacherId">;
 
 const QUIZZES_COLLECTION = "quizzes";
 
 function quizRef(quizId: string) {
-  return doc(db, QUIZZES_COLLECTION, quizId);
+  return doc(
+    db,
+    QUIZZES_COLLECTION,
+    quizId
+  );
 }
 
 /* =========================================================
@@ -100,18 +121,24 @@ function validateQuizInput(
   teacherExpiresAt: string
 ) {
   const now = Date.now();
-  const accountExpiration = new Date(teacherExpiresAt).getTime();
+
+  const accountExpiration =
+    new Date(
+      teacherExpiresAt
+    ).getTime();
 
   if (!input.title.trim()) {
     return "Quiz title is required.";
   }
 
-  if (!input.timeZone) {
+  if (!input.timeZone.trim()) {
     return "A time zone is required.";
   }
 
   if (
-    !Number.isFinite(input.timeLimitMinutes) ||
+    !Number.isFinite(
+      input.timeLimitMinutes
+    ) ||
     input.timeLimitMinutes < 1
   ) {
     return "Quiz duration must be greater than 0 minutes.";
@@ -125,7 +152,9 @@ function validateQuizInput(
   }
 
   if (
-    Number.isNaN(accountExpiration) ||
+    Number.isNaN(
+      accountExpiration
+    ) ||
     accountExpiration <= now
   ) {
     return "Your teacher account has expired.";
@@ -133,52 +162,68 @@ function validateQuizInput(
 
   const start =
     input.availableFrom !== null
-      ? new Date(input.availableFrom).getTime()
+      ? new Date(
+          input.availableFrom
+        ).getTime()
       : null;
 
   const end =
     input.availableUntil !== null
-      ? new Date(input.availableUntil).getTime()
+      ? new Date(
+          input.availableUntil
+        ).getTime()
       : null;
 
-  if (start !== null && Number.isNaN(start)) {
+  if (
+    start !== null &&
+    Number.isNaN(start)
+  ) {
     return "The opening date is invalid.";
   }
 
-  if (end !== null && Number.isNaN(end)) {
+  if (
+    end !== null &&
+    Number.isNaN(end)
+  ) {
     return "The deadline is invalid.";
   }
 
-  /*
-   * No selected date may already be in the past.
-   */
-
-  if (start !== null && start < now) {
+  if (
+    start !== null &&
+    start < now
+  ) {
     return "The opening date cannot be in the past.";
   }
 
-  if (end !== null && end <= now) {
+  if (
+    end !== null &&
+    end <= now
+  ) {
     return "The deadline cannot be in the past.";
   }
 
-  /*
-   * Nothing can happen after teacher account expiration.
-   */
-
-  if (start !== null && start > accountExpiration) {
+  if (
+    start !== null &&
+    start > accountExpiration
+  ) {
     return "The opening date cannot be after your account expiration.";
   }
 
-  if (end !== null && end > accountExpiration) {
+  if (
+    end !== null &&
+    end > accountExpiration
+  ) {
     return "The deadline cannot be after your account expiration.";
   }
 
-  /*
-   * Scheduled session
-   */
-
-  if (input.availabilityMode === "scheduled_session") {
-    if (start === null || end === null) {
+  if (
+    input.availabilityMode ===
+    "scheduled_session"
+  ) {
+    if (
+      start === null ||
+      end === null
+    ) {
       return "Start and end dates are required for a scheduled session.";
     }
 
@@ -186,9 +231,11 @@ function validateQuizInput(
       return "The session end must be after the session start.";
     }
 
-    const sessionDurationMinutes = Math.floor(
-      (end - start) / (1000 * 60)
-    );
+    const sessionDurationMinutes =
+      Math.floor(
+        (end - start) /
+          (1000 * 60)
+      );
 
     if (
       sessionDurationMinutes >
@@ -196,30 +243,53 @@ function validateQuizInput(
     ) {
       return `A scheduled session cannot exceed ${LIMITS.ACCOUNT_DURATION_DAYS} days.`;
     }
+
+    if (
+      input.timeLimitMinutes !==
+      sessionDurationMinutes
+    ) {
+      return "The scheduled-session duration does not match its start and end times.";
+    }
   }
 
-  /*
-   * Open window
-   */
-
-  if (input.availabilityMode === "open_window") {
+  if (
+    input.availabilityMode ===
+    "open_window"
+  ) {
     if (end === null) {
       return "A submission deadline is required.";
     }
 
-    const effectiveStart = start ?? now;
+    const effectiveStart =
+      start ?? now;
 
     if (end <= effectiveStart) {
       return "The deadline must be after the opening date.";
     }
 
-    const availableMinutes = Math.floor(
-      (end - effectiveStart) / (1000 * 60)
-    );
+    const availableMinutes =
+      Math.floor(
+        (end - effectiveStart) /
+          (1000 * 60)
+      );
 
-    if (input.timeLimitMinutes > availableMinutes) {
+    if (
+      input.timeLimitMinutes >
+      availableMinutes
+    ) {
       return "The time allowed per student cannot exceed the available quiz window.";
     }
+  }
+
+  /*
+   * Correct answers cannot be exposed if results themselves
+   * are hidden.
+   */
+  if (
+    input.showCorrectAnswers &&
+    !input.showResultsToStudents
+  ) {
+    return "Correct answers cannot be shown when student results are hidden.";
   }
 
   return null;
@@ -232,29 +302,36 @@ function validateQuizInput(
 export async function getQuiz(
   quizId: string
 ): Promise<Quiz | null> {
-  const snapshot = await getDoc(quizRef(quizId));
+  const snapshot =
+    await getDoc(
+      quizRef(quizId)
+    );
 
   if (!snapshot.exists()) {
     return null;
   }
 
-  const data = snapshot.data();
+  const data =
+    snapshot.data();
 
   return {
     id: snapshot.id,
 
     teacherId:
-      typeof data.teacherId === "string"
+      typeof data.teacherId ===
+      "string"
         ? data.teacherId
         : "",
 
     title:
-      typeof data.title === "string"
+      typeof data.title ===
+      "string"
         ? data.title
         : "",
 
     description:
-      typeof data.description === "string"
+      typeof data.description ===
+      "string"
         ? data.description
         : "",
 
@@ -266,82 +343,114 @@ export async function getQuiz(
           : "draft",
 
     timeZone:
-      typeof data.timeZone === "string"
+      typeof data.timeZone ===
+      "string"
         ? data.timeZone
         : "America/Toronto",
 
     availabilityMode:
-      data.availabilityMode === "scheduled_session"
+      data.availabilityMode ===
+      "scheduled_session"
         ? "scheduled_session"
         : "open_window",
 
     availableFrom:
-      typeof data.availableFrom === "string"
+      typeof data.availableFrom ===
+      "string"
         ? data.availableFrom
         : null,
 
     availableUntil:
-      typeof data.availableUntil === "string"
+      typeof data.availableUntil ===
+      "string"
         ? data.availableUntil
         : null,
 
     timeLimitMinutes:
-      typeof data.timeLimitMinutes === "number"
+      typeof data.timeLimitMinutes ===
+      "number"
         ? data.timeLimitMinutes
         : 60,
 
     allowBackNavigation:
-      typeof data.allowBackNavigation === "boolean"
+      typeof data.allowBackNavigation ===
+      "boolean"
         ? data.allowBackNavigation
         : true,
 
     shuffleQuestions:
-      typeof data.shuffleQuestions === "boolean"
+      typeof data.shuffleQuestions ===
+      "boolean"
         ? data.shuffleQuestions
         : false,
 
     shuffleChoices:
-      typeof data.shuffleChoices === "boolean"
+      typeof data.shuffleChoices ===
+      "boolean"
         ? data.shuffleChoices
         : false,
 
+    /*
+     * Default values are important for quizzes created
+     * before these properties were introduced.
+     */
+    showResultsToStudents:
+      typeof data.showResultsToStudents ===
+      "boolean"
+        ? data.showResultsToStudents
+        : true,
+
+    showCorrectAnswers:
+      typeof data.showCorrectAnswers ===
+      "boolean"
+        ? data.showCorrectAnswers
+        : false,
+
     totalQuestions:
-      typeof data.totalQuestions === "number"
+      typeof data.totalQuestions ===
+      "number"
         ? data.totalQuestions
         : 0,
 
     qcmQuestions:
-      typeof data.qcmQuestions === "number"
+      typeof data.qcmQuestions ===
+      "number"
         ? data.qcmQuestions
         : 0,
 
     developmentQuestions:
-      typeof data.developmentQuestions === "number"
+      typeof data.developmentQuestions ===
+      "number"
         ? data.developmentQuestions
         : 0,
 
     maxStudents:
-      typeof data.maxStudents === "number"
+      typeof data.maxStudents ===
+      "number"
         ? data.maxStudents
         : LIMITS.MAX_STUDENTS_PER_QUIZ,
 
     createdAt:
-      typeof data.createdAt === "string"
+      typeof data.createdAt ===
+      "string"
         ? data.createdAt
         : "",
 
     updatedAt:
-      typeof data.updatedAt === "string"
+      typeof data.updatedAt ===
+      "string"
         ? data.updatedAt
         : "",
 
     launchedAt:
-      typeof data.launchedAt === "string"
+      typeof data.launchedAt ===
+      "string"
         ? data.launchedAt
         : null,
 
     closedAt:
-      typeof data.closedAt === "string"
+      typeof data.closedAt ===
+      "string"
         ? data.closedAt
         : null,
   };
@@ -351,14 +460,20 @@ export async function getQuiz(
    Create quiz
    ========================================================= */
 
-export async function createQuiz(input: CreateQuizInput) {
-  const teacher = await getTeacher(input.teacherId);
+export async function createQuiz(
+  input: CreateQuizInput
+) {
+  const teacher =
+    await getTeacher(
+      input.teacherId
+    );
 
   if (!teacher) {
     return {
       success: false,
       quiz: null,
-      message: "Teacher not found.",
+      message:
+        "Teacher not found.",
     };
   }
 
@@ -366,62 +481,126 @@ export async function createQuiz(input: CreateQuizInput) {
     return {
       success: false,
       quiz: null,
-      message: "You already have one quiz.",
+      message:
+        "You already have one quiz.",
     };
   }
 
-  const validationError = validateQuizInput(
-    {
-      title: input.title,
-      description: input.description,
-      timeZone: input.timeZone,
-      availabilityMode: input.availabilityMode,
-      availableFrom: input.availableFrom,
-      availableUntil: input.availableUntil,
-      timeLimitMinutes: input.timeLimitMinutes,
-      allowBackNavigation: input.allowBackNavigation,
-      shuffleQuestions: input.shuffleQuestions,
-      shuffleChoices: input.shuffleChoices,
-    },
-    teacher.expiresAt
-  );
+  const normalizedShowCorrectAnswers =
+    input.showResultsToStudents
+      ? input.showCorrectAnswers
+      : false;
+
+  const normalizedInput: CreateQuizInput = {
+    ...input,
+    showCorrectAnswers:
+      normalizedShowCorrectAnswers,
+  };
+
+  const validationError =
+    validateQuizInput(
+      {
+        title:
+          normalizedInput.title,
+
+        description:
+          normalizedInput.description,
+
+        timeZone:
+          normalizedInput.timeZone,
+
+        availabilityMode:
+          normalizedInput.availabilityMode,
+
+        availableFrom:
+          normalizedInput.availableFrom,
+
+        availableUntil:
+          normalizedInput.availableUntil,
+
+        timeLimitMinutes:
+          normalizedInput.timeLimitMinutes,
+
+        allowBackNavigation:
+          normalizedInput.allowBackNavigation,
+
+        shuffleQuestions:
+          normalizedInput.shuffleQuestions,
+
+        shuffleChoices:
+          normalizedInput.shuffleChoices,
+
+        showResultsToStudents:
+          normalizedInput.showResultsToStudents,
+
+        showCorrectAnswers:
+          normalizedInput.showCorrectAnswers,
+      },
+
+      teacher.expiresAt
+    );
 
   if (validationError) {
     return {
       success: false,
       quiz: null,
-      message: validationError,
+      message:
+        validationError,
     };
   }
 
-  const now = new Date().toISOString();
+  const now =
+    new Date().toISOString();
 
-  const quizData: Omit<Quiz, "id"> = {
-    teacherId: input.teacherId,
+  const quizData:
+    Omit<Quiz, "id"> = {
+    teacherId:
+      normalizedInput.teacherId,
 
-    title: input.title.trim(),
-    description: input.description.trim(),
+    title:
+      normalizedInput.title.trim(),
+
+    description:
+      normalizedInput.description.trim(),
 
     status: "draft",
 
-    timeZone: input.timeZone,
+    timeZone:
+      normalizedInput.timeZone,
 
-    availabilityMode: input.availabilityMode,
+    availabilityMode:
+      normalizedInput.availabilityMode,
 
-    availableFrom: input.availableFrom,
-    availableUntil: input.availableUntil,
+    availableFrom:
+      normalizedInput.availableFrom,
 
-    timeLimitMinutes: input.timeLimitMinutes,
+    availableUntil:
+      normalizedInput.availableUntil,
 
-    allowBackNavigation: input.allowBackNavigation,
-    shuffleQuestions: input.shuffleQuestions,
-    shuffleChoices: input.shuffleChoices,
+    timeLimitMinutes:
+      normalizedInput.timeLimitMinutes,
+
+    allowBackNavigation:
+      normalizedInput.allowBackNavigation,
+
+    shuffleQuestions:
+      normalizedInput.shuffleQuestions,
+
+    shuffleChoices:
+      normalizedInput.shuffleChoices,
+
+    showResultsToStudents:
+      normalizedInput.showResultsToStudents,
+
+    showCorrectAnswers:
+      normalizedInput.showCorrectAnswers,
 
     totalQuestions: 0,
     qcmQuestions: 0,
     developmentQuestions: 0,
 
-    maxStudents: LIMITS.MAX_STUDENTS_PER_QUIZ,
+    maxStudents:
+      LIMITS.MAX_STUDENTS_PER_QUIZ,
 
     createdAt: now,
     updatedAt: now,
@@ -430,12 +609,20 @@ export async function createQuiz(input: CreateQuizInput) {
     closedAt: null,
   };
 
-  const quizDoc = await addDoc(
-    collection(db, QUIZZES_COLLECTION),
-    quizData
+  const quizDoc =
+    await addDoc(
+      collection(
+        db,
+        QUIZZES_COLLECTION
+      ),
+      quizData
+    );
+
+  await updateTeacherQuiz(
+    normalizedInput.teacherId,
+    quizDoc.id
   );
 
-  await updateTeacherQuiz(input.teacherId, quizDoc.id);
   await increaseQuizStats();
 
   return {
@@ -446,7 +633,8 @@ export async function createQuiz(input: CreateQuizInput) {
       ...quizData,
     },
 
-    message: "Quiz created successfully.",
+    message:
+      "Quiz created successfully.",
   };
 }
 
@@ -458,66 +646,112 @@ export async function updateQuiz(
   quizId: string,
   input: UpdateQuizInput
 ) {
-  const quiz = await getQuiz(quizId);
+  const quiz =
+    await getQuiz(quizId);
 
   if (!quiz) {
     return {
       success: false,
-      message: "Quiz not found.",
+      message:
+        "Quiz not found.",
     };
   }
 
-  if (quiz.status !== "draft") {
+  if (
+    quiz.status !==
+    "draft"
+  ) {
     return {
       success: false,
-      message: "Only draft quizzes can be edited.",
+      message:
+        "Only draft quizzes can be edited.",
     };
   }
 
-  const teacher = await getTeacher(quiz.teacherId);
+  const teacher =
+    await getTeacher(
+      quiz.teacherId
+    );
 
   if (!teacher) {
     return {
       success: false,
-      message: "Teacher not found.",
+      message:
+        "Teacher not found.",
     };
   }
 
-  const validationError = validateQuizInput(
-    input,
-    teacher.expiresAt
-  );
+  const normalizedInput: UpdateQuizInput = {
+    ...input,
+
+    showCorrectAnswers:
+      input.showResultsToStudents
+        ? input.showCorrectAnswers
+        : false,
+  };
+
+  const validationError =
+    validateQuizInput(
+      normalizedInput,
+      teacher.expiresAt
+    );
 
   if (validationError) {
     return {
       success: false,
-      message: validationError,
+      message:
+        validationError,
     };
   }
 
-  await updateDoc(quizRef(quizId), {
-    title: input.title.trim(),
-    description: input.description.trim(),
+  await updateDoc(
+    quizRef(quizId),
+    {
+      title:
+        normalizedInput.title.trim(),
 
-    timeZone: input.timeZone,
+      description:
+        normalizedInput.description.trim(),
 
-    availabilityMode: input.availabilityMode,
+      timeZone:
+        normalizedInput.timeZone,
 
-    availableFrom: input.availableFrom,
-    availableUntil: input.availableUntil,
+      availabilityMode:
+        normalizedInput.availabilityMode,
 
-    timeLimitMinutes: input.timeLimitMinutes,
+      availableFrom:
+        normalizedInput.availableFrom,
 
-    allowBackNavigation: input.allowBackNavigation,
-    shuffleQuestions: input.shuffleQuestions,
-    shuffleChoices: input.shuffleChoices,
+      availableUntil:
+        normalizedInput.availableUntil,
 
-    updatedAt: new Date().toISOString(),
-  });
+      timeLimitMinutes:
+        normalizedInput.timeLimitMinutes,
+
+      allowBackNavigation:
+        normalizedInput.allowBackNavigation,
+
+      shuffleQuestions:
+        normalizedInput.shuffleQuestions,
+
+      shuffleChoices:
+        normalizedInput.shuffleChoices,
+
+      showResultsToStudents:
+        normalizedInput.showResultsToStudents,
+
+      showCorrectAnswers:
+        normalizedInput.showCorrectAnswers,
+
+      updatedAt:
+        new Date().toISOString(),
+    }
+  );
 
   return {
     success: true,
-    message: "Quiz updated successfully.",
+    message:
+      "Quiz updated successfully.",
   };
 }
 
@@ -525,51 +759,87 @@ export async function updateQuiz(
    Launch
    ========================================================= */
 
-export async function launchQuiz(quizId: string) {
-  const quiz = await getQuiz(quizId);
+export async function launchQuiz(
+  quizId: string
+) {
+  const quiz =
+    await getQuiz(quizId);
 
   if (!quiz) {
     return {
       success: false,
-      message: "Quiz not found.",
-    };
-  }
-
-  if (quiz.status !== "draft") {
-    return {
-      success: false,
-      message: "Only draft quizzes can be launched.",
-    };
-  }
-
-  if (quiz.totalQuestions <= 0) {
-    return {
-      success: false,
-      message: "Add at least one question before launching the quiz.",
-    };
-  }
-
-  const teacher = await getTeacher(quiz.teacherId);
-
-  if (!teacher) {
-    return {
-      success: false,
-      message: "Teacher not found.",
+      message:
+        "Quiz not found.",
     };
   }
 
   if (
-    new Date(teacher.expiresAt).getTime() <= Date.now()
+    quiz.status !==
+    "draft"
   ) {
     return {
       success: false,
-      message: "Your teacher account has expired.",
+      message:
+        "Only draft quizzes can be launched.",
+    };
+  }
+
+  if (
+    quiz.totalQuestions <= 0
+  ) {
+    return {
+      success: false,
+      message:
+        "Add at least one question before launching the quiz.",
+    };
+  }
+
+  const teacher =
+    await getTeacher(
+      quiz.teacherId
+    );
+
+  if (!teacher) {
+    return {
+      success: false,
+      message:
+        "Teacher not found.",
+    };
+  }
+
+  const nowMs =
+    Date.now();
+
+  if (
+    new Date(
+      teacher.expiresAt
+    ).getTime() <= nowMs
+  ) {
+    return {
+      success: false,
+      message:
+        "Your teacher account has expired.",
+    };
+  }
+
+  if (
+    quiz.availableFrom &&
+    new Date(
+      quiz.availableFrom
+    ).getTime() < nowMs
+  ) {
+    return {
+      success: false,
+      message:
+        "The quiz opening date has passed. Update the quiz settings before launching it.",
     };
   }
 
   if (
     quiz.availableUntil &&
-    new Date(quiz.availableUntil).getTime() <= Date.now()
+    new Date(
+      quiz.availableUntil
+    ).getTime() <= nowMs
   ) {
     return {
       success: false,
@@ -578,17 +848,38 @@ export async function launchQuiz(quizId: string) {
     };
   }
 
-  const now = new Date().toISOString();
+  if (
+    quiz.availableUntil &&
+    new Date(
+      quiz.availableUntil
+    ).getTime() >
+      new Date(
+        teacher.expiresAt
+      ).getTime()
+  ) {
+    return {
+      success: false,
+      message:
+        "The quiz deadline cannot exceed the teacher account expiration.",
+    };
+  }
 
-  await updateDoc(quizRef(quizId), {
-    status: "launched",
-    launchedAt: now,
-    updatedAt: now,
-  });
+  const now =
+    new Date().toISOString();
+
+  await updateDoc(
+    quizRef(quizId),
+    {
+      status: "launched",
+      launchedAt: now,
+      updatedAt: now,
+    }
+  );
 
   return {
     success: true,
-    message: "Quiz launched successfully.",
+    message:
+      "Quiz launched successfully.",
   };
 }
 
@@ -596,27 +887,47 @@ export async function launchQuiz(quizId: string) {
    Close
    ========================================================= */
 
-export async function closeQuiz(quizId: string) {
-  const quiz = await getQuiz(quizId);
+export async function closeQuiz(
+  quizId: string
+) {
+  const quiz =
+    await getQuiz(quizId);
 
   if (!quiz) {
     return {
       success: false,
-      message: "Quiz not found.",
+      message:
+        "Quiz not found.",
     };
   }
 
-  const now = new Date().toISOString();
+  if (
+    quiz.status ===
+    "closed"
+  ) {
+    return {
+      success: true,
+      message:
+        "Quiz already closed.",
+    };
+  }
 
-  await updateDoc(quizRef(quizId), {
-    status: "closed",
-    closedAt: now,
-    updatedAt: now,
-  });
+  const now =
+    new Date().toISOString();
+
+  await updateDoc(
+    quizRef(quizId),
+    {
+      status: "closed",
+      closedAt: now,
+      updatedAt: now,
+    }
+  );
 
   return {
     success: true,
-    message: "Quiz closed successfully.",
+    message:
+      "Quiz closed successfully.",
   };
 }
 
@@ -624,17 +935,23 @@ export async function closeQuiz(quizId: string) {
    Delete
    ========================================================= */
 
-export async function deleteQuiz(quizId: string) {
-  const quiz = await getQuiz(quizId);
+export async function deleteQuiz(
+  quizId: string
+) {
+  const quiz =
+    await getQuiz(quizId);
 
   if (!quiz) {
     return {
       success: true,
-      message: "Quiz already deleted.",
+      message:
+        "Quiz already deleted.",
     };
   }
 
-  await deleteDoc(quizRef(quizId));
+  await deleteDoc(
+    quizRef(quizId)
+  );
 
   await updateTeacherQuiz(
     quiz.teacherId,
@@ -645,7 +962,8 @@ export async function deleteQuiz(quizId: string) {
 
   return {
     success: true,
-    message: "Quiz deleted successfully.",
+    message:
+      "Quiz deleted successfully.",
   };
 }
 
@@ -661,10 +979,20 @@ export async function updateQuizQuestionCounters(
     developmentQuestions: number;
   }
 ) {
-  await updateDoc(quizRef(quizId), {
-    totalQuestions: counters.totalQuestions,
-    qcmQuestions: counters.qcmQuestions,
-    developmentQuestions: counters.developmentQuestions,
-    updatedAt: new Date().toISOString(),
-  });
+  await updateDoc(
+    quizRef(quizId),
+    {
+      totalQuestions:
+        counters.totalQuestions,
+
+      qcmQuestions:
+        counters.qcmQuestions,
+
+      developmentQuestions:
+        counters.developmentQuestions,
+
+      updatedAt:
+        new Date().toISOString(),
+    }
+  );
 }

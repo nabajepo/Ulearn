@@ -16,13 +16,19 @@
   box-shadow: var(--shadow);
 }
 
+/* =========================================================
+   Page heading
+   ========================================================= */
+
 .heading {
   margin-top: 1.5rem;
   margin-bottom: 1.5rem;
 }
 
 .badge {
+  width: fit-content;
   display: inline-flex;
+
   margin-bottom: 0.85rem;
   padding: 0.45rem 0.8rem;
 
@@ -39,6 +45,7 @@
   margin-bottom: 0.65rem;
 
   color: var(--main-color);
+
   font-size: clamp(2.4rem, 4vw, 3.4rem);
   font-weight: 900;
   line-height: 1;
@@ -49,7 +56,43 @@
   max-width: 900px;
 
   color: rgba(23, 23, 23, 0.68);
+
   font-size: 1rem;
+  line-height: 1.7;
+}
+
+/* =========================================================
+   Account lifetime
+   ========================================================= */
+
+.accountLimit {
+  width: fit-content;
+
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+
+  margin-top: 1rem;
+  padding: 0.7rem 1rem;
+
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+
+  background: var(--soft-purple);
+}
+
+.accountLimit span {
+  color: rgba(23, 23, 23, 0.62);
+
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.accountLimit strong {
+  color: var(--main-color);
+
+  font-size: 0.82rem;
+  font-weight: 900;
 }
 
 /* =========================================================
@@ -58,11 +101,13 @@
 
 .form {
   display: grid;
+
   grid-template-columns:
     minmax(280px, 1.05fr)
     minmax(280px, 1fr)
     minmax(500px, 1.55fr)
-    minmax(320px, 1.1fr);
+    minmax(340px, 1.16fr);
+
   gap: 0.9rem;
   align-items: stretch;
 }
@@ -118,6 +163,10 @@
     );
 }
 
+/* =========================================================
+   Column headers
+   ========================================================= */
+
 .columnHeader {
   min-height: 62px;
 
@@ -152,12 +201,15 @@
   margin-bottom: 0.3rem;
 
   color: var(--main-color);
+
   font-size: 1.15rem;
   font-weight: 900;
+  line-height: 1.2;
 }
 
 .columnHeader p {
   color: rgba(23, 23, 23, 0.58);
+
   font-size: 0.78rem;
   line-height: 1.45;
 }
@@ -172,6 +224,7 @@
   gap: 0.5rem;
 
   color: var(--main-color);
+
   font-size: 0.9rem;
   font-weight: 800;
 }
@@ -181,6 +234,7 @@
 .form select {
   width: 100%;
   min-height: 52px;
+
   padding: 0.95rem 1rem;
 
   border: 1px solid var(--border-color);
@@ -195,12 +249,13 @@
   transition:
     border-color 0.2s ease,
     box-shadow 0.2s ease,
-    background 0.2s ease;
+    background-color 0.2s ease,
+    opacity 0.2s ease;
 }
 
-.form input:hover,
-.form textarea:hover,
-.form select:hover {
+.form input:hover:not(:disabled),
+.form textarea:hover:not(:disabled),
+.form select:hover:not(:disabled) {
   border-color: rgba(42, 3, 105, 0.34);
 }
 
@@ -211,14 +266,23 @@
   box-shadow: 0 0 0 3px var(--soft-purple);
 }
 
+.form input:disabled,
+.form textarea:disabled,
+.form select:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
 .form textarea {
   min-height: 210px;
+
   resize: vertical;
   line-height: 1.6;
 }
 
 .helperText {
   color: rgba(23, 23, 23, 0.57);
+
   font-size: 0.73rem;
   font-weight: 600;
   line-height: 1.5;
@@ -240,14 +304,18 @@
 
 .infoBox strong {
   display: block;
+
   margin-bottom: 0.35rem;
 
   color: var(--main-color);
+
   font-size: 0.84rem;
+  font-weight: 900;
 }
 
 .infoBox p {
   color: rgba(23, 23, 23, 0.62);
+
   font-size: 0.76rem;
   line-height: 1.55;
 }
@@ -270,6 +338,7 @@
   padding: 0 0.45rem;
 
   color: var(--main-color);
+
   font-size: 0.93rem;
   font-weight: 900;
 }
@@ -278,17 +347,20 @@
   margin-bottom: 0.8rem;
 
   color: rgba(23, 23, 23, 0.6);
+
   font-size: 0.72rem;
   line-height: 1.5;
 }
 
 .dateTimeGrid {
   display: grid;
+
   grid-template-columns:
     minmax(190px, 1.8fr)
     minmax(82px, 0.75fr)
     minmax(82px, 0.75fr)
     minmax(85px, 0.75fr);
+
   gap: 0.6rem;
   align-items: end;
 }
@@ -300,7 +372,9 @@
 .dateTimeGrid input,
 .dateTimeGrid select {
   min-height: 46px;
+
   padding: 0.75rem;
+
   font-size: 0.82rem;
 }
 
@@ -324,44 +398,102 @@
 }
 
 /* =========================================================
-   Student duration
+   Duration selector
    ========================================================= */
 
-.durationInput {
+.durationSection {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 0.8rem;
+}
 
-  overflow: hidden;
+.durationSection > label {
+  display: grid;
+  gap: 0.5rem;
+
+  color: var(--main-color);
+
+  font-size: 0.9rem;
+  font-weight: 800;
+}
+
+.durationSection select {
+  width: 100%;
+  min-height: 52px;
+
+  padding: 0.85rem 1rem;
 
   border: 1px solid var(--border-color);
   border-radius: 13px;
 
   background: #ffffff;
+  color: var(--foreground);
+
+  font-size: 0.9rem;
+  font-weight: 700;
 }
 
-.durationInput input {
-  border: none;
-  border-radius: 0;
-  box-shadow: none;
+.customDuration {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+
+  gap: 0.7rem;
+  padding: 0.9rem;
+
+  border: 1px solid var(--border-color);
+  border-radius: 14px;
+
+  background: rgba(42, 3, 105, 0.025);
 }
 
-.durationInput input:focus {
-  box-shadow: none;
-}
+.customDuration label {
+  display: grid;
+  gap: 0.45rem;
 
-.durationInput span {
-  display: flex;
-  align-items: center;
-
-  padding: 0 0.9rem;
-
-  border-left: 1px solid var(--border-color);
-
-  background: var(--soft-purple);
   color: var(--main-color);
 
   font-size: 0.78rem;
   font-weight: 800;
+}
+
+.customDuration input {
+  width: 100%;
+  min-height: 46px;
+
+  padding: 0.75rem;
+
+  border: 1px solid var(--border-color);
+  border-radius: 11px;
+
+  background: #ffffff;
+}
+
+.durationSummary {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  gap: 1rem;
+  padding: 0.8rem 0.9rem;
+
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+
+  background: var(--soft-purple);
+}
+
+.durationSummary span {
+  color: rgba(23, 23, 23, 0.62);
+
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+.durationSummary strong {
+  color: var(--main-color);
+
+  font-size: 0.82rem;
+  font-weight: 900;
+  text-align: right;
 }
 
 .sessionDurationBox {
@@ -375,24 +507,29 @@
 
 .sessionDurationBox span {
   display: block;
+
   margin-bottom: 0.35rem;
 
   color: rgba(23, 23, 23, 0.62);
+
   font-size: 0.72rem;
   font-weight: 700;
 }
 
 .sessionDurationBox strong {
   display: block;
+
   margin-bottom: 0.5rem;
 
   color: var(--main-color);
+
   font-size: 1.05rem;
   font-weight: 900;
 }
 
 .sessionDurationBox p {
   color: rgba(23, 23, 23, 0.62);
+
   font-size: 0.73rem;
   line-height: 1.5;
 }
@@ -403,14 +540,16 @@
 
 .options {
   display: grid;
-  gap: 0.65rem;
-  margin-top: 0.2rem;
+  gap: 0.4rem;
+
+  margin-top: 0.15rem;
 }
 
 .options h3 {
-  margin-bottom: 0.25rem;
+  margin-bottom: 0.2rem;
 
   color: var(--main-color);
+
   font-size: 1rem;
   font-weight: 900;
 }
@@ -418,19 +557,20 @@
 .options label {
   display: flex;
   align-items: flex-start;
-  gap: 0.7rem;
+  gap: 0.65rem;
 
-  padding: 0.8rem;
+  padding: 0.65rem;
 
   border: 1px solid transparent;
-  border-radius: 13px;
+  border-radius: 12px;
 
   color: var(--foreground);
   cursor: pointer;
 
   transition:
     border-color 0.2s ease,
-    background 0.2s ease;
+    background-color 0.2s ease,
+    opacity 0.2s ease;
 }
 
 .options label:hover {
@@ -444,6 +584,7 @@
   min-height: 0;
 
   margin-top: 0.1rem;
+
   flex-shrink: 0;
 
   accent-color: var(--main-color);
@@ -451,24 +592,50 @@
 }
 
 .options label > span {
+  min-width: 0;
+
   display: grid;
   gap: 0.2rem;
 }
 
 .options strong {
   color: var(--main-color);
+
   font-size: 0.8rem;
+  font-weight: 900;
 }
 
 .options small {
   color: rgba(23, 23, 23, 0.59);
+
   font-size: 0.68rem;
   font-weight: 600;
   line-height: 1.45;
 }
 
 /* =========================================================
-   Message and actions
+   Disabled student option
+   ========================================================= */
+
+.disabledOption {
+  opacity: 0.48;
+  cursor: not-allowed !important;
+}
+
+.disabledOption:hover {
+  border-color: transparent !important;
+  background: transparent !important;
+}
+
+.disabledOption input,
+.disabledOption strong,
+.disabledOption small,
+.disabledOption span {
+  cursor: not-allowed;
+}
+
+/* =========================================================
+   Message
    ========================================================= */
 
 .message {
@@ -487,15 +654,23 @@
   line-height: 1.5;
 }
 
+/* =========================================================
+   Form actions
+   ========================================================= */
+
 .formActions {
   grid-column: 1 / -1;
 
   display: flex;
-  justify-content: flex-end;
+  justify-content: flex-start;
   align-items: center;
   gap: 0.85rem;
 
   padding-top: 0.5rem;
+}
+
+.formActions :global(.app-button) {
+  flex-shrink: 0;
 }
 
 /* =========================================================
@@ -504,8 +679,8 @@
 
 @media (min-width: 1800px) {
   .card {
-    padding-left: 2.5rem;
     padding-right: 2.5rem;
+    padding-left: 2.5rem;
   }
 
   .form {
@@ -518,19 +693,18 @@
 }
 
 /* =========================================================
-   Responsive layout
+   Medium desktop and tablet
    ========================================================= */
 
-@media (max-width: 1250px) {
+@media (max-width: 1350px) {
   .form {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
-
-  .scheduleColumn,
-  .optionsColumn {
-    grid-column: auto;
-  }
 }
+
+/* =========================================================
+   Tablet
+   ========================================================= */
 
 @media (max-width: 920px) {
   .page {
@@ -553,6 +727,10 @@
     grid-column: auto;
   }
 }
+
+/* =========================================================
+   Mobile
+   ========================================================= */
 
 @media (max-width: 600px) {
   .card {
@@ -581,6 +759,29 @@
     width: 100%;
     min-width: 0;
   }
+
+  .accountLimit {
+    width: 100%;
+
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 500px) {
+  .customDuration {
+    grid-template-columns: 1fr;
+  }
+
+  .durationSummary {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 0.35rem;
+  }
+
+  .durationSummary strong {
+    text-align: left;
+  }
 }
 
 @media (max-width: 420px) {
@@ -590,176 +791,5 @@
 
   .dateField {
     grid-column: auto;
-  }
-}
-.accountLimit {
-  width: fit-content;
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-
-  margin-top: 1rem;
-  padding: 0.7rem 1rem;
-
-  border: 1px solid var(--border-color);
-  border-radius: 12px;
-
-  background: var(--soft-purple);
-}
-
-.accountLimit span {
-  color: rgba(23, 23, 23, 0.62);
-  font-size: 0.8rem;
-  font-weight: 700;
-}
-
-.accountLimit strong {
-  color: var(--main-color);
-  font-size: 0.82rem;
-  font-weight: 900;
-}
-/* =========================================================
-   Account lifetime information
-   ========================================================= */
-
-.accountLimit {
-  width: fit-content;
-
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-
-  margin-top: 1rem;
-  padding: 0.7rem 1rem;
-
-  border: 1px solid var(--border-color);
-  border-radius: 12px;
-
-  background: var(--soft-purple);
-}
-
-.accountLimit span {
-  color: rgba(23, 23, 23, 0.62);
-  font-size: 0.8rem;
-  font-weight: 700;
-}
-
-.accountLimit strong {
-  color: var(--main-color);
-  font-size: 0.82rem;
-  font-weight: 900;
-}
-
-/* =========================================================
-   Duration selector
-   ========================================================= */
-
-.durationSection {
-  display: grid;
-  gap: 0.8rem;
-}
-
-.durationSection > label {
-  display: grid;
-  gap: 0.5rem;
-
-  color: var(--main-color);
-  font-size: 0.9rem;
-  font-weight: 800;
-}
-
-.durationSection select {
-  width: 100%;
-  min-height: 52px;
-
-  padding: 0.85rem 1rem;
-
-  border: 1px solid var(--border-color);
-  border-radius: 13px;
-
-  background: #ffffff;
-  color: var(--foreground);
-
-  font-size: 0.9rem;
-  font-weight: 700;
-}
-
-.customDuration {
-  display: grid;
-  grid-template-columns:
-    repeat(2, minmax(0, 1fr));
-
-  gap: 0.7rem;
-
-  padding: 0.9rem;
-
-  border: 1px solid var(--border-color);
-  border-radius: 14px;
-
-  background: rgba(
-    42,
-    3,
-    105,
-    0.025
-  );
-}
-
-.customDuration label {
-  display: grid;
-  gap: 0.45rem;
-
-  color: var(--main-color);
-  font-size: 0.78rem;
-  font-weight: 800;
-}
-
-.customDuration input {
-  width: 100%;
-  min-height: 46px;
-
-  padding: 0.75rem;
-
-  border: 1px solid var(--border-color);
-  border-radius: 11px;
-
-  background: #ffffff;
-}
-
-.durationSummary {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-
-  gap: 1rem;
-
-  padding: 0.8rem 0.9rem;
-
-  border: 1px solid var(--border-color);
-  border-radius: 12px;
-
-  background: var(--soft-purple);
-}
-
-.durationSummary span {
-  color: rgba(23, 23, 23, 0.62);
-  font-size: 0.72rem;
-  font-weight: 700;
-}
-
-.durationSummary strong {
-  color: var(--main-color);
-  font-size: 0.82rem;
-  font-weight: 900;
-}
-
-@media (max-width: 500px) {
-  .customDuration {
-    grid-template-columns: 1fr;
-  }
-
-  .accountLimit {
-    width: 100%;
-    align-items: flex-start;
-    flex-direction: column;
   }
 }

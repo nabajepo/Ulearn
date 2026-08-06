@@ -102,10 +102,6 @@ const EMPTY_END: TimeSelection = {
   period: "PM",
 };
 
-/* =========================================================
-   Date helpers
-   ========================================================= */
-
 function createUtcDateTime(
   selection: TimeSelection,
   timeZone: string
@@ -126,7 +122,7 @@ function createUtcDateTime(
 function calculateMinutes(
   start: number,
   end: number
-) {
+): number {
   if (
     Number.isNaN(start) ||
     Number.isNaN(end) ||
@@ -143,7 +139,7 @@ function calculateMinutes(
 function getDateInputValue(
   value: Date | string,
   timeZone: string
-) {
+): string {
   const date =
     typeof value === "string"
       ? new Date(value)
@@ -182,23 +178,23 @@ function getDateInputValue(
   return `${year}-${month}-${day}`;
 }
 
-/**
- * Converts a UTC Firestore date back into the quiz's
- * local date + hour + minute + AM/PM.
- */
 function utcToTimeSelection(
   value: string | null,
   timeZone: string,
   fallback: TimeSelection
 ): TimeSelection {
   if (!value) {
-    return fallback;
+    return {
+      ...fallback,
+    };
   }
 
   const date = new Date(value);
 
   if (Number.isNaN(date.getTime())) {
-    return fallback;
+    return {
+      ...fallback,
+    };
   }
 
   const formatter =
@@ -247,18 +243,16 @@ function utcToTimeSelection(
 
   return {
     date: `${year}-${month}-${day}`,
-    hour: Number(hourValue),
-    minute: Number(minuteValue),
+    hour:
+      Number(hourValue) || 12,
+    minute:
+      Number(minuteValue) || 0,
     period:
       dayPeriod === "PM"
         ? "PM"
         : "AM",
   };
 }
-
-/* =========================================================
-   Page
-   ========================================================= */
 
 export default function QuizSettingsPage() {
   const router = useRouter();
@@ -283,15 +277,13 @@ export default function QuizSettingsPage() {
   const [saving, setSaving] =
     useState(false);
 
-  const [navigatingBack, setNavigatingBack] =
-    useState(false);
+  const [
+    navigatingBack,
+    setNavigatingBack,
+  ] = useState(false);
 
   const [message, setMessage] =
     useState("");
-
-  /* =========================================================
-     Form state
-     ========================================================= */
 
   const [title, setTitle] =
     useState("");
@@ -355,9 +347,15 @@ export default function QuizSettingsPage() {
     setShuffleChoices,
   ] = useState(false);
 
-  /* =========================================================
-     Load existing quiz
-     ========================================================= */
+  const [
+    showResultsToStudents,
+    setShowResultsToStudents,
+  ] = useState(true);
+
+  const [
+    showCorrectAnswers,
+    setShowCorrectAnswers,
+  ] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -380,7 +378,10 @@ export default function QuizSettingsPage() {
           data.timeZone ||
           "America/Toronto";
 
-        setTitle(data.title);
+        setTitle(
+          data.title
+        );
+
         setDescription(
           data.description
         );
@@ -413,13 +414,6 @@ export default function QuizSettingsPage() {
           data.timeLimitMinutes
         );
 
-        /*
-         * Standard 15-minute duration:
-         * select it directly.
-         *
-         * Non-standard value:
-         * use Custom duration.
-         */
         if (
           data.timeLimitMinutes %
             15 ===
@@ -434,19 +428,19 @@ export default function QuizSettingsPage() {
           setDurationSelection(
             CUSTOM_DURATION_VALUE
           );
-
-          setCustomHours(
-            Math.floor(
-              data.timeLimitMinutes /
-                60
-            )
-          );
-
-          setCustomMinutes(
-            data.timeLimitMinutes %
-              60
-          );
         }
+
+        setCustomHours(
+          Math.floor(
+            data.timeLimitMinutes /
+              60
+          )
+        );
+
+        setCustomMinutes(
+          data.timeLimitMinutes %
+            60
+        );
 
         setAllowBackNavigation(
           data.allowBackNavigation
@@ -459,15 +453,25 @@ export default function QuizSettingsPage() {
         setShuffleChoices(
           data.shuffleChoices
         );
+
+        setShowResultsToStudents(
+          data.showResultsToStudents
+        );
+
+        setShowCorrectAnswers(
+          data.showCorrectAnswers
+        );
       } catch (error) {
         console.error(
           "Error loading quiz settings:",
           error
         );
 
-        setMessage(
-          "Unable to load quiz settings."
-        );
+        if (!cancelled) {
+          setMessage(
+            "Unable to load quiz settings."
+          );
+        }
       } finally {
         if (!cancelled) {
           setLoading(false);
@@ -481,10 +485,6 @@ export default function QuizSettingsPage() {
       cancelled = true;
     };
   }, [quizId]);
-
-  /* =========================================================
-     Time zones
-     ========================================================= */
 
   const availableTimeZones =
     useMemo(() => {
@@ -501,16 +501,11 @@ export default function QuizSettingsPage() {
       return [
         {
           value: timeZone,
-          label:
-            `Current time zone — ${timeZone}`,
+          label: `Current time zone — ${timeZone}`,
         },
         ...TIME_ZONES,
       ];
     }, [timeZone]);
-
-  /* =========================================================
-     Dates
-     ========================================================= */
 
   const todayDateInput =
     useMemo(
@@ -606,10 +601,6 @@ export default function QuizSettingsPage() {
       ? availableWindowMinutes
       : null;
 
-  /* =========================================================
-     Maximum duration
-     ========================================================= */
-
   const maximumStudentTime =
     useMemo(() => {
       if (!accountExpirationMs) {
@@ -625,13 +616,11 @@ export default function QuizSettingsPage() {
       let maximum =
         Math.min(
           remaining,
-          LIMITS
-            .MAX_QUIZ_DURATION_MINUTES
+          LIMITS.MAX_QUIZ_DURATION_MINUTES
         );
 
       if (
-        availableWindowMinutes !==
-          null &&
+        availableWindowMinutes !== null &&
         availableWindowMinutes > 0
       ) {
         maximum =
@@ -659,10 +648,6 @@ export default function QuizSettingsPage() {
       [maximumStudentTime]
     );
 
-  /*
-   * If changing dates makes the previous duration invalid,
-   * automatically reduce it to the new maximum.
-   */
   useEffect(() => {
     if (
       availabilityMode !==
@@ -696,28 +681,22 @@ export default function QuizSettingsPage() {
       setDurationSelection(
         CUSTOM_DURATION_VALUE
       );
-
-      setCustomHours(
-        Math.floor(
-          maximumStudentTime /
-            60
-        )
-      );
-
-      setCustomMinutes(
-        maximumStudentTime %
-          60
-      );
     }
+
+    setCustomHours(
+      Math.floor(
+        maximumStudentTime / 60
+      )
+    );
+
+    setCustomMinutes(
+      maximumStudentTime % 60
+    );
   }, [
     availabilityMode,
     maximumStudentTime,
     timeLimitMinutes,
   ]);
-
-  /* =========================================================
-     Updates
-     ========================================================= */
 
   function updateStartTime<
     K extends keyof TimeSelection
@@ -761,18 +740,15 @@ export default function QuizSettingsPage() {
       value ===
       CUSTOM_DURATION_VALUE
     ) {
-      const hours =
+      setCustomHours(
         Math.floor(
-          timeLimitMinutes /
-            60
-        );
+          timeLimitMinutes / 60
+        )
+      );
 
-      const minutes =
-        timeLimitMinutes %
-        60;
-
-      setCustomHours(hours);
-      setCustomMinutes(minutes);
+      setCustomMinutes(
+        timeLimitMinutes % 60
+      );
 
       return;
     }
@@ -798,15 +774,26 @@ export default function QuizSettingsPage() {
     const safeHours =
       Math.max(
         0,
-        Math.floor(hours)
+        Math.min(
+          72,
+          Math.floor(
+            Number.isFinite(hours)
+              ? hours
+              : 0
+          )
+        )
       );
 
     const safeMinutes =
-      Math.min(
-        59,
-        Math.max(
-          0,
-          Math.floor(minutes)
+      Math.max(
+        0,
+        Math.min(
+          59,
+          Math.floor(
+            Number.isFinite(minutes)
+              ? minutes
+              : 0
+          )
         )
       );
 
@@ -826,10 +813,6 @@ export default function QuizSettingsPage() {
     setMessage("");
   }
 
-  /* =========================================================
-     Navigation
-     ========================================================= */
-
   function handleBack() {
     if (
       saving ||
@@ -845,13 +828,8 @@ export default function QuizSettingsPage() {
     );
   }
 
-  /* =========================================================
-     Save settings
-     ========================================================= */
-
   async function handleSubmit(
-    event:
-      FormEvent<HTMLFormElement>
+    event: FormEvent<HTMLFormElement>
   ) {
     event.preventDefault();
 
@@ -907,6 +885,14 @@ export default function QuizSettingsPage() {
     if (!cleanTitle) {
       setMessage(
         "Quiz title is required."
+      );
+
+      return;
+    }
+
+    if (!timeZone.trim()) {
+      setMessage(
+        "A quiz time zone is required."
       );
 
       return;
@@ -1026,8 +1012,7 @@ export default function QuizSettingsPage() {
 
     if (
       finalDuration >
-      LIMITS
-        .MAX_QUIZ_DURATION_MINUTES
+      LIMITS.MAX_QUIZ_DURATION_MINUTES
     ) {
       setMessage(
         `The quiz duration cannot exceed ${LIMITS.ACCOUNT_DURATION_DAYS} days.`
@@ -1080,6 +1065,12 @@ export default function QuizSettingsPage() {
             allowBackNavigation,
             shuffleQuestions,
             shuffleChoices,
+
+            showResultsToStudents,
+            showCorrectAnswers:
+              showResultsToStudents
+                ? showCorrectAnswers
+                : false,
           }
         );
 
@@ -1109,10 +1100,6 @@ export default function QuizSettingsPage() {
       setSaving(false);
     }
   }
-
-  /* =========================================================
-     Loading states
-     ========================================================= */
 
   if (
     teacherLoading ||
@@ -1212,9 +1199,7 @@ export default function QuizSettingsPage() {
             </h1>
 
             <p>
-              Only draft quizzes
-              can have their
-              settings changed.
+              Only draft quizzes can have their settings changed.
             </p>
           </div>
         </section>
@@ -1261,8 +1246,7 @@ export default function QuizSettingsPage() {
           </h1>
 
           <p>
-            Change the quiz information,
-            schedule and student options.
+            Change the quiz information, schedule and student options.
           </p>
 
           <div
@@ -1291,8 +1275,6 @@ export default function QuizSettingsPage() {
             handleSubmit
           }
         >
-          {/* COLUMN 1 */}
-
           <section
             className={`${styles.column} ${styles.generalColumn}`}
           >
@@ -1301,7 +1283,9 @@ export default function QuizSettingsPage() {
                 styles.columnHeader
               }
             >
-              <span>01</span>
+              <span>
+                01
+              </span>
 
               <div>
                 <h2>
@@ -1309,8 +1293,7 @@ export default function QuizSettingsPage() {
                 </h2>
 
                 <p>
-                  Change the quiz
-                  title and purpose.
+                  Change the quiz title and purpose.
                 </p>
               </div>
             </div>
@@ -1323,9 +1306,7 @@ export default function QuizSettingsPage() {
                 required
                 maxLength={120}
                 value={title}
-                onChange={(
-                  event
-                ) => {
+                onChange={(event) => {
                   setTitle(
                     event.target.value
                   );
@@ -1339,8 +1320,7 @@ export default function QuizSettingsPage() {
                   styles.helperText
                 }
               >
-                {title.length} /
-                120 characters
+                {title.length} / 120 characters
               </small>
             </label>
 
@@ -1352,9 +1332,7 @@ export default function QuizSettingsPage() {
                 value={
                   description
                 }
-                onChange={(
-                  event
-                ) => {
+                onChange={(event) => {
                   setDescription(
                     event.target.value
                   );
@@ -1368,13 +1346,10 @@ export default function QuizSettingsPage() {
                   styles.helperText
                 }
               >
-                {description.length} /
-                1000 characters
+                {description.length} / 1000 characters
               </small>
             </label>
           </section>
-
-          {/* COLUMN 2 */}
 
           <section
             className={`${styles.column} ${styles.availabilityColumn}`}
@@ -1384,7 +1359,9 @@ export default function QuizSettingsPage() {
                 styles.columnHeader
               }
             >
-              <span>02</span>
+              <span>
+                02
+              </span>
 
               <div>
                 <h2>
@@ -1392,8 +1369,7 @@ export default function QuizSettingsPage() {
                 </h2>
 
                 <p>
-                  Configure how students
-                  access the quiz.
+                  Configure how students access the quiz.
                 </p>
               </div>
             </div>
@@ -1405,9 +1381,7 @@ export default function QuizSettingsPage() {
                 value={
                   availabilityMode
                 }
-                onChange={(
-                  event
-                ) => {
+                onChange={(event) => {
                   setAvailabilityMode(
                     event.target
                       .value as QuizAvailabilityMode
@@ -1416,20 +1390,25 @@ export default function QuizSettingsPage() {
                   setMessage("");
                 }}
               >
-                <option
-                  value="open_window"
-                >
-                  Open window —
-                  different start times
+                <option value="open_window">
+                  Open window — different start times
                 </option>
 
-                <option
-                  value="scheduled_session"
-                >
-                  Scheduled session —
-                  everyone together
+                <option value="scheduled_session">
+                  Scheduled session — everyone together
                 </option>
               </select>
+
+              <small
+                className={
+                  styles.helperText
+                }
+              >
+                {availabilityMode ===
+                "open_window"
+                  ? "Students may begin at different times during the availability window."
+                  : "All students use the same scheduled session period."}
+              </small>
             </label>
 
             <label>
@@ -1439,9 +1418,7 @@ export default function QuizSettingsPage() {
                 value={
                   timeZone
                 }
-                onChange={(
-                  event
-                ) => {
+                onChange={(event) => {
                   setTimeZone(
                     event.target.value
                   );
@@ -1470,9 +1447,8 @@ export default function QuizSettingsPage() {
                   styles.helperText
                 }
               >
-                Quiz dates and times
-                will be interpreted
-                using {timeZone}.
+                Quiz dates and times will be interpreted using{" "}
+                {timeZone}.
               </small>
             </label>
 
@@ -1486,15 +1462,11 @@ export default function QuizSettingsPage() {
               </strong>
 
               <p>
-                Dates cannot be in
-                the past or after
-                your teacher account
-                expiration.
+                Dates cannot be in the past or after your teacher
+                account expiration.
               </p>
             </div>
           </section>
-
-          {/* COLUMN 3 */}
 
           <section
             className={`${styles.column} ${styles.scheduleColumn}`}
@@ -1504,7 +1476,9 @@ export default function QuizSettingsPage() {
                 styles.columnHeader
               }
             >
-              <span>03</span>
+              <span>
+                03
+              </span>
 
               <div>
                 <h2>
@@ -1512,8 +1486,7 @@ export default function QuizSettingsPage() {
                 </h2>
 
                 <p>
-                  Change opening and
-                  closing times.
+                  Change opening and closing times.
                 </p>
               </div>
             </div>
@@ -1568,9 +1541,7 @@ export default function QuizSettingsPage() {
                     value={
                       startTime.date
                     }
-                    onChange={(
-                      event
-                    ) =>
+                    onChange={(event) =>
                       updateStartTime(
                         "date",
                         event.target.value
@@ -1586,9 +1557,7 @@ export default function QuizSettingsPage() {
                     value={
                       startTime.hour
                     }
-                    onChange={(
-                      event
-                    ) =>
+                    onChange={(event) =>
                       updateStartTime(
                         "hour",
                         Number(
@@ -1622,9 +1591,7 @@ export default function QuizSettingsPage() {
                     value={
                       startTime.minute
                     }
-                    onChange={(
-                      event
-                    ) =>
+                    onChange={(event) =>
                       updateStartTime(
                         "minute",
                         Number(
@@ -1636,8 +1603,12 @@ export default function QuizSettingsPage() {
                     {MINUTES.map(
                       (minute) => (
                         <option
-                          key={minute}
-                          value={minute}
+                          key={
+                            minute
+                          }
+                          value={
+                            minute
+                          }
                         >
                           {String(
                             minute
@@ -1658,9 +1629,7 @@ export default function QuizSettingsPage() {
                     value={
                       startTime.period
                     }
-                    onChange={(
-                      event
-                    ) =>
+                    onChange={(event) =>
                       updateStartTime(
                         "period",
                         event.target
@@ -1693,7 +1662,10 @@ export default function QuizSettingsPage() {
                       startUtc,
                       timeZone
                     )
-                  : "Available immediately after launch"}
+                  : availabilityMode ===
+                      "open_window"
+                    ? "Available immediately after launch"
+                    : "Start date not selected"}
               </div>
             </fieldset>
 
@@ -1714,8 +1686,7 @@ export default function QuizSettingsPage() {
                   styles.groupDescription
                 }
               >
-                This date and time
-                are required.
+                This date and time are required.
               </p>
 
               <div
@@ -1743,9 +1714,7 @@ export default function QuizSettingsPage() {
                     value={
                       endTime.date
                     }
-                    onChange={(
-                      event
-                    ) =>
+                    onChange={(event) =>
                       updateEndTime(
                         "date",
                         event.target.value
@@ -1761,9 +1730,7 @@ export default function QuizSettingsPage() {
                     value={
                       endTime.hour
                     }
-                    onChange={(
-                      event
-                    ) =>
+                    onChange={(event) =>
                       updateEndTime(
                         "hour",
                         Number(
@@ -1797,9 +1764,7 @@ export default function QuizSettingsPage() {
                     value={
                       endTime.minute
                     }
-                    onChange={(
-                      event
-                    ) =>
+                    onChange={(event) =>
                       updateEndTime(
                         "minute",
                         Number(
@@ -1811,8 +1776,12 @@ export default function QuizSettingsPage() {
                     {MINUTES.map(
                       (minute) => (
                         <option
-                          key={minute}
-                          value={minute}
+                          key={
+                            minute
+                          }
+                          value={
+                            minute
+                          }
                         >
                           {String(
                             minute
@@ -1833,9 +1802,7 @@ export default function QuizSettingsPage() {
                     value={
                       endTime.period
                     }
-                    onChange={(
-                      event
-                    ) =>
+                    onChange={(event) =>
                       updateEndTime(
                         "period",
                         event.target
@@ -1873,8 +1840,6 @@ export default function QuizSettingsPage() {
             </fieldset>
           </section>
 
-          {/* COLUMN 4 */}
-
           <section
             className={`${styles.column} ${styles.optionsColumn}`}
           >
@@ -1883,7 +1848,9 @@ export default function QuizSettingsPage() {
                 styles.columnHeader
               }
             >
-              <span>04</span>
+              <span>
+                04
+              </span>
 
               <div>
                 <h2>
@@ -1891,8 +1858,7 @@ export default function QuizSettingsPage() {
                 </h2>
 
                 <p>
-                  Configure the student
-                  quiz experience.
+                  Configure the student quiz experience.
                 </p>
               </div>
             </div>
@@ -1911,9 +1877,7 @@ export default function QuizSettingsPage() {
                     value={
                       durationSelection
                     }
-                    onChange={(
-                      event
-                    ) =>
+                    onChange={(event) =>
                       handleDurationSelection(
                         event.target.value
                       )
@@ -1964,9 +1928,7 @@ export default function QuizSettingsPage() {
                         value={
                           customHours
                         }
-                        onChange={(
-                          event
-                        ) =>
+                        onChange={(event) =>
                           updateCustomDuration(
                             Number(
                               event.target.value
@@ -1987,9 +1949,7 @@ export default function QuizSettingsPage() {
                         value={
                           customMinutes
                         }
-                        onChange={(
-                          event
-                        ) =>
+                        onChange={(event) =>
                           updateCustomDuration(
                             customHours,
                             Number(
@@ -2036,8 +1996,7 @@ export default function QuizSettingsPage() {
                 }
               >
                 <span>
-                  Scheduled session
-                  duration
+                  Scheduled session duration
                 </span>
 
                 <strong>
@@ -2049,8 +2008,7 @@ export default function QuizSettingsPage() {
                 </strong>
 
                 <p>
-                  The duration is
-                  calculated automatically.
+                  The duration is calculated automatically.
                 </p>
               </div>
             )}
@@ -2070,13 +2028,13 @@ export default function QuizSettingsPage() {
                   checked={
                     allowBackNavigation
                   }
-                  onChange={(
-                    event
-                  ) =>
+                  onChange={(event) => {
                     setAllowBackNavigation(
                       event.target.checked
-                    )
-                  }
+                    );
+
+                    setMessage("");
+                  }}
                 />
 
                 <span>
@@ -2085,8 +2043,7 @@ export default function QuizSettingsPage() {
                   </strong>
 
                   <small>
-                    Students may return
-                    to previous questions.
+                    Students may return to previous questions.
                   </small>
                 </span>
               </label>
@@ -2097,13 +2054,13 @@ export default function QuizSettingsPage() {
                   checked={
                     shuffleQuestions
                   }
-                  onChange={(
-                    event
-                  ) =>
+                  onChange={(event) => {
                     setShuffleQuestions(
                       event.target.checked
-                    )
-                  }
+                    );
+
+                    setMessage("");
+                  }}
                 />
 
                 <span>
@@ -2112,8 +2069,7 @@ export default function QuizSettingsPage() {
                   </strong>
 
                   <small>
-                    Questions appear
-                    in a random order.
+                    Questions appear in a random order.
                   </small>
                 </span>
               </label>
@@ -2124,13 +2080,13 @@ export default function QuizSettingsPage() {
                   checked={
                     shuffleChoices
                   }
-                  onChange={(
-                    event
-                  ) =>
+                  onChange={(event) => {
                     setShuffleChoices(
                       event.target.checked
-                    )
-                  }
+                    );
+
+                    setMessage("");
+                  }}
                 />
 
                 <span>
@@ -2139,8 +2095,79 @@ export default function QuizSettingsPage() {
                   </strong>
 
                   <small>
-                    Multiple-choice answers
-                    appear randomly.
+                    Multiple-choice answers appear randomly.
+                  </small>
+                </span>
+              </label>
+
+              <label>
+                <input
+                  type="checkbox"
+                  checked={
+                    showResultsToStudents
+                  }
+                  onChange={(event) => {
+                    const checked =
+                      event.target.checked;
+
+                    setShowResultsToStudents(
+                      checked
+                    );
+
+                    if (!checked) {
+                      setShowCorrectAnswers(
+                        false
+                      );
+                    }
+
+                    setMessage("");
+                  }}
+                />
+
+                <span>
+                  <strong>
+                    Show final score
+                  </strong>
+
+                  <small>
+                    Students may view their final score once grading
+                    is complete.
+                  </small>
+                </span>
+              </label>
+
+              <label
+                className={
+                  !showResultsToStudents
+                    ? styles.disabledOption
+                    : undefined
+                }
+              >
+                <input
+                  type="checkbox"
+                  checked={
+                    showCorrectAnswers
+                  }
+                  disabled={
+                    !showResultsToStudents
+                  }
+                  onChange={(event) => {
+                    setShowCorrectAnswers(
+                      event.target.checked
+                    );
+
+                    setMessage("");
+                  }}
+                />
+
+                <span>
+                  <strong>
+                    Show correct answers
+                  </strong>
+
+                  <small>
+                    Students may review correct answers after grading
+                    is complete.
                   </small>
                 </span>
               </label>
@@ -2164,6 +2191,13 @@ export default function QuizSettingsPage() {
             }
           >
             <button
+              type="submit"
+              className="app-button app-button-action"
+              disabled={saving}
+            >
+              Save Changes
+            </button>
+            <button
               type="button"
               className="app-button app-button-secondary app-button-action"
               disabled={saving}
@@ -2173,14 +2207,7 @@ export default function QuizSettingsPage() {
             >
               Cancel
             </button>
-
-            <button
-              type="submit"
-              className="app-button app-button-action"
-              disabled={saving}
-            >
-              Save Changes
-            </button>
+          
           </div>
         </form>
       </section>
