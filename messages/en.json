@@ -1,0 +1,545 @@
+{
+  "common": {
+    "signIn": "Sign In",
+    "getStarted": "Get Started",
+    "learnMore": "Learn More"
+  },
+
+  "home": {
+    "hero": {
+      "badge": "Smart quiz platform",
+      "title": "Welcome to ULearn",
+      "subtitle": "Transforming Quizzes into Real Learning Experiences",
+      "description": "ULearn helps teachers create quizzes, assign them to students, correct multiple-choice questions automatically, and track class progress. The first version focuses on a simple and useful quiz workflow for teachers and students."
+    },
+
+    "preview": {
+      "label": "Quiz Preview",
+      "type": "QCM",
+      "title": "Basic Math Quiz",
+      "question": "What is 2 + 2 ?"
+    },
+
+    "process": {
+      "tag": "Process",
+      "title": "How It Works?",
+      "description": "ULearn keeps the workflow simple: create a quiz, share it with students, collect answers, and review performance.",
+
+      "create": {
+        "title": "Create",
+        "description": "Teachers create one quiz with up to 50 questions, including multiple-choice and development questions."
+      },
+
+      "assign": {
+        "title": "Assign",
+        "description": "Students receive access to the quiz and submit their answers before the teacher closes the evaluation."
+      },
+
+      "review": {
+        "title": "Review",
+        "description": "QCM answers are corrected automatically, while development questions can be reviewed manually by the teacher."
+      }
+    },
+
+    "faq": {
+      "tag": "FAQ",
+      "title": "Frequently Asked Questions",
+
+      "what": {
+        "question": "What is ULearn?",
+        "answer": "ULearn is a quiz platform that helps teachers create academic evaluations and helps students learn through structured practice."
+      },
+
+      "who": {
+        "question": "Who is it for?",
+        "answer": "It is mainly for teachers, tutors, students, and academic groups that need a simple quiz management tool."
+      },
+
+      "quizLimit": {
+        "question": "How many quizzes can a teacher create?",
+        "answer": "In this first version, one teacher can create one active quiz. If the quiz is deleted, the create button becomes available again."
+      },
+
+      "accountDuration": {
+        "question": "How long does an account last?",
+        "answer": "For this test version, teacher accounts and related quiz data are kept for three days before being removed."
+      },
+
+      "developmentQuestions": {
+        "question": "Can teachers use development questions?",
+        "answer": "Yes. The quiz can include QCM questions and development questions that the teacher reviews manually."
+      },
+
+      "free": {
+        "question": "Is ULearn free?",
+        "answer": "The first version is free for testing and academic experimentation."
+      }
+    },
+
+    "stats": {
+      "tag": "Platform",
+      "title": "ULearn Statistics",
+      "description": "A quick overview of current usage during the test version."
+    },
+
+    "feedback": {
+      "tag": "Reviews",
+      "title": "Feedbacks"
+    },
+
+    "start": {
+      "title": "Ready to create your first quiz?",
+      "description": "Sign in and start building your first ULearn evaluation."
+    }
+  },
+
+  "clerk": {
+    "common": {
+      "continue": "Continue"
+    },
+
+    "signIn": {
+      "title": "Welcome to ULearn",
+      "subtitle": "Enter your credentials"
+    },
+
+    "signUp": {
+      "title": "Create your account",
+      "subtitle": "It takes less than a minute"
+    }
+  },
+
+  "navigation": {
+    "menu": "Menu",
+    "home": "Home",
+    "howItWorks": "How it Works?",
+    "stats": "Stats",
+    "feedback": "Feedbacks",
+    "getStarted": "Get Started"
+  },
+
+  "platformStats": {
+    "loading": "Loading platform statistics...",
+    "error": "Unable to load platform statistics.",
+    "activeTeachers": "Active Teachers",
+    "totalTeachers": "Total teachers who have used ULearn",
+    "activeQuizzes": "Active Quizzes",
+    "totalQuizzesCreated": "Total Quizzes Created"
+  },
+
+  "feedbackComponent": {
+    "title": "Students Feedbacks",
+    "loadingTitle": "Loading feedback...",
+    "loadingText": "Please wait while we load student reviews.",
+    "unavailableTitle": "Feedback unavailable",
+    "loadError": "Unable to load feedback at the moment.",
+    "noReviews": "No reviews yet",
+    "recentReview": "recent review",
+    "recentReviews": "recent reviews",
+    "rating": "Rating",
+    "outOfFive": "out of 5",
+    "emptyTitle": "No feedback yet",
+    "emptyText": "Student feedback will appear here once reviews are added."
+  },
+
+  "help": {
+    "button": "Need help?",
+    "badge": "ULearn support",
+    "title": "Report a problem",
+    "subtitle": "Tell us what happened so we can improve your ULearn experience.",
+    "openAriaLabel": "Open the help form",
+    "closeAriaLabel": "Close the help form",
+    "close": "Close",
+    "cancel": "Cancel",
+
+    "account": {
+      "loading": "Loading account...",
+      "notSignedIn": "Not signed in",
+      "authenticatedUser": "Authenticated user"
+    },
+
+    "form": {
+      "actionLabel": "What were you trying to do?",
+      "actionPlaceholder": "Example: Create a new quiz",
+      "descriptionLabel": "What happened?",
+      "descriptionPlaceholder": "Describe the issue, the error message, or the unexpected behaviour...",
+      "emailLabel": "Your email",
+      "emailPlaceholder": "name@example.com",
+      "optional": "Optional",
+      "emailHelp": "Add an email if you would like a response.",
+      "characters": "characters",
+      "submit": "Submit report",
+      "preparing": "Preparing report..."
+    },
+
+    "automaticInfo": {
+      "title": "Information added automatically",
+      "account": "Signed-in account"
+    },
+
+    "success": {
+      "title": "Report prepared",
+      "text": "Thank you. Your report has been prepared successfully.",
+      "temporaryNotice": "Email delivery will be connected in a later development phase."
+    },
+
+    "validation": {
+      "actionRequired": "Please tell us what you were trying to do.",
+      "descriptionRequired": "Please describe what went wrong.",
+      "descriptionTooShort": "Please provide a little more detail about the problem.",
+      "invalidEmail": "Please enter a valid email address.",
+      "submitError": "Unable to submit the report. Please try again."
+    }
+  },
+  "loading": {
+  "word": "Loading",
+  "defaultSubtitle": "Preparing your workspace...",
+  "secureWorkspace": "Loading your secure workspace..."
+},
+
+"dashboard": {
+  "loading": "Preparing your dashboard...",
+  "loadingCreateTitle": "Creating Quiz",
+  "loadingCreateSubtitle": "Opening the quiz creation page...",
+  "loadingOpenTitle": "Opening Quiz",
+  "loadingOpenSubtitle": "Loading your quiz...",
+  "accessUnavailable": "Access unavailable",
+  "loadError": "Your dashboard cannot be loaded.",
+  "welcome": "Welcome",
+  "accountExpires": "Account expires in",
+
+  "create": {
+    "title": "Create a Quiz",
+    "description": "Create your unique quiz with up to 50 questions: 40 QCM and 10 development questions.",
+    "button": "Create New Quiz",
+    "alreadyCreated": "Quiz Already Created",
+    "deleteCurrent": "Delete your current quiz if you want to create another one.",
+    "limit": "You can create only one quiz in this version."
+  },
+
+  "quizzes": {
+    "title": "Quizzes",
+    "description": "View your existing quiz, manage its settings, launch it, or see its participants.",
+    "open": "Open Quiz",
+    "none": "No Quiz Yet",
+    "manage": "You can manage your current quiz here.",
+    "createFirst": "Create a quiz first to activate this section."
+  }
+},
+"countdown": {
+  "loading": "Loading...",
+  "unavailable": "Unavailable",
+  "expired": "Expired",
+  "units": {
+    "day": "d",
+    "hour": "h",
+    "minute": "m",
+    "second": "s"
+  }
+},
+"quizCreate": {
+  "badge": "Quiz settings",
+  "title": "Create Quiz",
+  "subtitle": "Configure your quiz. All quiz dates must remain inside your teacher account lifetime.",
+  "backDashboard": "Back to Dashboard",
+  "accountValidUntil": "Account valid until",
+
+  "loading": {
+    "preparing": "Preparing the quiz creation form...",
+    "creatingTitle": "Creating your quiz",
+    "creatingSubtitle": "Saving your quiz settings...",
+    "returning": "Returning to your dashboard..."
+  },
+
+  "teacherUnavailable": {
+    "title": "Teacher unavailable",
+    "text": "Teacher profile unavailable."
+  },
+
+  "general": {
+    "title": "General information",
+    "subtitle": "Define the quiz title, structure and purpose.",
+    "quizTitle": "Quiz title",
+    "quizTitlePlaceholder": "Example: Basic mathematics",
+    "description": "Description",
+    "descriptionPlaceholder": "Describe the purpose of this quiz...",
+    "numberQuestions": "Number of questions",
+    "maximumQuestions": "Maximum questions:",
+    "totalPoints": "Total quiz points",
+    "minimumPoints": "Minimum 10 points."
+  },
+
+  "availability": {
+    "title": "Availability",
+    "subtitle": "Configure how students access the quiz.",
+    "mode": "Availability mode",
+    "openWindow": "Open window — different start times",
+    "scheduledSession": "Scheduled session — everyone together",
+    "openWindowHelp": "Students may begin at different times during the availability window.",
+    "scheduledHelp": "All students use the same scheduled session period.",
+    "timeZone": "Quiz time zone",
+    "timeZoneHelp": "Quiz dates and times will be interpreted using",
+    "dateLimitsTitle": "Quiz date limits",
+    "dateLimitsText": "Dates cannot be in the past or after your teacher account expiration."
+  },
+
+  "timeZones": {
+    "current": "Current time zone",
+    "toronto": "Eastern Time — Ottawa, Toronto, Montréal",
+    "winnipeg": "Central Time — Winnipeg",
+    "edmonton": "Mountain Time — Edmonton",
+    "vancouver": "Pacific Time — Vancouver",
+    "halifax": "Atlantic Time — Halifax",
+    "stJohns": "Newfoundland Time — St. John's",
+    "paris": "Central European Time — Paris",
+    "bujumbura": "Central Africa Time — Bujumbura"
+  },
+
+  "schedule": {
+    "title": "Quiz schedule",
+    "subtitle": "Select valid opening and closing times.",
+    "sessionStart": "Session start",
+    "availableFrom": "Available from",
+    "availableFromHelp": "Optional. Leave empty to make the quiz available immediately after launch.",
+    "sessionStartHelp": "Required. All students may begin at this time.",
+    "sessionEnd": "Session end",
+    "submissionDeadline": "Submission deadline",
+    "requiredDateTime": "This date and time are required.",
+    "date": "Date",
+    "hour": "Hour",
+    "minute": "Minute",
+    "period": "Period",
+    "preview": "Preview",
+    "availableImmediately": "Available immediately after launch",
+    "startNotSelected": "Start date not selected",
+    "deadlineNotSelected": "Deadline not selected"
+  },
+
+  "student": {
+    "title": "Student settings",
+    "subtitle": "Configure the quiz experience.",
+    "timeAllowed": "Time allowed per student",
+    "customDuration": "Custom duration...",
+    "hours": "Hours",
+    "minutes": "Minutes",
+    "selectedDuration": "Selected duration",
+    "maximumAllowed": "Maximum allowed for this quiz window:",
+    "sessionDuration": "Scheduled session duration",
+    "selectStartEnd": "Select the start and end times",
+    "sessionDurationHelp": "The duration is calculated automatically from the session start and end.",
+    "options": "Student options",
+    "backNavigation": "Allow back navigation",
+    "backNavigationHelp": "Students may return to previous questions.",
+    "shuffleQuestions": "Shuffle questions",
+    "shuffleQuestionsHelp": "Questions appear in a random order.",
+    "shuffleChoices": "Shuffle QCM choices",
+    "shuffleChoicesHelp": "Multiple-choice answers appear in a random order.",
+    "showScore": "Show final score",
+    "showScoreHelp": "Students may view their final score once grading is complete.",
+    "showCorrectAnswers": "Show correct answers",
+    "showCorrectAnswersHelp": "Students may review correct answers after grading is complete."
+  },
+
+  "actions": {
+    "create": "Create Quiz",
+    "cancel": "Cancel"
+  },
+
+  "units": {
+    "characters": "characters",
+    "minutesShort": "min",
+    "days": "days"
+  },
+
+  "validation": {
+    "titleRequired": "Quiz title is required.",
+    "questionRange": "The number of questions must be between 1 and",
+    "minimumPoints": "The quiz must be worth at least 10 points.",
+    "accountExpired": "Your teacher account has expired.",
+    "startPast": "The opening date and time cannot be in the past.",
+    "startAfterExpiration": "The opening date cannot be after your account expiration.",
+    "sessionEndRequired": "A session end date and time are required.",
+    "deadlineRequired": "A submission deadline is required.",
+    "deadlinePast": "The deadline cannot be in the past.",
+    "deadlineAfterExpiration": "The quiz deadline cannot exceed your teacher account expiration.",
+    "sessionEndAfterStart": "The session end must be after the session start.",
+    "deadlineAfterStart": "The submission deadline must be after the opening date.",
+    "sessionStartRequired": "A scheduled session requires a start date and time.",
+    "minimumDuration": "The quiz duration must be at least 1 minute.",
+    "maximumDuration": "The quiz duration cannot exceed",
+    "durationWindow": "The time allowed per student cannot exceed",
+    "createError": "Unable to create the quiz. Please try again."
+  }
+},
+"quizDetails": {
+  "backDashboard": "Back to Dashboard",
+  "noDescription": "No description provided.",
+
+  "loading": {
+    "openingTitle": "Opening Quiz",
+    "openingSubtitle": "Loading your quiz information...",
+    "pleaseWait": "Please wait...",
+    "dashboard": "Returning to your dashboard...",
+    "edit": "Opening the quiz editor...",
+    "settings": "Opening quiz settings...",
+    "students": "Opening students and grading...",
+    "launch": "Launching your quiz...",
+    "delete": "Deleting your quiz..."
+  },
+
+  "access": {
+    "title": "Access denied",
+    "text": "Quiz not found or access denied."
+  },
+
+  "status": {
+    "draft": "DRAFT",
+    "launched": "LAUNCHED",
+    "closed": "CLOSED"
+  },
+
+  "summary": {
+    "status": "Status",
+    "plannedQuestions": "Planned questions",
+    "totalPoints": "Total points",
+    "activeStudents": "Active students",
+    "finishedStudents": "Finished students",
+    "timePerStudent": "Time per student",
+    "sessionDuration": "Session duration",
+    "mode": "Mode",
+    "timeZone": "Quiz time zone",
+    "availableFrom": "Available from",
+    "whenLaunched": "When launched",
+    "deadline": "Deadline",
+    "notSet": "Not set",
+    "accountExpires": "Teacher account expires",
+    "backNavigation": "Back navigation",
+    "shuffleQuestions": "Shuffle questions",
+    "shuffleChoices": "Shuffle choices",
+    "showFinalScore": "Show final score",
+    "showCorrectAnswers": "Show correct answers"
+  },
+
+  "modes": {
+    "openWindow": "Open window",
+    "scheduledSession": "Scheduled session"
+  },
+
+  "values": {
+    "allowed": "Allowed",
+    "disabled": "Disabled",
+    "yes": "Yes",
+    "no": "No"
+  },
+
+  "messages": {
+    "loadError": "Unable to load the quiz.",
+    "launchSuccess": "Quiz launched successfully.",
+    "launchError": "Unable to launch the quiz.",
+    "deleteError": "Unable to delete the quiz.",
+    "deadlinePassed": "This quiz deadline has passed. Open Quiz Settings and select a new deadline before launching it.",
+    "accountExpired": "Your teacher account has expired. This quiz can no longer be launched."
+  },
+
+  "actions": {
+    "settings": "Quiz Settings",
+    "edit": "Edit Quiz",
+    "launch": "Launch Quiz",
+    "students": "Students & Grading",
+    "delete": "Delete Quiz",
+    "cancel": "Cancel"
+  },
+
+  "deleteModal": {
+    "badge": "Danger zone",
+    "title": "Delete quiz",
+    "closeAria": "Close delete confirmation",
+    "confirmBefore": "Are you sure you want to delete",
+    "warning": "This action cannot be undone. The quiz and all related data will be permanently removed."
+  }
+},
+"quizSettings": {
+  "badge": "Quiz settings",
+  "title": "Update Quiz Settings",
+  "subtitle": "Change the quiz information, structure, schedule and student options.",
+  "backQuiz": "Back to Quiz",
+
+  "generalSubtitle": "Change the title, structure and purpose.",
+  "scheduleSubtitle": "Change opening and closing times.",
+  "studentSubtitle": "Configure the student quiz experience.",
+
+  "currentQuestions": "Questions currently created:",
+  "maximumAllowed": "Maximum allowed:",
+  "sessionDurationHelp": "The duration is calculated automatically.",
+  "shuffleChoicesHelp": "Multiple-choice answers appear randomly.",
+
+  "loading": {
+    "title": "Quiz Settings",
+    "subtitle": "Loading your quiz settings...",
+    "savingTitle": "Saving Quiz",
+    "savingSubtitle": "Updating your quiz settings...",
+    "returning": "Returning to your quiz..."
+  },
+
+  "access": {
+    "title": "Access unavailable",
+    "text": "Quiz not found or access denied."
+  },
+
+  "locked": {
+    "title": "Settings locked",
+    "text": "Only draft quizzes can have their settings changed."
+  },
+
+  "schedule": {
+    "availableFromHelp": "Optional. Clear the date to make the quiz available when launched.",
+    "sessionStartHelp": "Required for a scheduled session."
+  },
+
+  "messages": {
+    "loadError": "Unable to load quiz settings.",
+    "saveError": "Unable to save the quiz settings. Please try again."
+  },
+
+  "validation": {
+    "draftOnly": "Only draft quizzes can be modified.",
+    "timeZoneRequired": "A quiz time zone is required.",
+    "startPast": "The opening date and time cannot be in the past. Select a future time or remove the opening date.",
+    "existingQuestionsBefore": "This quiz already contains",
+    "existingQuestionsAfter": "The planned number of questions cannot be lower than"
+  },
+
+  "actions": {
+    "save": "Save Changes"
+  }
+},
+"students": {
+  "backQuiz": "Back to Quiz",
+  "badge": "Students & grading",
+  "description": "Review submitted quizzes and grade development questions.",
+
+  "loading": {
+    "title": "Students & Grading",
+    "subtitle": "Loading student submissions...",
+    "returning": "Returning to your quiz..."
+  },
+
+  "access": {
+    "title": "Access denied",
+    "text": "Quiz not found or access denied."
+  },
+
+  "empty": {
+    "title": "No submissions yet",
+    "text": "Students who complete the quiz will appear here in submission order."
+  },
+
+  "future": {
+    "title": "Future grading workflow",
+    "step1": "1. Students will be ordered by submission time.",
+    "step2": "2. QCM questions will be corrected automatically.",
+    "step3": "3. Click a student to grade development answers.",
+    "step4": "4. Publish the final result when grading is complete."
+  }
+}
+}

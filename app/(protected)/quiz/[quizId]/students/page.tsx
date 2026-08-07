@@ -17,40 +17,79 @@ import {
   type Quiz,
 } from "@/lib/services/quizzes";
 
-import { useTeacher } from "@/hooks/useTeacher";
+import {
+  useTeacher,
+} from "@/hooks/useTeacher";
+
+import {
+  useLanguage,
+} from "@/hooks/useLanguage";
 
 import styles from "./StudentsPage.module.css";
 
 export default function StudentsPage() {
-  const router = useRouter();
-  const params = useParams();
+  const router =
+    useRouter();
 
-  const quizId = String(params.quizId);
+  const params =
+    useParams();
+
+  const {
+    t,
+  } = useLanguage();
+
+  const quizId =
+    String(
+      params.quizId
+    );
 
   const {
     teacher,
-    loading: teacherLoading,
+    loading:
+      teacherLoading,
   } = useTeacher();
 
-  const [quiz, setQuiz] =
-    useState<Quiz | null>(null);
+  const [
+    quiz,
+    setQuiz,
+  ] =
+    useState<Quiz | null>(
+      null
+    );
 
-  const [loading, setLoading] =
+  const [
+    loading,
+    setLoading,
+  ] =
     useState(true);
 
-  const [navigating, setNavigating] =
+  const [
+    navigating,
+    setNavigating,
+  ] =
     useState(false);
 
+  /* =========================================================
+     Load quiz
+     ========================================================= */
+
   useEffect(() => {
-    let cancelled = false;
+    let cancelled =
+      false;
 
     async function loadQuiz() {
       try {
         const data =
-          await getQuiz(quizId);
+          await getQuiz(
+            quizId
+          );
 
-        if (!cancelled) {
-          setQuiz(data);
+        if (
+          !cancelled
+        ) {
+          setQuiz(
+            data
+          );
         }
       } catch (error) {
         console.error(
@@ -58,8 +97,12 @@ export default function StudentsPage() {
           error
         );
       } finally {
-        if (!cancelled) {
-          setLoading(false);
+        if (
+          !cancelled
+        ) {
+          setLoading(
+            false
+          );
         }
       }
     }
@@ -67,9 +110,16 @@ export default function StudentsPage() {
     loadQuiz();
 
     return () => {
-      cancelled = true;
+      cancelled =
+        true;
     };
-  }, [quizId]);
+  }, [
+    quizId,
+  ]);
+
+  /* =========================================================
+     Loading
+     ========================================================= */
 
   if (
     teacherLoading ||
@@ -77,102 +127,199 @@ export default function StudentsPage() {
   ) {
     return (
       <AppLoading
-        title="Students & Grading"
-        subtitle="Loading quiz submissions..."
-      />
-    );
-  }
-
-  if (navigating) {
-    return (
-      <AppLoading
-        title="ULearn"
-        subtitle="Returning to your quiz..."
+        title={t(
+          "students.loading.title"
+        )}
+        subtitle={t(
+          "students.loading.subtitle"
+        )}
       />
     );
   }
 
   if (
-    !teacher ||
-    !quiz ||
-    quiz.teacherId !== teacher.id
+    navigating
   ) {
     return (
-      <main className={styles.page}>
-        <section className={styles.card}>
-          <h1>Access denied</h1>
+      <AppLoading
+        title="ULearn"
+        subtitle={t(
+          "students.loading.returning"
+        )}
+      />
+    );
+  }
+
+  /* =========================================================
+     Access
+     ========================================================= */
+
+  if (
+    !teacher ||
+    !quiz ||
+    quiz.teacherId !==
+      teacher.id
+  ) {
+    return (
+      <main
+        className={
+          styles.page
+        }
+      >
+        <section
+          className={
+            styles.card
+          }
+        >
+          <h1>
+            {t(
+              "students.access.title"
+            )}
+          </h1>
 
           <p>
-            Quiz not found or access denied.
+            {t(
+              "students.access.text"
+            )}
           </p>
         </section>
       </main>
     );
   }
 
+  /* =========================================================
+     Navigation
+     ========================================================= */
+
   function handleBack() {
-    setNavigating(true);
+    if (
+      navigating
+    ) {
+      return;
+    }
+
+    setNavigating(
+      true
+    );
 
     router.push(
       `/quiz/${quizId}`
     );
   }
 
+  /* =========================================================
+     UI
+     ========================================================= */
+
   return (
-    <main className={styles.page}>
-      <section className={styles.card}>
+    <main
+      className={
+        styles.page
+      }
+    >
+      <section
+        className={
+          styles.card
+        }
+      >
         <button
           type="button"
           className="app-button app-button-secondary"
-          onClick={handleBack}
+          onClick={
+            handleBack
+          }
         >
-          ← Back to Quiz
+          ←{" "}
+          {t(
+            "students.backQuiz"
+          )}
         </button>
 
-        <header className={styles.header}>
-          <span className={styles.badge}>
-            Students & grading
+        <header
+          className={
+            styles.header
+          }
+        >
+          <span
+            className={
+              styles.badge
+            }
+          >
+            {t(
+              "students.badge"
+            )}
           </span>
 
-          <h1>{quiz.title}</h1>
+          <h1>
+            {quiz.title}
+          </h1>
 
           <p>
-            Review submitted quizzes and grade
-            development questions.
+            {t(
+              "students.description"
+            )}
           </p>
         </header>
 
-        <section className={styles.emptyState}>
-          <div className={styles.emptyIcon}>
+        <section
+          className={
+            styles.emptyState
+          }
+        >
+          <div
+            className={
+              styles.emptyIcon
+            }
+            aria-hidden="true"
+          >
             0
           </div>
 
-          <h2>No submissions yet</h2>
+          <h2>
+            {t(
+              "students.empty.title"
+            )}
+          </h2>
 
           <p>
-            Students who complete the quiz will
-            appear here in submission order.
+            {t(
+              "students.empty.text"
+            )}
           </p>
 
-          <div className={styles.futureInfo}>
+          <div
+            className={
+              styles.futureInfo
+            }
+          >
             <strong>
-              Future grading workflow
+              {t(
+                "students.future.title"
+              )}
             </strong>
 
             <span>
-              1. Students will be ordered by submission time.
+              {t(
+                "students.future.step1"
+              )}
             </span>
 
             <span>
-              2. QCM questions will be corrected automatically.
+              {t(
+                "students.future.step2"
+              )}
             </span>
 
             <span>
-              3. Click a student to grade development answers.
+              {t(
+                "students.future.step3"
+              )}
             </span>
 
             <span>
-              4. Publish the final result when grading is complete.
+              {t(
+                "students.future.step4"
+              )}
             </span>
           </div>
         </section>

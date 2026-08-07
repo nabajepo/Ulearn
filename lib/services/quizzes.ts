@@ -22,6 +22,10 @@ import {
   updateTeacherQuiz,
 } from "@/lib/services/users";
 
+/* =========================================================
+   Types
+   ========================================================= */
+
 export type QuizStatus =
   | "draft"
   | "launched"
@@ -40,8 +44,17 @@ export type Quiz = {
 
   status: QuizStatus;
 
+  /*
+   * Quiz structure selected by the teacher
+   * before questions are created.
+   */
+  targetQuestions: number;
+  totalPoints: number;
+
   timeZone: string;
-  availabilityMode: QuizAvailabilityMode;
+
+  availabilityMode:
+    QuizAvailabilityMode;
 
   availableFrom: string | null;
   availableUntil: string | null;
@@ -52,18 +65,12 @@ export type Quiz = {
   shuffleQuestions: boolean;
   shuffleChoices: boolean;
 
-  /*
-   * Result visibility settings.
-   *
-   * showResultsToStudents:
-   * Students may see their final score once grading is complete.
-   *
-   * showCorrectAnswers:
-   * Students may also review correct answers once grading is complete.
-   */
   showResultsToStudents: boolean;
   showCorrectAnswers: boolean;
 
+  /*
+   * Actual question counters.
+   */
   totalQuestions: number;
   qcmQuestions: number;
   developmentQuestions: number;
@@ -83,8 +90,13 @@ export type CreateQuizInput = {
   title: string;
   description: string;
 
+  targetQuestions: number;
+  totalPoints: number;
+
   timeZone: string;
-  availabilityMode: QuizAvailabilityMode;
+
+  availabilityMode:
+    QuizAvailabilityMode;
 
   availableFrom: string | null;
   availableUntil: string | null;
@@ -99,12 +111,33 @@ export type CreateQuizInput = {
   showCorrectAnswers: boolean;
 };
 
+/*
+ * Settings currently do not have to send
+ * targetQuestions and totalPoints.
+ *
+ * This prevents the existing Settings page
+ * from breaking.
+ *
+ * Later, Edit Quiz may be responsible for
+ * changing these two structural values.
+ */
 export type UpdateQuizInput =
-  Omit<CreateQuizInput, "teacherId">;
+  Omit<
+    CreateQuizInput,
+    | "teacherId"
+    | "targetQuestions"
+    | "totalPoints"
+  > & {
+    targetQuestions?: number;
+    totalPoints?: number;
+  };
 
-const QUIZZES_COLLECTION = "quizzes";
+const QUIZZES_COLLECTION =
+  "quizzes";
 
-function quizRef(quizId: string) {
+function quizRef(
+  quizId: string
+) {
   return doc(
     db,
     QUIZZES_COLLECTION,
@@ -113,25 +146,94 @@ function quizRef(quizId: string) {
 }
 
 /* =========================================================
-   Validation
+   Structural validation
+   ========================================================= */
+
+function validateQuizStructure(input: {
+  targetQuestions: number;
+  totalPoints: number;
+}) {
+  if (
+    !Number.isInteger(
+      input.targetQuestions
+    )
+  ) {
+    return "The number of questions must be a whole number.";
+  }
+
+  if (
+    input.targetQuestions < 1
+  ) {
+    return "The quiz must contain at least 1 question.";
+  }
+
+  if (
+    input.targetQuestions >
+    LIMITS.MAX_QUESTIONS_PER_QUIZ
+  ) {
+    return `The quiz cannot contain more than ${LIMITS.MAX_QUESTIONS_PER_QUIZ} questions.`;
+  }
+
+  if (
+    !Number.isFinite(
+      input.totalPoints
+    )
+  ) {
+    return "The total number of points is invalid.";
+  }
+
+  if (
+    input.totalPoints < 10
+  ) {
+    return "The quiz must be worth at least 10 points.";
+  }
+
+  if (
+    !Number.isInteger(
+      input.totalPoints
+    )
+  ) {
+    return "The total number of points must be a whole number.";
+  }
+
+  return null;
+}
+
+/* =========================================================
+   Settings validation
    ========================================================= */
 
 function validateQuizInput(
-  input: Omit<CreateQuizInput, "teacherId">,
+  input: {
+    title: string;
+
+    timeZone: string;
+
+    availabilityMode:
+      QuizAvailabilityMode;
+
+    availableFrom: string | null;
+    availableUntil: string | null;
+
+    timeLimitMinutes: number;
+  },
   teacherExpiresAt: string
 ) {
-  const now = Date.now();
+  const now =
+    Date.now();
 
   const accountExpiration =
     new Date(
       teacherExpiresAt
     ).getTime();
 
-  if (!input.title.trim()) {
+  if (
+    !input.title.trim()
+  ) {
     return "Quiz title is required.";
   }
 
-  if (!input.timeZone.trim()) {
+  if (!input.timeZone) {
     return "A time zone is required.";
   }
 
@@ -216,6 +318,10 @@ function validateQuizInput(
     return "The deadline cannot be after your account expiration.";
   }
 
+  /* =====================================================
+     Scheduled session
+     ===================================================== */
+
   if (
     input.availabilityMode ===
     "scheduled_session"
@@ -239,18 +345,16 @@ function validateQuizInput(
 
     if (
       sessionDurationMinutes >
-      LIMITS.MAX_QUIZ_DURATION_MINUTES
+      LIMITS
+        .MAX_QUIZ_DURATION_MINUTES
     ) {
       return `A scheduled session cannot exceed ${LIMITS.ACCOUNT_DURATION_DAYS} days.`;
     }
-
-    if (
-      input.timeLimitMinutes !==
-      sessionDurationMinutes
-    ) {
-      return "The scheduled-session duration does not match its start and end times.";
-    }
   }
+
+  /* =====================================================
+     Open window
+     ===================================================== */
 
   if (
     input.availabilityMode ===
@@ -263,13 +367,16 @@ function validateQuizInput(
     const effectiveStart =
       start ?? now;
 
-    if (end <= effectiveStart) {
+    if (
+      end <= effectiveStart
+    ) {
       return "The deadline must be after the opening date.";
     }
 
     const availableMinutes =
       Math.floor(
-        (end - effectiveStart) /
+        (end -
+          effectiveStart) /
           (1000 * 60)
       );
 
@@ -279,17 +386,6 @@ function validateQuizInput(
     ) {
       return "The time allowed per student cannot exceed the available quiz window.";
     }
-  }
-
-  /*
-   * Correct answers cannot be exposed if results themselves
-   * are hidden.
-   */
-  if (
-    input.showCorrectAnswers &&
-    !input.showResultsToStudents
-  ) {
-    return "Correct answers cannot be shown when student results are hidden.";
   }
 
   return null;
@@ -342,6 +438,22 @@ export async function getQuiz(
           ? "closed"
           : "draft",
 
+    /*
+     * Compatibility with quizzes created
+     * before these fields existed.
+     */
+    targetQuestions:
+      typeof data.targetQuestions ===
+      "number"
+        ? data.targetQuestions
+        : LIMITS.MAX_QUESTIONS_PER_QUIZ,
+
+    totalPoints:
+      typeof data.totalPoints ===
+      "number"
+        ? data.totalPoints
+        : 100,
+
     timeZone:
       typeof data.timeZone ===
       "string"
@@ -390,15 +502,11 @@ export async function getQuiz(
         ? data.shuffleChoices
         : false,
 
-    /*
-     * Default values are important for quizzes created
-     * before these properties were introduced.
-     */
     showResultsToStudents:
       typeof data.showResultsToStudents ===
       "boolean"
         ? data.showResultsToStudents
-        : true,
+        : false,
 
     showCorrectAnswers:
       typeof data.showCorrectAnswers ===
@@ -486,57 +594,45 @@ export async function createQuiz(
     };
   }
 
-  const normalizedShowCorrectAnswers =
-    input.showResultsToStudents
-      ? input.showCorrectAnswers
-      : false;
+  const structureError =
+    validateQuizStructure({
+      targetQuestions:
+        input.targetQuestions,
 
-  const normalizedInput: CreateQuizInput = {
-    ...input,
-    showCorrectAnswers:
-      normalizedShowCorrectAnswers,
-  };
+      totalPoints:
+        input.totalPoints,
+    });
+
+  if (structureError) {
+    return {
+      success: false,
+      quiz: null,
+      message:
+        structureError,
+    };
+  }
 
   const validationError =
     validateQuizInput(
       {
         title:
-          normalizedInput.title,
-
-        description:
-          normalizedInput.description,
+          input.title,
 
         timeZone:
-          normalizedInput.timeZone,
+          input.timeZone,
 
         availabilityMode:
-          normalizedInput.availabilityMode,
+          input.availabilityMode,
 
         availableFrom:
-          normalizedInput.availableFrom,
+          input.availableFrom,
 
         availableUntil:
-          normalizedInput.availableUntil,
+          input.availableUntil,
 
         timeLimitMinutes:
-          normalizedInput.timeLimitMinutes,
-
-        allowBackNavigation:
-          normalizedInput.allowBackNavigation,
-
-        shuffleQuestions:
-          normalizedInput.shuffleQuestions,
-
-        shuffleChoices:
-          normalizedInput.shuffleChoices,
-
-        showResultsToStudents:
-          normalizedInput.showResultsToStudents,
-
-        showCorrectAnswers:
-          normalizedInput.showCorrectAnswers,
+          input.timeLimitMinutes,
       },
-
       teacher.expiresAt
     );
 
@@ -550,50 +646,57 @@ export async function createQuiz(
   }
 
   const now =
-    new Date().toISOString();
+    new Date()
+      .toISOString();
 
   const quizData:
     Omit<Quiz, "id"> = {
     teacherId:
-      normalizedInput.teacherId,
+      input.teacherId,
 
     title:
-      normalizedInput.title.trim(),
+      input.title.trim(),
 
     description:
-      normalizedInput.description.trim(),
+      input.description.trim(),
 
     status: "draft",
 
+    targetQuestions:
+      input.targetQuestions,
+
+    totalPoints:
+      input.totalPoints,
+
     timeZone:
-      normalizedInput.timeZone,
+      input.timeZone,
 
     availabilityMode:
-      normalizedInput.availabilityMode,
+      input.availabilityMode,
 
     availableFrom:
-      normalizedInput.availableFrom,
+      input.availableFrom,
 
     availableUntil:
-      normalizedInput.availableUntil,
+      input.availableUntil,
 
     timeLimitMinutes:
-      normalizedInput.timeLimitMinutes,
+      input.timeLimitMinutes,
 
     allowBackNavigation:
-      normalizedInput.allowBackNavigation,
+      input.allowBackNavigation,
 
     shuffleQuestions:
-      normalizedInput.shuffleQuestions,
+      input.shuffleQuestions,
 
     shuffleChoices:
-      normalizedInput.shuffleChoices,
+      input.shuffleChoices,
 
     showResultsToStudents:
-      normalizedInput.showResultsToStudents,
+      input.showResultsToStudents,
 
     showCorrectAnswers:
-      normalizedInput.showCorrectAnswers,
+      input.showCorrectAnswers,
 
     totalQuestions: 0,
     qcmQuestions: 0,
@@ -619,7 +722,7 @@ export async function createQuiz(
     );
 
   await updateTeacherQuiz(
-    normalizedInput.teacherId,
+    input.teacherId,
     quizDoc.id
   );
 
@@ -658,8 +761,7 @@ export async function updateQuiz(
   }
 
   if (
-    quiz.status !==
-    "draft"
+    quiz.status !== "draft"
   ) {
     return {
       success: false,
@@ -681,18 +783,64 @@ export async function updateQuiz(
     };
   }
 
-  const normalizedInput: UpdateQuizInput = {
-    ...input,
+  const targetQuestions =
+    input.targetQuestions ??
+    quiz.targetQuestions;
 
-    showCorrectAnswers:
-      input.showResultsToStudents
-        ? input.showCorrectAnswers
-        : false,
-  };
+  const totalPoints =
+    input.totalPoints ??
+    quiz.totalPoints;
+
+  const structureError =
+    validateQuizStructure({
+      targetQuestions,
+      totalPoints,
+    });
+
+  if (structureError) {
+    return {
+      success: false,
+      message:
+        structureError,
+    };
+  }
+
+  /*
+   * A target cannot be reduced below questions
+   * that already exist.
+   */
+  if (
+    targetQuestions <
+    quiz.totalQuestions
+  ) {
+    return {
+      success: false,
+      message:
+        `This quiz already contains ${quiz.totalQuestions} questions. The target cannot be lower than that.`,
+    };
+  }
 
   const validationError =
     validateQuizInput(
-      normalizedInput,
+      {
+        title:
+          input.title,
+
+        timeZone:
+          input.timeZone,
+
+        availabilityMode:
+          input.availabilityMode,
+
+        availableFrom:
+          input.availableFrom,
+
+        availableUntil:
+          input.availableUntil,
+
+        timeLimitMinutes:
+          input.timeLimitMinutes,
+      },
       teacher.expiresAt
     );
 
@@ -708,43 +856,47 @@ export async function updateQuiz(
     quizRef(quizId),
     {
       title:
-        normalizedInput.title.trim(),
+        input.title.trim(),
 
       description:
-        normalizedInput.description.trim(),
+        input.description.trim(),
+
+      targetQuestions,
+      totalPoints,
 
       timeZone:
-        normalizedInput.timeZone,
+        input.timeZone,
 
       availabilityMode:
-        normalizedInput.availabilityMode,
+        input.availabilityMode,
 
       availableFrom:
-        normalizedInput.availableFrom,
+        input.availableFrom,
 
       availableUntil:
-        normalizedInput.availableUntil,
+        input.availableUntil,
 
       timeLimitMinutes:
-        normalizedInput.timeLimitMinutes,
+        input.timeLimitMinutes,
 
       allowBackNavigation:
-        normalizedInput.allowBackNavigation,
+        input.allowBackNavigation,
 
       shuffleQuestions:
-        normalizedInput.shuffleQuestions,
+        input.shuffleQuestions,
 
       shuffleChoices:
-        normalizedInput.shuffleChoices,
+        input.shuffleChoices,
 
       showResultsToStudents:
-        normalizedInput.showResultsToStudents,
+        input.showResultsToStudents,
 
       showCorrectAnswers:
-        normalizedInput.showCorrectAnswers,
+        input.showCorrectAnswers,
 
       updatedAt:
-        new Date().toISOString(),
+        new Date()
+          .toISOString(),
     }
   );
 
@@ -774,8 +926,7 @@ export async function launchQuiz(
   }
 
   if (
-    quiz.status !==
-    "draft"
+    quiz.status !== "draft"
   ) {
     return {
       success: false,
@@ -794,6 +945,21 @@ export async function launchQuiz(
     };
   }
 
+  /*
+   * Require the professor to finish the
+   * planned question structure.
+   */
+  if (
+    quiz.totalQuestions !==
+    quiz.targetQuestions
+  ) {
+    return {
+      success: false,
+      message:
+        `This quiz requires ${quiz.targetQuestions} questions. You currently have ${quiz.totalQuestions}.`,
+    };
+  }
+
   const teacher =
     await getTeacher(
       quiz.teacherId
@@ -807,13 +973,11 @@ export async function launchQuiz(
     };
   }
 
-  const nowMs =
-    Date.now();
-
   if (
     new Date(
       teacher.expiresAt
-    ).getTime() <= nowMs
+    ).getTime() <=
+    Date.now()
   ) {
     return {
       success: false,
@@ -823,23 +987,11 @@ export async function launchQuiz(
   }
 
   if (
-    quiz.availableFrom &&
-    new Date(
-      quiz.availableFrom
-    ).getTime() < nowMs
-  ) {
-    return {
-      success: false,
-      message:
-        "The quiz opening date has passed. Update the quiz settings before launching it.",
-    };
-  }
-
-  if (
     quiz.availableUntil &&
     new Date(
       quiz.availableUntil
-    ).getTime() <= nowMs
+    ).getTime() <=
+      Date.now()
   ) {
     return {
       success: false,
@@ -848,31 +1000,21 @@ export async function launchQuiz(
     };
   }
 
-  if (
-    quiz.availableUntil &&
-    new Date(
-      quiz.availableUntil
-    ).getTime() >
-      new Date(
-        teacher.expiresAt
-      ).getTime()
-  ) {
-    return {
-      success: false,
-      message:
-        "The quiz deadline cannot exceed the teacher account expiration.",
-    };
-  }
-
   const now =
-    new Date().toISOString();
+    new Date()
+      .toISOString();
 
   await updateDoc(
     quizRef(quizId),
     {
-      status: "launched",
-      launchedAt: now,
-      updatedAt: now,
+      status:
+        "launched",
+
+      launchedAt:
+        now,
+
+      updatedAt:
+        now,
     }
   );
 
@@ -901,26 +1043,21 @@ export async function closeQuiz(
     };
   }
 
-  if (
-    quiz.status ===
-    "closed"
-  ) {
-    return {
-      success: true,
-      message:
-        "Quiz already closed.",
-    };
-  }
-
   const now =
-    new Date().toISOString();
+    new Date()
+      .toISOString();
 
   await updateDoc(
     quizRef(quizId),
     {
-      status: "closed",
-      closedAt: now,
-      updatedAt: now,
+      status:
+        "closed",
+
+      closedAt:
+        now,
+
+      updatedAt:
+        now,
     }
   );
 
@@ -992,7 +1129,8 @@ export async function updateQuizQuestionCounters(
         counters.developmentQuestions,
 
       updatedAt:
-        new Date().toISOString(),
+        new Date()
+          .toISOString(),
     }
   );
 }

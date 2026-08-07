@@ -12,160 +12,359 @@
  * • Display the account expiration countdown.
  * • Allow the teacher to create one quiz.
  * • Allow the teacher to open the existing quiz.
+ * • Allow the user to change the application language.
  * ============================================================================
  */
 
 import { useState } from "react";
+
 import { UserButton } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 
 import AppLoading from "@/components/AppLoading";
+import LanguageSwitcher from "@/components/LanguageSwitcher";
+
 import { useTeacher } from "@/hooks/useTeacher";
 import { useCountdown } from "@/hooks/useCountdown";
+import { useLanguage } from "@/hooks/useLanguage";
 
 import styles from "./DashboardPage.module.css";
+
+type NavigationTarget =
+  | "create"
+  | "open"
+  | "";
 
 export default function DashboardPage() {
   const router = useRouter();
 
-  const { teacher, loading, blocked, message } = useTeacher();
-  const timeLeft = useCountdown(teacher?.expiresAt ?? null);
+  const { t } = useLanguage();
 
-  const [navigationTarget, setNavigationTarget] = useState<
-    "create" | "open" | ""
-  >("");
+  const {
+    teacher,
+    loading,
+    blocked,
+    message,
+  } = useTeacher();
 
-  function navigateTo(path: string, target: "create" | "open") {
+  const timeLeft = useCountdown(
+    teacher?.expiresAt ?? null
+  );
+
+  const [
+    navigationTarget,
+    setNavigationTarget,
+  ] = useState<NavigationTarget>("");
+
+  function navigateTo(
+    path: string,
+    target: "create" | "open"
+  ) {
     if (navigationTarget) {
       return;
     }
 
     setNavigationTarget(target);
+
     router.push(path);
   }
+
+  /* =========================================================
+     Loading
+     ========================================================= */
 
   if (loading) {
     return (
       <AppLoading
         title="ULearn"
-        subtitle="Preparing your teacher dashboard..."
+        subtitle={t(
+          "dashboard.loading"
+        )}
       />
     );
   }
 
-  if (navigationTarget === "create") {
+  if (
+    navigationTarget ===
+    "create"
+  ) {
     return (
       <AppLoading
-        title="Create Quiz"
-        subtitle="Opening the quiz creation workspace..."
+        title={t(
+          "dashboard.loadingCreateTitle"
+        )}
+        subtitle={t(
+          "dashboard.loadingCreateSubtitle"
+        )}
       />
     );
   }
 
-  if (navigationTarget === "open") {
+  if (
+    navigationTarget ===
+    "open"
+  ) {
     return (
       <AppLoading
-        title="Opening Quiz"
-        subtitle="Loading your quiz settings..."
+        title={t(
+          "dashboard.loadingOpenTitle"
+        )}
+        subtitle={t(
+          "dashboard.loadingOpenSubtitle"
+        )}
       />
     );
   }
 
-  if (blocked || !teacher) {
+  /* =========================================================
+     Access unavailable
+     ========================================================= */
+
+  if (
+    blocked ||
+    !teacher
+  ) {
     return (
-      <main className={styles.blockedPage}>
-        <section className={styles.blockedBox}>
-          <h1>Access unavailable</h1>
+      <main
+        className={
+          styles.blockedPage
+        }
+      >
+        <section
+          className={
+            styles.blockedBox
+          }
+        >
+          <h1>
+            {t(
+              "dashboard.accessUnavailable"
+            )}
+          </h1>
 
           <p>
-            {message || "Your dashboard cannot be loaded."}
+            {message ||
+              t(
+                "dashboard.loadError"
+              )}
           </p>
         </section>
       </main>
     );
   }
 
-  const hasQuiz = Boolean(teacher.quizId);
+  const hasQuiz =
+    Boolean(
+      teacher.quizId
+    );
+
+  /* =========================================================
+     Dashboard
+     ========================================================= */
 
   return (
-    <main className={styles.page}>
-      <header className={styles.header}>
-        <div className={styles.brand}>
-          <h1>ULearn</h1>
-          <p>Welcome, {teacher.name} 👋</p>
+    <main
+      className={
+        styles.page
+      }
+    >
+      <header
+        className={
+          styles.header
+        }
+      >
+        {/* Brand */}
+
+        <div
+          className={
+            styles.brand
+          }
+        >
+          <h1>
+            ULearn
+          </h1>
+
+          <p>
+            {t(
+              "dashboard.welcome"
+            )}
+            {", "}
+            {teacher.name}
+            {" 👋"}
+          </p>
         </div>
 
-        <div className={styles.timer}>
-          <span>Account expires in</span>
-          <strong>{timeLeft}</strong>
+        {/* Account countdown */}
+
+        <div
+          className={
+            styles.timer
+          }
+        >
+          <span>
+            {t(
+              "dashboard.accountExpires"
+            )}
+          </span>
+
+          <strong>
+            {timeLeft}
+          </strong>
         </div>
 
-        <div className={styles.userButton}>
+        {/* Language + Clerk profile */}
+
+        <div
+          className={
+            styles.headerActions
+          }
+        >
+          <LanguageSwitcher />
+
           <UserButton />
         </div>
       </header>
 
-      <section className={styles.main}>
+      <section
+        className={
+          styles.main
+        }
+      >
+        {/* ===================================================
+           Create Quiz
+           =================================================== */}
+
         <article
           className={`${styles.card} ${
-            hasQuiz ? styles.disabled : ""
+            hasQuiz
+              ? styles.disabled
+              : ""
           }`}
         >
-          <div className={styles.icon}>＋</div>
+          <div
+            className={
+              styles.icon
+            }
+          >
+            ＋
+          </div>
 
           <div>
-            <h2>Create a Quiz</h2>
+            <h2>
+              {t(
+                "dashboard.create.title"
+              )}
+            </h2>
 
             <p>
-              Create your unique quiz with up to 50 questions: 40 QCM and 10
-              development questions.
+              {t(
+                "dashboard.create.description"
+              )}
             </p>
 
             <button
               type="button"
               className="app-button"
-              disabled={hasQuiz || Boolean(navigationTarget)}
-              onClick={() => navigateTo("/quiz/create", "create")}
+              disabled={
+                hasQuiz ||
+                Boolean(
+                  navigationTarget
+                )
+              }
+              onClick={() =>
+                navigateTo(
+                  "/quiz/create",
+                  "create"
+                )
+              }
             >
-              {hasQuiz ? "Quiz Already Created" : "Create New Quiz  →"}
+              {hasQuiz
+                ? t(
+                    "dashboard.create.alreadyCreated"
+                  )
+                : `${t(
+                    "dashboard.create.button"
+                  )} →`}
             </button>
 
             <small>
               {hasQuiz
-                ? "Delete your current quiz if you want to create another one."
-                : "You can create only one quiz in this version."}
+                ? t(
+                    "dashboard.create.deleteCurrent"
+                  )
+                : t(
+                    "dashboard.create.limit"
+                  )}
             </small>
           </div>
         </article>
 
-        <article className={styles.card}>
-          <div className={styles.icon}>☰</div>
+        {/* ===================================================
+           Existing Quiz
+           =================================================== */}
+
+        <article
+          className={
+            styles.card
+          }
+        >
+          <div
+            className={
+              styles.icon
+            }
+          >
+            ☰
+          </div>
 
           <div>
-            <h2>Quizzes</h2>
+            <h2>
+              {t(
+                "dashboard.quizzes.title"
+              )}
+            </h2>
 
             <p>
-              View your existing quiz, manage its settings, launch it, or see
-              its participants.
+              {t(
+                "dashboard.quizzes.description"
+              )}
             </p>
 
             <button
               type="button"
               className="app-button"
-              disabled={!hasQuiz || Boolean(navigationTarget)}
+              disabled={
+                !hasQuiz ||
+                Boolean(
+                  navigationTarget
+                )
+              }
               onClick={() => {
-                if (teacher.quizId) {
-                  navigateTo(`/quiz/${teacher.quizId}`, "open");
+                if (
+                  teacher.quizId
+                ) {
+                  navigateTo(
+                    `/quiz/${teacher.quizId}`,
+                    "open"
+                  );
                 }
               }}
             >
-              {hasQuiz ? "Open Quiz  →" : "No Quiz Yet"}
+              {hasQuiz
+                ? `${t(
+                    "dashboard.quizzes.open"
+                  )} →`
+                : t(
+                    "dashboard.quizzes.none"
+                  )}
             </button>
 
             <small>
               {hasQuiz
-                ? "You can manage your current quiz here."
-                : "Create a quiz first to activate this section."}
+                ? t(
+                    "dashboard.quizzes.manage"
+                  )
+                : t(
+                    "dashboard.quizzes.createFirst"
+                  )}
             </small>
           </div>
         </article>

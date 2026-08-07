@@ -1,73 +1,178 @@
+"use client";
+
 import Link from "next/link";
 
 import Reveal from "@/components/Reveal";
 import SectionBox from "@/components/SectionBox";
 import ShowFeedbacks from "@/components/ShowFeedbacks";
 import PlatformStats from "@/components/PlatformStats";
-import { SignInButtonBox } from "@/components/SignInButtonBox";
+import LanguageSwitcher from "@/components/LanguageSwitcher";
+
+import {
+  SignInButtonBox,
+} from "@/components/SignInButtonBox";
+
+import {
+  useLanguage,
+} from "@/hooks/useLanguage";
 
 import styles from "./HomePage.module.css";
 
 export default function Home() {
+  const {
+    t,
+  } = useLanguage();
+
   return (
     <>
-      <header className={styles.header}>
-        <Link href="#home" className={styles.name}>
+      <header
+        className={
+          styles.header
+        }
+      >
+        <div
+          className={
+            styles.name
+          }
+        >
           ULearn
-        </Link>
+        </div>
 
-        <nav className={styles.navbar}>
-          <SignInButtonBox text="Sign In" classNameC="navName" />
+        <nav
+          className={
+            styles.navbar
+          }
+        >
+          <LanguageSwitcher />
+
+          <SignInButtonBox
+            text={
+              t(
+                "common.signIn"
+              )
+            }
+            classNameC="navName"
+          />
+
           <SectionBox />
         </nav>
       </header>
 
       <main>
+        {/* =================================================
+            Hero
+            ================================================= */}
+
         <Reveal>
           <section
             id="home"
             className={`${styles.section} ${styles.heroSection}`}
           >
-            <div className={styles.heroContent}>
-              <span className={styles.heroBadge}>
-                Smart quiz platform
+            <div
+              className={
+                styles.heroContent
+              }
+            >
+              <span
+                className={
+                  styles.heroBadge
+                }
+              >
+                {t(
+                  "home.hero.badge"
+                )}
               </span>
 
-              <h1 className={styles.homeTitle}>Welcome to ULearn</h1>
+              <h1
+                className={
+                  styles.homeTitle
+                }
+              >
+                {t(
+                  "home.hero.title"
+                )}
+              </h1>
 
-              <h2>Transforming Quizzes into Real Learning Experiences</h2>
+              <h2>
+                {t(
+                  "home.hero.subtitle"
+                )}
+              </h2>
 
               <p>
-                ULearn helps teachers create quizzes, assign them to students,
-                correct multiple-choice questions automatically, and track
-                class progress. The first version focuses on a simple and
-                useful quiz workflow for teachers and students.
+                {t(
+                  "home.hero.description"
+                )}
               </p>
 
-              <div className={styles.heroActions}>
+              <div
+                className={
+                  styles.heroActions
+                }
+              >
                 <SignInButtonBox
-                  text="Get Started"
-                  classNameC={styles.primaryButton}
+                  text={
+                    t(
+                      "common.getStarted"
+                    )
+                  }
+                  classNameC={
+                    styles.primaryButton
+                  }
                 />
 
                 <Link
                   href="#howItWorks"
-                  className={styles.secondaryButton}
+                  className={
+                    styles.secondaryButton
+                  }
                 >
-                  Learn More
+                  {t(
+                    "common.learnMore"
+                  )}
                 </Link>
               </div>
             </div>
 
-            <div className={styles.heroCard}>
-              <div className={styles.heroCardTop}>
-                <span>Quiz Preview</span>
-                <strong>QCM</strong>
+            <div
+              className={
+                styles.heroCard
+              }
+            >
+              <div
+                className={
+                  styles.heroCardTop
+                }
+              >
+                <span>
+                  {t(
+                    "home.preview.label"
+                  )}
+                </span>
+
+                <strong>
+                  {t(
+                    "home.preview.type"
+                  )}
+                </strong>
               </div>
 
-              <div className={styles.quizPreview}>
-                <h3>Basic Math Quiz</h3>
-                <p>What is 2 + 2 ?</p>
+              <div
+                className={
+                  styles.quizPreview
+                }
+              >
+                <h3>
+                  {t(
+                    "home.preview.title"
+                  )}
+                </h3>
+
+                <p>
+                  {t(
+                    "home.preview.question"
+                  )}
+                </p>
 
                 <div
                   className={`${styles.answer} ${styles.activeAnswer}`}
@@ -75,142 +180,334 @@ export default function Home() {
                   4
                 </div>
 
-                <div className={styles.answer}>6</div>
-                <div className={styles.answer}>8</div>
+                <div
+                  className={
+                    styles.answer
+                  }
+                >
+                  6
+                </div>
+
+                <div
+                  className={
+                    styles.answer
+                  }
+                >
+                  8
+                </div>
               </div>
             </div>
           </section>
         </Reveal>
 
-        <Reveal>
-          <section id="howItWorks" className={styles.section}>
-            <div className={styles.sectionHeading}>
-              <span className={styles.sectionTag}>Process</span>
+        {/* =================================================
+            Process
+            ================================================= */}
 
-              <h2>How It Works?</h2>
+        <Reveal>
+          <section
+            id="howItWorks"
+            className={
+              styles.section
+            }
+          >
+            <div
+              className={
+                styles.sectionHeading
+              }
+            >
+              <span
+                className={
+                  styles.sectionTag
+                }
+              >
+                {t(
+                  "home.process.tag"
+                )}
+              </span>
+
+              <h2>
+                {t(
+                  "home.process.title"
+                )}
+              </h2>
 
               <p>
-                ULearn keeps the workflow simple: create a quiz, share it with
-                students, collect answers, and review performance.
+                {t(
+                  "home.process.description"
+                )}
               </p>
             </div>
 
-            <div className={styles.cardsGrid}>
-              <article className={styles.infoCard}>
-                <span className={styles.cardNumber}>01</span>
+            <div
+              className={
+                styles.cardsGrid
+              }
+            >
+              <article
+                className={
+                  styles.infoCard
+                }
+              >
+                <span
+                  className={
+                    styles.cardNumber
+                  }
+                >
+                  01
+                </span>
 
-                <h3>Create</h3>
+                <h3>
+                  {t(
+                    "home.process.create.title"
+                  )}
+                </h3>
 
                 <p>
-                  Teachers create one quiz with up to 50 questions, including
-                  multiple-choice and development questions.
+                  {t(
+                    "home.process.create.description"
+                  )}
                 </p>
               </article>
 
-              <article className={styles.infoCard}>
-                <span className={styles.cardNumber}>02</span>
+              <article
+                className={
+                  styles.infoCard
+                }
+              >
+                <span
+                  className={
+                    styles.cardNumber
+                  }
+                >
+                  02
+                </span>
 
-                <h3>Assign</h3>
+                <h3>
+                  {t(
+                    "home.process.assign.title"
+                  )}
+                </h3>
 
                 <p>
-                  Students receive access to the quiz and submit their answers
-                  before the teacher closes the evaluation.
+                  {t(
+                    "home.process.assign.description"
+                  )}
                 </p>
               </article>
 
-              <article className={styles.infoCard}>
-                <span className={styles.cardNumber}>03</span>
+              <article
+                className={
+                  styles.infoCard
+                }
+              >
+                <span
+                  className={
+                    styles.cardNumber
+                  }
+                >
+                  03
+                </span>
 
-                <h3>Review</h3>
+                <h3>
+                  {t(
+                    "home.process.review.title"
+                  )}
+                </h3>
 
                 <p>
-                  QCM answers are corrected automatically, while development
-                  questions can be reviewed manually by the teacher.
+                  {t(
+                    "home.process.review.description"
+                  )}
                 </p>
               </article>
             </div>
           </section>
         </Reveal>
+
+        {/* =================================================
+            FAQ
+            ================================================= */}
 
         <Reveal>
-          <section id="faq" className={styles.section}>
-            <div className={styles.sectionHeading}>
-              <span className={styles.sectionTag}>FAQ</span>
-              <h2>Frequently Asked Questions</h2>
+          <section
+            id="faq"
+            className={
+              styles.section
+            }
+          >
+            <div
+              className={
+                styles.sectionHeading
+              }
+            >
+              <span
+                className={
+                  styles.sectionTag
+                }
+              >
+                {t(
+                  "home.faq.tag"
+                )}
+              </span>
+
+              <h2>
+                {t(
+                  "home.faq.title"
+                )}
+              </h2>
             </div>
 
-            <div className={styles.cardsGrid}>
-              <article className={styles.faqCard}>
-                <h3>What is ULearn?</h3>
+            <div
+              className={
+                styles.cardsGrid
+              }
+            >
+              <article
+                className={
+                  styles.faqCard
+                }
+              >
+                <h3>
+                  {t(
+                    "home.faq.what.question"
+                  )}
+                </h3>
 
                 <p>
-                  ULearn is a quiz platform that helps teachers create academic
-                  evaluations and helps students learn through structured
-                  practice.
+                  {t(
+                    "home.faq.what.answer"
+                  )}
                 </p>
               </article>
 
-              <article className={styles.faqCard}>
-                <h3>Who is it for?</h3>
+              <article
+                className={
+                  styles.faqCard
+                }
+              >
+                <h3>
+                  {t(
+                    "home.faq.who.question"
+                  )}
+                </h3>
 
                 <p>
-                  It is mainly for teachers, tutors, students, and academic
-                  groups that need a simple quiz management tool.
+                  {t(
+                    "home.faq.who.answer"
+                  )}
                 </p>
               </article>
 
-              <article className={styles.faqCard}>
-                <h3>How many quizzes can a teacher create?</h3>
+              <article
+                className={
+                  styles.faqCard
+                }
+              >
+                <h3>
+                  {t(
+                    "home.faq.quizLimit.question"
+                  )}
+                </h3>
 
                 <p>
-                  In this first version, one teacher can create one active quiz.
-                  If the quiz is deleted, the create button becomes available
-                  again.
+                  {t(
+                    "home.faq.quizLimit.answer"
+                  )}
                 </p>
               </article>
 
-              <article className={styles.faqCard}>
-                <h3>How long does an account last?</h3>
+              <article
+                className={
+                  styles.faqCard
+                }
+              >
+                <h3>
+                  {t(
+                    "home.faq.accountDuration.question"
+                  )}
+                </h3>
 
                 <p>
-                  For this test version, teacher accounts and related quiz data
-                  are kept for three days before being removed.
+                  {t(
+                    "home.faq.accountDuration.answer"
+                  )}
                 </p>
               </article>
 
-              <article className={styles.faqCard}>
-                <h3>Can teachers use development questions?</h3>
+              <article
+                className={
+                  styles.faqCard
+                }
+              >
+                <h3>
+                  {t(
+                    "home.faq.developmentQuestions.question"
+                  )}
+                </h3>
 
                 <p>
-                  Yes. The quiz can include QCM questions and development
-                  questions that the teacher reviews manually.
+                  {t(
+                    "home.faq.developmentQuestions.answer"
+                  )}
                 </p>
               </article>
 
-              <article className={styles.faqCard}>
-                <h3>Is ULearn free?</h3>
+              <article
+                className={
+                  styles.faqCard
+                }
+              >
+                <h3>
+                  {t(
+                    "home.faq.free.question"
+                  )}
+                </h3>
 
                 <p>
-                  The first version is free for testing and academic
-                  experimentation.
+                  {t(
+                    "home.faq.free.answer"
+                  )}
                 </p>
               </article>
             </div>
           </section>
         </Reveal>
+
+        {/* =================================================
+            Stats
+            ================================================= */}
 
         <Reveal>
           <section
             id="stats"
             className={`${styles.section} ${styles.statsSection}`}
           >
-            <div className={styles.sectionHeading}>
-              <span className={styles.sectionTag}>Platform</span>
+            <div
+              className={
+                styles.sectionHeading
+              }
+            >
+              <span
+                className={
+                  styles.sectionTag
+                }
+              >
+                {t(
+                  "home.stats.tag"
+                )}
+              </span>
 
-              <h2>ULearn Statistics</h2>
+              <h2>
+                {t(
+                  "home.stats.title"
+                )}
+              </h2>
 
               <p>
-                A quick overview of current usage during the test version.
+                {t(
+                  "home.stats.description"
+                )}
               </p>
             </div>
 
@@ -218,35 +515,76 @@ export default function Home() {
           </section>
         </Reveal>
 
+        {/* =================================================
+            Feedback
+            ================================================= */}
+
         <Reveal>
           <section
             id="feedback"
             className={`${styles.section} ${styles.feedbackSection}`}
           >
-            <div className={styles.sectionHeading}>
-              <span className={styles.sectionTag}>Reviews</span>
-              <h2>Feedbacks</h2>
+            <div
+              className={
+                styles.sectionHeading
+              }
+            >
+              <span
+                className={
+                  styles.sectionTag
+                }
+              >
+                {t(
+                  "home.feedback.tag"
+                )}
+              </span>
+
+              <h2>
+                {t(
+                  "home.feedback.title"
+                )}
+              </h2>
             </div>
 
             <ShowFeedbacks />
           </section>
         </Reveal>
 
+        {/* =================================================
+            Get started
+            ================================================= */}
+
         <Reveal>
           <section
             id="start"
             className={`${styles.section} ${styles.startSection}`}
           >
-            <div className={styles.startBox}>
-              <h2>Ready to create your first quiz?</h2>
+            <div
+              className={
+                styles.startBox
+              }
+            >
+              <h2>
+                {t(
+                  "home.start.title"
+                )}
+              </h2>
 
               <p>
-                Sign in and start building your first ULearn evaluation.
+                {t(
+                  "home.start.description"
+                )}
               </p>
 
               <SignInButtonBox
-                text="Get Started"
-                classNameC={styles.primaryButton}
+                text={
+                  t(
+                    "common.getStarted"
+                  )
+                }
+                classNameC={
+                  styles.primaryButton
+                }
               />
             </div>
           </section>

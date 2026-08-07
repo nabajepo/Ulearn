@@ -7,69 +7,232 @@
  *
  * Purpose
  * -------
- * This custom React hook calculates and updates a real-time countdown
+ * Calculates and updates a real-time localized countdown
  * until a given expiration date.
  *
- * Why does this file exist?
- * -------------------------
- * Every teacher account in ULearn expires after a fixed number of days.
- * Instead of rewriting countdown logic in multiple pages or components,
- * this hook centralizes the countdown behavior in one reusable place.
+ * Examples:
  *
- * Responsibilities
- * ----------------
- * • Calculate the remaining time.
- * • Update the countdown every second.
- * • Detect when the account has expired.
- * • Return a formatted string ready to display in the UI.
- *
- * Example Output
- * --------------
+ * English:
  * 2d 14h 32m 18s
  *
- * Used by
- * -------
- * Dashboard
- * Teacher Account Header
- * Future Account Management Pages
+ * French:
+ * 2j 14h 32min 18s
+ *
+ * Kirundi:
+ * 2u 14h 32m 18s
+ *
  * ============================================================================
  */
 
-import { useEffect, useState } from "react";
+import {
+  useEffect,
+  useState,
+} from "react";
 
-export function useCountdown(expiresAt: string | null) {
-  const [timeLeft, setTimeLeft] = useState("Loading...");
+import {
+  useLanguage,
+} from "@/hooks/useLanguage";
+
+export function useCountdown(
+  expiresAt: string | null
+) {
+  const { t } =
+    useLanguage();
+
+  const [
+    timeLeft,
+    setTimeLeft,
+  ] = useState("");
 
   useEffect(() => {
+    /* =====================================================
+       No expiration date
+       ===================================================== */
+
     if (!expiresAt) {
-      setTimeLeft("Unavailable");
+      setTimeLeft(
+        t(
+          "countdown.unavailable"
+        )
+      );
+
       return;
     }
 
-    const updateCountdown = () => {
-      const now = Date.now();
-      const expiration = new Date(expiresAt).getTime();
-      const diff = expiration - now;
+    /* =====================================================
+       Countdown calculation
+       ===================================================== */
 
-      if (diff <= 0) {
-        setTimeLeft("Expired");
+    function updateCountdown() {
+      const now =
+        Date.now();
+
+      const expiration =
+        new Date(
+          expiresAt
+        ).getTime();
+
+      /* ===================================================
+         Invalid date
+         =================================================== */
+
+      if (
+        Number.isNaN(
+          expiration
+        )
+      ) {
+        setTimeLeft(
+          t(
+            "countdown.unavailable"
+          )
+        );
+
         return;
       }
 
-      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-      const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
-      const minutes = Math.floor((diff / (1000 * 60)) % 60);
-      const seconds = Math.floor((diff / 1000) % 60);
+      const difference =
+        expiration - now;
 
-      setTimeLeft(`${days}d ${hours}h ${minutes}m ${seconds}s`);
-    };
+      /* ===================================================
+         Expired
+         =================================================== */
+
+      if (
+        difference <= 0
+      ) {
+        setTimeLeft(
+          t(
+            "countdown.expired"
+          )
+        );
+
+        return;
+      }
+
+      /* ===================================================
+         Calculate units
+         =================================================== */
+
+      const days =
+        Math.floor(
+          difference /
+            (
+              1000 *
+              60 *
+              60 *
+              24
+            )
+        );
+
+      const hours =
+        Math.floor(
+          (
+            difference /
+            (
+              1000 *
+              60 *
+              60
+            )
+          ) %
+            24
+        );
+
+      const minutes =
+        Math.floor(
+          (
+            difference /
+            (
+              1000 *
+              60
+            )
+          ) %
+            60
+        );
+
+      const seconds =
+        Math.floor(
+          (
+            difference /
+            1000
+          ) %
+            60
+        );
+
+      /* ===================================================
+         Localized units
+         =================================================== */
+
+      const dayUnit =
+        t(
+          "countdown.units.day"
+        );
+
+      const hourUnit =
+        t(
+          "countdown.units.hour"
+        );
+
+      const minuteUnit =
+        t(
+          "countdown.units.minute"
+        );
+
+      const secondUnit =
+        t(
+          "countdown.units.second"
+        );
+
+      /* ===================================================
+         Final text
+         =================================================== */
+
+      setTimeLeft(
+        `${days}${dayUnit} ` +
+          `${hours}${hourUnit} ` +
+          `${minutes}${minuteUnit} ` +
+          `${seconds}${secondUnit}`
+      );
+    }
+
+    /* =====================================================
+       Run immediately
+       ===================================================== */
 
     updateCountdown();
 
-    const interval = setInterval(updateCountdown, 1000);
+    /* =====================================================
+       Update every second
+       ===================================================== */
 
-    return () => clearInterval(interval);
-  }, [expiresAt]);
+    const interval =
+      window.setInterval(
+        updateCountdown,
+        1000
+      );
+
+    /* =====================================================
+       Cleanup
+       ===================================================== */
+
+    return () => {
+      window.clearInterval(
+        interval
+      );
+    };
+  }, [
+    expiresAt,
+    t,
+  ]);
+
+  /* =====================================================
+     Initial localized loading state
+     ===================================================== */
+
+  if (!timeLeft) {
+    return t(
+      "countdown.loading"
+    );
+  }
 
   return timeLeft;
 }

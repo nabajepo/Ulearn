@@ -11,6 +11,8 @@ import {
 
 import { useUser } from "@clerk/nextjs";
 
+import { useLanguage } from "@/hooks/useLanguage";
+
 type FormState = {
   action: string;
   description: string;
@@ -24,56 +26,84 @@ const INITIAL_FORM: FormState = {
 };
 
 export default function HelpSupport() {
-  const { user, isLoaded } = useUser();
+  const {
+    user,
+    isLoaded,
+  } = useUser();
+
+  const { t } = useLanguage();
 
   const firstInputRef =
-    useRef<HTMLInputElement | null>(null);
+    useRef<HTMLInputElement | null>(
+      null
+    );
 
   const [open, setOpen] =
     useState(false);
 
   const [form, setForm] =
-    useState<FormState>(INITIAL_FORM);
+    useState<FormState>(
+      INITIAL_FORM
+    );
 
   const [message, setMessage] =
     useState("");
 
-  const [submitting, setSubmitting] =
-    useState(false);
+  const [
+    submitting,
+    setSubmitting,
+  ] = useState(false);
 
-  const [submitted, setSubmitted] =
-    useState(false);
+  const [
+    submitted,
+    setSubmitted,
+  ] = useState(false);
 
-  const userEmail = useMemo(() => {
-    if (!isLoaded || !user) {
-      return "";
-    }
+  const userEmail =
+    useMemo(() => {
+      if (
+        !isLoaded ||
+        !user
+      ) {
+        return "";
+      }
 
-    return (
-      user.primaryEmailAddress
-        ?.emailAddress || ""
-    );
-  }, [isLoaded, user]);
+      return (
+        user.primaryEmailAddress
+          ?.emailAddress || ""
+      );
+    }, [
+      isLoaded,
+      user,
+    ]);
 
-  const signedInAccount = useMemo(() => {
-    if (!isLoaded) {
-      return "Loading account...";
-    }
+  const signedInAccount =
+    useMemo(() => {
+      if (!isLoaded) {
+        return t(
+          "help.account.loading"
+        );
+      }
 
-    if (!user) {
-      return "Not signed in";
-    }
+      if (!user) {
+        return t(
+          "help.account.notSignedIn"
+        );
+      }
 
-    return (
-      user.fullName ||
-      userEmail ||
-      "Authenticated user"
-    );
-  }, [
-    isLoaded,
-    user,
-    userEmail,
-  ]);
+      return (
+        user.fullName ||
+        userEmail ||
+        t(
+          "help.account.authenticatedUser"
+        )
+      );
+    }, [
+      isLoaded,
+      user,
+      userEmail,
+      t,
+    ]);
 
   useEffect(() => {
     if (!open) {
@@ -85,19 +115,25 @@ export default function HelpSupport() {
 
     setForm((current) => ({
       ...current,
+
       email:
         current.email ||
         userEmail,
     }));
 
     const timer =
-      window.setTimeout(() => {
-        firstInputRef.current
-          ?.focus();
-      }, 100);
+      window.setTimeout(
+        () => {
+          firstInputRef.current
+            ?.focus();
+        },
+        100
+      );
 
     return () => {
-      window.clearTimeout(timer);
+      window.clearTimeout(
+        timer
+      );
     };
   }, [
     open,
@@ -113,7 +149,8 @@ export default function HelpSupport() {
       event: KeyboardEvent
     ) {
       if (
-        event.key === "Escape" &&
+        event.key ===
+          "Escape" &&
         !submitting
       ) {
         closeModal();
@@ -126,7 +163,8 @@ export default function HelpSupport() {
     );
 
     const previousOverflow =
-      document.body.style.overflow;
+      document.body.style
+        .overflow;
 
     document.body.style.overflow =
       "hidden";
@@ -173,7 +211,8 @@ export default function HelpSupport() {
   }
 
   function handleOverlayClick(
-    event: MouseEvent<HTMLDivElement>
+    event:
+      MouseEvent<HTMLDivElement>
   ) {
     if (
       event.target ===
@@ -185,7 +224,8 @@ export default function HelpSupport() {
   }
 
   async function handleSubmit(
-    event: FormEvent<HTMLFormElement>
+    event:
+      FormEvent<HTMLFormElement>
   ) {
     event.preventDefault();
 
@@ -204,7 +244,9 @@ export default function HelpSupport() {
 
     if (!cleanAction) {
       setMessage(
-        "Please tell us what you were trying to do."
+        t(
+          "help.validation.actionRequired"
+        )
       );
 
       return;
@@ -212,17 +254,22 @@ export default function HelpSupport() {
 
     if (!cleanDescription) {
       setMessage(
-        "Please describe what went wrong."
+        t(
+          "help.validation.descriptionRequired"
+        )
       );
 
       return;
     }
 
     if (
-      cleanDescription.length < 10
+      cleanDescription.length <
+      10
     ) {
       setMessage(
-        "Please provide a little more detail about the problem."
+        t(
+          "help.validation.descriptionTooShort"
+        )
       );
 
       return;
@@ -235,7 +282,9 @@ export default function HelpSupport() {
       )
     ) {
       setMessage(
-        "Please enter a valid email address."
+        t(
+          "help.validation.invalidEmail"
+        )
       );
 
       return;
@@ -246,19 +295,23 @@ export default function HelpSupport() {
 
     try {
       const supportReport = {
-        action: cleanAction,
+        action:
+          cleanAction,
 
         description:
           cleanDescription,
 
         email:
-          cleanEmail || null,
+          cleanEmail ||
+          null,
 
         teacherId:
-          user?.id || null,
+          user?.id ||
+          null,
 
         teacherName:
-          user?.fullName || null,
+          user?.fullName ||
+          null,
 
         signedInAccount:
           user
@@ -284,7 +337,10 @@ export default function HelpSupport() {
       );
 
       setSubmitted(true);
-      setForm(INITIAL_FORM);
+
+      setForm(
+        INITIAL_FORM
+      );
     } catch (error) {
       console.error(
         "Unable to prepare the support report:",
@@ -292,7 +348,9 @@ export default function HelpSupport() {
       );
 
       setMessage(
-        "Unable to submit the report. Please try again."
+        t(
+          "help.validation.submitError"
+        )
       );
     } finally {
       setSubmitting(false);
@@ -305,7 +363,9 @@ export default function HelpSupport() {
         type="button"
         className="help-support-button"
         onClick={openModal}
-        aria-label="Open the help form"
+        aria-label={t(
+          "help.openAriaLabel"
+        )}
         aria-haspopup="dialog"
         aria-expanded={open}
       >
@@ -314,7 +374,9 @@ export default function HelpSupport() {
         </span>
 
         <span className="help-support-button-text">
-          Need help?
+          {t(
+            "help.button"
+          )}
         </span>
       </button>
 
@@ -334,26 +396,36 @@ export default function HelpSupport() {
             <header className="help-support-header">
               <div>
                 <span className="help-support-badge">
-                  ULearn support
+                  {t(
+                    "help.badge"
+                  )}
                 </span>
 
                 <h2 id="help-dialog-title">
-                  Report a problem
+                  {t(
+                    "help.title"
+                  )}
                 </h2>
 
                 <p>
-                  Tell us what happened
-                  so we can improve your
-                  ULearn experience.
+                  {t(
+                    "help.subtitle"
+                  )}
                 </p>
               </div>
 
               <button
                 type="button"
                 className="help-support-close-button"
-                onClick={closeModal}
-                disabled={submitting}
-                aria-label="Close the help form"
+                onClick={
+                  closeModal
+                }
+                disabled={
+                  submitting
+                }
+                aria-label={t(
+                  "help.closeAriaLabel"
+                )}
               >
                 ×
               </button>
@@ -366,45 +438,64 @@ export default function HelpSupport() {
                 </div>
 
                 <h3>
-                  Report prepared
+                  {t(
+                    "help.success.title"
+                  )}
                 </h3>
 
                 <p>
-                  Thank you. Your report
-                  has been prepared
-                  successfully.
+                  {t(
+                    "help.success.text"
+                  )}
                 </p>
 
                 <p className="help-support-temporary-notice">
-                  Email delivery will be
-                  connected in a later
-                  development phase.
+                  {t(
+                    "help.success.temporaryNotice"
+                  )}
                 </p>
 
                 <button
                   type="button"
                   className="app-button app-button-action"
-                  onClick={closeModal}
+                  onClick={
+                    closeModal
+                  }
                 >
-                  Close
+                  {t(
+                    "help.close"
+                  )}
                 </button>
               </div>
             ) : (
               <form
                 className="help-support-form"
-                onSubmit={handleSubmit}
+                onSubmit={
+                  handleSubmit
+                }
               >
                 <label>
-                  What were you trying
-                  to do?
+                  {t(
+                    "help.form.actionLabel"
+                  )}
 
                   <input
-                    ref={firstInputRef}
+                    ref={
+                      firstInputRef
+                    }
                     type="text"
-                    value={form.action}
-                    maxLength={150}
-                    placeholder="Example: Create a new quiz"
-                    onChange={(event) =>
+                    value={
+                      form.action
+                    }
+                    maxLength={
+                      150
+                    }
+                    placeholder={t(
+                      "help.form.actionPlaceholder"
+                    )}
+                    onChange={(
+                      event
+                    ) =>
                       updateField(
                         "action",
                         event.target.value
@@ -413,22 +504,35 @@ export default function HelpSupport() {
                   />
 
                   <small>
-                    {form.action.length}
-                    {" / "}
-                    150 characters
+                    {
+                      form.action
+                        .length
+                    }{" "}
+                    / 150{" "}
+                    {t(
+                      "help.form.characters"
+                    )}
                   </small>
                 </label>
 
                 <label>
-                  What happened?
+                  {t(
+                    "help.form.descriptionLabel"
+                  )}
 
                   <textarea
                     value={
                       form.description
                     }
-                    maxLength={1500}
-                    placeholder="Describe the issue, the error message, or the unexpected behaviour..."
-                    onChange={(event) =>
+                    maxLength={
+                      1500
+                    }
+                    placeholder={t(
+                      "help.form.descriptionPlaceholder"
+                    )}
+                    onChange={(
+                      event
+                    ) =>
                       updateField(
                         "description",
                         event.target.value
@@ -440,27 +544,41 @@ export default function HelpSupport() {
                     {
                       form.description
                         .length
-                    }
-                    {" / "}
-                    1500 characters
+                    }{" "}
+                    / 1500{" "}
+                    {t(
+                      "help.form.characters"
+                    )}
                   </small>
                 </label>
 
                 <label>
                   <span>
-                    Your email
+                    {t(
+                      "help.form.emailLabel"
+                    )}
 
                     <span className="help-support-optional">
-                      Optional
+                      {t(
+                        "help.form.optional"
+                      )}
                     </span>
                   </span>
 
                   <input
                     type="email"
-                    value={form.email}
-                    maxLength={200}
-                    placeholder="name@example.com"
-                    onChange={(event) =>
+                    value={
+                      form.email
+                    }
+                    maxLength={
+                      200
+                    }
+                    placeholder={t(
+                      "help.form.emailPlaceholder"
+                    )}
+                    onChange={(
+                      event
+                    ) =>
                       updateField(
                         "email",
                         event.target.value
@@ -469,24 +587,30 @@ export default function HelpSupport() {
                   />
 
                   <small>
-                    Add an email if you
-                    would like a response.
+                    {t(
+                      "help.form.emailHelp"
+                    )}
                   </small>
                 </label>
 
                 <div className="help-support-automatic-info">
                   <strong>
-                    Information added
-                    automatically
+                    {t(
+                      "help.automaticInfo.title"
+                    )}
                   </strong>
 
                   <div className="help-support-account-info">
                     <span>
-                      Signed-in account
+                      {t(
+                        "help.automaticInfo.account"
+                      )}
                     </span>
 
                     <p>
-                      {signedInAccount}
+                      {
+                        signedInAccount
+                      }
                     </p>
                   </div>
                 </div>
@@ -504,20 +628,32 @@ export default function HelpSupport() {
                   <button
                     type="submit"
                     className="app-button app-button-action"
-                    disabled={submitting}
+                    disabled={
+                      submitting
+                    }
                   >
                     {submitting
-                      ? "Preparing report..."
-                      : "Submit report"}
+                      ? t(
+                          "help.form.preparing"
+                        )
+                      : t(
+                          "help.form.submit"
+                        )}
                   </button>
 
                   <button
                     type="button"
                     className="app-button app-button-secondary app-button-action"
-                    disabled={submitting}
-                    onClick={closeModal}
+                    disabled={
+                      submitting
+                    }
+                    onClick={
+                      closeModal
+                    }
                   >
-                    Cancel
+                    {t(
+                      "help.cancel"
+                    )}
                   </button>
                 </div>
               </form>

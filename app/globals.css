@@ -1171,3 +1171,166 @@ p {
     transition: none;
   }
 }
+
+/* =========================================================
+   LanguageSwitcher
+   ========================================================= */
+
+.language-switcher {
+  position: relative;
+  z-index: 400;
+}
+
+.language-switcher-trigger {
+  min-height: 42px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+
+  padding: 0 0.8rem;
+
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+
+  background: #ffffff;
+  color: var(--main-color);
+
+  font-size: 0.86rem;
+  font-weight: 900;
+
+  cursor: pointer;
+
+  transition:
+    transform 0.2s ease,
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.language-switcher-trigger:hover {
+  transform: translateY(-1px);
+
+  border-color: rgba(42, 3, 105, 0.28);
+
+  background: var(--soft-purple);
+}
+
+.language-switcher-trigger:focus-visible {
+  outline: none;
+
+  box-shadow:
+    0 0 0 4px var(--soft-purple);
+}
+
+.language-switcher-globe {
+  width: 22px;
+  height: 22px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  border: 1px solid var(--border-color);
+  border-radius: 50%;
+
+  font-size: 0.7rem;
+}
+
+.language-switcher-arrow {
+  display: inline-block;
+
+  font-size: 0.72rem;
+
+  transition:
+    transform 0.2s ease;
+}
+
+.language-switcher-arrow.is-open {
+  transform: rotate(180deg);
+}
+
+/* Dropdown */
+
+.language-switcher-menu {
+  position: absolute;
+
+  top: calc(100% + 0.55rem);
+  right: 0;
+
+  min-width: 180px;
+
+  display: grid;
+  gap: 0.25rem;
+
+  padding: 0.45rem;
+
+  border: 1px solid var(--border-color);
+  border-radius: 15px;
+
+  background: #ffffff;
+
+  box-shadow:
+    0 18px 45px
+      rgba(42, 3, 105, 0.16);
+}
+
+.language-switcher-option {
+  width: 100%;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 1rem;
+
+  padding: 0.75rem 0.85rem;
+
+  border-radius: 10px;
+
+  background: transparent;
+  color: var(--foreground);
+
+  font-size: 0.86rem;
+  font-weight: 700;
+
+  text-align: left;
+
+  cursor: pointer;
+
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
+}
+
+.language-switcher-option:hover {
+  background: var(--soft-purple);
+  color: var(--main-color);
+}
+
+.language-switcher-option.is-selected {
+  background: var(--soft-purple);
+  color: var(--main-color);
+
+  font-weight: 900;
+}
+
+.language-switcher-check {
+  color: var(--main-color);
+
+  font-size: 0.85rem;
+  font-weight: 900;
+}
+
+@media (max-width: 768px) {
+  .language-switcher-trigger {
+    min-height: 38px;
+
+    padding: 0 0.65rem;
+  }
+
+  .language-switcher-menu {
+    min-width: 160px;
+  }
+}

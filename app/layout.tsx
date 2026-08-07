@@ -1,5 +1,3 @@
-import { ClerkProvider } from "@clerk/nextjs";
-
 import type {
   Metadata,
   Viewport,
@@ -10,71 +8,71 @@ import {
   Geist_Mono,
 } from "next/font/google";
 
+import AppProviders from "@/components/AppProviders";
 import HelpSupport from "@/components/HelpSupport";
 
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
+const geistSans =
+  Geist({
+    variable:
+      "--font-geist-sans",
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
+    subsets: [
+      "latin",
+    ],
+  });
 
-export const metadata: Metadata = {
-  title: "ULearn",
+const geistMono =
+  Geist_Mono({
+    variable:
+      "--font-geist-mono",
 
-  description:
-    "ULearn is a web-based platform where teachers can create quizzes, correct student answers, deliver scores, and track student progress.",
+    subsets: [
+      "latin",
+    ],
+  });
 
-  icons: {
-    icon: "/logo.png",
-    apple: "/logo.png",
-    shortcut: "/logo.png",
-  },
-};
+export const metadata: Metadata =
+  {
+    title: "ULearn",
 
-export const viewport: Viewport = {
-  width: "device-width",
-  initialScale: 1,
-};
+    description:
+      "ULearn is a web-based platform where teachers can create quizzes, correct student answers, deliver scores, and track student progress.",
 
-const localization = {
-  signIn: {
-    start: {
-      title: "Welcome to ULearn",
-      subtitle: "Enter your credentials",
+    icons: {
+      icon: "/logo.png",
+      apple: "/logo.png",
+      shortcut: "/logo.png",
     },
-  },
+  };
 
-  signUp: {
-    start: {
-      title: "Create your account",
-      subtitle: "It takes less than a minute",
-      formButtonPrimary: "Create",
-    },
-  },
-};
+export const viewport: Viewport =
+  {
+    width: "device-width",
+    initialScale: 1,
+  };
 
 export default function RootLayout({
   children,
 }: Readonly<{
-  children: React.ReactNode;
+  children:
+    React.ReactNode;
 }>) {
   return (
-    <ClerkProvider localization={localization}>
-      <html lang="en">
-        <body
-          className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-        >
+    <html
+      lang="en"
+      suppressHydrationWarning
+    >
+      <body
+        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+      >
+        <AppProviders>
           {children}
 
           <HelpSupport />
-        </body>
-      </html>
-    </ClerkProvider>
+        </AppProviders>
+      </body>
+    </html>
   );
 }

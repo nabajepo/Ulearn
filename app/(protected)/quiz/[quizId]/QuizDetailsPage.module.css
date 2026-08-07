@@ -24,6 +24,7 @@
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
+
   gap: 2rem;
 
   margin: 2rem 0;
@@ -41,9 +42,8 @@
   font-size: clamp(2.5rem, 5vw, 4.2rem);
   font-weight: 900;
   line-height: 1;
-  letter-spacing: -1.5px;
 
-  overflow-wrap: anywhere;
+  letter-spacing: -1.5px;
 }
 
 .description {
@@ -51,9 +51,8 @@
 
   color: rgba(23, 23, 23, 0.7);
 
+  font-size: 1rem;
   line-height: 1.7;
-  white-space: pre-wrap;
-  overflow-wrap: anywhere;
 }
 
 .statusBadge {
@@ -71,20 +70,28 @@
 }
 
 /* =========================================================
-   Quiz summary
+   Summary
    ========================================================= */
 
 .summary {
   display: grid;
+
   grid-template-columns:
     repeat(3, minmax(0, 1fr));
 
   gap: 1rem;
+
   margin: 2rem 0;
 }
 
 .summaryItem {
   min-width: 0;
+  min-height: 82px;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+
   padding: 1rem 1.1rem;
 
   border: 1px solid var(--border-color);
@@ -95,6 +102,7 @@
 
 .summaryItem span {
   display: block;
+
   margin-bottom: 0.35rem;
 
   color: rgba(23, 23, 23, 0.58);
@@ -110,17 +118,39 @@
 
   font-size: 0.94rem;
   font-weight: 900;
+  line-height: 1.4;
 
   overflow-wrap: anywhere;
 }
 
 /* =========================================================
-   Actions
+   Message
+   ========================================================= */
+
+.message {
+  margin-top: 1.5rem;
+
+  padding: 1rem;
+
+  border: 1px solid var(--border-color);
+  border-radius: 14px;
+
+  background: var(--soft-purple);
+
+  color: var(--main-color);
+
+  font-weight: 800;
+  line-height: 1.6;
+}
+
+/* =========================================================
+   Main actions
    ========================================================= */
 
 .actions {
   display: flex;
   align-items: center;
+
   gap: 0.9rem;
 
   margin-top: 2rem;
@@ -128,22 +158,8 @@
   flex-wrap: wrap;
 }
 
-/* =========================================================
-   Messages
-   ========================================================= */
-
-.message {
-  margin-top: 1.5rem;
-  padding: 1rem;
-
-  border: 1px solid var(--border-color);
-  border-radius: 14px;
-
-  background: var(--soft-purple);
-  color: var(--main-color);
-
-  font-weight: 800;
-  line-height: 1.6;
+.actions :global(.app-button) {
+  flex-shrink: 0;
 }
 
 /* =========================================================
@@ -153,7 +169,8 @@
 .deleteOverlay {
   position: fixed;
   inset: 0;
-  z-index: 1200;
+
+  z-index: 1500;
 
   display: flex;
   align-items: center;
@@ -161,44 +178,40 @@
 
   padding: 1.5rem;
 
-  background: rgba(15, 8, 28, 0.52);
-  backdrop-filter: blur(8px);
+  background: rgba(18, 11, 30, 0.54);
 
-  animation:
-    deleteOverlayAppear
-    0.2s ease-out;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+
+  animation: deleteOverlayIn 0.2s ease-out;
 }
 
 /* =========================================================
-   Delete confirmation modal
+   Delete modal
    ========================================================= */
 
 .deleteModal {
   width: min(540px, 100%);
-  max-height: calc(100vh - 3rem);
-  max-height: calc(100dvh - 3rem);
 
-  overflow-y: auto;
+  overflow: hidden;
 
-  padding: 1.8rem;
+  padding: 1.65rem;
 
   border: 1px solid var(--border-color);
-  border-radius: 26px;
+  border-radius: 24px;
 
   background:
     linear-gradient(
       145deg,
-      rgba(42, 3, 105, 0.025),
-      #ffffff 35%
+      rgba(42, 3, 105, 0.035),
+      #ffffff 38%
     );
 
   box-shadow:
-    0 28px 80px rgba(20, 4, 45, 0.28),
+    0 28px 80px rgba(22, 6, 45, 0.3),
     var(--shadow);
 
-  animation:
-    deleteModalAppear
-    0.25s ease-out;
+  animation: deleteModalIn 0.24s ease-out;
 }
 
 /* =========================================================
@@ -207,45 +220,46 @@
 
 .deleteModalHeader {
   display: flex;
-  align-items: flex-start;
   justify-content: space-between;
+  align-items: flex-start;
+
   gap: 1rem;
 
-  padding-bottom: 1.15rem;
+  padding-bottom: 1rem;
 
   border-bottom: 1px solid var(--border-color);
 }
 
 .deleteBadge {
   width: fit-content;
+
   display: inline-flex;
 
-  margin-bottom: 0.6rem;
-  padding: 0.4rem 0.75rem;
+  margin-bottom: 0.55rem;
+  padding: 0.35rem 0.65rem;
 
+  border: 1px solid var(--border-color);
   border-radius: 999px;
 
-  background: rgba(176, 0, 32, 0.08);
-  color: var(--danger-color);
+  background: var(--soft-purple);
+  color: var(--main-color);
 
-  font-size: 0.74rem;
+  font-size: 0.72rem;
   font-weight: 900;
 }
 
 .deleteModalHeader h2 {
-  margin: 0;
-
   color: var(--main-color);
 
-  font-size: clamp(1.7rem, 4vw, 2.2rem);
+  font-size: 2rem;
   font-weight: 900;
-  line-height: 1.1;
-  letter-spacing: -0.5px;
+  line-height: 1.05;
 }
 
 .deleteCloseButton {
   width: 42px;
   height: 42px;
+
   flex-shrink: 0;
 
   display: inline-flex;
@@ -258,8 +272,8 @@
   background: #ffffff;
   color: var(--main-color);
 
-  font-size: 1.6rem;
-  font-weight: 500;
+  font-size: 1.5rem;
+  font-weight: 700;
   line-height: 1;
 
   cursor: pointer;
@@ -267,91 +281,111 @@
   transition:
     transform 0.2s ease,
     background-color 0.2s ease,
-    opacity 0.2s ease;
+    border-color 0.2s ease;
 }
 
 .deleteCloseButton:hover {
   transform: rotate(4deg);
+
+  border-color: rgba(42, 3, 105, 0.3);
+
   background: var(--soft-purple);
 }
 
 .deleteCloseButton:focus-visible {
   outline: none;
-  box-shadow:
-    0 0 0 4px
-    var(--soft-purple);
+  box-shadow: 0 0 0 4px var(--soft-purple);
 }
 
 /* =========================================================
-   Delete modal content
+   Delete warning content
    ========================================================= */
 
-.deleteModalContent {
+.deleteContent {
   display: grid;
-  grid-template-columns: auto 1fr;
+
+  grid-template-columns:
+    48px minmax(0, 1fr);
+
   gap: 1rem;
 
-  padding: 1.5rem 0;
+  padding: 1.4rem 0;
 }
 
-.deleteIcon {
-  width: 50px;
-  height: 50px;
+.deleteWarningIcon {
+  width: 48px;
+  height: 48px;
 
   display: inline-flex;
   align-items: center;
   justify-content: center;
 
-  border: 1px solid
-    rgba(176, 0, 32, 0.12);
-  border-radius: 16px;
+  border: 1px solid var(--border-color);
+  border-radius: 14px;
 
-  background: rgba(176, 0, 32, 0.08);
-  color: var(--danger-color);
+  background: var(--soft-purple);
+  color: var(--main-color);
 
-  font-size: 1.4rem;
+  font-size: 1.45rem;
   font-weight: 900;
 }
 
-.deleteModalContent p {
-  color: rgba(23, 23, 23, 0.74);
+.deleteText {
+  min-width: 0;
+}
 
-  font-size: 0.96rem;
+.deleteText p {
+  margin: 0;
+
+  color: rgba(23, 23, 23, 0.76);
+
+  font-size: 0.95rem;
   line-height: 1.65;
 }
 
-.deleteModalContent strong {
+.deleteText strong {
   color: var(--main-color);
+
   font-weight: 900;
 }
 
-.deleteWarning {
-  margin-top: 0.75rem;
+/*
+ * Important:
+ * This warning text uses the main ULearn purple.
+ * Only the Delete Quiz button remains red/danger.
+ */
 
-  color: var(--danger-color) !important;
+.deleteWarningText {
+  margin-top: 0.65rem !important;
 
-  font-size: 0.83rem !important;
+  color: var(--main-color) !important;
+
+  font-size: 0.84rem !important;
   font-weight: 800;
+  line-height: 1.55 !important;
 }
 
 /* =========================================================
-   Delete modal actions
+   Delete actions
    ========================================================= */
 
-.deleteModalActions {
+.deleteActions {
   display: flex;
   justify-content: flex-end;
   align-items: center;
-  gap: 0.8rem;
 
-  padding-top: 0.5rem;
+  gap: 0.8rem;
+}
+
+.deleteActions :global(.app-button) {
+  flex-shrink: 0;
 }
 
 /* =========================================================
-   Animations
+   Delete animations
    ========================================================= */
 
-@keyframes deleteOverlayAppear {
+@keyframes deleteOverlayIn {
   from {
     opacity: 0;
   }
@@ -361,16 +395,18 @@
   }
 }
 
-@keyframes deleteModalAppear {
+@keyframes deleteModalIn {
   from {
     opacity: 0;
+
     transform:
-      translateY(16px)
+      translateY(14px)
       scale(0.98);
   }
 
   to {
     opacity: 1;
+
     transform:
       translateY(0)
       scale(1);
@@ -378,7 +414,7 @@
 }
 
 /* =========================================================
-   Responsive summary
+   Responsive
    ========================================================= */
 
 @media (max-width: 1000px) {
@@ -387,10 +423,6 @@
       repeat(2, minmax(0, 1fr));
   }
 }
-
-/* =========================================================
-   Mobile
-   ========================================================= */
 
 @media (max-width: 700px) {
   .page {
@@ -421,46 +453,47 @@
 
   .deleteOverlay {
     align-items: flex-end;
+
     padding: 0;
   }
 
   .deleteModal {
     width: 100%;
-    max-height: 92vh;
-    max-height: 92dvh;
 
-    padding: 1.3rem;
+    padding: 1.35rem;
 
     border-right: none;
     border-bottom: none;
     border-left: none;
+
     border-radius: 24px 24px 0 0;
   }
 
-  .deleteModalActions {
+  .deleteActions {
     display: grid;
+
     grid-template-columns: 1fr;
   }
 
-  .deleteModalActions :global(.app-button) {
+  .deleteActions :global(.app-button) {
     width: 100%;
   }
 }
 
 @media (max-width: 480px) {
-  .deleteModalContent {
+  .deleteContent {
     grid-template-columns: 1fr;
   }
 
-  .deleteIcon {
+  .deleteWarningIcon {
     width: 44px;
     height: 44px;
   }
-}
 
-/* =========================================================
-   Reduced motion
-   ========================================================= */
+  .deleteModalHeader h2 {
+    font-size: 1.7rem;
+  }
+}
 
 @media (prefers-reduced-motion: reduce) {
   .deleteOverlay,

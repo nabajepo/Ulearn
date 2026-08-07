@@ -9,8 +9,9 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@clerk/localizations": "^4.14.1",
     "@clerk/nextjs": "^6.36.9",
-    "firebase": "^12.10.0",
+    "firebase": "^12.17.1",
     "next": "16.1.3",
     "react": "19.2.3",
     "react-dom": "19.2.3"

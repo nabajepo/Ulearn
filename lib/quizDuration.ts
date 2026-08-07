@@ -1,16 +1,27 @@
 // lib/quizDuration.ts
 
+export type QuizDurationLanguage = "en" | "fr" | "rn";
+
+function pluralizeEnglish(
+  value: number,
+  singular: string,
+  plural: string
+) {
+  return value === 1 ? singular : plural;
+}
+
 /**
- * Formats a duration in a readable form.
+ * Formats a duration according to the selected application language.
  *
  * Examples:
- * 15   -> "15 minutes"
- * 60   -> "1 hour"
- * 75   -> "1 hour 15 minutes"
- * 1440 -> "1 day"
- * 1530 -> "1 day 1 hour 30 minutes"
+ * en: 75   -> "1 hour 15 minutes"
+ * fr: 75   -> "1 heure 15 minutes"
+ * rn: 75   -> "isaha 1 iminota 15"
  */
-export function formatQuizDuration(totalMinutes: number) {
+export function formatQuizDuration(
+  totalMinutes: number,
+  language: QuizDurationLanguage = "en"
+) {
   const safeMinutes = Math.max(
     0,
     Math.floor(totalMinutes)
@@ -32,15 +43,79 @@ export function formatQuizDuration(totalMinutes: number) {
 
   const parts: string[] = [];
 
+  if (language === "fr") {
+    if (days > 0) {
+      parts.push(
+        `${days} ${days === 1 ? "jour" : "jours"}`
+      );
+    }
+
+    if (hours > 0) {
+      parts.push(
+        `${hours} ${hours === 1 ? "heure" : "heures"}`
+      );
+    }
+
+    if (
+      minutes > 0 ||
+      parts.length === 0
+    ) {
+      parts.push(
+        `${minutes} ${minutes === 1 ? "minute" : "minutes"}`
+      );
+    }
+
+    return parts.join(" ");
+  }
+
+  if (language === "rn") {
+    if (days > 0) {
+      parts.push(
+        days === 1
+          ? "umusi 1"
+          : `imisi ${days}`
+      );
+    }
+
+    if (hours > 0) {
+      parts.push(
+        hours === 1
+          ? "isaha 1"
+          : `amasaha ${hours}`
+      );
+    }
+
+    if (
+      minutes > 0 ||
+      parts.length === 0
+    ) {
+      parts.push(
+        minutes === 1
+          ? "umunota 1"
+          : `iminota ${minutes}`
+      );
+    }
+
+    return parts.join(" ");
+  }
+
   if (days > 0) {
     parts.push(
-      `${days} day${days !== 1 ? "s" : ""}`
+      `${days} ${pluralizeEnglish(
+        days,
+        "day",
+        "days"
+      )}`
     );
   }
 
   if (hours > 0) {
     parts.push(
-      `${hours} hour${hours !== 1 ? "s" : ""}`
+      `${hours} ${pluralizeEnglish(
+        hours,
+        "hour",
+        "hours"
+      )}`
     );
   }
 
@@ -49,9 +124,11 @@ export function formatQuizDuration(totalMinutes: number) {
     parts.length === 0
   ) {
     parts.push(
-      `${minutes} minute${
-        minutes !== 1 ? "s" : ""
-      }`
+      `${minutes} ${pluralizeEnglish(
+        minutes,
+        "minute",
+        "minutes"
+      )}`
     );
   }
 
@@ -59,21 +136,16 @@ export function formatQuizDuration(totalMinutes: number) {
 }
 
 /**
- * Generates values every 15 minutes.
- *
- * 15, 30, 45, 60, 75...
- *
- * The list automatically stops at the maximum duration
- * currently allowed for the quiz.
+ * Generates values every 15 minutes and adds the exact maximum
+ * when the maximum is not divisible by 15.
  */
 export function buildDurationOptions(
   maximumMinutes: number
 ) {
-  const maximum =
-    Math.max(
-      1,
-      Math.floor(maximumMinutes)
-    );
+  const maximum = Math.max(
+    1,
+    Math.floor(maximumMinutes)
+  );
 
   const values: number[] = [];
 
@@ -85,16 +157,6 @@ export function buildDurationOptions(
     values.push(value);
   }
 
-  /*
-   * If the maximum is not divisible by 15,
-   * make the exact maximum selectable too.
-   *
-   * Example:
-   * maximum = 139 minutes
-   *
-   * options:
-   * 15, 30, 45 ... 135, 139
-   */
   if (
     maximum % 15 !== 0 &&
     maximum > 0

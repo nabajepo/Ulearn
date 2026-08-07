@@ -1,0 +1,545 @@
+{
+  "common": {
+    "signIn": "Se connecter",
+    "getStarted": "Commencer",
+    "learnMore": "En savoir plus"
+  },
+
+  "home": {
+    "hero": {
+      "badge": "Plateforme de quiz intelligente",
+      "title": "Bienvenue sur ULearn",
+      "subtitle": "Transformez les quiz en véritables expériences d’apprentissage",
+      "description": "ULearn aide les enseignants à créer des quiz, à les proposer aux étudiants, à corriger automatiquement les questions à choix multiples et à suivre la progression de la classe. La première version se concentre sur un processus de quiz simple et utile pour les enseignants et les étudiants."
+    },
+
+    "preview": {
+      "label": "Aperçu du quiz",
+      "type": "QCM",
+      "title": "Quiz de mathématiques de base",
+      "question": "Combien font 2 + 2 ?"
+    },
+
+    "process": {
+      "tag": "Processus",
+      "title": "Comment ça fonctionne ?",
+      "description": "ULearn garde le processus simple : créez un quiz, partagez-le avec les étudiants, recueillez leurs réponses et analysez leurs résultats.",
+
+      "create": {
+        "title": "Créer",
+        "description": "Les enseignants créent un quiz pouvant contenir jusqu’à 50 questions, notamment des QCM et des questions de développement."
+      },
+
+      "assign": {
+        "title": "Attribuer",
+        "description": "Les étudiants reçoivent l’accès au quiz et soumettent leurs réponses avant la fermeture de l’évaluation."
+      },
+
+      "review": {
+        "title": "Corriger",
+        "description": "Les réponses aux QCM sont corrigées automatiquement, tandis que les questions de développement peuvent être corrigées manuellement par l’enseignant."
+      }
+    },
+
+    "faq": {
+      "tag": "FAQ",
+      "title": "Questions fréquemment posées",
+
+      "what": {
+        "question": "Qu’est-ce que ULearn ?",
+        "answer": "ULearn est une plateforme de quiz qui aide les enseignants à créer des évaluations académiques et les étudiants à apprendre grâce à une pratique structurée."
+      },
+
+      "who": {
+        "question": "À qui s’adresse ULearn ?",
+        "answer": "ULearn s’adresse principalement aux enseignants, tuteurs, étudiants et groupes académiques qui ont besoin d’un outil simple de gestion de quiz."
+      },
+
+      "quizLimit": {
+        "question": "Combien de quiz un enseignant peut-il créer ?",
+        "answer": "Dans cette première version, un enseignant peut avoir un seul quiz actif. Si ce quiz est supprimé, il peut en créer un nouveau."
+      },
+
+      "accountDuration": {
+        "question": "Combien de temps un compte reste-t-il actif ?",
+        "answer": "Dans cette version de test, les comptes enseignants et les données associées aux quiz sont conservés pendant trois jours avant d’être supprimés."
+      },
+
+      "developmentQuestions": {
+        "question": "Les enseignants peuvent-ils utiliser des questions de développement ?",
+        "answer": "Oui. Un quiz peut contenir des QCM et des questions de développement que l’enseignant corrige manuellement."
+      },
+
+      "free": {
+        "question": "ULearn est-il gratuit ?",
+        "answer": "La première version est gratuite pour les tests et l’expérimentation académique."
+      }
+    },
+
+    "stats": {
+      "tag": "Plateforme",
+      "title": "Statistiques ULearn",
+      "description": "Un aperçu rapide de l’utilisation actuelle de la version de test."
+    },
+
+    "feedback": {
+      "tag": "Avis",
+      "title": "Commentaires"
+    },
+
+    "start": {
+      "title": "Prêt à créer votre premier quiz ?",
+      "description": "Connectez-vous et commencez à créer votre première évaluation ULearn."
+    }
+  },
+
+  "clerk": {
+    "common": {
+      "continue": "Continuer"
+    },
+
+    "signIn": {
+      "title": "Bienvenue sur ULearn",
+      "subtitle": "Entrez vos informations de connexion"
+    },
+
+    "signUp": {
+      "title": "Créez votre compte",
+      "subtitle": "Cela prend moins d’une minute"
+    }
+  },
+
+  "navigation": {
+    "menu": "Menu",
+    "home": "Accueil",
+    "howItWorks": "Comment ça fonctionne ?",
+    "stats": "Statistiques",
+    "feedback": "Commentaires",
+    "getStarted": "Commencer"
+  },
+
+  "platformStats": {
+    "loading": "Chargement des statistiques de la plateforme...",
+    "error": "Impossible de charger les statistiques de la plateforme.",
+    "activeTeachers": "Enseignants actifs",
+    "totalTeachers": "Total des enseignants ayant utilisé ULearn",
+    "activeQuizzes": "Quiz actifs",
+    "totalQuizzesCreated": "Total des quiz créés"
+  },
+
+  "feedbackComponent": {
+    "title": "Commentaires des étudiants",
+    "loadingTitle": "Chargement des commentaires...",
+    "loadingText": "Veuillez patienter pendant le chargement des avis des étudiants.",
+    "unavailableTitle": "Commentaires indisponibles",
+    "loadError": "Impossible de charger les commentaires pour le moment.",
+    "noReviews": "Aucun avis pour le moment",
+    "recentReview": "avis récent",
+    "recentReviews": "avis récents",
+    "rating": "Note",
+    "outOfFive": "sur 5",
+    "emptyTitle": "Aucun commentaire pour le moment",
+    "emptyText": "Les commentaires des étudiants apparaîtront ici dès qu’ils seront ajoutés."
+  },
+
+  "help": {
+    "button": "Besoin d’aide ?",
+    "badge": "Support ULearn",
+    "title": "Signaler un problème",
+    "subtitle": "Expliquez-nous ce qui s’est passé afin que nous puissions améliorer votre expérience ULearn.",
+    "openAriaLabel": "Ouvrir le formulaire d’aide",
+    "closeAriaLabel": "Fermer le formulaire d’aide",
+    "close": "Fermer",
+    "cancel": "Annuler",
+
+    "account": {
+      "loading": "Chargement du compte...",
+      "notSignedIn": "Non connecté",
+      "authenticatedUser": "Utilisateur authentifié"
+    },
+
+    "form": {
+      "actionLabel": "Qu’essayiez-vous de faire ?",
+      "actionPlaceholder": "Exemple : créer un nouveau quiz",
+      "descriptionLabel": "Que s’est-il passé ?",
+      "descriptionPlaceholder": "Décrivez le problème, le message d’erreur ou le comportement inattendu...",
+      "emailLabel": "Votre adresse courriel",
+      "emailPlaceholder": "nom@exemple.com",
+      "optional": "Facultatif",
+      "emailHelp": "Ajoutez votre adresse courriel si vous souhaitez recevoir une réponse.",
+      "characters": "caractères",
+      "submit": "Envoyer le rapport",
+      "preparing": "Préparation du rapport..."
+    },
+
+    "automaticInfo": {
+      "title": "Informations ajoutées automatiquement",
+      "account": "Compte connecté"
+    },
+
+    "success": {
+      "title": "Rapport préparé",
+      "text": "Merci. Votre rapport a été préparé avec succès.",
+      "temporaryNotice": "L’envoi par courriel sera connecté dans une prochaine phase de développement."
+    },
+
+    "validation": {
+      "actionRequired": "Veuillez indiquer ce que vous essayiez de faire.",
+      "descriptionRequired": "Veuillez décrire le problème rencontré.",
+      "descriptionTooShort": "Veuillez fournir un peu plus de détails sur le problème.",
+      "invalidEmail": "Veuillez saisir une adresse courriel valide.",
+      "submitError": "Impossible d’envoyer le rapport. Veuillez réessayer."
+    }
+  },
+  "loading": {
+  "word": "Chargement",
+  "defaultSubtitle": "Préparation de votre espace de travail...",
+  "secureWorkspace": "Chargement de votre espace sécurisé..."
+},
+
+"dashboard": {
+  "loading": "Préparation de votre tableau de bord...",
+  "loadingCreateTitle": "Création du quiz",
+  "loadingCreateSubtitle": "Ouverture de la page de création du quiz...",
+  "loadingOpenTitle": "Ouverture du quiz",
+  "loadingOpenSubtitle": "Chargement de votre quiz...",
+  "accessUnavailable": "Accès indisponible",
+  "loadError": "Impossible de charger votre tableau de bord.",
+  "welcome": "Bienvenue",
+  "accountExpires": "Le compte expire dans",
+
+  "create": {
+    "title": "Créer un quiz",
+    "description": "Créez votre quiz avec jusqu’à 50 questions : 40 QCM et 10 questions de développement.",
+    "button": "Créer un nouveau quiz",
+    "alreadyCreated": "Quiz déjà créé",
+    "deleteCurrent": "Supprimez votre quiz actuel si vous souhaitez en créer un autre.",
+    "limit": "Vous ne pouvez créer qu’un seul quiz dans cette version."
+  },
+
+  "quizzes": {
+    "title": "Quiz",
+    "description": "Consultez votre quiz existant, gérez ses paramètres, lancez-le ou consultez ses participants.",
+    "open": "Ouvrir le quiz",
+    "none": "Aucun quiz",
+    "manage": "Vous pouvez gérer votre quiz actuel ici.",
+    "createFirst": "Créez d’abord un quiz pour activer cette section."
+  }
+},
+"countdown": {
+  "loading": "Chargement...",
+  "unavailable": "Indisponible",
+  "expired": "Expiré",
+  "units": {
+    "day": "j",
+    "hour": "h",
+    "minute": "min",
+    "second": "s"
+  }
+},
+"quizCreate": {
+  "badge": "Paramètres du quiz",
+  "title": "Créer un quiz",
+  "subtitle": "Configurez votre quiz. Toutes les dates du quiz doivent rester comprises dans la durée de validité de votre compte enseignant.",
+  "backDashboard": "Retour au tableau de bord",
+  "accountValidUntil": "Compte valide jusqu’au",
+
+  "loading": {
+    "preparing": "Préparation du formulaire de création du quiz...",
+    "creatingTitle": "Création de votre quiz",
+    "creatingSubtitle": "Enregistrement des paramètres du quiz...",
+    "returning": "Retour au tableau de bord..."
+  },
+
+  "teacherUnavailable": {
+    "title": "Enseignant indisponible",
+    "text": "Profil enseignant indisponible."
+  },
+
+  "general": {
+    "title": "Informations générales",
+    "subtitle": "Définissez le titre, la structure et l’objectif du quiz.",
+    "quizTitle": "Titre du quiz",
+    "quizTitlePlaceholder": "Exemple : Mathématiques de base",
+    "description": "Description",
+    "descriptionPlaceholder": "Décrivez l’objectif de ce quiz...",
+    "numberQuestions": "Nombre de questions",
+    "maximumQuestions": "Nombre maximum de questions :",
+    "totalPoints": "Total des points",
+    "minimumPoints": "Minimum 10 points."
+  },
+
+  "availability": {
+    "title": "Disponibilité",
+    "subtitle": "Configurez la manière dont les étudiants accèdent au quiz.",
+    "mode": "Mode de disponibilité",
+    "openWindow": "Fenêtre ouverte — heures de début différentes",
+    "scheduledSession": "Session planifiée — tout le monde ensemble",
+    "openWindowHelp": "Les étudiants peuvent commencer à des heures différentes pendant la période de disponibilité.",
+    "scheduledHelp": "Tous les étudiants utilisent la même période de session planifiée.",
+    "timeZone": "Fuseau horaire du quiz",
+    "timeZoneHelp": "Les dates et heures du quiz seront interprétées selon",
+    "dateLimitsTitle": "Limites des dates du quiz",
+    "dateLimitsText": "Les dates ne peuvent pas être dans le passé ni après l’expiration de votre compte enseignant."
+  },
+
+  "timeZones": {
+    "current": "Fuseau horaire actuel",
+    "toronto": "Heure de l’Est — Ottawa, Toronto, Montréal",
+    "winnipeg": "Heure du Centre — Winnipeg",
+    "edmonton": "Heure des Rocheuses — Edmonton",
+    "vancouver": "Heure du Pacifique — Vancouver",
+    "halifax": "Heure de l’Atlantique — Halifax",
+    "stJohns": "Heure de Terre-Neuve — St. John's",
+    "paris": "Heure d’Europe centrale — Paris",
+    "bujumbura": "Heure d’Afrique centrale — Bujumbura"
+  },
+
+  "schedule": {
+    "title": "Horaire du quiz",
+    "subtitle": "Sélectionnez des heures d’ouverture et de fermeture valides.",
+    "sessionStart": "Début de la session",
+    "availableFrom": "Disponible à partir de",
+    "availableFromHelp": "Facultatif. Laissez vide pour rendre le quiz disponible immédiatement après son lancement.",
+    "sessionStartHelp": "Obligatoire. Tous les étudiants peuvent commencer à cette heure.",
+    "sessionEnd": "Fin de la session",
+    "submissionDeadline": "Date limite de soumission",
+    "requiredDateTime": "Cette date et cette heure sont obligatoires.",
+    "date": "Date",
+    "hour": "Heure",
+    "minute": "Minute",
+    "period": "Période",
+    "preview": "Aperçu",
+    "availableImmediately": "Disponible immédiatement après le lancement",
+    "startNotSelected": "Date de début non sélectionnée",
+    "deadlineNotSelected": "Date limite non sélectionnée"
+  },
+
+  "student": {
+    "title": "Paramètres des étudiants",
+    "subtitle": "Configurez l’expérience du quiz.",
+    "timeAllowed": "Temps accordé par étudiant",
+    "customDuration": "Durée personnalisée...",
+    "hours": "Heures",
+    "minutes": "Minutes",
+    "selectedDuration": "Durée sélectionnée",
+    "maximumAllowed": "Durée maximale autorisée pour cette fenêtre :",
+    "sessionDuration": "Durée de la session planifiée",
+    "selectStartEnd": "Sélectionnez les heures de début et de fin",
+    "sessionDurationHelp": "La durée est calculée automatiquement à partir du début et de la fin de la session.",
+    "options": "Options des étudiants",
+    "backNavigation": "Autoriser le retour en arrière",
+    "backNavigationHelp": "Les étudiants peuvent revenir aux questions précédentes.",
+    "shuffleQuestions": "Mélanger les questions",
+    "shuffleQuestionsHelp": "Les questions apparaissent dans un ordre aléatoire.",
+    "shuffleChoices": "Mélanger les choix des QCM",
+    "shuffleChoicesHelp": "Les choix de réponses apparaissent dans un ordre aléatoire.",
+    "showScore": "Afficher la note finale",
+    "showScoreHelp": "Les étudiants peuvent consulter leur note finale une fois la correction terminée.",
+    "showCorrectAnswers": "Afficher les bonnes réponses",
+    "showCorrectAnswersHelp": "Les étudiants peuvent consulter les bonnes réponses après la correction."
+  },
+
+  "actions": {
+    "create": "Créer le quiz",
+    "cancel": "Annuler"
+  },
+
+  "units": {
+    "characters": "caractères",
+    "minutesShort": "min",
+    "days": "jours"
+  },
+
+  "validation": {
+    "titleRequired": "Le titre du quiz est obligatoire.",
+    "questionRange": "Le nombre de questions doit être compris entre 1 et",
+    "minimumPoints": "Le quiz doit valoir au moins 10 points.",
+    "accountExpired": "Votre compte enseignant a expiré.",
+    "startPast": "La date et l’heure d’ouverture ne peuvent pas être dans le passé.",
+    "startAfterExpiration": "La date d’ouverture ne peut pas dépasser l’expiration de votre compte.",
+    "sessionEndRequired": "La date et l’heure de fin de session sont obligatoires.",
+    "deadlineRequired": "Une date limite de soumission est obligatoire.",
+    "deadlinePast": "La date limite ne peut pas être dans le passé.",
+    "deadlineAfterExpiration": "La date limite du quiz ne peut pas dépasser l’expiration de votre compte enseignant.",
+    "sessionEndAfterStart": "La fin de la session doit être après son début.",
+    "deadlineAfterStart": "La date limite doit être après la date d’ouverture.",
+    "sessionStartRequired": "Une session planifiée nécessite une date et une heure de début.",
+    "minimumDuration": "La durée du quiz doit être d’au moins 1 minute.",
+    "maximumDuration": "La durée du quiz ne peut pas dépasser",
+    "durationWindow": "Le temps accordé par étudiant ne peut pas dépasser",
+    "createError": "Impossible de créer le quiz. Veuillez réessayer."
+  }
+},
+"quizDetails": {
+  "backDashboard": "Retour au tableau de bord",
+  "noDescription": "Aucune description fournie.",
+
+  "loading": {
+    "openingTitle": "Ouverture du quiz",
+    "openingSubtitle": "Chargement des informations du quiz...",
+    "pleaseWait": "Veuillez patienter...",
+    "dashboard": "Retour au tableau de bord...",
+    "edit": "Ouverture de l’éditeur du quiz...",
+    "settings": "Ouverture des paramètres du quiz...",
+    "students": "Ouverture des étudiants et de la correction...",
+    "launch": "Lancement du quiz...",
+    "delete": "Suppression du quiz..."
+  },
+
+  "access": {
+    "title": "Accès refusé",
+    "text": "Quiz introuvable ou accès refusé."
+  },
+
+  "status": {
+    "draft": "BROUILLON",
+    "launched": "LANCÉ",
+    "closed": "FERMÉ"
+  },
+
+  "summary": {
+    "status": "Statut",
+    "plannedQuestions": "Questions prévues",
+    "totalPoints": "Nombre total de points",
+    "activeStudents": "Étudiants actifs",
+    "finishedStudents": "Étudiants ayant terminé",
+    "timePerStudent": "Temps par étudiant",
+    "sessionDuration": "Durée de la session",
+    "mode": "Mode",
+    "timeZone": "Fuseau horaire du quiz",
+    "availableFrom": "Disponible à partir de",
+    "whenLaunched": "Au lancement",
+    "deadline": "Date limite",
+    "notSet": "Non définie",
+    "accountExpires": "Expiration du compte enseignant",
+    "backNavigation": "Retour en arrière",
+    "shuffleQuestions": "Mélanger les questions",
+    "shuffleChoices": "Mélanger les choix",
+    "showFinalScore": "Afficher la note finale",
+    "showCorrectAnswers": "Afficher les bonnes réponses"
+  },
+
+  "modes": {
+    "openWindow": "Fenêtre ouverte",
+    "scheduledSession": "Session planifiée"
+  },
+
+  "values": {
+    "allowed": "Autorisé",
+    "disabled": "Désactivé",
+    "yes": "Oui",
+    "no": "Non"
+  },
+
+  "messages": {
+    "loadError": "Impossible de charger le quiz.",
+    "launchSuccess": "Le quiz a été lancé avec succès.",
+    "launchError": "Impossible de lancer le quiz.",
+    "deleteError": "Impossible de supprimer le quiz.",
+    "deadlinePassed": "La date limite de ce quiz est dépassée. Ouvrez les paramètres du quiz et choisissez une nouvelle date limite avant de le lancer.",
+    "accountExpired": "Votre compte enseignant a expiré. Ce quiz ne peut plus être lancé."
+  },
+
+  "actions": {
+    "settings": "Paramètres du quiz",
+    "edit": "Modifier le quiz",
+    "launch": "Lancer le quiz",
+    "students": "Étudiants et correction",
+    "delete": "Supprimer le quiz",
+    "cancel": "Annuler"
+  },
+
+  "deleteModal": {
+    "badge": "Zone dangereuse",
+    "title": "Supprimer le quiz",
+    "closeAria": "Fermer la confirmation de suppression",
+    "confirmBefore": "Voulez-vous vraiment supprimer",
+    "warning": "Cette action est irréversible. Le quiz et toutes les données associées seront supprimés définitivement."
+  }
+},
+"quizSettings": {
+  "badge": "Paramètres du quiz",
+  "title": "Modifier les paramètres du quiz",
+  "subtitle": "Modifiez les informations, la structure, l’horaire et les options des étudiants.",
+  "backQuiz": "Retour au quiz",
+
+  "generalSubtitle": "Modifiez le titre, la structure et l’objectif.",
+  "scheduleSubtitle": "Modifiez les heures d’ouverture et de fermeture.",
+  "studentSubtitle": "Configurez l’expérience du quiz pour les étudiants.",
+
+  "currentQuestions": "Questions actuellement créées :",
+  "maximumAllowed": "Maximum autorisé :",
+  "sessionDurationHelp": "La durée est calculée automatiquement.",
+  "shuffleChoicesHelp": "Les choix de réponses apparaissent dans un ordre aléatoire.",
+
+  "loading": {
+    "title": "Paramètres du quiz",
+    "subtitle": "Chargement des paramètres du quiz...",
+    "savingTitle": "Enregistrement du quiz",
+    "savingSubtitle": "Mise à jour des paramètres du quiz...",
+    "returning": "Retour au quiz..."
+  },
+
+  "access": {
+    "title": "Accès indisponible",
+    "text": "Quiz introuvable ou accès refusé."
+  },
+
+  "locked": {
+    "title": "Paramètres verrouillés",
+    "text": "Seuls les quiz en brouillon peuvent être modifiés."
+  },
+
+  "schedule": {
+    "availableFromHelp": "Facultatif. Effacez la date pour rendre le quiz disponible lors de son lancement.",
+    "sessionStartHelp": "Obligatoire pour une session planifiée."
+  },
+
+  "messages": {
+    "loadError": "Impossible de charger les paramètres du quiz.",
+    "saveError": "Impossible d’enregistrer les paramètres du quiz. Veuillez réessayer."
+  },
+
+  "validation": {
+    "draftOnly": "Seuls les quiz en brouillon peuvent être modifiés.",
+    "timeZoneRequired": "Un fuseau horaire est obligatoire pour le quiz.",
+    "startPast": "La date et l’heure d’ouverture ne peuvent pas être dans le passé. Choisissez une heure future ou supprimez la date d’ouverture.",
+    "existingQuestionsBefore": "Ce quiz contient déjà",
+    "existingQuestionsAfter": "Le nombre prévu de questions ne peut pas être inférieur à"
+  },
+
+  "actions": {
+    "save": "Enregistrer"
+  }
+},
+"students": {
+  "backQuiz": "Retour au quiz",
+  "badge": "Étudiants et correction",
+  "description": "Consultez les quiz soumis et corrigez les questions de développement.",
+
+  "loading": {
+    "title": "Étudiants et correction",
+    "subtitle": "Chargement des soumissions des étudiants...",
+    "returning": "Retour au quiz..."
+  },
+
+  "access": {
+    "title": "Accès refusé",
+    "text": "Quiz introuvable ou accès refusé."
+  },
+
+  "empty": {
+    "title": "Aucune soumission pour le moment",
+    "text": "Les étudiants qui terminent le quiz apparaîtront ici dans l’ordre de soumission."
+  },
+
+  "future": {
+    "title": "Processus de correction prévu",
+    "step1": "1. Les étudiants seront classés selon l’heure de soumission.",
+    "step2": "2. Les questions QCM seront corrigées automatiquement.",
+    "step3": "3. Cliquez sur un étudiant pour corriger ses réponses de développement.",
+    "step4": "4. Publiez le résultat final lorsque la correction est terminée."
+  }
+}
+}

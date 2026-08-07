@@ -1,69 +1,139 @@
 "use client";
 
+import {
+  useMemo,
+} from "react";
+
+import {
+  useLanguage,
+} from "@/hooks/useLanguage";
+
 type AppLoadingProps = {
   title?: string;
   subtitle?: string;
   fullScreen?: boolean;
 };
 
-const loadingLetters = "Loading".split("");
-
 export default function AppLoading({
-  title = "ULearn",
-  subtitle = "Preparing your workspace...",
+  title,
+  subtitle,
   fullScreen = true,
 }: AppLoadingProps) {
+  const {
+    t,
+  } = useLanguage();
+
+  const displayedTitle =
+    title || "ULearn";
+
+  const displayedSubtitle =
+    subtitle ||
+    t(
+      "loading.defaultSubtitle"
+    );
+
+  const loadingLetters =
+    useMemo(
+      () =>
+        t(
+          "loading.word"
+        ).split(""),
+      [
+        t,
+      ]
+    );
+
+  const firstDotDelay =
+    loadingLetters.length *
+    0.1;
+
   return (
     <main
       className={`app-loading ${
-        fullScreen ? "app-loading--fullscreen" : "app-loading--inline"
+        fullScreen
+          ? "app-loading--fullscreen"
+          : "app-loading--inline"
       }`}
       role="status"
       aria-live="polite"
-      aria-label={subtitle}
+      aria-label={
+        displayedSubtitle
+      }
     >
       <section className="app-loading-content">
-        <div className="app-loading-logo" aria-hidden="true">
+        <div
+          className="app-loading-logo"
+          aria-hidden="true"
+        >
           U
         </div>
 
-        <h1 className="app-loading-title">{title}</h1>
+        <h1 className="app-loading-title">
+          {displayedTitle}
+        </h1>
 
-        <div className="app-loading-word" aria-hidden="true">
-          {loadingLetters.map((letter, index) => (
-            <span
-              key={`${letter}-${index}`}
-              style={{
-                animationDelay: `${index * 0.1}s`,
-              }}
-            >
-              {letter}
-            </span>
-          ))}
+        <div
+          className="app-loading-word"
+          aria-hidden="true"
+        >
+          {loadingLetters.map(
+            (
+              letter,
+              index
+            ) => (
+              <span
+                key={`${letter}-${index}`}
+                className="app-loading-letter"
+                style={{
+                  animationDelay:
+                    `${index * 0.1}s`,
+                }}
+              >
+                {letter}
+              </span>
+            )
+          )}
 
           <span
             className="app-loading-dot"
-            style={{ animationDelay: "0.7s" }}
+            style={{
+              animationDelay:
+                `${firstDotDelay}s`,
+            }}
           >
             .
           </span>
 
           <span
             className="app-loading-dot"
-            style={{ animationDelay: "0.8s" }}
+            style={{
+              animationDelay:
+                `${
+                  firstDotDelay +
+                  0.1
+                }s`,
+            }}
           >
             .
           </span>
 
           <span
             className="app-loading-dot"
-            style={{ animationDelay: "0.9s" }}
+            style={{
+              animationDelay:
+                `${
+                  firstDotDelay +
+                  0.2
+                }s`,
+            }}
           >
             .
           </span>
         </div>
 
-        <p className="app-loading-subtitle">{subtitle}</p>
+        <p className="app-loading-subtitle">
+          {displayedSubtitle}
+        </p>
       </section>
     </main>
   );

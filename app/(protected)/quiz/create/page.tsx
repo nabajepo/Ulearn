@@ -7,10 +7,19 @@ import {
   type FormEvent,
 } from "react";
 
-import { useRouter } from "next/navigation";
+import {
+  useRouter,
+} from "next/navigation";
 
 import AppLoading from "@/components/AppLoading";
-import { useTeacher } from "@/hooks/useTeacher";
+
+import {
+  useTeacher,
+} from "@/hooks/useTeacher";
+
+import {
+  useLanguage,
+} from "@/hooks/useLanguage";
 
 import {
   createQuiz,
@@ -23,7 +32,9 @@ import {
   type Meridiem,
 } from "@/lib/dateTime";
 
-import { LIMITS } from "@/lib/services/limits";
+import {
+  LIMITS,
+} from "@/lib/services/limits";
 
 import {
   buildDurationOptions,
@@ -32,6 +43,10 @@ import {
 
 import styles from "../QuizSettingsForm.module.css";
 
+/* =========================================================
+   Types
+   ========================================================= */
+
 type TimeSelection = {
   date: string;
   hour: number;
@@ -39,77 +54,104 @@ type TimeSelection = {
   period: Meridiem;
 };
 
+/* =========================================================
+   Constants
+   ========================================================= */
+
 const HOURS = Array.from(
   { length: 12 },
   (_, index) => index + 1
 );
 
-const MINUTES = [0, 15, 30, 45];
+const MINUTES = [
+  0,
+  15,
+  30,
+  45,
+];
 
 const TIME_ZONES = [
   {
     value: "America/Toronto",
-    label: "Eastern Time — Ottawa, Toronto, Montréal",
+    key: "toronto",
   },
   {
     value: "America/Winnipeg",
-    label: "Central Time — Winnipeg",
+    key: "winnipeg",
   },
   {
     value: "America/Edmonton",
-    label: "Mountain Time — Edmonton",
+    key: "edmonton",
   },
   {
     value: "America/Vancouver",
-    label: "Pacific Time — Vancouver",
+    key: "vancouver",
   },
   {
     value: "America/Halifax",
-    label: "Atlantic Time — Halifax",
+    key: "halifax",
   },
   {
     value: "America/St_Johns",
-    label: "Newfoundland Time — St. John's",
+    key: "stJohns",
   },
   {
     value: "Europe/Paris",
-    label: "Central European Time — Paris",
+    key: "paris",
   },
   {
     value: "Africa/Bujumbura",
-    label: "Central Africa Time — Bujumbura",
+    key: "bujumbura",
   },
-];
+] as const;
 
-const INITIAL_START_TIME: TimeSelection = {
-  date: "",
-  hour: 9,
-  minute: 0,
-  period: "AM",
-};
+const INITIAL_START_TIME:
+  TimeSelection = {
+    date: "",
+    hour: 9,
+    minute: 0,
+    period: "AM",
+  };
 
-const INITIAL_END_TIME: TimeSelection = {
-  date: "",
-  hour: 5,
-  minute: 0,
-  period: "PM",
-};
+const INITIAL_END_TIME:
+  TimeSelection = {
+    date: "",
+    hour: 5,
+    minute: 0,
+    period: "PM",
+  };
 
-const CUSTOM_DURATION_VALUE = "custom";
+const CUSTOM_DURATION_VALUE =
+  "custom";
+
+/* =========================================================
+   Helpers
+   ========================================================= */
 
 function createUtcDateTime(
   selection: TimeSelection,
   timeZone: string
-): string | null {
-  if (!selection.date || !timeZone) {
+) {
+  if (
+    !selection.date ||
+    !timeZone
+  ) {
     return null;
   }
 
   return zonedDateTimeToUtc({
-    date: selection.date,
-    hour: selection.hour,
-    minute: selection.minute,
-    period: selection.period,
+    date:
+      selection.date,
+
+    hour:
+      selection.hour,
+
+    minute:
+      selection.minute,
+
+    period:
+      selection.period,
+
     timeZone,
   });
 }
@@ -117,7 +159,7 @@ function createUtcDateTime(
 function calculateMinutes(
   start: number,
   end: number
-): number {
+) {
   if (
     Number.isNaN(start) ||
     Number.isNaN(end) ||
@@ -127,67 +169,113 @@ function calculateMinutes(
   }
 
   return Math.floor(
-    (end - start) / (1000 * 60)
+    (end - start) /
+      (1000 * 60)
   );
 }
 
 function getDateInputValue(
   value: Date | string,
   timeZone: string
-): string {
+) {
   const date =
     typeof value === "string"
       ? new Date(value)
       : value;
 
-  if (Number.isNaN(date.getTime())) {
+  if (
+    Number.isNaN(
+      date.getTime()
+    )
+  ) {
     return "";
   }
 
   const formatter =
-    new Intl.DateTimeFormat("en-CA", {
-      timeZone,
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit",
-    });
+    new Intl.DateTimeFormat(
+      "en-CA",
+      {
+        timeZone,
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+      }
+    );
 
   const parts =
-    formatter.formatToParts(date);
+    formatter.formatToParts(
+      date
+    );
 
   const year =
     parts.find(
-      (part) => part.type === "year"
+      (part) =>
+        part.type === "year"
     )?.value ?? "";
 
   const month =
     parts.find(
-      (part) => part.type === "month"
+      (part) =>
+        part.type === "month"
     )?.value ?? "";
 
   const day =
     parts.find(
-      (part) => part.type === "day"
+      (part) =>
+        part.type === "day"
     )?.value ?? "";
 
   return `${year}-${month}-${day}`;
 }
 
+/* =========================================================
+   Page
+   ========================================================= */
+
 export default function CreateQuizPage() {
-  const router = useRouter();
+  const router =
+    useRouter();
+
+  const {
+    t,
+    language,
+  } = useLanguage();
 
   const {
     teacher,
     loading,
     blocked,
-    message: teacherMessage,
+    message:
+      teacherMessage,
   } = useTeacher();
 
-  const [title, setTitle] =
-    useState("");
+  /* =====================================================
+     General information
+     ===================================================== */
 
-  const [description, setDescription] =
-    useState("");
+  const [
+    title,
+    setTitle,
+  ] = useState("");
+
+  const [
+    description,
+    setDescription,
+  ] = useState("");
+
+  const [
+    targetQuestions,
+    setTargetQuestions,
+  ] = useState(10);
+
+  const [
+    totalPoints,
+    setTotalPoints,
+  ] = useState(10);
+
+  /* =====================================================
+     Availability
+     ===================================================== */
 
   const [
     availabilityMode,
@@ -197,18 +285,33 @@ export default function CreateQuizPage() {
       "open_window"
     );
 
-  const [timeZone, setTimeZone] =
-    useState("America/Toronto");
+  const [
+    timeZone,
+    setTimeZone,
+  ] =
+    useState(
+      "America/Toronto"
+    );
 
-  const [startTime, setStartTime] =
+  const [
+    startTime,
+    setStartTime,
+  ] =
     useState<TimeSelection>(
       INITIAL_START_TIME
     );
 
-  const [endTime, setEndTime] =
+  const [
+    endTime,
+    setEndTime,
+  ] =
     useState<TimeSelection>(
       INITIAL_END_TIME
     );
+
+  /* =====================================================
+     Duration
+     ===================================================== */
 
   const [
     timeLimitMinutes,
@@ -229,6 +332,10 @@ export default function CreateQuizPage() {
     customMinutes,
     setCustomMinutes,
   ] = useState(0);
+
+  /* =====================================================
+     Student options
+     ===================================================== */
 
   const [
     allowBackNavigation,
@@ -255,8 +362,14 @@ export default function CreateQuizPage() {
     setShowCorrectAnswers,
   ] = useState(false);
 
-  const [message, setMessage] =
-    useState("");
+  /* =====================================================
+     UI state
+     ===================================================== */
+
+  const [
+    message,
+    setMessage,
+  ] = useState("");
 
   const [
     submitting,
@@ -268,14 +381,20 @@ export default function CreateQuizPage() {
     setNavigatingBack,
   ] = useState(false);
 
+  /* =====================================================
+     Browser timezone
+     ===================================================== */
+
   useEffect(() => {
-    const detectedTimeZone =
+    const detected =
       Intl.DateTimeFormat()
         .resolvedOptions()
         .timeZone;
 
-    if (detectedTimeZone) {
-      setTimeZone(detectedTimeZone);
+    if (detected) {
+      setTimeZone(
+        detected
+      );
     }
   }, []);
 
@@ -284,21 +403,48 @@ export default function CreateQuizPage() {
       const exists =
         TIME_ZONES.some(
           (zone) =>
-            zone.value === timeZone
+            zone.value ===
+            timeZone
+        );
+
+      const translated =
+        TIME_ZONES.map(
+          (zone) => ({
+            value:
+              zone.value,
+
+            label:
+              t(
+                `quizCreate.timeZones.${zone.key}`
+              ),
+          })
         );
 
       if (exists) {
-        return TIME_ZONES;
+        return translated;
       }
 
       return [
         {
-          value: timeZone,
-          label: `Current time zone — ${timeZone}`,
+          value:
+            timeZone,
+
+          label:
+            `${t(
+              "quizCreate.timeZones.current"
+            )} — ${timeZone}`,
         },
-        ...TIME_ZONES,
+
+        ...translated,
       ];
-    }, [timeZone]);
+    }, [
+      timeZone,
+      t,
+    ]);
+
+  /* =====================================================
+     Account dates
+     ===================================================== */
 
   const todayDateInput =
     useMemo(
@@ -312,7 +458,9 @@ export default function CreateQuizPage() {
 
   const accountExpirationDateInput =
     useMemo(() => {
-      if (!teacher?.expiresAt) {
+      if (
+        !teacher?.expiresAt
+      ) {
         return "";
       }
 
@@ -327,7 +475,9 @@ export default function CreateQuizPage() {
 
   const accountExpirationMs =
     useMemo(() => {
-      if (!teacher?.expiresAt) {
+      if (
+        !teacher?.expiresAt
+      ) {
         return 0;
       }
 
@@ -336,10 +486,18 @@ export default function CreateQuizPage() {
           teacher.expiresAt
         ).getTime();
 
-      return Number.isNaN(value)
+      return Number.isNaN(
+        value
+      )
         ? 0
         : value;
-    }, [teacher?.expiresAt]);
+    }, [
+      teacher?.expiresAt,
+    ]);
+
+  /* =====================================================
+     Selected dates
+     ===================================================== */
 
   const startUtc =
     useMemo(
@@ -348,7 +506,10 @@ export default function CreateQuizPage() {
           startTime,
           timeZone
         ),
-      [startTime, timeZone]
+      [
+        startTime,
+        timeZone,
+      ]
     );
 
   const endUtc =
@@ -358,7 +519,10 @@ export default function CreateQuizPage() {
           endTime,
           timeZone
         ),
-      [endTime, timeZone]
+      [
+        endTime,
+        timeZone,
+      ]
     );
 
   const availableWindowMinutes =
@@ -367,21 +531,21 @@ export default function CreateQuizPage() {
         return null;
       }
 
-      const startMs =
+      const start =
         startUtc
           ? new Date(
               startUtc
             ).getTime()
           : Date.now();
 
-      const endMs =
+      const end =
         new Date(
           endUtc
         ).getTime();
 
       return calculateMinutes(
-        startMs,
-        endMs
+        start,
+        end
       );
     }, [
       startUtc,
@@ -394,9 +558,15 @@ export default function CreateQuizPage() {
       ? availableWindowMinutes
       : null;
 
+  /* =====================================================
+     Maximum student duration
+     ===================================================== */
+
   const maximumStudentTime =
     useMemo(() => {
-      if (!accountExpirationMs) {
+      if (
+        !accountExpirationMs
+      ) {
         return 1;
       }
 
@@ -409,12 +579,15 @@ export default function CreateQuizPage() {
       let maximum =
         Math.min(
           remainingAccountMinutes,
-          LIMITS.MAX_QUIZ_DURATION_MINUTES
+          LIMITS
+            .MAX_QUIZ_DURATION_MINUTES
         );
 
       if (
-        availableWindowMinutes !== null &&
-        availableWindowMinutes > 0
+        availableWindowMinutes !==
+          null &&
+        availableWindowMinutes >
+          0
       ) {
         maximum =
           Math.min(
@@ -438,7 +611,9 @@ export default function CreateQuizPage() {
         buildDurationOptions(
           maximumStudentTime
         ),
-      [maximumStudentTime]
+      [
+        maximumStudentTime,
+      ]
     );
 
   useEffect(() => {
@@ -460,38 +635,27 @@ export default function CreateQuizPage() {
       maximumStudentTime
     );
 
-    if (
-      maximumStudentTime % 15 === 0
-    ) {
-      setDurationSelection(
-        String(maximumStudentTime)
-      );
-    } else {
-      setDurationSelection(
-        CUSTOM_DURATION_VALUE
-      );
-
-      setCustomHours(
-        Math.floor(
-          maximumStudentTime / 60
-        )
-      );
-
-      setCustomMinutes(
-        maximumStudentTime % 60
-      );
-    }
+    setDurationSelection(
+      String(
+        maximumStudentTime
+      )
+    );
   }, [
     availabilityMode,
     maximumStudentTime,
     timeLimitMinutes,
   ]);
 
+  /* =====================================================
+     Date updates
+     ===================================================== */
+
   function updateStartTime<
-    K extends keyof TimeSelection
+    K extends keyof TimeSelection,
   >(
     field: K,
-    value: TimeSelection[K]
+    value:
+      TimeSelection[K]
   ) {
     setStartTime(
       (current) => ({
@@ -504,10 +668,11 @@ export default function CreateQuizPage() {
   }
 
   function updateEndTime<
-    K extends keyof TimeSelection
+    K extends keyof TimeSelection,
   >(
     field: K,
-    value: TimeSelection[K]
+    value:
+      TimeSelection[K]
   ) {
     setEndTime(
       (current) => ({
@@ -519,27 +684,23 @@ export default function CreateQuizPage() {
     setMessage("");
   }
 
+  /* =====================================================
+     Duration updates
+     ===================================================== */
+
   function handleDurationSelection(
     value: string
   ) {
-    setDurationSelection(value);
+    setDurationSelection(
+      value
+    );
+
     setMessage("");
 
     if (
       value ===
       CUSTOM_DURATION_VALUE
     ) {
-      const currentHours =
-        Math.floor(
-          timeLimitMinutes / 60
-        );
-
-      const currentMinutes =
-        timeLimitMinutes % 60;
-
-      setCustomHours(currentHours);
-      setCustomMinutes(currentMinutes);
-
       return;
     }
 
@@ -547,7 +708,9 @@ export default function CreateQuizPage() {
       Number(value);
 
     if (
-      Number.isFinite(minutes)
+      Number.isFinite(
+        minutes
+      )
     ) {
       setTimeLimitMinutes(
         minutes
@@ -562,32 +725,17 @@ export default function CreateQuizPage() {
     const safeHours =
       Math.max(
         0,
-        Math.min(
-          72,
-          Math.floor(
-            Number.isFinite(hours)
-              ? hours
-              : 0
-          )
-        )
+        Math.floor(hours)
       );
 
     const safeMinutes =
-      Math.max(
-        0,
-        Math.min(
-          59,
-          Math.floor(
-            Number.isFinite(minutes)
-              ? minutes
-              : 0
-          )
+      Math.min(
+        59,
+        Math.max(
+          0,
+          Math.floor(minutes)
         )
       );
-
-    const totalMinutes =
-      safeHours * 60 +
-      safeMinutes;
 
     setCustomHours(
       safeHours
@@ -598,11 +746,16 @@ export default function CreateQuizPage() {
     );
 
     setTimeLimitMinutes(
-      totalMinutes
+      safeHours * 60 +
+        safeMinutes
     );
 
     setMessage("");
   }
+
+  /* =====================================================
+     Navigation
+     ===================================================== */
 
   function handleBackToDashboard() {
     if (
@@ -612,15 +765,22 @@ export default function CreateQuizPage() {
       return;
     }
 
-    setNavigatingBack(true);
+    setNavigatingBack(
+      true
+    );
 
     router.push(
       "/dashboard"
     );
   }
 
+  /* =====================================================
+     Submit
+     ===================================================== */
+
   async function handleSubmit(
-    event: FormEvent<HTMLFormElement>
+    event:
+      FormEvent<HTMLFormElement>
   ) {
     event.preventDefault();
 
@@ -633,7 +793,8 @@ export default function CreateQuizPage() {
 
     setMessage("");
 
-    const now = Date.now();
+    const now =
+      Date.now();
 
     const expiration =
       new Date(
@@ -662,15 +823,41 @@ export default function CreateQuizPage() {
 
     if (!cleanTitle) {
       setMessage(
-        "Quiz title is required."
+        t(
+          "quizCreate.validation.titleRequired"
+        )
       );
 
       return;
     }
 
-    if (!timeZone.trim()) {
+    if (
+      !Number.isInteger(
+        targetQuestions
+      ) ||
+      targetQuestions < 1 ||
+      targetQuestions >
+        LIMITS.MAX_QUESTIONS_PER_QUIZ
+    ) {
       setMessage(
-        "A quiz time zone is required."
+        `${t(
+          "quizCreate.validation.questionRange"
+        )} ${LIMITS.MAX_QUESTIONS_PER_QUIZ}.`
+      );
+
+      return;
+    }
+
+    if (
+      !Number.isInteger(
+        totalPoints
+      ) ||
+      totalPoints < 10
+    ) {
+      setMessage(
+        t(
+          "quizCreate.validation.minimumPoints"
+        )
       );
 
       return;
@@ -683,7 +870,9 @@ export default function CreateQuizPage() {
       expiration <= now
     ) {
       setMessage(
-        "Your teacher account has expired."
+        t(
+          "quizCreate.validation.accountExpired"
+        )
       );
 
       return;
@@ -694,7 +883,9 @@ export default function CreateQuizPage() {
       startMs < now
     ) {
       setMessage(
-        "The opening date and time cannot be in the past."
+        t(
+          "quizCreate.validation.startPast"
+        )
       );
 
       return;
@@ -702,39 +893,55 @@ export default function CreateQuizPage() {
 
     if (
       startMs !== null &&
-      startMs > expiration
+      startMs >
+        expiration
     ) {
       setMessage(
-        "The opening date cannot be after your account expiration."
-      );
-
-      return;
-    }
-
-    if (endMs === null) {
-      setMessage(
-        availabilityMode ===
-        "scheduled_session"
-          ? "A session end date and time are required."
-          : "A submission deadline is required."
-      );
-
-      return;
-    }
-
-    if (endMs <= now) {
-      setMessage(
-        "The deadline cannot be in the past."
+        t(
+          "quizCreate.validation.startAfterExpiration"
+        )
       );
 
       return;
     }
 
     if (
-      endMs > expiration
+      endMs === null
     ) {
       setMessage(
-        "The quiz deadline cannot exceed your teacher account expiration."
+        availabilityMode ===
+        "scheduled_session"
+          ? t(
+              "quizCreate.validation.sessionEndRequired"
+            )
+          : t(
+              "quizCreate.validation.deadlineRequired"
+            )
+      );
+
+      return;
+    }
+
+    if (
+      endMs <= now
+    ) {
+      setMessage(
+        t(
+          "quizCreate.validation.deadlinePast"
+        )
+      );
+
+      return;
+    }
+
+    if (
+      endMs >
+      expiration
+    ) {
+      setMessage(
+        t(
+          "quizCreate.validation.deadlineAfterExpiration"
+        )
       );
 
       return;
@@ -747,8 +954,12 @@ export default function CreateQuizPage() {
       setMessage(
         availabilityMode ===
         "scheduled_session"
-          ? "The session end must be after the session start."
-          : "The submission deadline must be after the opening date."
+          ? t(
+              "quizCreate.validation.sessionEndAfterStart"
+            )
+          : t(
+              "quizCreate.validation.deadlineAfterStart"
+            )
       );
 
       return;
@@ -760,7 +971,9 @@ export default function CreateQuizPage() {
       startMs === null
     ) {
       setMessage(
-        "A scheduled session requires a start date and time."
+        t(
+          "quizCreate.validation.sessionStartRequired"
+        )
       );
 
       return;
@@ -773,14 +986,17 @@ export default function CreateQuizPage() {
         : timeLimitMinutes;
 
     if (
-      finalDuration === null ||
+      finalDuration ===
+        null ||
       !Number.isFinite(
         finalDuration
       ) ||
       finalDuration < 1
     ) {
       setMessage(
-        "The quiz duration must be at least 1 minute."
+        t(
+          "quizCreate.validation.minimumDuration"
+        )
       );
 
       return;
@@ -788,10 +1004,15 @@ export default function CreateQuizPage() {
 
     if (
       finalDuration >
-      LIMITS.MAX_QUIZ_DURATION_MINUTES
+      LIMITS
+        .MAX_QUIZ_DURATION_MINUTES
     ) {
       setMessage(
-        `The quiz duration cannot exceed ${LIMITS.ACCOUNT_DURATION_DAYS} days.`
+        `${t(
+          "quizCreate.validation.maximumDuration"
+        )} ${LIMITS.ACCOUNT_DURATION_DAYS} ${t(
+          "quizCreate.units.days"
+        )}.`
       );
 
       return;
@@ -804,9 +1025,12 @@ export default function CreateQuizPage() {
         maximumStudentTime
     ) {
       setMessage(
-        `The time allowed per student cannot exceed ${formatQuizDuration(
-          maximumStudentTime
-        )} for the selected quiz window.`
+        `${t(
+          "quizCreate.validation.durationWindow"
+        )} ${formatQuizDuration(
+          maximumStudentTime,
+          language
+        )}.`
       );
 
       return;
@@ -826,6 +1050,9 @@ export default function CreateQuizPage() {
           description:
             cleanDescription,
 
+          targetQuestions,
+          totalPoints,
+
           timeZone,
 
           availabilityMode,
@@ -844,10 +1071,7 @@ export default function CreateQuizPage() {
           shuffleChoices,
 
           showResultsToStudents,
-          showCorrectAnswers:
-            showResultsToStudents
-              ? showCorrectAnswers
-              : false,
+          showCorrectAnswers,
         });
 
       if (
@@ -858,7 +1082,9 @@ export default function CreateQuizPage() {
           result.message
         );
 
-        setSubmitting(false);
+        setSubmitting(
+          false
+        );
 
         return;
       }
@@ -873,18 +1099,28 @@ export default function CreateQuizPage() {
       );
 
       setMessage(
-        "Unable to create the quiz. Please try again."
+        t(
+          "quizCreate.validation.createError"
+        )
       );
 
-      setSubmitting(false);
+      setSubmitting(
+        false
+      );
     }
   }
+
+  /* =====================================================
+     Loading
+     ===================================================== */
 
   if (loading) {
     return (
       <AppLoading
         title="ULearn"
-        subtitle="Preparing the quiz creation form..."
+        subtitle={t(
+          "quizCreate.loading.preparing"
+        )}
       />
     );
   }
@@ -892,17 +1128,25 @@ export default function CreateQuizPage() {
   if (submitting) {
     return (
       <AppLoading
-        title="Creating your quiz"
-        subtitle="Saving your quiz settings..."
+        title={t(
+          "quizCreate.loading.creatingTitle"
+        )}
+        subtitle={t(
+          "quizCreate.loading.creatingSubtitle"
+        )}
       />
     );
   }
 
-  if (navigatingBack) {
+  if (
+    navigatingBack
+  ) {
     return (
       <AppLoading
         title="ULearn"
-        subtitle="Returning to your dashboard..."
+        subtitle={t(
+          "quizCreate.loading.returning"
+        )}
       />
     );
   }
@@ -923,23 +1167,17 @@ export default function CreateQuizPage() {
           }
         >
           <h1>
-            Teacher unavailable
+            {t(
+              "quizCreate.teacherUnavailable.title"
+            )}
           </h1>
 
           <p>
             {teacherMessage ||
-              "Teacher profile unavailable."}
+              t(
+                "quizCreate.teacherUnavailable.text"
+              )}
           </p>
-
-          <button
-            type="button"
-            className="app-button app-button-secondary"
-            onClick={() =>
-              router.push("/")
-            }
-          >
-            Return to Home
-          </button>
         </section>
       </main>
     );
@@ -963,7 +1201,10 @@ export default function CreateQuizPage() {
             handleBackToDashboard
           }
         >
-          ← Back to Dashboard
+          ←{" "}
+          {t(
+            "quizCreate.backDashboard"
+          )}
         </button>
 
         <header
@@ -976,16 +1217,21 @@ export default function CreateQuizPage() {
               styles.badge
             }
           >
-            Quiz settings
+            {t(
+              "quizCreate.badge"
+            )}
           </span>
 
           <h1>
-            Create Quiz
+            {t(
+              "quizCreate.title"
+            )}
           </h1>
 
           <p>
-            Configure your quiz. All quiz dates must remain inside
-            your teacher account lifetime.
+            {t(
+              "quizCreate.subtitle"
+            )}
           </p>
 
           <div
@@ -994,7 +1240,9 @@ export default function CreateQuizPage() {
             }
           >
             <span>
-              Account valid until
+              {t(
+                "quizCreate.accountValidUntil"
+              )}
             </span>
 
             <strong>
@@ -1022,31 +1270,39 @@ export default function CreateQuizPage() {
                 styles.columnHeader
               }
             >
-              <span>
-                01
-              </span>
+              <span>01</span>
 
               <div>
                 <h2>
-                  General information
+                  {t(
+                    "quizCreate.general.title"
+                  )}
                 </h2>
 
                 <p>
-                  Define the quiz title and purpose.
+                  {t(
+                    "quizCreate.general.subtitle"
+                  )}
                 </p>
               </div>
             </div>
 
             <label>
-              Quiz title
+              {t(
+                "quizCreate.general.quizTitle"
+              )}
 
               <input
                 type="text"
                 value={title}
                 maxLength={120}
                 required
-                placeholder="Example: Basic mathematics"
-                onChange={(event) => {
+                placeholder={t(
+                  "quizCreate.general.quizTitlePlaceholder"
+                )}
+                onChange={(
+                  event
+                ) => {
                   setTitle(
                     event.target.value
                   );
@@ -1060,18 +1316,30 @@ export default function CreateQuizPage() {
                   styles.helperText
                 }
               >
-                {title.length} / 120 characters
+                {title.length} /
+                120{" "}
+                {t(
+                  "quizCreate.units.characters"
+                )}
               </small>
             </label>
 
             <label>
-              Description
+              {t(
+                "quizCreate.general.description"
+              )}
 
               <textarea
-                value={description}
+                value={
+                  description
+                }
                 maxLength={1000}
-                placeholder="Describe the purpose of this quiz..."
-                onChange={(event) => {
+                placeholder={t(
+                  "quizCreate.general.descriptionPlaceholder"
+                )}
+                onChange={(
+                  event
+                ) => {
                   setDescription(
                     event.target.value
                   );
@@ -1085,9 +1353,101 @@ export default function CreateQuizPage() {
                   styles.helperText
                 }
               >
-                {description.length} / 1000 characters
+                {description.length} /
+                1000{" "}
+                {t(
+                  "quizCreate.units.characters"
+                )}
               </small>
             </label>
+
+            <div
+              className={
+                styles.structureGrid
+              }
+            >
+              <label>
+                {t(
+                  "quizCreate.general.numberQuestions"
+                )}
+
+                <input
+                  type="number"
+                  min={1}
+                  max={
+                    LIMITS
+                      .MAX_QUESTIONS_PER_QUIZ
+                  }
+                  step={1}
+                  required
+                  value={
+                    targetQuestions
+                  }
+                  onChange={(
+                    event
+                  ) => {
+                    setTargetQuestions(
+                      Number(
+                        event.target.value
+                      )
+                    );
+
+                    setMessage("");
+                  }}
+                />
+
+                <small
+                  className={
+                    styles.helperText
+                  }
+                >
+                  {t(
+                    "quizCreate.general.maximumQuestions"
+                  )}{" "}
+                  {
+                    LIMITS
+                      .MAX_QUESTIONS_PER_QUIZ
+                  }.
+                </small>
+              </label>
+
+              <label>
+                {t(
+                  "quizCreate.general.totalPoints"
+                )}
+
+                <input
+                  type="number"
+                  min={10}
+                  step={1}
+                  required
+                  value={
+                    totalPoints
+                  }
+                  onChange={(
+                    event
+                  ) => {
+                    setTotalPoints(
+                      Number(
+                        event.target.value
+                      )
+                    );
+
+                    setMessage("");
+                  }}
+                />
+
+                <small
+                  className={
+                    styles.helperText
+                  }
+                >
+                  {t(
+                    "quizCreate.general.minimumPoints"
+                  )}
+                </small>
+              </label>
+            </div>
           </section>
 
           <section
@@ -1098,29 +1458,35 @@ export default function CreateQuizPage() {
                 styles.columnHeader
               }
             >
-              <span>
-                02
-              </span>
+              <span>02</span>
 
               <div>
                 <h2>
-                  Availability
+                  {t(
+                    "quizCreate.availability.title"
+                  )}
                 </h2>
 
                 <p>
-                  Configure how students access the quiz.
+                  {t(
+                    "quizCreate.availability.subtitle"
+                  )}
                 </p>
               </div>
             </div>
 
             <label>
-              Availability mode
+              {t(
+                "quizCreate.availability.mode"
+              )}
 
               <select
                 value={
                   availabilityMode
                 }
-                onChange={(event) => {
+                onChange={(
+                  event
+                ) => {
                   setAvailabilityMode(
                     event.target
                       .value as QuizAvailabilityMode
@@ -1129,12 +1495,20 @@ export default function CreateQuizPage() {
                   setMessage("");
                 }}
               >
-                <option value="open_window">
-                  Open window — different start times
+                <option
+                  value="open_window"
+                >
+                  {t(
+                    "quizCreate.availability.openWindow"
+                  )}
                 </option>
 
-                <option value="scheduled_session">
-                  Scheduled session — everyone together
+                <option
+                  value="scheduled_session"
+                >
+                  {t(
+                    "quizCreate.availability.scheduledSession"
+                  )}
                 </option>
               </select>
 
@@ -1145,19 +1519,27 @@ export default function CreateQuizPage() {
               >
                 {availabilityMode ===
                 "open_window"
-                  ? "Students may begin at different times during the availability window."
-                  : "All students use the same scheduled session period."}
+                  ? t(
+                      "quizCreate.availability.openWindowHelp"
+                    )
+                  : t(
+                      "quizCreate.availability.scheduledHelp"
+                    )}
               </small>
             </label>
 
             <label>
-              Quiz time zone
+              {t(
+                "quizCreate.availability.timeZone"
+              )}
 
               <select
                 value={
                   timeZone
                 }
-                onChange={(event) => {
+                onChange={(
+                  event
+                ) => {
                   setTimeZone(
                     event.target.value
                   );
@@ -1186,7 +1568,9 @@ export default function CreateQuizPage() {
                   styles.helperText
                 }
               >
-                Quiz dates and times will be interpreted using{" "}
+                {t(
+                  "quizCreate.availability.timeZoneHelp"
+                )}{" "}
                 {timeZone}.
               </small>
             </label>
@@ -1197,12 +1581,15 @@ export default function CreateQuizPage() {
               }
             >
               <strong>
-                Quiz date limits
+                {t(
+                  "quizCreate.availability.dateLimitsTitle"
+                )}
               </strong>
 
               <p>
-                Dates cannot be in the past or after your teacher
-                account expiration.
+                {t(
+                  "quizCreate.availability.dateLimitsText"
+                )}
               </p>
             </div>
           </section>
@@ -1215,17 +1602,19 @@ export default function CreateQuizPage() {
                 styles.columnHeader
               }
             >
-              <span>
-                03
-              </span>
+              <span>03</span>
 
               <div>
                 <h2>
-                  Quiz schedule
+                  {t(
+                    "quizCreate.schedule.title"
+                  )}
                 </h2>
 
                 <p>
-                  Select valid opening and closing times.
+                  {t(
+                    "quizCreate.schedule.subtitle"
+                  )}
                 </p>
               </div>
             </div>
@@ -1238,8 +1627,12 @@ export default function CreateQuizPage() {
               <legend>
                 {availabilityMode ===
                 "scheduled_session"
-                  ? "Session start"
-                  : "Available from"}
+                  ? t(
+                      "quizCreate.schedule.sessionStart"
+                    )
+                  : t(
+                      "quizCreate.schedule.availableFrom"
+                    )}
               </legend>
 
               <p
@@ -1249,8 +1642,12 @@ export default function CreateQuizPage() {
               >
                 {availabilityMode ===
                 "open_window"
-                  ? "Optional. Leave empty to make the quiz available immediately after launch."
-                  : "Required. All students may begin at this time."}
+                  ? t(
+                      "quizCreate.schedule.availableFromHelp"
+                    )
+                  : t(
+                      "quizCreate.schedule.sessionStartHelp"
+                    )}
               </p>
 
               <div
@@ -1263,7 +1660,9 @@ export default function CreateQuizPage() {
                     styles.dateField
                   }
                 >
-                  Date
+                  {t(
+                    "quizCreate.schedule.date"
+                  )}
 
                   <input
                     type="date"
@@ -1280,7 +1679,9 @@ export default function CreateQuizPage() {
                     value={
                       startTime.date
                     }
-                    onChange={(event) =>
+                    onChange={(
+                      event
+                    ) =>
                       updateStartTime(
                         "date",
                         event.target.value
@@ -1290,13 +1691,17 @@ export default function CreateQuizPage() {
                 </label>
 
                 <label>
-                  Hour
+                  {t(
+                    "quizCreate.schedule.hour"
+                  )}
 
                   <select
                     value={
                       startTime.hour
                     }
-                    onChange={(event) =>
+                    onChange={(
+                      event
+                    ) =>
                       updateStartTime(
                         "hour",
                         Number(
@@ -1324,13 +1729,17 @@ export default function CreateQuizPage() {
                 </label>
 
                 <label>
-                  Minute
+                  {t(
+                    "quizCreate.schedule.minute"
+                  )}
 
                   <select
                     value={
                       startTime.minute
                     }
-                    onChange={(event) =>
+                    onChange={(
+                      event
+                    ) =>
                       updateStartTime(
                         "minute",
                         Number(
@@ -1362,13 +1771,17 @@ export default function CreateQuizPage() {
                 </label>
 
                 <label>
-                  Period
+                  {t(
+                    "quizCreate.schedule.period"
+                  )}
 
                   <select
                     value={
                       startTime.period
                     }
-                    onChange={(event) =>
+                    onChange={(
+                      event
+                    ) =>
                       updateStartTime(
                         "period",
                         event.target
@@ -1393,7 +1806,9 @@ export default function CreateQuizPage() {
                 }
               >
                 <strong>
-                  Preview:
+                  {t(
+                    "quizCreate.schedule.preview"
+                  )}:
                 </strong>{" "}
 
                 {startUtc
@@ -1403,8 +1818,12 @@ export default function CreateQuizPage() {
                     )
                   : availabilityMode ===
                       "open_window"
-                    ? "Available immediately after launch"
-                    : "Start date not selected"}
+                    ? t(
+                        "quizCreate.schedule.availableImmediately"
+                      )
+                    : t(
+                        "quizCreate.schedule.startNotSelected"
+                      )}
               </div>
             </fieldset>
 
@@ -1416,8 +1835,12 @@ export default function CreateQuizPage() {
               <legend>
                 {availabilityMode ===
                 "scheduled_session"
-                  ? "Session end"
-                  : "Submission deadline"}
+                  ? t(
+                      "quizCreate.schedule.sessionEnd"
+                    )
+                  : t(
+                      "quizCreate.schedule.submissionDeadline"
+                    )}
               </legend>
 
               <p
@@ -1425,7 +1848,9 @@ export default function CreateQuizPage() {
                   styles.groupDescription
                 }
               >
-                This date and time are required.
+                {t(
+                  "quizCreate.schedule.requiredDateTime"
+                )}
               </p>
 
               <div
@@ -1438,7 +1863,9 @@ export default function CreateQuizPage() {
                     styles.dateField
                   }
                 >
-                  Date
+                  {t(
+                    "quizCreate.schedule.date"
+                  )}
 
                   <input
                     type="date"
@@ -1453,7 +1880,9 @@ export default function CreateQuizPage() {
                     value={
                       endTime.date
                     }
-                    onChange={(event) =>
+                    onChange={(
+                      event
+                    ) =>
                       updateEndTime(
                         "date",
                         event.target.value
@@ -1463,13 +1892,17 @@ export default function CreateQuizPage() {
                 </label>
 
                 <label>
-                  Hour
+                  {t(
+                    "quizCreate.schedule.hour"
+                  )}
 
                   <select
                     value={
                       endTime.hour
                     }
-                    onChange={(event) =>
+                    onChange={(
+                      event
+                    ) =>
                       updateEndTime(
                         "hour",
                         Number(
@@ -1497,13 +1930,17 @@ export default function CreateQuizPage() {
                 </label>
 
                 <label>
-                  Minute
+                  {t(
+                    "quizCreate.schedule.minute"
+                  )}
 
                   <select
                     value={
                       endTime.minute
                     }
-                    onChange={(event) =>
+                    onChange={(
+                      event
+                    ) =>
                       updateEndTime(
                         "minute",
                         Number(
@@ -1535,13 +1972,17 @@ export default function CreateQuizPage() {
                 </label>
 
                 <label>
-                  Period
+                  {t(
+                    "quizCreate.schedule.period"
+                  )}
 
                   <select
                     value={
                       endTime.period
                     }
-                    onChange={(event) =>
+                    onChange={(
+                      event
+                    ) =>
                       updateEndTime(
                         "period",
                         event.target
@@ -1566,7 +2007,9 @@ export default function CreateQuizPage() {
                 }
               >
                 <strong>
-                  Preview:
+                  {t(
+                    "quizCreate.schedule.preview"
+                  )}:
                 </strong>{" "}
 
                 {endUtc
@@ -1574,7 +2017,9 @@ export default function CreateQuizPage() {
                       endUtc,
                       timeZone
                     )
-                  : "Deadline not selected"}
+                  : t(
+                      "quizCreate.schedule.deadlineNotSelected"
+                    )}
               </div>
             </fieldset>
           </section>
@@ -1587,17 +2032,19 @@ export default function CreateQuizPage() {
                 styles.columnHeader
               }
             >
-              <span>
-                04
-              </span>
+              <span>04</span>
 
               <div>
                 <h2>
-                  Student settings
+                  {t(
+                    "quizCreate.student.title"
+                  )}
                 </h2>
 
                 <p>
-                  Configure the student quiz experience.
+                  {t(
+                    "quizCreate.student.subtitle"
+                  )}
                 </p>
               </div>
             </div>
@@ -1610,13 +2057,17 @@ export default function CreateQuizPage() {
                 }
               >
                 <label>
-                  Time allowed per student
+                  {t(
+                    "quizCreate.student.timeAllowed"
+                  )}
 
                   <select
                     value={
                       durationSelection
                     }
-                    onChange={(event) =>
+                    onChange={(
+                      event
+                    ) =>
                       handleDurationSelection(
                         event.target.value
                       )
@@ -1632,9 +2083,14 @@ export default function CreateQuizPage() {
                             minutes
                           }
                         >
-                          {minutes} min —{" "}
+                          {minutes}{" "}
+                          {t(
+                            "quizCreate.units.minutesShort"
+                          )}{" "}
+                          —{" "}
                           {formatQuizDuration(
-                            minutes
+                            minutes,
+                            language
                           )}
                         </option>
                       )
@@ -1645,7 +2101,9 @@ export default function CreateQuizPage() {
                         CUSTOM_DURATION_VALUE
                       }
                     >
-                      Custom duration...
+                      {t(
+                        "quizCreate.student.customDuration"
+                      )}
                     </option>
                   </select>
                 </label>
@@ -1658,7 +2116,9 @@ export default function CreateQuizPage() {
                     }
                   >
                     <label>
-                      Hours
+                      {t(
+                        "quizCreate.student.hours"
+                      )}
 
                       <input
                         type="number"
@@ -1667,7 +2127,9 @@ export default function CreateQuizPage() {
                         value={
                           customHours
                         }
-                        onChange={(event) =>
+                        onChange={(
+                          event
+                        ) =>
                           updateCustomDuration(
                             Number(
                               event.target.value
@@ -1679,7 +2141,9 @@ export default function CreateQuizPage() {
                     </label>
 
                     <label>
-                      Minutes
+                      {t(
+                        "quizCreate.student.minutes"
+                      )}
 
                       <input
                         type="number"
@@ -1688,7 +2152,9 @@ export default function CreateQuizPage() {
                         value={
                           customMinutes
                         }
-                        onChange={(event) =>
+                        onChange={(
+                          event
+                        ) =>
                           updateCustomDuration(
                             customHours,
                             Number(
@@ -1707,12 +2173,15 @@ export default function CreateQuizPage() {
                   }
                 >
                   <span>
-                    Selected duration
+                    {t(
+                      "quizCreate.student.selectedDuration"
+                    )}
                   </span>
 
                   <strong>
                     {formatQuizDuration(
-                      timeLimitMinutes
+                      timeLimitMinutes,
+                      language
                     )}
                   </strong>
                 </div>
@@ -1722,9 +2191,12 @@ export default function CreateQuizPage() {
                     styles.helperText
                   }
                 >
-                  Maximum allowed for this quiz window:{" "}
+                  {t(
+                    "quizCreate.student.maximumAllowed"
+                  )}{" "}
                   {formatQuizDuration(
-                    maximumStudentTime
+                    maximumStudentTime,
+                    language
                   )}.
                 </small>
               </div>
@@ -1735,20 +2207,26 @@ export default function CreateQuizPage() {
                 }
               >
                 <span>
-                  Scheduled session duration
+                  {t(
+                    "quizCreate.student.sessionDuration"
+                  )}
                 </span>
 
                 <strong>
                   {scheduledSessionDuration
                     ? formatQuizDuration(
-                        scheduledSessionDuration
+                        scheduledSessionDuration,
+                        language
                       )
-                    : "Select the start and end times"}
+                    : t(
+                        "quizCreate.student.selectStartEnd"
+                      )}
                 </strong>
 
                 <p>
-                  The duration is calculated automatically from the
-                  session start and end.
+                  {t(
+                    "quizCreate.student.sessionDurationHelp"
+                  )}
                 </p>
               </div>
             )}
@@ -1759,7 +2237,9 @@ export default function CreateQuizPage() {
               }
             >
               <h3>
-                Student options
+                {t(
+                  "quizCreate.student.options"
+                )}
               </h3>
 
               <label>
@@ -1768,22 +2248,26 @@ export default function CreateQuizPage() {
                   checked={
                     allowBackNavigation
                   }
-                  onChange={(event) => {
+                  onChange={(
+                    event
+                  ) =>
                     setAllowBackNavigation(
                       event.target.checked
-                    );
-
-                    setMessage("");
-                  }}
+                    )
+                  }
                 />
 
                 <span>
                   <strong>
-                    Allow back navigation
+                    {t(
+                      "quizCreate.student.backNavigation"
+                    )}
                   </strong>
 
                   <small>
-                    Students may return to previous questions.
+                    {t(
+                      "quizCreate.student.backNavigationHelp"
+                    )}
                   </small>
                 </span>
               </label>
@@ -1794,22 +2278,26 @@ export default function CreateQuizPage() {
                   checked={
                     shuffleQuestions
                   }
-                  onChange={(event) => {
+                  onChange={(
+                    event
+                  ) =>
                     setShuffleQuestions(
                       event.target.checked
-                    );
-
-                    setMessage("");
-                  }}
+                    )
+                  }
                 />
 
                 <span>
                   <strong>
-                    Shuffle questions
+                    {t(
+                      "quizCreate.student.shuffleQuestions"
+                    )}
                   </strong>
 
                   <small>
-                    Questions appear in a random order.
+                    {t(
+                      "quizCreate.student.shuffleQuestionsHelp"
+                    )}
                   </small>
                 </span>
               </label>
@@ -1820,22 +2308,26 @@ export default function CreateQuizPage() {
                   checked={
                     shuffleChoices
                   }
-                  onChange={(event) => {
+                  onChange={(
+                    event
+                  ) =>
                     setShuffleChoices(
                       event.target.checked
-                    );
-
-                    setMessage("");
-                  }}
+                    )
+                  }
                 />
 
                 <span>
                   <strong>
-                    Shuffle QCM choices
+                    {t(
+                      "quizCreate.student.shuffleChoices"
+                    )}
                   </strong>
 
                   <small>
-                    Multiple-choice answers appear in a random order.
+                    {t(
+                      "quizCreate.student.shuffleChoicesHelp"
+                    )}
                   </small>
                 </span>
               </label>
@@ -1846,7 +2338,9 @@ export default function CreateQuizPage() {
                   checked={
                     showResultsToStudents
                   }
-                  onChange={(event) => {
+                  onChange={(
+                    event
+                  ) => {
                     const checked =
                       event.target.checked;
 
@@ -1854,24 +2348,27 @@ export default function CreateQuizPage() {
                       checked
                     );
 
-                    if (!checked) {
+                    if (
+                      !checked
+                    ) {
                       setShowCorrectAnswers(
                         false
                       );
                     }
-
-                    setMessage("");
                   }}
                 />
 
                 <span>
                   <strong>
-                    Show final score
+                    {t(
+                      "quizCreate.student.showScore"
+                    )}
                   </strong>
 
                   <small>
-                    Students may view their final score once grading
-                    is complete.
+                    {t(
+                      "quizCreate.student.showScoreHelp"
+                    )}
                   </small>
                 </span>
               </label>
@@ -1891,23 +2388,26 @@ export default function CreateQuizPage() {
                   disabled={
                     !showResultsToStudents
                   }
-                  onChange={(event) => {
+                  onChange={(
+                    event
+                  ) =>
                     setShowCorrectAnswers(
                       event.target.checked
-                    );
-
-                    setMessage("");
-                  }}
+                    )
+                  }
                 />
 
                 <span>
                   <strong>
-                    Show correct answers
+                    {t(
+                      "quizCreate.student.showCorrectAnswers"
+                    )}
                   </strong>
 
                   <small>
-                    Students may review correct answers after grading
-                    is complete.
+                    {t(
+                      "quizCreate.student.showCorrectAnswersHelp"
+                    )}
                   </small>
                 </span>
               </label>
@@ -1930,15 +2430,18 @@ export default function CreateQuizPage() {
               styles.formActions
             }
           >
-             <button
+            <button
               type="submit"
               className="app-button app-button-action"
               disabled={
                 submitting
               }
             >
-              Create Quiz
+              {t(
+                "quizCreate.actions.create"
+              )}
             </button>
+
             <button
               type="button"
               className="app-button app-button-secondary app-button-action"
@@ -1949,7 +2452,9 @@ export default function CreateQuizPage() {
                 handleBackToDashboard
               }
             >
-              Cancel
+              {t(
+                "quizCreate.actions.cancel"
+              )}
             </button>
           </div>
         </form>

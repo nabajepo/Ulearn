@@ -19,7 +19,13 @@ import {
   type Quiz,
 } from "@/lib/services/quizzes";
 
-import { useTeacher } from "@/hooks/useTeacher";
+import {
+  useTeacher,
+} from "@/hooks/useTeacher";
+
+import {
+  useLanguage,
+} from "@/hooks/useLanguage";
 
 import {
   formatInTimeZone,
@@ -31,6 +37,10 @@ import {
 
 import styles from "./QuizDetailsPage.module.css";
 
+/* =========================================================
+   Types
+   ========================================================= */
+
 type ProcessingAction =
   | ""
   | "dashboard"
@@ -40,48 +50,98 @@ type ProcessingAction =
   | "launch"
   | "delete";
 
-export default function QuizDetailsPage() {
-  const router = useRouter();
-  const params = useParams();
+/* =========================================================
+   Page
+   ========================================================= */
 
-  const quizId = String(params.quizId);
+export default function QuizDetailsPage() {
+  const router =
+    useRouter();
+
+  const params =
+    useParams();
+
+  const {
+    t,
+    language,
+  } = useLanguage();
+
+  const quizId =
+    String(
+      params.quizId
+    );
 
   const {
     teacher,
-    loading: teacherLoading,
+    loading:
+      teacherLoading,
   } = useTeacher();
 
-  const [quiz, setQuiz] =
-    useState<Quiz | null>(null);
+  const [
+    quiz,
+    setQuiz,
+  ] =
+    useState<Quiz | null>(
+      null
+    );
 
-  const [loading, setLoading] =
+  const [
+    loading,
+    setLoading,
+  ] =
     useState(true);
 
-  const [message, setMessage] =
+  const [
+    message,
+    setMessage,
+  ] =
     useState("");
 
-  const [processing, setProcessing] =
-    useState<ProcessingAction>("");
+  const [
+    processing,
+    setProcessing,
+  ] =
+    useState<ProcessingAction>(
+      ""
+    );
 
   const [
     deleteModalOpen,
     setDeleteModalOpen,
-  ] = useState(false);
+  ] =
+    useState(false);
+
+  /*
+   * These values will later come from
+   * student attempts/submissions.
+   */
+  const activeStudents =
+    0;
+
+  const finishedStudents =
+    0;
 
   /* =========================================================
      Load quiz
      ========================================================= */
 
   useEffect(() => {
-    let cancelled = false;
+    let cancelled =
+      false;
 
     async function loadQuiz() {
       try {
         const data =
-          await getQuiz(quizId);
+          await getQuiz(
+            quizId
+          );
 
-        if (!cancelled) {
-          setQuiz(data);
+        if (
+          !cancelled
+        ) {
+          setQuiz(
+            data
+          );
         }
       } catch (error) {
         console.error(
@@ -89,14 +149,22 @@ export default function QuizDetailsPage() {
           error
         );
 
-        if (!cancelled) {
+        if (
+          !cancelled
+        ) {
           setMessage(
-            "Unable to load the quiz."
+            t(
+              "quizDetails.messages.loadError"
+            )
           );
         }
       } finally {
-        if (!cancelled) {
-          setLoading(false);
+        if (
+          !cancelled
+        ) {
+          setLoading(
+            false
+          );
         }
       }
     }
@@ -104,37 +172,50 @@ export default function QuizDetailsPage() {
     loadQuiz();
 
     return () => {
-      cancelled = true;
+      cancelled =
+        true;
     };
-  }, [quizId]);
+  }, [
+    quizId,
+    t,
+  ]);
 
   /* =========================================================
-     Delete modal keyboard and body behavior
+     Delete modal:
+     escape key + body scroll
      ========================================================= */
 
   useEffect(() => {
-    if (!deleteModalOpen) {
+    if (
+      !deleteModalOpen
+    ) {
       return;
     }
 
     const previousOverflow =
-      document.body.style.overflow;
+      document.body.style
+        .overflow;
 
     document.body.style.overflow =
       "hidden";
 
     function handleKeyDown(
-      event: KeyboardEvent
+      event:
+        KeyboardEvent
     ) {
       if (
-        event.key === "Escape" &&
-        processing !== "delete"
+        event.key ===
+          "Escape" &&
+        processing !==
+          "delete"
       ) {
-        setDeleteModalOpen(false);
+        setDeleteModalOpen(
+          false
+        );
       }
     }
 
-    window.addEventListener(
+    document.addEventListener(
       "keydown",
       handleKeyDown
     );
@@ -143,7 +224,7 @@ export default function QuizDetailsPage() {
       document.body.style.overflow =
         previousOverflow;
 
-      window.removeEventListener(
+      document.removeEventListener(
         "keydown",
         handleKeyDown
       );
@@ -154,7 +235,7 @@ export default function QuizDetailsPage() {
   ]);
 
   /* =========================================================
-     Loading states
+     Loading
      ========================================================= */
 
   if (
@@ -163,125 +244,226 @@ export default function QuizDetailsPage() {
   ) {
     return (
       <AppLoading
-        title="Opening Quiz"
-        subtitle="Loading your quiz information..."
+        title={t(
+          "quizDetails.loading.openingTitle"
+        )}
+        subtitle={t(
+          "quizDetails.loading.openingSubtitle"
+        )}
       />
     );
   }
 
   if (processing) {
     let subtitle =
-      "Please wait...";
+      t(
+        "quizDetails.loading.pleaseWait"
+      );
 
-    switch (processing) {
+    switch (
+      processing
+    ) {
       case "dashboard":
         subtitle =
-          "Returning to your dashboard...";
+          t(
+            "quizDetails.loading.dashboard"
+          );
         break;
 
       case "edit":
         subtitle =
-          "Opening the quiz editor...";
+          t(
+            "quizDetails.loading.edit"
+          );
         break;
 
       case "settings":
         subtitle =
-          "Opening quiz settings...";
+          t(
+            "quizDetails.loading.settings"
+          );
         break;
 
       case "students":
         subtitle =
-          "Opening students and grading...";
+          t(
+            "quizDetails.loading.students"
+          );
         break;
 
       case "launch":
         subtitle =
-          "Launching your quiz...";
+          t(
+            "quizDetails.loading.launch"
+          );
         break;
 
       case "delete":
         subtitle =
-          "Deleting your quiz...";
+          t(
+            "quizDetails.loading.delete"
+          );
         break;
     }
 
     return (
       <AppLoading
         title="ULearn"
-        subtitle={subtitle}
+        subtitle={
+          subtitle
+        }
       />
     );
   }
 
   /* =========================================================
-     Access validation
+     Access
      ========================================================= */
 
   if (
     !teacher ||
     !quiz ||
-    quiz.teacherId !== teacher.id
+    quiz.teacherId !==
+      teacher.id
   ) {
     return (
-      <main className={styles.page}>
-        <section className={styles.card}>
-          <h1>Access denied</h1>
+      <main
+        className={
+          styles.page
+        }
+      >
+        <section
+          className={
+            styles.card
+          }
+        >
+          <h1>
+            {t(
+              "quizDetails.access.title"
+            )}
+          </h1>
 
           <p>
-            Quiz not found or access denied.
+            {t(
+              "quizDetails.access.text"
+            )}
           </p>
         </section>
       </main>
     );
   }
 
+  /* =========================================================
+     Derived information
+     ========================================================= */
+
   const timeZone =
     quiz.timeZone ||
     "America/Toronto";
 
-  const now = Date.now();
+  const now =
+    Date.now();
 
   const deadlinePassed =
-    quiz.availableUntil !== null &&
+    quiz.availableUntil !==
+      null &&
     new Date(
       quiz.availableUntil
-    ).getTime() <= now;
+    ).getTime() <=
+      now;
 
   const accountExpired =
     new Date(
       teacher.expiresAt
-    ).getTime() <= now;
+    ).getTime() <=
+    now;
 
   /* =========================================================
-     Launch quiz
+     Status translation
+     ========================================================= */
+
+  function getStatusLabel(
+    status:
+      Quiz["status"]
+  ) {
+    if (
+      status ===
+      "launched"
+    ) {
+      return t(
+        "quizDetails.status.launched"
+      );
+    }
+
+    if (
+      status ===
+      "closed"
+    ) {
+      return t(
+        "quizDetails.status.closed"
+      );
+    }
+
+    return t(
+      "quizDetails.status.draft"
+    );
+  }
+
+  /* =========================================================
+     Launch
      ========================================================= */
 
   async function handleLaunch() {
     if (
       processing ||
-      quiz.status !== "draft"
+      quiz.status !==
+        "draft"
     ) {
       return;
     }
 
     setMessage("");
-    setProcessing("launch");
+
+    setProcessing(
+      "launch"
+    );
 
     try {
       const result =
-        await launchQuiz(quizId);
+        await launchQuiz(
+          quizId
+        );
 
-      if (!result.success) {
-        setMessage(result.message);
-        setProcessing("");
+      if (
+        !result.success
+      ) {
+        setMessage(
+          t(
+            "quizDetails.messages.launchError"
+          )
+        );
+
+        setProcessing(
+          ""
+        );
+
         return;
       }
 
       const updated =
-        await getQuiz(quizId);
+        await getQuiz(
+          quizId
+        );
 
-      setQuiz(updated);
-      setMessage(result.message);
+      setQuiz(
+        updated
+      );
+
+      setMessage(
+        t(
+          "quizDetails.messages.launchSuccess"
+        )
+      );
     } catch (error) {
       console.error(
         "Error launching quiz:",
@@ -289,10 +471,14 @@ export default function QuizDetailsPage() {
       );
 
       setMessage(
-        "Unable to launch the quiz."
+        t(
+          "quizDetails.messages.launchError"
+        )
       );
     } finally {
-      setProcessing("");
+      setProcessing(
+        ""
+      );
     }
   }
 
@@ -301,23 +487,33 @@ export default function QuizDetailsPage() {
      ========================================================= */
 
   function openDeleteModal() {
-    if (processing) {
+    if (
+      processing
+    ) {
       return;
     }
 
     setMessage("");
-    setDeleteModalOpen(true);
+
+    setDeleteModalOpen(
+      true
+    );
   }
 
   function closeDeleteModal() {
-    if (processing === "delete") {
+    if (
+      processing ===
+      "delete"
+    ) {
       return;
     }
 
-    setDeleteModalOpen(false);
+    setDeleteModalOpen(
+      false
+    );
   }
 
-  async function handleDeleteConfirm() {
+  async function handleDelete() {
     if (
       processing ||
       !deleteModalOpen
@@ -325,21 +521,41 @@ export default function QuizDetailsPage() {
       return;
     }
 
-    setDeleteModalOpen(false);
     setMessage("");
-    setProcessing("delete");
+
+    setProcessing(
+      "delete"
+    );
 
     try {
       const result =
-        await deleteQuiz(quizId);
+        await deleteQuiz(
+          quizId
+        );
 
-      if (!result.success) {
-        setMessage(result.message);
-        setProcessing("");
+      if (
+        !result.success
+      ) {
+        setMessage(
+          t(
+            "quizDetails.messages.deleteError"
+          )
+        );
+
+        setProcessing(
+          ""
+        );
+
+        setDeleteModalOpen(
+          false
+        );
+
         return;
       }
 
-      router.push("/dashboard");
+      router.push(
+        "/dashboard"
+      );
     } catch (error) {
       console.error(
         "Error deleting quiz:",
@@ -347,10 +563,18 @@ export default function QuizDetailsPage() {
       );
 
       setMessage(
-        "Unable to delete the quiz."
+        t(
+          "quizDetails.messages.deleteError"
+        )
       );
 
-      setProcessing("");
+      setProcessing(
+        ""
+      );
+
+      setDeleteModalOpen(
+        false
+      );
     }
   }
 
@@ -359,23 +583,33 @@ export default function QuizDetailsPage() {
      ========================================================= */
 
   function handleDashboard() {
-    if (processing) {
+    if (
+      processing
+    ) {
       return;
     }
 
-    setProcessing("dashboard");
-    router.push("/dashboard");
+    setProcessing(
+      "dashboard"
+    );
+
+    router.push(
+      "/dashboard"
+    );
   }
 
   function handleEditQuiz() {
     if (
       processing ||
-      quiz.status !== "draft"
+      quiz.status !==
+        "draft"
     ) {
       return;
     }
 
-    setProcessing("edit");
+    setProcessing(
+      "edit"
+    );
 
     router.push(
       `/quiz/${quiz.id}/edit`
@@ -385,12 +619,15 @@ export default function QuizDetailsPage() {
   function handleQuizSettings() {
     if (
       processing ||
-      quiz.status !== "draft"
+      quiz.status !==
+        "draft"
     ) {
       return;
     }
 
-    setProcessing("settings");
+    setProcessing(
+      "settings"
+    );
 
     router.push(
       `/quiz/${quiz.id}/settings`
@@ -398,11 +635,15 @@ export default function QuizDetailsPage() {
   }
 
   function handleStudents() {
-    if (processing) {
+    if (
+      processing
+    ) {
       return;
     }
 
-    setProcessing("students");
+    setProcessing(
+      "students"
+    );
 
     router.push(
       `/quiz/${quiz.id}/students`
@@ -414,280 +655,560 @@ export default function QuizDetailsPage() {
      ========================================================= */
 
   return (
-    <main className={styles.page}>
-      <section className={styles.card}>
-        <button
-          type="button"
-          className="app-button app-button-secondary"
-          onClick={handleDashboard}
+    <>
+      <main
+        className={
+          styles.page
+        }
+      >
+        <section
+          className={
+            styles.card
+          }
         >
-          ← Back to Dashboard
-        </button>
+          <button
+            type="button"
+            className="app-button app-button-secondary"
+            onClick={
+              handleDashboard
+            }
+          >
+            ←{" "}
+            {t(
+              "quizDetails.backDashboard"
+            )}
+          </button>
 
-        <header className={styles.header}>
-          <div className={styles.titleBlock}>
-            <h1>{quiz.title}</h1>
+          <header
+            className={
+              styles.header
+            }
+          >
+            <div
+              className={
+                styles.titleBlock
+              }
+            >
+              <h1>
+                {
+                  quiz.title
+                }
+              </h1>
 
-            <p className={styles.description}>
-              {quiz.description ||
-                "No description provided."}
-            </p>
-          </div>
+              <p
+                className={
+                  styles.description
+                }
+              >
+                {quiz.description ||
+                  t(
+                    "quizDetails.noDescription"
+                  )}
+              </p>
+            </div>
 
-          <span className={styles.statusBadge}>
-            {quiz.status.toUpperCase()}
-          </span>
-        </header>
-
-        <div className={styles.summary}>
-          <div className={styles.summaryItem}>
-            <span>Status</span>
-            <strong>{quiz.status}</strong>
-          </div>
-
-          <div className={styles.summaryItem}>
-            <span>Questions</span>
-
-            <strong>
-              {quiz.totalQuestions} / 50
-            </strong>
-          </div>
-
-          <div className={styles.summaryItem}>
-            <span>QCM questions</span>
-
-            <strong>
-              {quiz.qcmQuestions} / 40
-            </strong>
-          </div>
-
-          <div className={styles.summaryItem}>
-            <span>
-              Development questions
-            </span>
-
-            <strong>
-              {quiz.developmentQuestions} / 10
-            </strong>
-          </div>
-
-          <div className={styles.summaryItem}>
-            <span>Students</span>
-
-            <strong>
-              0 / {quiz.maxStudents}
-            </strong>
-          </div>
-
-          <div className={styles.summaryItem}>
-            <span>
-              {quiz.availabilityMode ===
-              "open_window"
-                ? "Time per student"
-                : "Session duration"}
-            </span>
-
-            <strong>
-              {formatQuizDuration(
-                quiz.timeLimitMinutes
+            <span
+              className={
+                styles.statusBadge
+              }
+            >
+              {getStatusLabel(
+                quiz.status
               )}
-            </strong>
-          </div>
-
-          <div className={styles.summaryItem}>
-            <span>Mode</span>
-
-            <strong>
-              {quiz.availabilityMode ===
-              "open_window"
-                ? "Open window"
-                : "Scheduled session"}
-            </strong>
-          </div>
-
-          <div className={styles.summaryItem}>
-            <span>Quiz time zone</span>
-            <strong>{timeZone}</strong>
-          </div>
-
-          <div className={styles.summaryItem}>
-            <span>Available from</span>
-
-            <strong>
-              {quiz.availableFrom
-                ? formatInTimeZone(
-                    quiz.availableFrom,
-                    timeZone
-                  )
-                : "When launched"}
-            </strong>
-          </div>
-
-          <div className={styles.summaryItem}>
-            <span>Deadline</span>
-
-            <strong>
-              {quiz.availableUntil
-                ? formatInTimeZone(
-                    quiz.availableUntil,
-                    timeZone
-                  )
-                : "Not set"}
-            </strong>
-          </div>
-
-          <div className={styles.summaryItem}>
-            <span>
-              Teacher account expires
             </span>
+          </header>
 
-            <strong>
-              {formatInTimeZone(
-                teacher.expiresAt,
-                timeZone
+          {/* =================================================
+              SUMMARY
+              ================================================= */}
+
+          <div
+            className={
+              styles.summary
+            }
+          >
+            <div
+              className={
+                styles.summaryItem
+              }
+            >
+              <span>
+                {t(
+                  "quizDetails.summary.status"
+                )}
+              </span>
+
+              <strong>
+                {getStatusLabel(
+                  quiz.status
+                )}
+              </strong>
+            </div>
+
+            <div
+              className={
+                styles.summaryItem
+              }
+            >
+              <span>
+                {t(
+                  "quizDetails.summary.plannedQuestions"
+                )}
+              </span>
+
+              <strong>
+                {
+                  quiz.targetQuestions
+                }
+              </strong>
+            </div>
+
+            <div
+              className={
+                styles.summaryItem
+              }
+            >
+              <span>
+                {t(
+                  "quizDetails.summary.totalPoints"
+                )}
+              </span>
+
+              <strong>
+                {
+                  quiz.totalPoints
+                }
+              </strong>
+            </div>
+
+            <div
+              className={
+                styles.summaryItem
+              }
+            >
+              <span>
+                {t(
+                  "quizDetails.summary.activeStudents"
+                )}
+              </span>
+
+              <strong>
+                {
+                  activeStudents
+                }
+                {" / "}
+                {
+                  quiz.maxStudents
+                }
+              </strong>
+            </div>
+
+            <div
+              className={
+                styles.summaryItem
+              }
+            >
+              <span>
+                {t(
+                  "quizDetails.summary.finishedStudents"
+                )}
+              </span>
+
+              <strong>
+                {
+                  finishedStudents
+                }
+                {" / "}
+                {
+                  quiz.maxStudents
+                }
+              </strong>
+            </div>
+
+            <div
+              className={
+                styles.summaryItem
+              }
+            >
+              <span>
+                {quiz.availabilityMode ===
+                "open_window"
+                  ? t(
+                      "quizDetails.summary.timePerStudent"
+                    )
+                  : t(
+                      "quizDetails.summary.sessionDuration"
+                    )}
+              </span>
+
+              <strong>
+                {formatQuizDuration(
+                  quiz.timeLimitMinutes,
+                  language
+                )}
+              </strong>
+            </div>
+
+            <div
+              className={
+                styles.summaryItem
+              }
+            >
+              <span>
+                {t(
+                  "quizDetails.summary.mode"
+                )}
+              </span>
+
+              <strong>
+                {quiz.availabilityMode ===
+                "open_window"
+                  ? t(
+                      "quizDetails.modes.openWindow"
+                    )
+                  : t(
+                      "quizDetails.modes.scheduledSession"
+                    )}
+              </strong>
+            </div>
+
+            <div
+              className={
+                styles.summaryItem
+              }
+            >
+              <span>
+                {t(
+                  "quizDetails.summary.timeZone"
+                )}
+              </span>
+
+              <strong>
+                {
+                  timeZone
+                }
+              </strong>
+            </div>
+
+            <div
+              className={
+                styles.summaryItem
+              }
+            >
+              <span>
+                {t(
+                  "quizDetails.summary.availableFrom"
+                )}
+              </span>
+
+              <strong>
+                {quiz.availableFrom
+                  ? formatInTimeZone(
+                      quiz.availableFrom,
+                      timeZone
+                    )
+                  : t(
+                      "quizDetails.summary.whenLaunched"
+                    )}
+              </strong>
+            </div>
+
+            <div
+              className={
+                styles.summaryItem
+              }
+            >
+              <span>
+                {t(
+                  "quizDetails.summary.deadline"
+                )}
+              </span>
+
+              <strong>
+                {quiz.availableUntil
+                  ? formatInTimeZone(
+                      quiz.availableUntil,
+                      timeZone
+                    )
+                  : t(
+                      "quizDetails.summary.notSet"
+                    )}
+              </strong>
+            </div>
+
+            <div
+              className={
+                styles.summaryItem
+              }
+            >
+              <span>
+                {t(
+                  "quizDetails.summary.accountExpires"
+                )}
+              </span>
+
+              <strong>
+                {formatInTimeZone(
+                  teacher.expiresAt,
+                  timeZone
+                )}
+              </strong>
+            </div>
+
+            <div
+              className={
+                styles.summaryItem
+              }
+            >
+              <span>
+                {t(
+                  "quizDetails.summary.backNavigation"
+                )}
+              </span>
+
+              <strong>
+                {quiz.allowBackNavigation
+                  ? t(
+                      "quizDetails.values.allowed"
+                    )
+                  : t(
+                      "quizDetails.values.disabled"
+                    )}
+              </strong>
+            </div>
+
+            <div
+              className={
+                styles.summaryItem
+              }
+            >
+              <span>
+                {t(
+                  "quizDetails.summary.shuffleQuestions"
+                )}
+              </span>
+
+              <strong>
+                {quiz.shuffleQuestions
+                  ? t(
+                      "quizDetails.values.yes"
+                    )
+                  : t(
+                      "quizDetails.values.no"
+                    )}
+              </strong>
+            </div>
+
+            <div
+              className={
+                styles.summaryItem
+              }
+            >
+              <span>
+                {t(
+                  "quizDetails.summary.shuffleChoices"
+                )}
+              </span>
+
+              <strong>
+                {quiz.shuffleChoices
+                  ? t(
+                      "quizDetails.values.yes"
+                    )
+                  : t(
+                      "quizDetails.values.no"
+                    )}
+              </strong>
+            </div>
+
+            <div
+              className={
+                styles.summaryItem
+              }
+            >
+              <span>
+                {t(
+                  "quizDetails.summary.showFinalScore"
+                )}
+              </span>
+
+              <strong>
+                {quiz.showResultsToStudents
+                  ? t(
+                      "quizDetails.values.yes"
+                    )
+                  : t(
+                      "quizDetails.values.no"
+                    )}
+              </strong>
+            </div>
+
+            <div
+              className={
+                styles.summaryItem
+              }
+            >
+              <span>
+                {t(
+                  "quizDetails.summary.showCorrectAnswers"
+                )}
+              </span>
+
+              <strong>
+                {quiz.showCorrectAnswers
+                  ? t(
+                      "quizDetails.values.yes"
+                    )
+                  : t(
+                      "quizDetails.values.no"
+                    )}
+              </strong>
+            </div>
+          </div>
+
+          {/* =================================================
+              MESSAGES
+              ================================================= */}
+
+          {deadlinePassed &&
+            quiz.status ===
+              "draft" && (
+              <p
+                className={
+                  styles.message
+                }
+              >
+                {t(
+                  "quizDetails.messages.deadlinePassed"
+                )}
+              </p>
+            )}
+
+          {accountExpired && (
+            <p
+              className={
+                styles.message
+              }
+            >
+              {t(
+                "quizDetails.messages.accountExpired"
               )}
-            </strong>
-          </div>
-
-          <div className={styles.summaryItem}>
-            <span>Back navigation</span>
-
-            <strong>
-              {quiz.allowBackNavigation
-                ? "Allowed"
-                : "Disabled"}
-            </strong>
-          </div>
-
-          <div className={styles.summaryItem}>
-            <span>Shuffle questions</span>
-
-            <strong>
-              {quiz.shuffleQuestions
-                ? "Yes"
-                : "No"}
-            </strong>
-          </div>
-
-          <div className={styles.summaryItem}>
-            <span>Shuffle choices</span>
-
-            <strong>
-              {quiz.shuffleChoices
-                ? "Yes"
-                : "No"}
-            </strong>
-          </div>
-
-          <div className={styles.summaryItem}>
-            <span>Show final score</span>
-
-            <strong>
-              {quiz.showResultsToStudents
-                ? "Yes"
-                : "No"}
-            </strong>
-          </div>
-
-          <div className={styles.summaryItem}>
-            <span>
-              Show correct answers
-            </span>
-
-            <strong>
-              {quiz.showCorrectAnswers
-                ? "Yes"
-                : "No"}
-            </strong>
-          </div>
-        </div>
-
-        {deadlinePassed &&
-          quiz.status === "draft" && (
-            <p className={styles.message}>
-              This quiz deadline has passed.
-              Open Quiz Settings and select
-              a new deadline before launching it.
             </p>
           )}
 
-        {accountExpired && (
-          <p className={styles.message}>
-            Your teacher account has expired.
-            This quiz can no longer be launched.
-          </p>
-        )}
+          {message && (
+            <p
+              className={
+                styles.message
+              }
+            >
+              {
+                message
+              }
+            </p>
+          )}
 
-        {message && (
-          <p
-            className={styles.message}
-            role="alert"
-          >
-            {message}
-          </p>
-        )}
+          {/* =================================================
+              ACTIONS
+              ================================================= */}
 
-        <div className={styles.actions}>
-          <button
-            type="button"
-            className="app-button"
-            disabled={
-              quiz.status !== "draft" ||
-              accountExpired
+          <div
+            className={
+              styles.actions
             }
-            onClick={handleQuizSettings}
           >
-            Quiz Settings
-          </button>
+            <button
+              type="button"
+              className="app-button"
+              disabled={
+                quiz.status !==
+                  "draft" ||
+                accountExpired
+              }
+              onClick={
+                handleQuizSettings
+              }
+            >
+              {t(
+                "quizDetails.actions.settings"
+              )}
+            </button>
 
-          <button
-            type="button"
-            className="app-button"
-            disabled={
-              quiz.status !== "draft" ||
-              accountExpired
-            }
-            onClick={handleEditQuiz}
-          >
-            Edit Quiz
-          </button>
+            <button
+              type="button"
+              className="app-button"
+              disabled={
+                quiz.status !==
+                  "draft" ||
+                accountExpired
+              }
+              onClick={
+                handleEditQuiz
+              }
+            >
+              {t(
+                "quizDetails.actions.edit"
+              )}
+            </button>
 
-          <button
-            type="button"
-            className="app-button"
-            onClick={handleStudents}
-          >
-            Students & Grading
-          </button>
+            <button
+              type="button"
+              className="app-button"
+              disabled={
+                quiz.status !==
+                  "draft" ||
+                deadlinePassed ||
+                accountExpired
+              }
+              onClick={
+                handleLaunch
+              }
+            >
+              {t(
+                "quizDetails.actions.launch"
+              )}
+            </button>
 
-          <button
-            type="button"
-            className="app-button"
-            disabled={
-              quiz.status !== "draft" ||
-              deadlinePassed ||
-              accountExpired
-            }
-            onClick={handleLaunch}
-          >
-            Launch Quiz
-          </button>
+            <button
+              type="button"
+              className="app-button"
+              onClick={
+                handleStudents
+              }
+            >
+              {t(
+                "quizDetails.actions.students"
+              )}
+            </button>
 
-          <button
-            type="button"
-            className="app-button app-button-secondary app-button-action"
-            onClick={openDeleteModal}
-          >
-            Delete Quiz
-          </button>
-        </div>
-      </section>
+            <button
+              type="button"
+              className="app-button app-button-secondary app-button-action"
+              onClick={
+                openDeleteModal
+              }
+            >
+              {t(
+                "quizDetails.actions.delete"
+              )}
+            </button>
+          </div>
+        </section>
+      </main>
+
+      {/* =====================================================
+          CUSTOM DELETE CONFIRMATION
+          ===================================================== */}
 
       {deleteModalOpen && (
         <div
-          className={styles.deleteOverlay}
+          className={
+            styles.deleteOverlay
+          }
           role="presentation"
-          onMouseDown={(event) => {
+          onMouseDown={(
+            event
+          ) => {
             if (
               event.target ===
               event.currentTarget
@@ -697,7 +1218,9 @@ export default function QuizDetailsPage() {
           }}
         >
           <section
-            className={styles.deleteModal}
+            className={
+              styles.deleteModal
+            }
             role="dialog"
             aria-modal="true"
             aria-labelledby="delete-quiz-title"
@@ -714,11 +1237,17 @@ export default function QuizDetailsPage() {
                     styles.deleteBadge
                   }
                 >
-                  Danger zone
+                  {t(
+                    "quizDetails.deleteModal.badge"
+                  )}
                 </span>
 
-                <h2 id="delete-quiz-title">
-                  Delete quiz
+                <h2
+                  id="delete-quiz-title"
+                >
+                  {t(
+                    "quizDetails.deleteModal.title"
+                  )}
                 </h2>
               </div>
 
@@ -727,8 +1256,12 @@ export default function QuizDetailsPage() {
                 className={
                   styles.deleteCloseButton
                 }
-                aria-label="Close delete confirmation"
-                onClick={closeDeleteModal}
+                onClick={
+                  closeDeleteModal
+                }
+                aria-label={t(
+                  "quizDetails.deleteModal.closeAria"
+                )}
               >
                 ×
               </button>
@@ -736,64 +1269,81 @@ export default function QuizDetailsPage() {
 
             <div
               className={
-                styles.deleteModalContent
+                styles.deleteContent
               }
             >
               <div
                 className={
-                  styles.deleteIcon
+                  styles.deleteWarningIcon
                 }
                 aria-hidden="true"
               >
                 !
               </div>
 
-              <div>
-                <p id="delete-quiz-description">
-                  Are you sure you want to
-                  delete{" "}
+              <div
+                className={
+                  styles.deleteText
+                }
+              >
+                <p
+                  id="delete-quiz-description"
+                >
+                  {t(
+                    "quizDetails.deleteModal.confirmBefore"
+                  )}{" "}
+
                   <strong>
                     “{quiz.title}”
                   </strong>
+
                   ?
                 </p>
 
                 <p
                   className={
-                    styles.deleteWarning
+                    styles.deleteWarningText
                   }
                 >
-                  This action cannot be undone.
-                  The quiz and all related data
-                  will be permanently removed.
+                  {t(
+                    "quizDetails.deleteModal.warning"
+                  )}
                 </p>
               </div>
             </div>
 
             <div
               className={
-                styles.deleteModalActions
+                styles.deleteActions
               }
             >
               <button
                 type="button"
-                className="app-button app-button-secondary app-button-action"
-                onClick={closeDeleteModal}
+                className="app-button app-button-danger app-button-action"
+                onClick={
+                  handleDelete
+                }
               >
-                Cancel
+                {t(
+                  "quizDetails.actions.delete"
+                )}
               </button>
 
               <button
                 type="button"
-                className="app-button app-button-danger app-button-action"
-                onClick={handleDeleteConfirm}
+                className="app-button app-button-secondary app-button-action"
+                onClick={
+                  closeDeleteModal
+                }
               >
-                Delete Quiz
+                {t(
+                  "quizDetails.actions.cancel"
+                )}
               </button>
             </div>
           </section>
         </div>
       )}
-    </main>
+    </>
   );
 }
