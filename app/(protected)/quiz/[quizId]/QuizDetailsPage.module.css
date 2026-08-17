@@ -320,11 +320,26 @@
   align-items: center;
   justify-content: center;
 
-  border: 1px solid var(--border-color);
+  border: 1px solid
+    rgba(
+      176,
+      0,
+      32,
+      0.18
+    );
+
   border-radius: 14px;
 
-  background: var(--soft-purple);
-  color: var(--main-color);
+  background:
+    rgba(
+      176,
+      0,
+      32,
+      0.08
+    );
+
+  color:
+    var(--danger-color);
 
   font-size: 1.45rem;
   font-weight: 900;

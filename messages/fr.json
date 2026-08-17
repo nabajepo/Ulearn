@@ -541,5 +541,136 @@
     "step3": "3. Cliquez sur un étudiant pour corriger ses réponses de développement.",
     "step4": "4. Publiez le résultat final lorsque la correction est terminée."
   }
+},
+"quizEdit": {
+  "backQuiz": "Retour au quiz",
+  "badge": "Éditeur de quiz",
+  "title": "Modifier le quiz",
+  "subtitle": "Créez et gérez les questions incluses dans ce quiz.",
+  "statusDraft": "BROUILLON",
+
+  "loading": {
+    "title": "Éditeur du quiz",
+    "subtitle": "Chargement des questions du quiz...",
+    "returning": "Retour au quiz...",
+    "savingTitle": "Enregistrement de la question",
+    "savingSubtitle": "Mise à jour du quiz...",
+    "deleting": "Suppression de la question..."
+  },
+
+  "access": {
+    "title": "Accès refusé",
+    "text": "Quiz introuvable ou accès refusé."
+  },
+
+  "locked": {
+    "title": "Éditeur du quiz verrouillé",
+    "text": "Seuls les quiz en brouillon peuvent être modifiés."
+  },
+
+  "progress": {
+    "questions": "Questions",
+    "questionsRemaining": "questions restantes",
+    "points": "Points attribués",
+    "pointsRemaining": "points restants",
+    "structure": "Structure du quiz",
+    "complete": "Complète",
+    "incomplete": "Incomplète",
+    "ready": "La structure du quiz est complète.",
+    "keepEditing": "Continuez jusqu’à ce que toutes les questions et tous les points soient attribués."
+  },
+
+  "questions": {
+    "title": "Questions",
+    "add": "Ajouter une question",
+    "developmentShort": "DEV",
+    "untitled": "Question sans titre",
+    "pointsShort": "pts",
+    "emptyTitle": "Aucune question",
+    "emptyText": "Créez votre première question pour commencer à construire ce quiz."
+  },
+
+  "editor": {
+    "newQuestion": "Nouvelle question",
+    "editQuestion": "Modification de la question",
+    "createTitle": "Créer une question",
+    "question": "Question",
+    "type": "Type de question",
+    "qcm": "QCM",
+    "development": "Développement",
+    "questionText": "Texte de la question",
+    "questionPlaceholder": "Écrivez la question ici...",
+    "characters": "caractères",
+    "points": "Points",
+    "maximum": "Maximum :",
+    "answers": "Choix de réponses",
+    "answersHelp": "Sélectionnez la bonne réponse à l’aide du bouton correspondant à la lettre.",
+    "correctAnswer": "Bonne réponse",
+    "answer": "Réponse",
+    "removeAnswer": "Supprimer la réponse",
+    "addAnswer": "Ajouter une réponse",
+    "developmentTitle": "Question de développement",
+    "specialCharacters": "Caractères spéciaux",
+    "developmentHelp": "L’étudiant rédigera une réponse libre qui sera corrigée manuellement par l’enseignant."
+  },
+
+  "actions": {
+    "create": "Créer la question",
+    "save": "Modifier",
+    "delete": "Supprimer",
+    "newQuestion": "Nouvelle question",
+    "cancel": "Annuler"
+  },
+
+  "messages": {
+    "loadError": "Impossible de charger l’éditeur du quiz.",
+    "saved": "Question enregistrée avec succès.",
+    "saveError": "Impossible d’enregistrer la question.",
+    "deleted": "Question supprimée avec succès.",
+    "deleteError": "Impossible de supprimer la question."
+  },
+
+  "validation": {
+    "questionRequired": "Le texte de la question est obligatoire.",
+    "pointsMinimum": "Une question doit valoir au moins 1 point.",
+    "maximumPoints": "Le nombre maximal de points disponibles pour cette question est",
+    "twoChoices": "Une question QCM doit contenir au moins deux réponses.",
+    "emptyChoice": "Tous les choix de réponse doivent contenir du texte.",
+    "correctAnswer": "Sélectionnez la bonne réponse."
+  },
+
+  "deleteModal": {
+    "badge": "Confirmation",
+    "title": "Supprimer la question",
+    "confirm": "Voulez-vous vraiment supprimer cette question ?",
+    "warning": "Cette action est irréversible.",
+    "closeAria": "Fermer la confirmation de suppression de la question"
+  }
+},
+"specialCharacters": {
+  "groups": {
+    "math": "Mathématiques",
+    "greek": "Lettres grecques",
+    "science": "Sciences",
+    "fractions": "Fractions courantes"
+  },
+
+  "exponent": {
+    "label": "Exposant personnalisé",
+    "placeholder": "Exemple : 12"
+  },
+
+  "subscript": {
+    "label": "Indice personnalisé",
+    "placeholder": "Exemple : 23"
+  },
+
+  "insert": "Insérer",
+  "preview": "Aperçu :", 
+
+  "formula": {
+    "title": "Formules avancées",
+    "description": "Les fractions, matrices, limites et formules complexes seront disponibles dans l’éditeur de formules."
+  }
 }
 }

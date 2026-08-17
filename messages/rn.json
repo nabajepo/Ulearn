@@ -541,5 +541,136 @@
     "step3": "3. Fyonda ku munyeshure kugira ukosore inyishu ziwe zanditse.",
     "step4": "4. Tangaza amanota ya nyuma igihe ugukosora kurangiye."
   }
+},
+"quizEdit": {
+  "backQuiz": "Subira kuri quiz",
+  "badge": "Aho guhindurira quiz",
+  "title": "Hindura Quiz",
+  "subtitle": "Kora kandi utunganye ibibazo biri muri iyi quiz.",
+  "statusDraft": "URWANDIKO",
+
+  "loading": {
+    "title": "Aho guhindurira quiz",
+    "subtitle": "Turiko turazana ibibazo vya quiz...",
+    "returning": "Turiko turasubira kuri quiz...",
+    "savingTitle": "Turiko turabika ikibazo",
+    "savingSubtitle": "Turiko turahindura quiz...",
+    "deleting": "Turiko turasiba ikibazo..."
+  },
+
+  "access": {
+    "title": "Nta burenganzira",
+    "text": "Quiz ntiyabonetse canke nta burenganzira bwo kuyifungura."
+  },
+
+  "locked": {
+    "title": "Guhindura quiz vyarafunzwe",
+    "text": "Quiz iri mu rwego rw'ugutegurwa ni yo gusa ishobora guhindurwa."
+  },
+
+  "progress": {
+    "questions": "Ibibazo",
+    "questionsRemaining": "ibibazo bisigaye",
+    "points": "Amanota yatanzwe",
+    "pointsRemaining": "amanota asigaye",
+    "structure": "Imiterere ya quiz",
+    "complete": "Yuzuye",
+    "incomplete": "Ntiryuzuye",
+    "ready": "Imiterere ya quiz yaruzuye.",
+    "keepEditing": "Bandanya uhindura gushika ibibazo vyose n’amanota yose bitanzwe."
+  },
+
+  "questions": {
+    "title": "Ibibazo",
+    "add": "Ongerako ikibazo",
+    "developmentShort": "DEV",
+    "untitled": "Ikibazo kitagira umutwe",
+    "pointsShort": "pts",
+    "emptyTitle": "Nta bibazo birimwo",
+    "emptyText": "Kora ikibazo ca mbere kugira utangure gutegura iyi quiz."
+  },
+
+  "editor": {
+    "newQuestion": "Ikibazo gishasha",
+    "editQuestion": "Turiko turahindura ikibazo",
+    "createTitle": "Kora ikibazo",
+    "question": "Ikibazo",
+    "type": "Ubwoko bw’ikibazo",
+    "qcm": "QCM",
+    "development": "Ikibazo c’inyishu ndende",
+    "questionText": "Ivyanditswe vy’ikibazo",
+    "questionPlaceholder": "Andika ikibazo hano...",
+    "characters": "inyuguti",
+    "points": "Amanota",
+    "maximum": "Amanota menshi:",
+    "answers": "Inyishu zishoboka",
+    "answersHelp": "Hitamwo inyishu nziza ukoresheje urudome rwayo.",
+    "correctAnswer": "Inyishu nziza",
+    "answer": "Inyishu",
+    "removeAnswer": "Siba inyishu",
+    "addAnswer": "Ongerako inyishu",
+    "developmentTitle": "Ikibazo c’inyishu ndende",
+    "specialCharacters": "Ibimenyetso bidasanzwe",
+    "developmentHelp": "Umunyeshure azandika inyishu yiwe, hanyuma umwigisha ayikosore."
+  },
+
+  "actions": {
+    "create": "Ongera ikibazo",
+    "save": "Bika ikibazo",
+    "delete": "Futa ikibazo",
+    "newQuestion": "Ikibazo gishasha",
+    "cancel": "Hagarika"
+  },
+
+  "messages": {
+    "loadError": "Ntivyashobotse gufungura aho guhindurira quiz.",
+    "saved": "Ikibazo cabitswe neza.",
+    "saveError": "Ntivyashobotse kubika ikibazo.",
+    "deleted": "Ikibazo casibwe neza.",
+    "deleteError": "Ntivyashobotse gusiba ikibazo."
+  },
+
+  "validation": {
+    "questionRequired": "Andika ikibazo.",
+    "pointsMinimum": "Ikibazo gitegerezwa kugira n’imiburiburi inota 1.",
+    "maximumPoints": "Amanota menshi ashobora gutangwa kuri iki kibazo ni",
+    "twoChoices": "Ikibazo ca QCM gitegerezwa kugira n’imiburiburi inyishu zibiri.",
+    "emptyChoice": "Inyishu zose zitegerezwa kuba zanditse.",
+    "correctAnswer": "Hitamwo inyishu nziza."
+  },
+
+  "deleteModal": {
+    "badge": "Kwemeza",
+    "title": "Siba ikibazo",
+    "confirm": "Urashaka vy’ukuri gusiba iki kibazo?",
+    "warning": "Iki gikorwa ntigishobora gusubirwamwo.",
+    "closeAria": "Funga ukwemeza gusiba ikibazo"
+  }
+},
+"specialCharacters": {
+  "groups": {
+    "math": "Imibare",
+    "greek": "Indome z'Ikigiriki",
+    "science": "Ubumenyi",
+    "fractions": "Ibice bikunda gukoreshwa"
+  },
+
+  "exponent": {
+    "label": "Exposant ushaka",
+    "placeholder": "Akarorero: 12"
+  },
+
+  "subscript": {
+    "label": "Indice ushaka",
+    "placeholder": "Akarorero: 23"
+  },
+
+  "insert": "Shiramwo",
+  "preview": "Akarorero:",
+
+  "formula": {
+    "title": "Formule zikomeye",
+    "description": "Fractions, matrices, limites n’izindi formule zikomeye zizokorwa mu mwanditsi wa formule."
+  }
 }
 }
