@@ -23,14 +23,20 @@ import {
 
 import {
   createDevelopmentQuestion,
+  createMultipleChoiceQuestion,
   createQcmQuestion,
   deleteQuestion,
   getQuizQuestions,
   updateDevelopmentQuestion,
+  updateMultipleChoiceQuestion,
   updateQcmQuestion,
   type Question,
   type QuestionType,
 } from "@/lib/services/questions";
+
+import {
+  LIMITS,
+} from "@/lib/services/limits";
 
 import {
   useTeacher,
@@ -58,33 +64,36 @@ type ProcessingAction =
 
 type QuestionFormState = {
   type: QuestionType;
+
   text: string;
+
   points: number;
+
   choices: string[];
+
+  /*
+   * QCM:
+   * exactly one correct answer.
+   */
   correctChoiceIndex: number;
+
+  /*
+   * Multiple choice:
+   * several correct answers.
+   */
+  correctChoiceIndexes: number[];
 };
 
 /* =========================================================
    Constants
    ========================================================= */
 
-const EMPTY_QCM_CHOICES = [
+const EMPTY_CHOICES = [
   "",
   "",
   "",
   "",
 ];
-
-const INITIAL_FORM:
-  QuestionFormState = {
-    type: "qcm",
-    text: "",
-    points: 1,
-    choices: [
-      ...EMPTY_QCM_CHOICES,
-    ],
-    correctChoiceIndex: 0,
-  };
 
 const MAX_QUESTION_LENGTH =
   1000;
@@ -99,51 +108,129 @@ const MAX_CHOICE_LENGTH =
 function createEmptyForm():
   QuestionFormState {
   return {
-    type: "qcm",
-    text: "",
-    points: 1,
+    type:
+      "qcm",
+
+    text:
+      "",
+
+    points:
+      1,
+
     choices: [
-      ...EMPTY_QCM_CHOICES,
+      ...EMPTY_CHOICES,
     ],
-    correctChoiceIndex: 0,
+
+    correctChoiceIndex:
+      0,
+
+    correctChoiceIndexes:
+      [],
   };
 }
 
 function buildFormFromQuestion(
   question: Question
 ): QuestionFormState {
+  /* =====================================================
+     Development
+     ===================================================== */
+
   if (
     question.type ===
     "development"
   ) {
     return {
-      type: "development",
-      text: question.text,
-      points: question.points,
+      type:
+        "development",
+
+      text:
+        question.text,
+
+      points:
+        question.points,
+
       choices: [
-        ...EMPTY_QCM_CHOICES,
+        ...EMPTY_CHOICES,
       ],
-      correctChoiceIndex: 0,
+
+      correctChoiceIndex:
+        0,
+
+      correctChoiceIndexes:
+        [],
     };
   }
+
+  /* =====================================================
+     Choice questions
+     ===================================================== */
 
   const choices = [
     ...question.choices,
   ];
 
   while (
-    choices.length < 4
+    choices.length <
+    4
   ) {
-    choices.push("");
+    choices.push(
+      ""
+    );
   }
 
+  /* =====================================================
+     Multiple choice
+     ===================================================== */
+
+  if (
+    question.type ===
+    "multiple_choice"
+  ) {
+    return {
+      type:
+        "multiple_choice",
+
+      text:
+        question.text,
+
+      points:
+        question.points,
+
+      choices,
+
+      correctChoiceIndex:
+        question.correctChoiceIndexes[
+          0
+        ] ?? 0,
+
+      correctChoiceIndexes: [
+        ...question.correctChoiceIndexes,
+      ],
+    };
+  }
+
+  /* =====================================================
+     QCM
+     ===================================================== */
+
   return {
-    type: "qcm",
-    text: question.text,
-    points: question.points,
+    type:
+      "qcm",
+
+    text:
+      question.text,
+
+    points:
+      question.points,
+
     choices,
+
     correctChoiceIndex:
       question.correctChoiceIndex,
+
+    correctChoiceIndexes:
+      [],
   };
 }
 
@@ -153,12 +240,15 @@ function getQuestionLabel(
   const text =
     question.text.trim();
 
-  if (!text) {
+  if (
+    !text
+  ) {
     return "";
   }
 
   if (
-    text.length <= 42
+    text.length <=
+    42
   ) {
     return text;
   }
@@ -167,8 +257,29 @@ function getQuestionLabel(
     text.slice(
       0,
       42
-    ) + "…"
+    ) +
+    "…"
   );
+}
+
+function getQuestionTypeShortLabel(
+  question: Question
+) {
+  if (
+    question.type ===
+    "multiple_choice"
+  ) {
+    return "MULTI";
+  }
+
+  if (
+    question.type ===
+    "development"
+  ) {
+    return "DEV";
+  }
+
+  return "QCM";
 }
 
 /* =========================================================
@@ -184,7 +295,8 @@ export default function EditQuizPage() {
 
   const {
     t,
-  } = useLanguage();
+  } =
+    useLanguage();
 
   const quizId =
     String(
@@ -195,21 +307,28 @@ export default function EditQuizPage() {
     teacher,
     loading:
       teacherLoading,
-  } = useTeacher();
+  } =
+    useTeacher();
 
   /* =========================================================
      Refs
      ========================================================= */
 
   const questionTextRef =
-    useRef<HTMLTextAreaElement | null>(
+    useRef<
+      HTMLTextAreaElement | null
+    >(
       null
     );
 
   const choiceRefs =
     useRef<
-      Array<HTMLInputElement | null>
-    >([]);
+      Array<
+        HTMLInputElement | null
+      >
+    >(
+      []
+    );
 
   /* =========================================================
      Quiz data
@@ -219,7 +338,9 @@ export default function EditQuizPage() {
     quiz,
     setQuiz,
   ] =
-    useState<Quiz | null>(
+    useState<
+      Quiz | null
+    >(
       null
     );
 
@@ -227,7 +348,9 @@ export default function EditQuizPage() {
     questions,
     setQuestions,
   ] =
-    useState<Question[]>(
+    useState<
+      Question[]
+    >(
       []
     );
 
@@ -239,7 +362,9 @@ export default function EditQuizPage() {
     selectedQuestionId,
     setSelectedQuestionId,
   ] =
-    useState<string | null>(
+    useState<
+      string | null
+    >(
       null
     );
 
@@ -247,7 +372,9 @@ export default function EditQuizPage() {
     editorMode,
     setEditorMode,
   ] =
-    useState<EditorMode>(
+    useState<
+      EditorMode
+    >(
       "create"
     );
 
@@ -255,7 +382,9 @@ export default function EditQuizPage() {
     form,
     setForm,
   ] =
-    useState<QuestionFormState>(
+    useState<
+      QuestionFormState
+    >(
       () =>
         createEmptyForm()
     );
@@ -268,13 +397,17 @@ export default function EditQuizPage() {
     loading,
     setLoading,
   ] =
-    useState(true);
+    useState(
+      true
+    );
 
   const [
     processing,
     setProcessing,
   ] =
-    useState<ProcessingAction>(
+    useState<
+      ProcessingAction
+    >(
       ""
     );
 
@@ -282,35 +415,33 @@ export default function EditQuizPage() {
     message,
     setMessage,
   ] =
-    useState("");
+    useState(
+      ""
+    );
 
   const [
     deleteModalOpen,
     setDeleteModalOpen,
   ] =
-    useState(false);
+    useState(
+      false
+    );
 
-  /*
-   * Special character picker for
-   * the question textarea.
-   */
   const [
     questionSymbolsOpen,
     setQuestionSymbolsOpen,
   ] =
-    useState(false);
+    useState(
+      false
+    );
 
-  /*
-   * Index of the QCM answer whose
-   * symbol picker is currently open.
-   *
-   * null = none.
-   */
   const [
     activeChoicePickerIndex,
     setActiveChoicePickerIndex,
   ] =
-    useState<number | null>(
+    useState<
+      number | null
+    >(
       null
     );
 
@@ -322,15 +453,77 @@ export default function EditQuizPage() {
     useMemo(
       () =>
         questions.find(
-          (question) =>
+          (
+            question
+          ) =>
             question.id ===
             selectedQuestionId
-        ) ?? null,
+        ) ??
+        null,
       [
         questions,
         selectedQuestionId,
       ]
     );
+
+  const questionCount =
+    questions.length;
+
+  const qcmCount =
+    useMemo(
+      () =>
+        questions.filter(
+          (
+            question
+          ) =>
+            question.type ===
+            "qcm"
+        ).length,
+      [
+        questions,
+      ]
+    );
+
+  const multipleChoiceCount =
+    useMemo(
+      () =>
+        questions.filter(
+          (
+            question
+          ) =>
+            question.type ===
+            "multiple_choice"
+        ).length,
+      [
+        questions,
+      ]
+    );
+
+  const developmentCount =
+    useMemo(
+      () =>
+        questions.filter(
+          (
+            question
+          ) =>
+            question.type ===
+            "development"
+        ).length,
+      [
+        questions,
+      ]
+    );
+
+  /*
+   * QCM + MULTI are both automatically
+   * corrected questions.
+   *
+   * With the current LIMITS configuration,
+   * they share MAX_QCM_QUESTIONS.
+   */
+  const automaticQuestionCount =
+    qcmCount +
+    multipleChoiceCount;
 
   const assignedPoints =
     useMemo(
@@ -349,13 +542,11 @@ export default function EditQuizPage() {
       ]
     );
 
-  const questionCount =
-    questions.length;
-
   const remainingQuestions =
     quiz
       ? Math.max(
           0,
+
           quiz.targetQuestions -
             questionCount
         )
@@ -365,6 +556,7 @@ export default function EditQuizPage() {
     quiz
       ? Math.max(
           0,
+
           quiz.totalPoints -
             assignedPoints
         )
@@ -373,40 +565,129 @@ export default function EditQuizPage() {
   const structureComplete =
     Boolean(
       quiz &&
-        questionCount ===
-          quiz.targetQuestions &&
-        assignedPoints ===
-          quiz.totalPoints
+      questionCount ===
+        quiz.targetQuestions &&
+      assignedPoints ===
+        quiz.totalPoints
     );
 
   /*
-   * Every future question needs
-   * at least one point.
+   * Respect both:
+   *
+   * - planned quiz target
+   * - global application maximum
    */
+  const belowTotalQuestionLimit =
+    questionCount <
+    LIMITS
+      .MAX_QUESTIONS_PER_QUIZ;
+
   const canAddQuestion =
     Boolean(
       quiz &&
-        questionCount <
-          quiz.targetQuestions &&
-        remainingPoints >=
-          remainingQuestions
+      questionCount <
+        quiz.targetQuestions &&
+      belowTotalQuestionLimit &&
+      remainingPoints >=
+        remainingQuestions
     );
 
   /* =========================================================
-     Maximum allowed points
+     Type limits
      ========================================================= */
 
-  function getMaximumPointsForCurrentQuestion() {
-    if (!quiz) {
-      return 1;
+  function getCountsWithoutCurrentQuestion() {
+    let automatic =
+      automaticQuestionCount;
+
+    let development =
+      developmentCount;
+
+    if (
+      editorMode ===
+        "edit" &&
+      selectedQuestion
+    ) {
+      if (
+        selectedQuestion.type ===
+          "development"
+      ) {
+        development =
+          Math.max(
+            0,
+            development -
+              1
+          );
+      } else {
+        automatic =
+          Math.max(
+            0,
+            automatic -
+              1
+          );
+      }
+    }
+
+    return {
+      automatic,
+      development,
+    };
+  }
+
+  function canUseQuestionType(
+    type: QuestionType
+  ) {
+    const counts =
+      getCountsWithoutCurrentQuestion();
+
+    if (
+      type ===
+      "development"
+    ) {
+      return (
+        counts.development <
+        LIMITS
+          .MAX_DEVELOPMENT_QUESTIONS
+      );
     }
 
     /*
-     * Editing an existing question.
-     *
-     * We temporarily put its current
-     * points back into the available pool.
+     * QCM + MULTI share the
+     * automatic question limit.
      */
+    return (
+      counts.automatic <
+      LIMITS
+        .MAX_QCM_QUESTIONS
+    );
+  }
+
+  const qcmTypeAvailable =
+    canUseQuestionType(
+      "qcm"
+    );
+
+  const multipleChoiceTypeAvailable =
+    canUseQuestionType(
+      "multiple_choice"
+    );
+
+  const developmentTypeAvailable =
+    canUseQuestionType(
+      "development"
+    );
+
+  /* =========================================================
+     Maximum points
+     ========================================================= */
+
+  function getMaximumPointsForCurrentQuestion() {
+    if (
+      !quiz
+    ) {
+      return 1;
+    }
+
     if (
       editorMode ===
         "edit" &&
@@ -420,13 +701,10 @@ export default function EditQuizPage() {
         quiz.totalPoints -
         pointsUsedByOthers;
 
-      /*
-       * Questions that still have not
-       * been created after this one.
-       */
       const futureQuestionCount =
         Math.max(
           0,
+
           quiz.targetQuestions -
             questionCount
         );
@@ -436,32 +714,25 @@ export default function EditQuizPage() {
 
       return Math.max(
         1,
+
         availablePool -
           reservedPoints
       );
     }
 
-    /*
-     * Creating a new question.
-     *
-     * After creating this one, all
-     * remaining future questions still
-     * need at least one point.
-     */
     const futureQuestionCount =
       Math.max(
         0,
+
         remainingQuestions -
           1
       );
 
-    const reservedPoints =
-      futureQuestionCount;
-
     return Math.max(
       1,
+
       remainingPoints -
-        reservedPoints
+        futureQuestionCount
     );
   }
 
@@ -489,7 +760,9 @@ export default function EditQuizPage() {
             ),
           ]);
 
-        if (cancelled) {
+        if (
+          cancelled
+        ) {
           return;
         }
 
@@ -506,7 +779,9 @@ export default function EditQuizPage() {
           0
         ) {
           const first =
-            questionData[0];
+            questionData[
+              0
+            ];
 
           setSelectedQuestionId(
             first.id
@@ -534,13 +809,17 @@ export default function EditQuizPage() {
             createEmptyForm()
           );
         }
-      } catch (error) {
+      } catch (
+        error
+      ) {
         console.error(
           "Unable to load quiz editor:",
           error
         );
 
-        if (!cancelled) {
+        if (
+          !cancelled
+        ) {
           setMessage(
             t(
               "quizEdit.messages.loadError"
@@ -548,7 +827,9 @@ export default function EditQuizPage() {
           );
         }
       } finally {
-        if (!cancelled) {
+        if (
+          !cancelled
+        ) {
           setLoading(
             false
           );
@@ -586,7 +867,8 @@ export default function EditQuizPage() {
       "hidden";
 
     function handleEscape(
-      event: KeyboardEvent
+      event:
+        KeyboardEvent
     ) {
       if (
         event.key ===
@@ -620,7 +902,7 @@ export default function EditQuizPage() {
   ]);
 
   /* =========================================================
-     Loading screens
+     Loading
      ========================================================= */
 
   if (
@@ -773,11 +1055,13 @@ export default function EditQuizPage() {
   }
 
   /* =========================================================
-     Editor navigation
+     Navigation
      ========================================================= */
 
   function handleBack() {
-    if (processing) {
+    if (
+      processing
+    ) {
       return;
     }
 
@@ -795,9 +1079,12 @@ export default function EditQuizPage() {
      ========================================================= */
 
   function handleSelectQuestion(
-    question: Question
+    question:
+      Question
   ) {
-    if (processing) {
+    if (
+      processing
+    ) {
       return;
     }
 
@@ -823,7 +1110,9 @@ export default function EditQuizPage() {
       null
     );
 
-    setMessage("");
+    setMessage(
+      ""
+    );
   }
 
   /* =========================================================
@@ -846,11 +1135,31 @@ export default function EditQuizPage() {
       "create"
     );
 
-    setForm({
-      ...createEmptyForm(),
+    /*
+     * Pick the first available type.
+     */
+    let newType:
+      QuestionType =
+      "qcm";
 
-      points: 1,
-    });
+    if (
+      automaticQuestionCount >=
+      LIMITS
+        .MAX_QCM_QUESTIONS
+    ) {
+      newType =
+        "development";
+    }
+
+    const newForm =
+      createEmptyForm();
+
+    newForm.type =
+      newType;
+
+    setForm(
+      newForm
+    );
 
     setQuestionSymbolsOpen(
       false
@@ -860,7 +1169,9 @@ export default function EditQuizPage() {
       null
     );
 
-    setMessage("");
+    setMessage(
+      ""
+    );
   }
 
   /* =========================================================
@@ -875,14 +1186,134 @@ export default function EditQuizPage() {
       QuestionFormState[K]
   ) {
     setForm(
-      (current) => ({
+      (
+        current
+      ) => ({
         ...current,
+
         [field]:
           value,
       })
     );
 
-    setMessage("");
+    setMessage(
+      ""
+    );
+  }
+
+  function handleTypeChange(
+    type:
+      QuestionType
+  ) {
+    if (
+      !canUseQuestionType(
+        type
+      )
+    ) {
+      return;
+    }
+
+    setForm(
+      (
+        current
+      ) => {
+        /* =================================================
+           QCM
+           ================================================= */
+
+        if (
+          type ===
+          "qcm"
+        ) {
+          const preferredIndex =
+            current.correctChoiceIndexes[
+              0
+            ] ??
+            current.correctChoiceIndex ??
+            0;
+
+          return {
+            ...current,
+
+            type:
+              "qcm",
+
+            correctChoiceIndex:
+              Math.max(
+                0,
+                Math.min(
+                  preferredIndex,
+                  current.choices.length -
+                    1
+                )
+              ),
+
+            correctChoiceIndexes:
+              [],
+          };
+        }
+
+        /* =================================================
+           MULTI
+           ================================================= */
+
+        if (
+          type ===
+          "multiple_choice"
+        ) {
+          const indexes =
+            current.correctChoiceIndexes.length >
+            0
+              ? current.correctChoiceIndexes
+              : [
+                  current.correctChoiceIndex,
+                ];
+
+          return {
+            ...current,
+
+            type:
+              "multiple_choice",
+
+            correctChoiceIndexes:
+              Array.from(
+                new Set(
+                  indexes
+                )
+              ).filter(
+                (
+                  index
+                ) =>
+                  index >=
+                    0 &&
+                  index <
+                    current
+                      .choices
+                      .length
+              ),
+          };
+        }
+
+        /* =================================================
+           Development
+           ================================================= */
+
+        return {
+          ...current,
+
+          type:
+            "development",
+        };
+      }
+    );
+
+    setActiveChoicePickerIndex(
+      null
+    );
+
+    setMessage(
+      ""
+    );
   }
 
   function updateChoice(
@@ -890,28 +1321,37 @@ export default function EditQuizPage() {
     value: string
   ) {
     setForm(
-      (current) => {
+      (
+        current
+      ) => {
         const nextChoices = [
           ...current.choices,
         ];
 
-        nextChoices[index] =
+        nextChoices[
+          index
+        ] =
           value;
 
         return {
           ...current,
+
           choices:
             nextChoices,
         };
       }
     );
 
-    setMessage("");
+    setMessage(
+      ""
+    );
   }
 
   function addChoice() {
     setForm(
-      (current) => ({
+      (
+        current
+      ) => ({
         ...current,
 
         choices: [
@@ -921,14 +1361,69 @@ export default function EditQuizPage() {
       })
     );
 
-    setMessage("");
+    setMessage(
+      ""
+    );
+  }
+
+  function toggleMultipleCorrectChoice(
+    index: number
+  ) {
+    setForm(
+      (
+        current
+      ) => {
+        const alreadySelected =
+          current
+            .correctChoiceIndexes
+            .includes(
+              index
+            );
+
+        const nextIndexes =
+          alreadySelected
+            ? current
+                .correctChoiceIndexes
+                .filter(
+                  (
+                    value
+                  ) =>
+                    value !==
+                    index
+                )
+            : [
+                ...current.correctChoiceIndexes,
+                index,
+              ];
+
+        return {
+          ...current,
+
+          correctChoiceIndexes:
+            nextIndexes.sort(
+              (
+                first,
+                second
+              ) =>
+                first -
+                second
+            ),
+        };
+      }
+    );
+
+    setMessage(
+      ""
+    );
   }
 
   function removeChoice(
     index: number
   ) {
     setForm(
-      (current) => {
+      (
+        current
+      ) => {
         if (
           current.choices.length <=
           2
@@ -945,6 +1440,10 @@ export default function EditQuizPage() {
               choiceIndex !==
               index
           );
+
+        /* =================================================
+           Fix single QCM index
+           ================================================= */
 
         let nextCorrectIndex =
           current.correctChoiceIndex;
@@ -964,6 +1463,31 @@ export default function EditQuizPage() {
             1;
         }
 
+        /* =================================================
+           Fix MULTI indexes
+           ================================================= */
+
+        const nextCorrectIndexes =
+          current
+            .correctChoiceIndexes
+            .filter(
+              (
+                correctIndex
+              ) =>
+                correctIndex !==
+                index
+            )
+            .map(
+              (
+                correctIndex
+              ) =>
+                correctIndex >
+                index
+                  ? correctIndex -
+                      1
+                  : correctIndex
+            );
+
         return {
           ...current,
 
@@ -972,6 +1496,9 @@ export default function EditQuizPage() {
 
           correctChoiceIndex:
             nextCorrectIndex,
+
+          correctChoiceIndexes:
+            nextCorrectIndexes,
         };
       }
     );
@@ -980,11 +1507,13 @@ export default function EditQuizPage() {
       null
     );
 
-    setMessage("");
+    setMessage(
+      ""
+    );
   }
 
   /* =========================================================
-     Special character insertion
+     Special characters
      ========================================================= */
 
   function insertQuestionCharacter(
@@ -1004,7 +1533,9 @@ export default function EditQuizPage() {
       return;
     }
 
-    if (!textarea) {
+    if (
+      !textarea
+    ) {
       updateForm(
         "text",
         currentText +
@@ -1022,12 +1553,12 @@ export default function EditQuizPage() {
       textarea.selectionEnd ??
       start;
 
-    const replacedLength =
-      end - start;
-
     const newLength =
       currentText.length -
-      replacedLength +
+      (
+        end -
+        start
+      ) +
       value.length;
 
     if (
@@ -1080,9 +1611,12 @@ export default function EditQuizPage() {
     const currentText =
       form.choices[
         index
-      ] ?? "";
+      ] ??
+      "";
 
-    if (!input) {
+    if (
+      !input
+    ) {
       if (
         currentText.length +
           value.length <=
@@ -1106,12 +1640,12 @@ export default function EditQuizPage() {
       input.selectionEnd ??
       start;
 
-    const replacedLength =
-      end - start;
-
     const newLength =
       currentText.length -
-      replacedLength +
+      (
+        end -
+        start
+      ) +
       value.length;
 
     if (
@@ -1153,23 +1687,54 @@ export default function EditQuizPage() {
   }
 
   /* =========================================================
-     Save question
+     Save
      ========================================================= */
 
   async function handleSubmit(
     event:
-      FormEvent<HTMLFormElement>
+      FormEvent<
+        HTMLFormElement
+      >
   ) {
     event.preventDefault();
 
-    if (processing) {
+    if (
+      processing
+    ) {
+      return;
+    }
+
+    if (
+      !canUseQuestionType(
+        form.type
+      )
+    ) {
+      if (
+        form.type ===
+        "development"
+      ) {
+        setMessage(
+          `${t(
+            "quizEdit.validation.developmentLimit"
+          )} ${LIMITS.MAX_DEVELOPMENT_QUESTIONS}.`
+        );
+      } else {
+        setMessage(
+          `${t(
+            "quizEdit.validation.automaticLimit"
+          )} ${LIMITS.MAX_QCM_QUESTIONS}.`
+        );
+      }
+
       return;
     }
 
     const cleanText =
       form.text.trim();
 
-    if (!cleanText) {
+    if (
+      !cleanText
+    ) {
       setMessage(
         t(
           "quizEdit.validation.questionRequired"
@@ -1183,7 +1748,8 @@ export default function EditQuizPage() {
       !Number.isInteger(
         form.points
       ) ||
-      form.points < 1
+      form.points <
+        1
     ) {
       setMessage(
         t(
@@ -1210,13 +1776,21 @@ export default function EditQuizPage() {
       return;
     }
 
+    /* =====================================================
+       Choice validation
+       ===================================================== */
+
     if (
       form.type ===
-      "qcm"
+        "qcm" ||
+      form.type ===
+        "multiple_choice"
     ) {
       const cleanChoices =
         form.choices.map(
-          (choice) =>
+          (
+            choice
+          ) =>
             choice.trim()
         );
 
@@ -1235,7 +1809,9 @@ export default function EditQuizPage() {
 
       if (
         cleanChoices.some(
-          (choice) =>
+          (
+            choice
+          ) =>
             !choice
         )
       ) {
@@ -1248,19 +1824,70 @@ export default function EditQuizPage() {
         return;
       }
 
-      if (
-        form.correctChoiceIndex <
-          0 ||
-        form.correctChoiceIndex >=
-          cleanChoices.length
-      ) {
-        setMessage(
-          t(
-            "quizEdit.validation.correctAnswer"
-          )
-        );
+      /* ===================================================
+         QCM
+         =================================================== */
 
-        return;
+      if (
+        form.type ===
+        "qcm"
+      ) {
+        if (
+          form.correctChoiceIndex <
+            0 ||
+          form.correctChoiceIndex >=
+            cleanChoices.length
+        ) {
+          setMessage(
+            t(
+              "quizEdit.validation.correctAnswer"
+            )
+          );
+
+          return;
+        }
+      }
+
+      /* ===================================================
+         MULTI
+         =================================================== */
+
+      if (
+        form.type ===
+        "multiple_choice"
+      ) {
+        if (
+          form.correctChoiceIndexes.length <
+          2
+        ) {
+          setMessage(
+            t(
+              "quizEdit.validation.multipleCorrectMinimum"
+            )
+          );
+
+          return;
+        }
+
+        if (
+          form.correctChoiceIndexes.some(
+            (
+              index
+            ) =>
+              index <
+                0 ||
+              index >=
+                cleanChoices.length
+          )
+        ) {
+          setMessage(
+            t(
+              "quizEdit.validation.multipleCorrectInvalid"
+            )
+          );
+
+          return;
+        }
       }
     }
 
@@ -1270,6 +1897,10 @@ export default function EditQuizPage() {
 
     try {
       let result;
+
+      /* ===================================================
+         Create
+         =================================================== */
 
       if (
         editorMode ===
@@ -1295,6 +1926,26 @@ export default function EditQuizPage() {
               correctChoiceIndex:
                 form.correctChoiceIndex,
             });
+        } else if (
+          form.type ===
+          "multiple_choice"
+        ) {
+          result =
+            await createMultipleChoiceQuestion({
+              quizId,
+
+              text:
+                cleanText,
+
+              points:
+                form.points,
+
+              choices:
+                form.choices,
+
+              correctChoiceIndexes:
+                form.correctChoiceIndexes,
+            });
         } else {
           result =
             await createDevelopmentQuestion({
@@ -1308,6 +1959,10 @@ export default function EditQuizPage() {
             });
         }
       } else {
+        /* =================================================
+           Update
+           ================================================= */
+
         if (
           !selectedQuestion
         ) {
@@ -1339,6 +1994,27 @@ export default function EditQuizPage() {
                   form.correctChoiceIndex,
               }
             );
+        } else if (
+          form.type ===
+          "multiple_choice"
+        ) {
+          result =
+            await updateMultipleChoiceQuestion(
+              selectedQuestion.id,
+              {
+                text:
+                  cleanText,
+
+                points:
+                  form.points,
+
+                choices:
+                  form.choices,
+
+                correctChoiceIndexes:
+                  form.correctChoiceIndexes,
+              }
+            );
         } else {
           result =
             await updateDevelopmentQuestion(
@@ -1358,11 +2034,9 @@ export default function EditQuizPage() {
         !result.success
       ) {
         setMessage(
-          result.message
-        );
-
-        setProcessing(
-          ""
+          t(
+            "quizEdit.messages.saveError"
+          )
         );
 
         return;
@@ -1411,7 +2085,9 @@ export default function EditQuizPage() {
           "quizEdit.messages.saved"
         )
       );
-    } catch (error) {
+    } catch (
+      error
+    ) {
       console.error(
         "Unable to save question:",
         error
@@ -1430,7 +2106,7 @@ export default function EditQuizPage() {
   }
 
   /* =========================================================
-     Delete question
+     Delete
      ========================================================= */
 
   function openDeleteModal() {
@@ -1482,15 +2158,13 @@ export default function EditQuizPage() {
         !result.success
       ) {
         setMessage(
-          result.message
+          t(
+            "quizEdit.messages.deleteError"
+          )
         );
 
         setDeleteModalOpen(
           false
-        );
-
-        setProcessing(
-          ""
         );
 
         return;
@@ -1522,7 +2196,9 @@ export default function EditQuizPage() {
         0
       ) {
         const next =
-          updatedQuestions[0];
+          updatedQuestions[
+            0
+          ];
 
         setSelectedQuestionId(
           next.id
@@ -1538,11 +2214,6 @@ export default function EditQuizPage() {
           )
         );
       } else {
-        /*
-         * Do not call handleNewQuestion()
-         * here because processing is still
-         * "deleting".
-         */
         setSelectedQuestionId(
           null
         );
@@ -1561,7 +2232,9 @@ export default function EditQuizPage() {
           "quizEdit.messages.deleted"
         )
       );
-    } catch (error) {
+    } catch (
+      error
+    ) {
       console.error(
         "Unable to delete question:",
         error
@@ -1673,7 +2346,7 @@ export default function EditQuizPage() {
           </header>
 
           {/* =================================================
-              Progress
+              Main progress
               ================================================= */}
 
           <section
@@ -1769,7 +2442,162 @@ export default function EditQuizPage() {
           </section>
 
           {/* =================================================
-              Main editor
+              Question type counters
+              ================================================= */}
+
+          <section
+            className={
+              styles.typeStatsSection
+            }
+          >
+            <div
+              className={
+                styles.typeStatsHeader
+              }
+            >
+              <div>
+                <h2>
+                  {t(
+                    "quizEdit.typeStats.title"
+                  )}
+                </h2>
+
+                <p>
+                  {t(
+                    "quizEdit.typeStats.description"
+                  )}
+                </p>
+              </div>
+
+              <span
+                className={
+                  styles.totalLimitBadge
+                }
+              >
+                {questionCount}
+                {" / "}
+                {
+                  LIMITS
+                    .MAX_QUESTIONS_PER_QUIZ
+                }
+                {" "}
+                {t(
+                  "quizEdit.typeStats.total"
+                )}
+              </span>
+            </div>
+
+            <div
+              className={
+                styles.typeStatsGrid
+              }
+            >
+              <article
+                className={
+                  styles.typeStatCard
+                }
+              >
+                <span>
+                  {t(
+                    "quizEdit.typeStats.qcm"
+                  )}
+                </span>
+
+                <strong>
+                  {qcmCount}
+                </strong>
+
+                <small>
+                  {t(
+                    "quizEdit.typeStats.qcmHelp"
+                  )}
+                </small>
+              </article>
+
+              <article
+                className={
+                  styles.typeStatCard
+                }
+              >
+                <span>
+                  {t(
+                    "quizEdit.typeStats.multipleChoice"
+                  )}
+                </span>
+
+                <strong>
+                  {multipleChoiceCount}
+                </strong>
+
+                <small>
+                  {t(
+                    "quizEdit.typeStats.multipleChoiceHelp"
+                  )}
+                </small>
+              </article>
+
+              <article
+                className={
+                  styles.typeStatCard
+                }
+              >
+                <span>
+                  {t(
+                    "quizEdit.typeStats.development"
+                  )}
+                </span>
+
+                <strong>
+                  {developmentCount}
+                  {" / "}
+                  {
+                    LIMITS
+                      .MAX_DEVELOPMENT_QUESTIONS
+                  }
+                </strong>
+
+                <small>
+                  {t(
+                    "quizEdit.typeStats.developmentHelp"
+                  )}
+                </small>
+              </article>
+
+              <article
+                className={`${styles.typeStatCard} ${
+                  automaticQuestionCount >=
+                  LIMITS
+                    .MAX_QCM_QUESTIONS
+                    ? styles.limitReachedCard
+                    : ""
+                }`}
+              >
+                <span>
+                  {t(
+                    "quizEdit.typeStats.autoGraded"
+                  )}
+                </span>
+
+                <strong>
+                  {automaticQuestionCount}
+                  {" / "}
+                  {
+                    LIMITS
+                      .MAX_QCM_QUESTIONS
+                  }
+                </strong>
+
+                <small>
+                  {t(
+                    "quizEdit.typeStats.autoGradedHelp"
+                  )}
+                </small>
+              </article>
+            </div>
+          </section>
+
+          {/* =================================================
+              Editor layout
               ================================================= */}
 
           <div
@@ -1826,6 +2654,35 @@ export default function EditQuizPage() {
 
               <div
                 className={
+                  styles.miniTypeCounters
+                }
+              >
+                <span>
+                  {t(
+                    "quizEdit.typeStats.qcm"
+                  )}{" "}
+                  <strong>
+                    {qcmCount}
+                  </strong>
+                </span>
+
+                <span>
+                  MULTI{" "}
+                  <strong>
+                    {multipleChoiceCount}
+                  </strong>
+                </span>
+
+                <span>
+                  DEV{" "}
+                  <strong>
+                    {developmentCount}
+                  </strong>
+                </span>
+              </div>
+
+              <div
+                className={
                   styles.questionList
                 }
               >
@@ -1875,12 +2732,9 @@ export default function EditQuizPage() {
                           }
                         >
                           <strong>
-                            {question.type ===
-                            "qcm"
-                              ? "QCM"
-                              : t(
-                                  "quizEdit.questions.developmentShort"
-                                )}
+                            {getQuestionTypeShortLabel(
+                              question
+                            )}
                           </strong>
 
                           <small>
@@ -2019,7 +2873,9 @@ export default function EditQuizPage() {
                   handleSubmit
                 }
               >
-                {/* Type */}
+                {/* ===========================================
+                    Type
+                    =========================================== */}
 
                 <label>
                   {t(
@@ -2032,36 +2888,70 @@ export default function EditQuizPage() {
                     }
                     onChange={(
                       event
-                    ) => {
-                      const type =
+                    ) =>
+                      handleTypeChange(
                         event.target
-                          .value as QuestionType;
-
-                      updateForm(
-                        "type",
-                        type
-                      );
-
-                      setActiveChoicePickerIndex(
-                        null
-                      );
-                    }}
+                          .value as QuestionType
+                      )
+                    }
                   >
-                    <option value="qcm">
+                    <option
+                      value="qcm"
+                      disabled={
+                        !qcmTypeAvailable &&
+                        form.type !==
+                          "qcm"
+                      }
+                    >
                       {t(
-                        "quizEdit.editor.qcm"
-                      )}
+                    "quizEdit.typeStats.qcm"
+                  )} — {t(
+                    "quizEdit.typeStats.qcmHelp"
+                  )}
                     </option>
 
-                    <option value="development">
+                    <option
+                      value="multiple_choice"
+                      disabled={
+                        !multipleChoiceTypeAvailable &&
+                        form.type !==
+                          "multiple_choice"
+                      }
+                    >
+                      {t(
+                    "quizEdit.multipleChoice.option"
+                  )}
+                    </option>
+
+                    <option
+                      value="development"
+                      disabled={
+                        !developmentTypeAvailable &&
+                        form.type !==
+                          "development"
+                      }
+                    >
                       {t(
                         "quizEdit.editor.development"
                       )}
                     </option>
                   </select>
+
+                  <small>
+                    {form.type ===
+                    "development"
+                      ? `${developmentCount} / ${LIMITS.MAX_DEVELOPMENT_QUESTIONS} ${t(
+                          "quizEdit.editor.developmentCounterLabel"
+                        )}`
+                      : `${automaticQuestionCount} / ${LIMITS.MAX_QCM_QUESTIONS} ${t(
+                          "quizEdit.editor.automaticCounterLabel"
+                        )}`}
+                  </small>
                 </label>
 
-                {/* Question text */}
+                {/* ===========================================
+                    Question text
+                    =========================================== */}
 
                 <label>
                   {t(
@@ -2135,7 +3025,9 @@ export default function EditQuizPage() {
                   </small>
                 </label>
 
-                {/* Points */}
+                {/* ===========================================
+                    Points
+                    =========================================== */}
 
                 <label
                   className={
@@ -2179,19 +3071,30 @@ export default function EditQuizPage() {
                   </small>
                 </label>
 
-                {/* QCM choices */}
+                {/* ===========================================
+                    {t(
+                    "quizEdit.typeStats.qcm"
+                  )} + MULTI answers
+                    =========================================== */}
 
-                {form.type ===
-                  "qcm" && (
+                {(form.type ===
+                  "qcm" ||
+                  form.type ===
+                    "multiple_choice") && (
                   <fieldset
                     className={
                       styles.choicesSection
                     }
                   >
                     <legend>
-                      {t(
-                        "quizEdit.editor.answers"
-                      )}
+                      {form.type ===
+                      "multiple_choice"
+                        ? t(
+                            "quizEdit.multipleChoice.answersTitle"
+                          )
+                        : t(
+                            "quizEdit.editor.answers"
+                          )}
                     </legend>
 
                     <p
@@ -2199,10 +3102,46 @@ export default function EditQuizPage() {
                         styles.choiceHelp
                       }
                     >
-                      {t(
-                        "quizEdit.editor.answersHelp"
-                      )}
+                      {form.type ===
+                      "multiple_choice"
+                        ? t(
+                            "quizEdit.multipleChoice.answersHelp"
+                          )
+                        : t(
+                            "quizEdit.editor.answersHelp"
+                          )}
                     </p>
+
+                    {form.type ===
+                      "multiple_choice" && (
+                      <div
+                        className={
+                          styles.multipleChoiceNotice
+                        }
+                      >
+                        <strong>
+                          {t(
+                    "quizEdit.typeStats.multipleChoice"
+                  )}
+                        </strong>
+
+                        <span>
+                          {
+                            form
+                              .correctChoiceIndexes
+                              .length
+                          }{" "}
+                          {form.correctChoiceIndexes.length ===
+                          1
+                            ? t(
+                                "quizEdit.multipleChoice.correctAnswerSelected"
+                              )
+                            : t(
+                                "quizEdit.multipleChoice.correctAnswersSelected"
+                              )}
+                        </span>
+                      </div>
+                    )}
 
                     <div
                       className={
@@ -2213,153 +3152,190 @@ export default function EditQuizPage() {
                         (
                           choice,
                           index
-                        ) => (
-                          <div
-                            key={
-                              index
-                            }
-                            className={
-                              styles.choiceBlock
-                            }
-                          >
-                            <div
-                              className={`${styles.choiceRow} ${
-                                form.correctChoiceIndex ===
-                                index
-                                  ? styles.correctChoice
-                                  : ""
-                              }`}
-                            >
-                              <label
-                                className={
-                                  styles.correctSelector
-                                }
-                                title={t(
-                                  "quizEdit.editor.correctAnswer"
-                                )}
-                              >
-                                <input
-                                  type="radio"
-                                  name="correct-choice"
-                                  checked={
-                                    form.correctChoiceIndex ===
+                        ) => {
+                          const correct =
+                            form.type ===
+                            "multiple_choice"
+                              ? form
+                                  .correctChoiceIndexes
+                                  .includes(
                                     index
+                                  )
+                              : form.correctChoiceIndex ===
+                                index;
+
+                          return (
+                            <div
+                              key={
+                                index
+                              }
+                              className={
+                                styles.choiceBlock
+                              }
+                            >
+                              <div
+                                className={`${styles.choiceRow} ${
+                                  correct
+                                    ? styles.correctChoice
+                                    : ""
+                                }`}
+                              >
+                                <label
+                                  className={
+                                    styles.correctSelector
                                   }
-                                  onChange={() =>
-                                    updateForm(
-                                      "correctChoiceIndex",
+                                  title={
+                                    form.type ===
+                                    "multiple_choice"
+                                      ? t(
+                                          "quizEdit.editor.toggleCorrectAnswer"
+                                        )
+                                      : t(
+                                          "quizEdit.editor.correctAnswer"
+                                        )
+                                  }
+                                >
+                                  <input
+                                    type={
+                                      form.type ===
+                                      "multiple_choice"
+                                        ? "checkbox"
+                                        : "radio"
+                                    }
+                                    name={
+                                      form.type ===
+                                      "multiple_choice"
+                                        ? `correct-choice-${index}`
+                                        : "correct-choice"
+                                    }
+                                    checked={
+                                      correct
+                                    }
+                                    onChange={() => {
+                                      if (
+                                        form.type ===
+                                        "multiple_choice"
+                                      ) {
+                                        toggleMultipleCorrectChoice(
+                                          index
+                                        );
+                                      } else {
+                                        updateForm(
+                                          "correctChoiceIndex",
+                                          index
+                                        );
+                                      }
+                                    }}
+                                  />
+
+                                  <span>
+                                    {String.fromCharCode(
+                                      65 +
+                                        index
+                                    )}
+                                  </span>
+                                </label>
+
+                                <input
+                                  ref={(
+                                    element
+                                  ) => {
+                                    choiceRefs.current[
                                       index
+                                    ] =
+                                      element;
+                                  }}
+                                  type="text"
+                                  value={
+                                    choice
+                                  }
+                                  maxLength={
+                                    MAX_CHOICE_LENGTH
+                                  }
+                                  placeholder={`${t(
+                                    "quizEdit.editor.answer"
+                                  )} ${
+                                    index +
+                                    1
+                                  }`}
+                                  onChange={(
+                                    event
+                                  ) =>
+                                    updateChoice(
+                                      index,
+                                      event.target
+                                        .value
                                     )
                                   }
                                 />
 
-                                <span>
-                                  {String.fromCharCode(
-                                    65 +
-                                      index
+                                <button
+                                  type="button"
+                                  className={
+                                    styles.choiceSymbolButton
+                                  }
+                                  onClick={() =>
+                                    setActiveChoicePickerIndex(
+                                      (
+                                        current
+                                      ) =>
+                                        current ===
+                                        index
+                                          ? null
+                                          : index
+                                    )
+                                  }
+                                  aria-expanded={
+                                    activeChoicePickerIndex ===
+                                    index
+                                  }
+                                  aria-label={t(
+                                    "quizEdit.editor.specialCharacters"
                                   )}
-                                </span>
-                              </label>
+                                >
+                                  Ω
+                                </button>
 
-                              <input
-                                ref={(
-                                  element
-                                ) => {
-                                  choiceRefs.current[
-                                    index
-                                  ] =
-                                    element;
-                                }}
-                                type="text"
-                                value={
-                                  choice
-                                }
-                                maxLength={
-                                  MAX_CHOICE_LENGTH
-                                }
-                                placeholder={`${t(
-                                  "quizEdit.editor.answer"
-                                )} ${
-                                  index +
-                                  1
-                                }`}
-                                onChange={(
-                                  event
-                                ) =>
-                                  updateChoice(
-                                    index,
-                                    event.target
-                                      .value
-                                  )
-                                }
-                              />
-
-                              <button
-                                type="button"
-                                className={
-                                  styles.choiceSymbolButton
-                                }
-                                onClick={() =>
-                                  setActiveChoicePickerIndex(
-                                    (
-                                      current
-                                    ) =>
-                                      current ===
+                                <button
+                                  type="button"
+                                  className={
+                                    styles.removeChoiceButton
+                                  }
+                                  disabled={
+                                    form
+                                      .choices
+                                      .length <=
+                                    2
+                                  }
+                                  onClick={() =>
+                                    removeChoice(
                                       index
-                                        ? null
-                                        : index
-                                  )
-                                }
-                                aria-expanded={
-                                  activeChoicePickerIndex ===
-                                  index
-                                }
-                                aria-label={t(
-                                  "quizEdit.editor.specialCharacters"
-                                )}
-                              >
-                                Ω
-                              </button>
+                                    )
+                                  }
+                                  aria-label={t(
+                                    "quizEdit.editor.removeAnswer"
+                                  )}
+                                >
+                                  ×
+                                </button>
+                              </div>
 
-                              <button
-                                type="button"
-                                className={
-                                  styles.removeChoiceButton
-                                }
-                                disabled={
-                                  form
-                                    .choices
-                                    .length <=
-                                  2
-                                }
-                                onClick={() =>
-                                  removeChoice(
-                                    index
-                                  )
-                                }
-                                aria-label={t(
-                                  "quizEdit.editor.removeAnswer"
-                                )}
-                              >
-                                ×
-                              </button>
-                            </div>
-
-                            {activeChoicePickerIndex ===
-                              index && (
-                              <SpecialCharactersPicker
-                                onInsert={(
-                                  value
-                                ) =>
-                                  insertChoiceCharacter(
-                                    index,
+                              {activeChoicePickerIndex ===
+                                index && (
+                                <SpecialCharactersPicker
+                                  onInsert={(
                                     value
-                                  )
-                                }
-                              />
-                            )}
-                          </div>
-                        )
+                                  ) =>
+                                    insertChoiceCharacter(
+                                      index,
+                                      value
+                                    )
+                                  }
+                                />
+                              )}
+                            </div>
+                          );
+                        }
                       )}
                     </div>
 
@@ -2380,7 +3356,9 @@ export default function EditQuizPage() {
                   </fieldset>
                 )}
 
-                {/* Development info */}
+                {/* ===========================================
+                    Development
+                    =========================================== */}
 
                 {form.type ===
                   "development" && (
@@ -2403,7 +3381,9 @@ export default function EditQuizPage() {
                   </div>
                 )}
 
-                {/* Message */}
+                {/* ===========================================
+                    Message
+                    =========================================== */}
 
                 {message && (
                   <p
@@ -2416,7 +3396,9 @@ export default function EditQuizPage() {
                   </p>
                 )}
 
-                {/* Actions */}
+                {/* ===========================================
+                    Actions
+                    =========================================== */}
 
                 <div
                   className={
@@ -2460,7 +3442,7 @@ export default function EditQuizPage() {
       </main>
 
       {/* =====================================================
-          Delete question confirmation
+          Delete modal
           ===================================================== */}
 
       {deleteModalOpen &&

@@ -9,9 +9,12 @@ import {
 } from "next/font/google";
 
 import AppProviders from "@/components/AppProviders";
-import HelpSupport from "@/components/HelpSupport";
 
 import "./globals.css";
+
+/* =========================================================
+   Fonts
+   ========================================================= */
 
 const geistSans =
   Geist({
@@ -33,25 +36,46 @@ const geistMono =
     ],
   });
 
-export const metadata: Metadata =
-  {
-    title: "ULearn",
+/* =========================================================
+   Metadata
+   ========================================================= */
 
-    description:
-      "ULearn is a web-based platform where teachers can create quizzes, correct student answers, deliver scores, and track student progress.",
+export const metadata:
+  Metadata = {
+  title:
+    "ULearn",
 
-    icons: {
-      icon: "/logo.png",
-      apple: "/logo.png",
-      shortcut: "/logo.png",
-    },
-  };
+  description:
+    "ULearn is a web-based platform where teachers can create quizzes, correct student answers, deliver scores, and track student progress.",
 
-export const viewport: Viewport =
-  {
-    width: "device-width",
-    initialScale: 1,
-  };
+  icons: {
+    icon:
+      "/logo.png",
+
+    apple:
+      "/logo.png",
+
+    shortcut:
+      "/logo.png",
+  },
+};
+
+/* =========================================================
+   Viewport
+   ========================================================= */
+
+export const viewport:
+  Viewport = {
+  width:
+    "device-width",
+
+  initialScale:
+    1,
+};
+
+/* =========================================================
+   Root layout
+   ========================================================= */
 
 export default function RootLayout({
   children,
@@ -69,8 +93,6 @@ export default function RootLayout({
       >
         <AppProviders>
           {children}
-
-          <HelpSupport />
         </AppProviders>
       </body>
     </html>

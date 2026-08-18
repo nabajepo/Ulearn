@@ -155,7 +155,9 @@
     "account": {
       "loading": "Loading account...",
       "notSignedIn": "Not signed in",
-      "authenticatedUser": "Authenticated user"
+      "notIdentified": "Not identified",
+      "authenticatedUser": "Authenticated user",
+      "student": "Student"
     },
 
     "form": {
@@ -417,7 +419,20 @@
     "shuffleQuestions": "Shuffle questions",
     "shuffleChoices": "Shuffle choices",
     "showFinalScore": "Show final score",
-    "showCorrectAnswers": "Show correct answers"
+    "showCorrectAnswers": "Show correct answers",
+    "createdQuestions": "Questions created",
+    "assignedPoints": "Points assigned"
+  },
+  "structure": {
+  "title": "Quiz structure",
+  "ready": "READY ✓",
+  "incomplete": "INCOMPLETE",
+  "complete": "Complete ✓",
+  "questionsRemaining": "questions remaining",
+  "pointsRemaining": "points remaining",
+  "readyText": "The quiz structure is complete.",
+  "incompleteText": "Complete the quiz structure before launching.",
+  "launchBlocked": "Complete all planned questions and assign all quiz points before launching the quiz."
   },
 
   "modes": {
@@ -456,7 +471,28 @@
     "closeAria": "Close delete confirmation",
     "confirmBefore": "Are you sure you want to delete",
     "warning": "This action cannot be undone. The quiz and all related data will be permanently removed."
-  }
+  },
+  "studentAccess": {
+  "button": "Student access",
+  "badge": "Student access",
+  "title": "Share this quiz with your students",
+  "description": "Students can use the direct link or enter the access code to join this quiz.",
+  "close": "Close student access",
+  "code": "Access code",
+  "codeHelp": "Share this short code with students who want to join manually.",
+  "link": "Student link",
+  "linkHelp": "Share this link to send students directly to the quiz access page.",
+  "copy": "Copy",
+  "copied": "Copied",
+  "copyError": "Unable to copy to the clipboard.",
+  "preparingLink": "Preparing link...",
+  "mode": "Availability mode",
+  "starts": "Session starts",
+  "availableFrom": "Available from",
+  "ends": "Ends",
+  "studentTime": "Time per student",
+  "sessionTime": "Session duration"
+}
 },
 "quizSettings": {
   "badge": "Quiz settings",
@@ -557,6 +593,27 @@
     "savingSubtitle": "Updating your quiz...",
     "deleting": "Deleting the question..."
   },
+  "typeStats": {
+  "title": "Question types",
+  "description": "Follow the limits before creating new questions.",
+  "qcm": "QCM",
+  "qcmHelp": "One correct answer",
+  "multipleChoice": "Multiple choice",
+  "multipleChoiceHelp": "Several correct answers",
+  "development": "Development",
+  "developmentHelp": "Manual grading",
+  "autoGraded": "Auto-graded",
+  "autoGradedHelp": "QCM + multiple choice",
+  "total": "total"
+},
+
+"multipleChoice": {
+  "option": "Multiple choice — several correct answers",
+  "answersTitle": "Correct answers",
+  "answersHelp": "Select at least two correct answers. Several letters can be active.",
+  "correctAnswerSelected": "correct answer selected",
+  "correctAnswersSelected": "correct answers selected"
+},
 
   "access": {
     "title": "Access denied",
@@ -611,6 +668,8 @@
     "addAnswer": "Add answer",
     "developmentTitle": "Development question",
     "specialCharacters": "Special characters",
+    "automaticCounterLabel": "auto-graded",
+    "developmentCounterLabel": "development",
     "developmentHelp": "Students will write a free-form answer. The teacher will grade it manually."
   },
 
@@ -636,7 +695,8 @@
     "maximumPoints": "The maximum available points for this question are",
     "twoChoices": "A QCM question must contain at least two answers.",
     "emptyChoice": "All answer choices must contain text.",
-    "correctAnswer": "Select the correct answer."
+    "correctAnswer": "Select the correct answer.",
+    "multipleCorrectMinimum": "Select at least two correct answers."
   },
 
   "deleteModal": {
@@ -671,6 +731,175 @@
   "formula": {
     "title": "Advanced formulas",
     "description": "Fractions, matrices, limits and complex formulas will be available through the formula editor."
+  }
+},
+"joinQuiz": {
+  "loading": "Loading quiz access...",
+
+  "badge": "Student quiz",
+  "noDescription": "No description provided.",
+  "teacher": {
+  "label": "Created by"
+   },
+
+  "starting": {
+    "title": "Starting quiz...",
+    "subtitle": "Preparing your personal quiz session..."
+  },
+
+  "notFound": {
+    "title": "Quiz not found",
+    "text": "This access code is invalid or no longer available."
+  },
+
+  "waiting": {
+    "label": "Starts in",
+    "text": "This quiz has not started yet. Keep this page open."
+  },
+
+  "ended": {
+    "title": "Quiz ended",
+    "text": "The quiz availability period has ended."
+  },
+
+  "unavailable": {
+    "title": "Quiz unavailable",
+    "text": "This quiz is not currently available to students."
+  },
+
+  "summary": {
+    "questions": "Questions",
+    "points": "Total points",
+    "timePerStudent": "Time per student",
+    "sessionDuration": "Session duration",
+    "mode": "Mode",
+    "starts": "Starts",
+    "ends": "Ends",
+    "timeZone": "Quiz time zone",
+    "timeRemaining": "Time remaining",
+    "immediately": "Immediately",
+    "notSet": "Not set"
+  },
+
+  "modes": {
+    "openWindow": "Open window",
+    "scheduledSession": "Scheduled session"
+  },
+
+  "student": {
+    "badge": "Student identification",
+    "title": "Enter your information",
+    "description": "Your name and email will identify your quiz attempt.",
+    "name": "Full name",
+    "namePlaceholder": "Example: Jean Dupont",
+    "email": "Email address",
+    "emailPlaceholder": "name@example.com",
+    "start": "Start quiz"
+  },
+
+  "validation": {
+    "nameRequired": "Please enter your full name.",
+    "emailRequired": "Please enter your email address.",
+    "invalidEmail": "Please enter a valid email address."
+  },
+
+  "messages": {
+    "loadError": "Unable to load this quiz.",
+    "startError": "Unable to start the quiz. Please try again."
+  }
+},
+"quizSession": {
+  "loading": "Loading your quiz session...",
+
+  "access": {
+    "title": "Quiz unavailable",
+    "text": "This quiz session is unavailable or could not be loaded.",
+    "notFound": "This quiz attempt could not be found.",
+    "loadError": "Unable to load your quiz session."
+  },
+
+  "header": {
+    "timeRemaining": "Time remaining",
+    "answered": "Answered"
+  },
+
+  "questions": {
+    "title": "Questions",
+    "development": "Development"
+  },
+
+  "questionTypes": {
+    "qcm": "QCM",
+    "multipleChoice": "Multiple choice",
+    "development": "Development"
+  },
+
+  "question": {
+    "label": "Question",
+    "points": "pts",
+    "developmentAnswer": "Your answer",
+    "developmentPlaceholder": "Write your answer here..."
+  },
+
+  "choiceInstructions": {
+    "singleTitle": "One answer",
+    "singleText": "Select the best answer.",
+    "multipleTitle": "Multiple answers possible",
+    "multipleText": "Select all the answers you believe are correct. You can select or deselect multiple choices."
+  },
+
+  "symbols": {
+    "open": "Special characters",
+    "close": "Close",
+    "panelAria": "Special character tools",
+    "insertSymbol": "Insert symbol",
+
+    "superscript": "Superscript",
+    "superscriptPlaceholder": "e.g. 12",
+    "insertSuperscript": "Insert superscript",
+
+    "subscript": "Subscript",
+    "subscriptPlaceholder": "e.g. 23",
+    "insertSubscript": "Insert subscript",
+
+    "fraction": "Fraction",
+    "numerator": "Numerator",
+    "denominator": "Denominator",
+    "numeratorPlaceholder": "1",
+    "denominatorPlaceholder": "2",
+    "insert": "Insert"
+  },
+
+  "saving": {
+    "saving": "Saving...",
+    "saved": "Saved ✓"
+  },
+
+  "actions": {
+    "previous": "Previous",
+    "next": "Next",
+    "submit": "Submit quiz",
+    "cancel": "Cancel"
+  },
+
+  "submit": {
+    "badge": "Final submission",
+    "title": "Submit your quiz?",
+    "text": "Once submitted, your answers can no longer be changed. Make sure you are ready before continuing.",
+    "submitting": "Submitting...",
+    "closeAria": "Close submission confirmation"
+  },
+
+  "submitted": {
+    "title": "Quiz submitted",
+    "text": "Your answers have been submitted successfully. Your result will be processed according to the quiz settings.",
+    "student": "Student",
+    "email": "Email"
+  },
+
+  "messages": {
+    "saveError": "Unable to save your answer. Please try again.",
+    "submitError": "Unable to submit your quiz. Please try again."
   }
 }
 }

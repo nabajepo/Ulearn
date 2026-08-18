@@ -4,9 +4,11 @@ import Link from "next/link";
 
 import Reveal from "@/components/Reveal";
 import SectionBox from "@/components/SectionBox";
+import HelpSupport from "@/components/HelpSupport";
 import ShowFeedbacks from "@/components/ShowFeedbacks";
 import PlatformStats from "@/components/PlatformStats";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
+
 
 import {
   SignInButtonBox,
@@ -590,6 +592,7 @@ export default function Home() {
           </section>
         </Reveal>
       </main>
+      <HelpSupport context="anonymous"/>
     </>
   );
 }

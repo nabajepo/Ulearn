@@ -1,0 +1,587 @@
+.page {
+  min-height: 100vh;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 2rem;
+
+  background: var(--page-gradient);
+}
+
+.card {
+  width: min(
+    1050px,
+    100%
+  );
+
+  padding: 2rem;
+
+  border: 1px solid var(--border-color);
+  border-radius: 28px;
+
+  background: #ffffff;
+
+  box-shadow: var(--shadow);
+}
+
+
+/* =========================================================
+   Top
+   ========================================================= */
+
+.top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  gap: 1rem;
+
+  margin-bottom: 2rem;
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+
+  gap: 0.7rem;
+
+  color: var(--main-color);
+
+  font-size: 1.1rem;
+  font-weight: 900;
+}
+
+.brandIcon {
+  width: 38px;
+  height: 38px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 12px;
+
+  background: var(--main-color);
+  color: #ffffff;
+
+  font-weight: 900;
+}
+
+.codeBadge {
+  padding:
+    0.45rem
+    0.7rem;
+
+  border-radius: 999px;
+
+  background: var(--soft-purple);
+  color: var(--main-color);
+
+  font-size: 0.76rem;
+  font-weight: 900;
+
+  letter-spacing: 0.08em;
+}
+
+
+/* =========================================================
+   Hero
+   ========================================================= */
+
+.hero {
+  padding-bottom: 1.5rem;
+
+  border-bottom: 1px solid var(--border-color);
+}
+
+.badge {
+  width: fit-content;
+
+  display: inline-flex;
+
+  margin-bottom: 0.65rem;
+
+  padding:
+    0.4rem
+    0.75rem;
+
+  border-radius: 999px;
+
+  background: var(--soft-purple);
+  color: var(--main-color);
+
+  font-size: 0.74rem;
+  font-weight: 900;
+}
+
+.hero h1 {
+  margin-bottom: 0.6rem;
+
+  color: var(--main-color);
+
+  font-size: clamp(
+    2.5rem,
+    6vw,
+    4.5rem
+  );
+
+  font-weight: 900;
+  line-height: 1;
+
+  letter-spacing: -1.5px;
+}
+
+
+/* =========================================================
+   Quiz creator
+   ========================================================= */
+
+.createdBy {
+  width: fit-content;
+
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+
+  gap: 0.35rem;
+
+  margin-bottom: 0.75rem;
+
+  padding:
+    0.5rem
+    0.75rem;
+
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+
+  background: var(--soft-purple);
+
+  font-size: 0.78rem;
+  line-height: 1.4;
+}
+
+.createdBy span {
+  color: rgba(
+    23,
+    23,
+    23,
+    0.58
+  );
+
+  font-weight: 700;
+}
+
+.createdBy strong {
+  color: var(--main-color);
+
+  font-weight: 900;
+}
+
+.description {
+  max-width: 760px;
+
+  color: rgba(
+    23,
+    23,
+    23,
+    0.65
+  );
+
+  font-size: 0.95rem;
+  line-height: 1.65;
+}
+
+
+/* =========================================================
+   State box
+   ========================================================= */
+
+.stateBox {
+  margin-top: 1.3rem;
+
+  padding: 1.2rem;
+
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+
+  background: var(--soft-purple);
+}
+
+.stateBox span {
+  display: block;
+
+  margin-bottom: 0.35rem;
+
+  color: rgba(
+    23,
+    23,
+    23,
+    0.58
+  );
+
+  font-size: 0.74rem;
+  font-weight: 800;
+}
+
+.stateBox strong {
+  display: block;
+
+  color: var(--main-color);
+
+  font-size: 1.4rem;
+  font-weight: 900;
+}
+
+.stateBox p {
+  margin-top: 0.4rem;
+
+  color: rgba(
+    23,
+    23,
+    23,
+    0.65
+  );
+
+  font-size: 0.8rem;
+  line-height: 1.5;
+}
+
+.countdown {
+  font-variant-numeric: tabular-nums;
+}
+
+
+/* =========================================================
+   Summary
+   ========================================================= */
+
+.summary {
+  display: grid;
+
+  grid-template-columns:
+    repeat(
+      4,
+      minmax(
+        0,
+        1fr
+      )
+    );
+
+  gap: 0.8rem;
+
+  margin: 1.5rem 0;
+}
+
+.summary article {
+  min-width: 0;
+
+  padding: 1rem;
+
+  border: 1px solid var(--border-color);
+  border-radius: 14px;
+
+  background: var(--soft-purple);
+}
+
+.summary span {
+  display: block;
+
+  margin-bottom: 0.35rem;
+
+  color: rgba(
+    23,
+    23,
+    23,
+    0.55
+  );
+
+  font-size: 0.7rem;
+  font-weight: 800;
+}
+
+.summary strong {
+  display: block;
+
+  color: var(--main-color);
+
+  font-size: 0.86rem;
+  font-weight: 900;
+  line-height: 1.45;
+
+  overflow-wrap: anywhere;
+}
+
+
+/* =========================================================
+   Student section
+   ========================================================= */
+
+.studentSection {
+  margin-top: 1.5rem;
+
+  padding: 1.4rem;
+
+  border: 1px solid var(--border-color);
+  border-radius: 20px;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(
+        42,
+        3,
+        105,
+        0.035
+      ),
+      #ffffff 38%
+    );
+}
+
+.studentHeading {
+  margin-bottom: 1rem;
+}
+
+.studentHeading h2 {
+  margin-bottom: 0.4rem;
+
+  color: var(--main-color);
+
+  font-size: 1.6rem;
+  font-weight: 900;
+}
+
+.studentHeading p {
+  color: rgba(
+    23,
+    23,
+    23,
+    0.62
+  );
+
+  font-size: 0.82rem;
+  line-height: 1.55;
+}
+
+
+/* =========================================================
+   Form
+   ========================================================= */
+
+.form {
+  display: grid;
+
+  grid-template-columns:
+    repeat(
+      2,
+      minmax(
+        0,
+        1fr
+      )
+    );
+
+  gap: 1rem;
+}
+
+.form label {
+  display: grid;
+
+  gap: 0.5rem;
+
+  color: var(--main-color);
+
+  font-size: 0.82rem;
+  font-weight: 900;
+}
+
+.form input {
+  width: 100%;
+  min-height: 52px;
+
+  padding: 0.9rem 1rem;
+
+  border: 1px solid var(--border-color);
+  border-radius: 13px;
+
+  background: #ffffff;
+  color: var(--foreground);
+
+  font-size: 0.9rem;
+  font-weight: 600;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.form input:focus {
+  border-color: var(--main-color);
+
+  box-shadow:
+    0 0 0 3px
+    var(--soft-purple);
+}
+
+.form input:disabled {
+  opacity: 0.58;
+
+  cursor: not-allowed;
+}
+
+.form small {
+  color: rgba(
+    23,
+    23,
+    23,
+    0.52
+  );
+
+  font-size: 0.67rem;
+  font-weight: 600;
+  line-height: 1.45;
+}
+
+.form :global(.app-button) {
+  width: fit-content;
+
+  align-self: end;
+}
+
+
+/* =========================================================
+   Message
+   ========================================================= */
+
+.message {
+  grid-column: 1 / -1;
+
+  padding: 0.85rem 1rem;
+
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+
+  background: var(--soft-purple);
+  color: var(--main-color);
+
+  font-size: 0.78rem;
+  font-weight: 800;
+  line-height: 1.5;
+}
+
+
+/* =========================================================
+   Error card
+   ========================================================= */
+
+.errorCard {
+  width: min(
+    560px,
+    100%
+  );
+
+  padding: 2.5rem;
+
+  border: 1px solid var(--border-color);
+  border-radius: 28px;
+
+  background: #ffffff;
+
+  text-align: center;
+
+  box-shadow: var(--shadow);
+}
+
+.errorCard h1 {
+  margin-bottom: 0.8rem;
+
+  color: var(--main-color);
+
+  font-size: 2.2rem;
+  font-weight: 900;
+}
+
+.errorCard p {
+  color: rgba(
+    23,
+    23,
+    23,
+    0.65
+  );
+
+  line-height: 1.6;
+}
+
+.accessCode {
+  display: inline-flex;
+
+  margin-top: 1.2rem;
+
+  padding:
+    0.7rem
+    1rem;
+
+  border-radius: 12px;
+
+  background: var(--soft-purple);
+  color: var(--main-color);
+
+  font-size: 1.1rem;
+  font-weight: 900;
+
+  letter-spacing: 0.12em;
+}
+
+
+/* =========================================================
+   Responsive
+   ========================================================= */
+
+@media (max-width: 900px) {
+  .summary {
+    grid-template-columns:
+      repeat(
+        2,
+        minmax(
+          0,
+          1fr
+        )
+      );
+  }
+}
+
+@media (max-width: 700px) {
+  .page {
+    padding: 1rem;
+  }
+
+  .card {
+    padding: 1.3rem;
+  }
+
+  .summary {
+    grid-template-columns: 1fr;
+  }
+
+  .form {
+    grid-template-columns: 1fr;
+  }
+
+  .form :global(.app-button) {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .top {
+    align-items: flex-start;
+  }
+
+  .hero h1 {
+    font-size: 2.5rem;
+  }
+
+  .createdBy {
+    width: 100%;
+  }
+}

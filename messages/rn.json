@@ -153,9 +153,11 @@
     "cancel": "Hagarika",
 
     "account": {
-      "loading": "Turiko turazana konti...",
+       "loading": "Turiko turazana konti...",
       "notSignedIn": "Nta konti iriko irakoreshwa",
-      "authenticatedUser": "Uwukoresha yemejwe"
+      "notIdentified": "Ntiramenyekana",
+      "authenticatedUser": "Uwukoresha yemejwe",
+      "student": "Umunyeshure"
     },
 
     "form": {
@@ -417,7 +419,20 @@
     "shuffleQuestions": "Kuvanga ibibazo",
     "shuffleChoices": "Kuvanga amahitamwo",
     "showFinalScore": "Kwerekana amanota ya nyuma",
-    "showCorrectAnswers": "Kwerekana inyishu zibereye"
+    "showCorrectAnswers": "Kwerekana inyishu zibereye",
+    "createdQuestions": "Ibibazo vyakozwe",
+    "assignedPoints": "Amanota yatanzwe"
+  },
+  "structure": {
+  "title": "Imiterere ya quiz",
+  "ready": "YUZUYE ✓",
+  "incomplete": "NTIYUZUYE",
+  "complete": "Biruzuye ✓",
+  "questionsRemaining": "ibibazo bisigaye",
+  "pointsRemaining": "amanota asigaye",
+  "readyText": "Imiterere ya quiz iruzuye.",
+  "incompleteText": "Uzuza quiz imbere yo kuyitangura.",
+  "launchBlocked": "Kora ibibazo vyose vyateguwe kandi utange amanota yose imbere yo gutangura quiz."
   },
 
   "modes": {
@@ -456,7 +471,28 @@
     "closeAria": "Funga iyemezwa ryo gusiba quiz",
     "confirmBefore": "Urashaka vy’ukuri gusiba",
     "warning": "Iki gikorwa ntigishobora gusubizwa inyuma. Quiz hamwe n’amakuru yose ajanye na yo bizosibwa burundu."
-  }
+  },
+"studentAccess": {
+  "button": "Ukwinjira kw'abanyeshure",
+  "badge": "Ukwinjira kw'abanyeshure",
+  "title": "Sangiza iyi quiz abanyeshure",
+  "description": "Abanyeshure bashobora gukoresha lien canke bakandika code yo kwinjira kugira binjire muri quiz.",
+  "close": "Funga uburyo abanyeshure binjira",
+  "code": "Code yo kwinjira",
+  "codeHelp": "Sangiza abanyeshure iyi code ngufi kugira bashobore kwinjira muri quiz.",
+  "link": "Lien y’abanyeshure",
+  "linkHelp": "Sangiza iyi lien kugira abanyeshure baje ku rupapuro rwo kwinjira muri quiz.",
+  "copy": "Koporora",
+  "copied": "Vyakopewe",
+  "copyError": "Ntivyashobotse gukoporora.",
+  "preparingLink": "Turiko turategura lien...",
+  "mode": "Uburyo quiz iboneka",
+  "starts": "Session itangura",
+  "availableFrom": "Iboneka kuva",
+  "ends": "Ihera",
+  "studentTime": "Igihe c’umunyeshure",
+  "sessionTime": "Igihe session imara"
+}
 },
 "quizSettings": {
   "badge": "Igenamiterere rya quiz",
@@ -567,6 +603,27 @@
     "title": "Guhindura quiz vyarafunzwe",
     "text": "Quiz iri mu rwego rw'ugutegurwa ni yo gusa ishobora guhindurwa."
   },
+  "typeStats": {
+  "title": "Ubwoko bw’ibibazo",
+  "description": "Kurikiza imipaka yashizweho imbere yo gukora ibibazo bishasha.",
+  "qcm": "QCM",
+  "qcmHelp": "Inyishu imwe ibereye",
+  "multipleChoice": "Amahitamwo menshi",
+  "multipleChoiceHelp": "Inyishu nyinshi zibereye",
+  "development": "Inyishu yanditse",
+  "developmentHelp": "Bikosorwa n’umwigisha",
+  "autoGraded": "Bikosorwa ubwavyo",
+  "autoGradedHelp": "QCM + amahitamwo menshi",
+  "total": "vyose"
+},
+
+"multipleChoice": {
+  "option": "Amahitamwo menshi — inyishu nyinshi zibereye",
+  "answersTitle": "Inyishu zibereye",
+  "answersHelp": "Hitamwo nibura inyishu zibiri zibereye. Ushobora guhitamwo indome nyinshi.",
+  "correctAnswerSelected": "inyishu ibereye yatoranijwe",
+  "correctAnswersSelected": "inyishu zibereye zatoranijwe"
+},
 
   "progress": {
     "questions": "Ibibazo",
@@ -611,6 +668,8 @@
     "addAnswer": "Ongerako inyishu",
     "developmentTitle": "Ikibazo c’inyishu ndende",
     "specialCharacters": "Ibimenyetso bidasanzwe",
+    "automaticCounterLabel": "bikosorwa ubwavyo",
+    "developmentCounterLabel": "ibibazo vy’inyishu zanditse",
     "developmentHelp": "Umunyeshure azandika inyishu yiwe, hanyuma umwigisha ayikosore."
   },
 
@@ -636,7 +695,8 @@
     "maximumPoints": "Amanota menshi ashobora gutangwa kuri iki kibazo ni",
     "twoChoices": "Ikibazo ca QCM gitegerezwa kugira n’imiburiburi inyishu zibiri.",
     "emptyChoice": "Inyishu zose zitegerezwa kuba zanditse.",
-    "correctAnswer": "Hitamwo inyishu nziza."
+    "correctAnswer": "Hitamwo inyishu nziza.",
+    "multipleCorrectMinimum": "Hitamwo nimiburiburi inyishu zibiri zibereye."
   },
 
   "deleteModal": {
@@ -671,6 +731,174 @@
   "formula": {
     "title": "Formule zikomeye",
     "description": "Fractions, matrices, limites n’izindi formule zikomeye zizokorwa mu mwanditsi wa formule."
+  }
+},
+"joinQuiz": {
+  "loading": "Turiko turazana quiz...",
+
+  "badge": "Quiz y'umunyeshure",
+  "noDescription": "Nta nsiguro yatanzwe.",
+  "teacher": {
+  "label": "Yakozwe na"
+},
+  "starting": {
+    "title": "Tugira dutanguze quiz...",
+    "subtitle": "Turiko turategura session yawe ya quiz..."
+  },
+
+  "notFound": {
+    "title": "Quiz ntiyabonetse",
+    "text": "Iyi kode yo kwinjira ntiyemewe canke ntikiboneka."
+  },
+
+  "waiting": {
+    "label": "Iratangura mu",
+    "text": "Iyi quiz ntiratangura. Ushobora kuguma kuri uru rupapuro."
+  },
+
+  "ended": {
+    "title": "Quiz yarangiye",
+    "text": "Igihe co gukora iyi quiz carangiye."
+  },
+
+  "unavailable": {
+    "title": "Quiz ntiboneka",
+    "text": "Iyi quiz ntiboneka ku banyeshure ubu."
+  },
+
+  "summary": {
+    "questions": "Ibibazo",
+    "points": "Amanota yose",
+    "timePerStudent": "Igihe c'umunyeshure",
+    "sessionDuration": "Igihe session imara",
+    "mode": "Uburyo",
+    "starts": "Itangura",
+    "ends": "Irangira",
+    "timeZone": "Igihe c'akarere ka quiz",
+    "timeRemaining": "Igihe gisigaye",
+    "immediately": "Ako kanya",
+    "notSet": "Ntivyashizweho"
+  },
+
+  "modes": {
+    "openWindow": "Igihe co kuyikorera kiruguruye",
+    "scheduledSession": "Isuzuma ryateguwe"
+  },
+
+  "student": {
+    "badge": "Kumenyekanisha umunyeshure",
+    "title": "Shiramwo amakuru yawe",
+    "description": "Izina ryawe na email yawe bizokoreshwa mu kumenya quiz yawe.",
+    "name": "Izina ryose",
+    "namePlaceholder": "Akarorero: Jean Dupont",
+    "email": "Email",
+    "emailPlaceholder": "izina@example.com",
+    "start": "Tangura quiz"
+  },
+
+  "validation": {
+    "nameRequired": "Shiramwo izina ryawe ryose.",
+    "emailRequired": "Shiramwo email yawe.",
+    "invalidEmail": "Shiramwo email yemewe."
+  },
+
+  "messages": {
+    "loadError": "Ntivyashobotse kuzana iyi quiz.",
+    "startError": "Ntivyashobotse gutangura quiz. Subira ugerageze."
+  }
+},
+"quizSession": {
+  "loading": "Turiko turazana session ya quiz yawe...",
+
+  "access": {
+    "title": "Quiz ntiboneka",
+    "text": "Iyi session ya quiz ntiboneka canke ntiyashoboye kuzanwa.",
+    "notFound": "Iki kigeragezo ca quiz nticabonetse.",
+    "loadError": "Ntivyashobotse kuzana session ya quiz yawe."
+  },
+
+  "header": {
+    "timeRemaining": "Igihe gisigaye",
+    "answered": "Ivyishuwe"
+  },
+
+  "questions": {
+    "title": "Ibibazo",
+    "development": "Ikibazo gisaba insiguro"
+  },
+
+  "questionTypes": {
+    "qcm": "QCM",
+    "multipleChoice": "Amahitamwo menshi",
+    "development": "Inyishu yanditse"
+  },
+
+  "question": {
+    "label": "Ikibazo",
+    "points": "amanota",
+    "developmentAnswer": "Inyishu yawe",
+    "developmentPlaceholder": "Andika inyishu yawe hano..."
+  },
+
+  "choiceInstructions": {
+    "singleTitle": "Inyishu imwe gusa",
+    "singleText": "Hitamwo inyishu ibereye kurusha izindi.",
+    "multipleTitle": "Inyishu nyinshi zirashobora kuba nziza",
+    "multipleText": "Hitamwo inyishu zose wibaza ko ari zo. Ushobora guhitamwo canke gukuraho amahitamwo menshi."
+  },
+
+  "symbols": {
+    "open": "Ibimenyetso bidasanzwe",
+    "close": "Funga",
+    "panelAria": "Ibikoresho vy’ibimenyetso bidasanzwe",
+    "insertSymbol": "Shiramwo ikimenyetso",
+
+    "superscript": "Exposant",
+    "superscriptPlaceholder": "Akarorero: 12",
+    "insertSuperscript": "Shiramwo exposant",
+
+    "subscript": "Indice",
+    "subscriptPlaceholder": "Akarorero: 23",
+    "insertSubscript": "Shiramwo indice",
+
+    "fraction": "Fraction",
+    "numerator": "Igice co hejuru",
+    "denominator": "Igice co hasi",
+    "numeratorPlaceholder": "1",
+    "denominatorPlaceholder": "2",
+    "insert": "Shiramwo"
+  },
+
+  "saving": {
+    "saving": "Turiko turabika...",
+    "saved": "Vyabitswe ✓"
+  },
+
+  "actions": {
+    "previous": "Subira inyuma",
+    "next": "Komeza",
+    "submit": "Tanga quiz",
+    "cancel": "Hagarika"
+  },
+
+  "submit": {
+    "badge": "Gutanga quiz",
+    "title": "Ushaka gutanga quiz?",
+    "text": "Umaze gutanga quiz, ntuzosubira guhindura inyishu zawe. Banza urabe neza ko warangije.",
+    "submitting": "Turiko turatanga...",
+    "closeAria": "Funga ukwemeza gutanga quiz"
+  },
+
+  "submitted": {
+    "title": "Quiz yatanzwe",
+    "text": "Inyishu zawe zatanzwe neza. Ivyavuye muri quiz bizokorwa hakurikijwe amategeko yashizweho.",
+    "student": "Umunyeshure",
+    "email": "Email"
+  },
+
+  "messages": {
+    "saveError": "Ntivyashobotse kubika inyishu yawe. Subira ugerageze.",
+    "submitError": "Ntivyashobotse gutanga quiz. Subira ugerageze."
   }
 }
 }

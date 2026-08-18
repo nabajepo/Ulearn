@@ -15,8 +15,10 @@ import AppLoading from "@/components/AppLoading";
 import {
   deleteQuiz,
   getQuiz,
+  getQuizStructureProgress,
   launchQuiz,
   type Quiz,
+  type QuizStructureProgress,
 } from "@/lib/services/quizzes";
 
 import {
@@ -50,6 +52,26 @@ type ProcessingAction =
   | "launch"
   | "delete";
 
+type CopiedField =
+  | ""
+  | "code"
+  | "link";
+
+/* =========================================================
+   Empty structure
+   ========================================================= */
+
+const EMPTY_STRUCTURE:
+  QuizStructureProgress = {
+  totalQuestions: 0,
+
+  qcmQuestions: 0,
+
+  developmentQuestions: 0,
+
+  assignedPoints: 0,
+};
+
 /* =========================================================
    Page
    ========================================================= */
@@ -77,6 +99,10 @@ export default function QuizDetailsPage() {
       teacherLoading,
   } = useTeacher();
 
+  /* =========================================================
+     Data
+     ========================================================= */
+
   const [
     quiz,
     setQuiz,
@@ -84,6 +110,18 @@ export default function QuizDetailsPage() {
     useState<Quiz | null>(
       null
     );
+
+  const [
+    structure,
+    setStructure,
+  ] =
+    useState<QuizStructureProgress>(
+      EMPTY_STRUCTURE
+    );
+
+  /* =========================================================
+     UI
+     ========================================================= */
 
   const [
     loading,
@@ -111,9 +149,29 @@ export default function QuizDetailsPage() {
   ] =
     useState(false);
 
+  const [
+    studentAccessOpen,
+    setStudentAccessOpen,
+  ] =
+    useState(false);
+
+  const [
+    appOrigin,
+    setAppOrigin,
+  ] =
+    useState("");
+
+  const [
+    copiedField,
+    setCopiedField,
+  ] =
+    useState<CopiedField>(
+      ""
+    );
+
   /*
-   * These values will later come from
-   * student attempts/submissions.
+   * These will later come from
+   * student attempts.
    */
   const activeStudents =
     0;
@@ -122,7 +180,17 @@ export default function QuizDetailsPage() {
     0;
 
   /* =========================================================
-     Load quiz
+     Browser origin
+     ========================================================= */
+
+  useEffect(() => {
+    setAppOrigin(
+      window.location.origin
+    );
+  }, []);
+
+  /* =========================================================
+     Load quiz + real structure
      ========================================================= */
 
   useEffect(() => {
@@ -131,18 +199,33 @@ export default function QuizDetailsPage() {
 
     async function loadQuiz() {
       try {
-        const data =
-          await getQuiz(
-            quizId
-          );
+        const [
+          quizData,
+          structureData,
+        ] =
+          await Promise.all([
+            getQuiz(
+              quizId
+            ),
+
+            getQuizStructureProgress(
+              quizId
+            ),
+          ]);
 
         if (
-          !cancelled
+          cancelled
         ) {
-          setQuiz(
-            data
-          );
+          return;
         }
+
+        setQuiz(
+          quizData
+        );
+
+        setStructure(
+          structureData
+        );
       } catch (error) {
         console.error(
           "Error loading quiz:",
@@ -181,13 +264,13 @@ export default function QuizDetailsPage() {
   ]);
 
   /* =========================================================
-     Delete modal:
-     escape key + body scroll
+     Modal behavior
      ========================================================= */
 
   useEffect(() => {
     if (
-      !deleteModalOpen
+      !deleteModalOpen &&
+      !studentAccessOpen
     ) {
       return;
     }
@@ -204,12 +287,31 @@ export default function QuizDetailsPage() {
         KeyboardEvent
     ) {
       if (
-        event.key ===
-          "Escape" &&
-        processing !==
-          "delete"
+        event.key !==
+        "Escape"
+      ) {
+        return;
+      }
+
+      if (
+        processing ===
+        "delete"
+      ) {
+        return;
+      }
+
+      if (
+        deleteModalOpen
       ) {
         setDeleteModalOpen(
+          false
+        );
+      }
+
+      if (
+        studentAccessOpen
+      ) {
+        setStudentAccessOpen(
           false
         );
       }
@@ -231,7 +333,38 @@ export default function QuizDetailsPage() {
     };
   }, [
     deleteModalOpen,
+    studentAccessOpen,
     processing,
+  ]);
+
+  /* =========================================================
+     Copy confirmation
+     ========================================================= */
+
+  useEffect(() => {
+    if (
+      !copiedField
+    ) {
+      return;
+    }
+
+    const timer =
+      window.setTimeout(
+        () => {
+          setCopiedField(
+            ""
+          );
+        },
+        1800
+      );
+
+    return () => {
+      window.clearTimeout(
+        timer
+      );
+    };
+  }, [
+    copiedField,
   ]);
 
   /* =========================================================
@@ -254,7 +387,9 @@ export default function QuizDetailsPage() {
     );
   }
 
-  if (processing) {
+  if (
+    processing
+  ) {
     let subtitle =
       t(
         "quizDetails.loading.pleaseWait"
@@ -354,7 +489,7 @@ export default function QuizDetailsPage() {
   }
 
   /* =========================================================
-     Derived information
+     Derived quiz information
      ========================================================= */
 
   const timeZone =
@@ -377,6 +512,55 @@ export default function QuizDetailsPage() {
       teacher.expiresAt
     ).getTime() <=
     now;
+
+  /* =========================================================
+     Real structure progress
+     ========================================================= */
+
+  const remainingQuestions =
+    Math.max(
+      0,
+
+      quiz.targetQuestions -
+        structure.totalQuestions
+    );
+
+  const remainingPoints =
+    Math.max(
+      0,
+
+      quiz.totalPoints -
+        structure.assignedPoints
+    );
+
+  const questionsComplete =
+    structure.totalQuestions ===
+    quiz.targetQuestions;
+
+  const pointsComplete =
+    structure.assignedPoints ===
+    quiz.totalPoints;
+
+  const structureComplete =
+    questionsComplete &&
+    pointsComplete;
+
+  /* =========================================================
+     Student access
+     ========================================================= */
+
+  const studentUrl =
+    quiz.accessCode &&
+    appOrigin
+      ? `${appOrigin}/join/${quiz.accessCode}`
+      : "";
+
+  const showStudentAccess =
+    quiz.status !==
+      "draft" &&
+    Boolean(
+      quiz.accessCode
+    );
 
   /* =========================================================
      Status translation
@@ -410,6 +594,45 @@ export default function QuizDetailsPage() {
   }
 
   /* =========================================================
+     Clipboard
+     ========================================================= */
+
+  async function copyToClipboard(
+    value: string,
+    field: CopiedField
+  ) {
+    if (
+      !value ||
+      !field
+    ) {
+      return;
+    }
+
+    try {
+      await navigator
+        .clipboard
+        .writeText(
+          value
+        );
+
+      setCopiedField(
+        field
+      );
+    } catch (error) {
+      console.error(
+        "Unable to copy:",
+        error
+      );
+
+      setMessage(
+        t(
+          "quizDetails.studentAccess.copyError"
+        )
+      );
+    }
+  }
+
+  /* =========================================================
      Launch
      ========================================================= */
 
@@ -417,7 +640,8 @@ export default function QuizDetailsPage() {
     if (
       processing ||
       quiz.status !==
-        "draft"
+        "draft" ||
+      !structureComplete
     ) {
       return;
     }
@@ -438,31 +662,49 @@ export default function QuizDetailsPage() {
         !result.success
       ) {
         setMessage(
-          t(
-            "quizDetails.messages.launchError"
-          )
-        );
-
-        setProcessing(
-          ""
+          result.message ||
+            t(
+              "quizDetails.messages.launchError"
+            )
         );
 
         return;
       }
 
-      const updated =
-        await getQuiz(
-          quizId
-        );
+      const [
+        updatedQuiz,
+        updatedStructure,
+      ] =
+        await Promise.all([
+          getQuiz(
+            quizId
+          ),
+
+          getQuizStructureProgress(
+            quizId
+          ),
+        ]);
 
       setQuiz(
-        updated
+        updatedQuiz
+      );
+
+      setStructure(
+        updatedStructure
       );
 
       setMessage(
         t(
           "quizDetails.messages.launchSuccess"
         )
+      );
+
+      /*
+       * Show the generated access information
+       * immediately after launch.
+       */
+      setStudentAccessOpen(
+        true
       );
     } catch (error) {
       console.error(
@@ -542,10 +784,6 @@ export default function QuizDetailsPage() {
           )
         );
 
-        setProcessing(
-          ""
-        );
-
         setDeleteModalOpen(
           false
         );
@@ -568,12 +806,12 @@ export default function QuizDetailsPage() {
         )
       );
 
-      setProcessing(
-        ""
-      );
-
       setDeleteModalOpen(
         false
+      );
+    } finally {
+      setProcessing(
+        ""
       );
     }
   }
@@ -679,6 +917,10 @@ export default function QuizDetailsPage() {
             )}
           </button>
 
+          {/* =================================================
+              Header
+              ================================================= */}
+
           <header
             className={
               styles.header
@@ -719,7 +961,7 @@ export default function QuizDetailsPage() {
           </header>
 
           {/* =================================================
-              SUMMARY
+              Summary
               ================================================= */}
 
           <div
@@ -727,6 +969,8 @@ export default function QuizDetailsPage() {
               styles.summary
             }
           >
+            {/* Status */}
+
             <div
               className={
                 styles.summaryItem
@@ -745,6 +989,8 @@ export default function QuizDetailsPage() {
               </strong>
             </div>
 
+            {/* Real question progress */}
+
             <div
               className={
                 styles.summaryItem
@@ -752,16 +998,32 @@ export default function QuizDetailsPage() {
             >
               <span>
                 {t(
-                  "quizDetails.summary.plannedQuestions"
+                  "quizDetails.summary.createdQuestions"
                 )}
               </span>
 
               <strong>
+                {
+                  structure.totalQuestions
+                }
+                {" / "}
                 {
                   quiz.targetQuestions
                 }
               </strong>
+
+              <small>
+                {questionsComplete
+                  ? t(
+                      "quizDetails.structure.complete"
+                    )
+                  : `${remainingQuestions} ${t(
+                      "quizDetails.structure.questionsRemaining"
+                    )}`}
+              </small>
             </div>
+
+            {/* Real points */}
 
             <div
               className={
@@ -770,16 +1032,32 @@ export default function QuizDetailsPage() {
             >
               <span>
                 {t(
-                  "quizDetails.summary.totalPoints"
+                  "quizDetails.summary.assignedPoints"
                 )}
               </span>
 
               <strong>
                 {
+                  structure.assignedPoints
+                }
+                {" / "}
+                {
                   quiz.totalPoints
                 }
               </strong>
+
+              <small>
+                {pointsComplete
+                  ? t(
+                      "quizDetails.structure.complete"
+                    )
+                  : `${remainingPoints} ${t(
+                      "quizDetails.structure.pointsRemaining"
+                    )}`}
+              </small>
             </div>
+
+            {/* Active students */}
 
             <div
               className={
@@ -803,6 +1081,8 @@ export default function QuizDetailsPage() {
               </strong>
             </div>
 
+            {/* Finished students */}
+
             <div
               className={
                 styles.summaryItem
@@ -824,6 +1104,42 @@ export default function QuizDetailsPage() {
                 }
               </strong>
             </div>
+
+            {/* Structure */}
+
+            <div
+              className={
+                styles.summaryItem
+              }
+            >
+              <span>
+                {t(
+                  "quizDetails.structure.title"
+                )}
+              </span>
+
+              <strong>
+                {structureComplete
+                  ? t(
+                      "quizDetails.structure.ready"
+                    )
+                  : t(
+                      "quizDetails.structure.incomplete"
+                    )}
+              </strong>
+
+              <small>
+                {structureComplete
+                  ? t(
+                      "quizDetails.structure.readyText"
+                    )
+                  : t(
+                      "quizDetails.structure.incompleteText"
+                    )}
+              </small>
+            </div>
+
+            {/* Duration */}
 
             <div
               className={
@@ -849,6 +1165,8 @@ export default function QuizDetailsPage() {
               </strong>
             </div>
 
+            {/* Mode */}
+
             <div
               className={
                 styles.summaryItem
@@ -872,6 +1190,8 @@ export default function QuizDetailsPage() {
               </strong>
             </div>
 
+            {/* Time zone */}
+
             <div
               className={
                 styles.summaryItem
@@ -889,6 +1209,8 @@ export default function QuizDetailsPage() {
                 }
               </strong>
             </div>
+
+            {/* Available from */}
 
             <div
               className={
@@ -913,6 +1235,8 @@ export default function QuizDetailsPage() {
               </strong>
             </div>
 
+            {/* Deadline */}
+
             <div
               className={
                 styles.summaryItem
@@ -936,6 +1260,8 @@ export default function QuizDetailsPage() {
               </strong>
             </div>
 
+            {/* Teacher account */}
+
             <div
               className={
                 styles.summaryItem
@@ -954,6 +1280,8 @@ export default function QuizDetailsPage() {
                 )}
               </strong>
             </div>
+
+            {/* Back navigation */}
 
             <div
               className={
@@ -977,6 +1305,8 @@ export default function QuizDetailsPage() {
               </strong>
             </div>
 
+            {/* Shuffle questions */}
+
             <div
               className={
                 styles.summaryItem
@@ -998,6 +1328,8 @@ export default function QuizDetailsPage() {
                     )}
               </strong>
             </div>
+
+            {/* Shuffle choices */}
 
             <div
               className={
@@ -1021,6 +1353,8 @@ export default function QuizDetailsPage() {
               </strong>
             </div>
 
+            {/* Final score */}
+
             <div
               className={
                 styles.summaryItem
@@ -1042,6 +1376,8 @@ export default function QuizDetailsPage() {
                     )}
               </strong>
             </div>
+
+            {/* Correct answers */}
 
             <div
               className={
@@ -1067,7 +1403,25 @@ export default function QuizDetailsPage() {
           </div>
 
           {/* =================================================
-              MESSAGES
+              Structure warning
+              ================================================= */}
+
+          {quiz.status ===
+            "draft" &&
+            !structureComplete && (
+              <p
+                className={
+                  styles.message
+                }
+              >
+                {t(
+                  "quizDetails.structure.launchBlocked"
+                )}
+              </p>
+            )}
+
+          {/* =================================================
+              Messages
               ================================================= */}
 
           {deadlinePassed &&
@@ -1101,6 +1455,7 @@ export default function QuizDetailsPage() {
               className={
                 styles.message
               }
+              role="status"
             >
               {
                 message
@@ -1109,7 +1464,7 @@ export default function QuizDetailsPage() {
           )}
 
           {/* =================================================
-              ACTIONS
+              Actions
               ================================================= */}
 
           <div
@@ -1157,11 +1512,19 @@ export default function QuizDetailsPage() {
               disabled={
                 quiz.status !==
                   "draft" ||
+                !structureComplete ||
                 deadlinePassed ||
                 accountExpired
               }
               onClick={
                 handleLaunch
+              }
+              title={
+                !structureComplete
+                  ? t(
+                      "quizDetails.structure.launchBlocked"
+                    )
+                  : undefined
               }
             >
               {t(
@@ -1197,7 +1560,347 @@ export default function QuizDetailsPage() {
       </main>
 
       {/* =====================================================
-          CUSTOM DELETE CONFIRMATION
+          Floating Student Access
+          ===================================================== */}
+
+      {showStudentAccess &&
+        quiz.accessCode && (
+          <button
+            type="button"
+            className={
+              styles.studentAccessFloatingButton
+            }
+            onClick={() =>
+              setStudentAccessOpen(
+                true
+              )
+            }
+            aria-haspopup="dialog"
+            aria-expanded={
+              studentAccessOpen
+            }
+          >
+            <span
+              className={
+                styles.studentAccessFloatingIcon
+              }
+              aria-hidden="true"
+            >
+              ↗
+            </span>
+
+            <span
+              className={
+                styles.studentAccessFloatingText
+              }
+            >
+              {t(
+                "quizDetails.studentAccess.button"
+              )}
+            </span>
+          </button>
+        )}
+
+      {/* =====================================================
+          Student Access Modal
+          ===================================================== */}
+
+      {studentAccessOpen &&
+        quiz.accessCode && (
+          <div
+            className={
+              styles.studentAccessOverlay
+            }
+            onMouseDown={(
+              event
+            ) => {
+              if (
+                event.target ===
+                event.currentTarget
+              ) {
+                setStudentAccessOpen(
+                  false
+                );
+              }
+            }}
+          >
+            <section
+              className={
+                styles.studentAccessModal
+              }
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="student-access-title"
+            >
+              <header
+                className={
+                  styles.studentAccessModalHeader
+                }
+              >
+                <div>
+                  <span
+                    className={
+                      styles.studentAccessBadge
+                    }
+                  >
+                    {t(
+                      "quizDetails.studentAccess.badge"
+                    )}
+                  </span>
+
+                  <h2
+                    id="student-access-title"
+                  >
+                    {t(
+                      "quizDetails.studentAccess.title"
+                    )}
+                  </h2>
+
+                  <p>
+                    {t(
+                      "quizDetails.studentAccess.description"
+                    )}
+                  </p>
+                </div>
+
+                <button
+                  type="button"
+                  className={
+                    styles.studentAccessClose
+                  }
+                  onClick={() =>
+                    setStudentAccessOpen(
+                      false
+                    )
+                  }
+                  aria-label={t(
+                    "quizDetails.studentAccess.close"
+                  )}
+                >
+                  ×
+                </button>
+              </header>
+
+              <div
+                className={
+                  styles.studentAccessContent
+                }
+              >
+                {/* Access code */}
+
+                <div
+                  className={
+                    styles.studentAccessField
+                  }
+                >
+                  <span>
+                    {t(
+                      "quizDetails.studentAccess.code"
+                    )}
+                  </span>
+
+                  <div
+                    className={
+                      styles.studentAccessRow
+                    }
+                  >
+                    <strong
+                      className={
+                        styles.studentAccessCode
+                      }
+                    >
+                      {
+                        quiz.accessCode
+                      }
+                    </strong>
+
+                    <button
+                      type="button"
+                      className="app-button app-button-secondary"
+                      onClick={() =>
+                        copyToClipboard(
+                          quiz.accessCode!,
+                          "code"
+                        )
+                      }
+                    >
+                      {copiedField ===
+                      "code"
+                        ? t(
+                            "quizDetails.studentAccess.copied"
+                          )
+                        : t(
+                            "quizDetails.studentAccess.copy"
+                          )}
+                    </button>
+                  </div>
+
+                  <small>
+                    {t(
+                      "quizDetails.studentAccess.codeHelp"
+                    )}
+                  </small>
+                </div>
+
+                {/* Student link */}
+
+                <div
+                  className={
+                    styles.studentAccessField
+                  }
+                >
+                  <span>
+                    {t(
+                      "quizDetails.studentAccess.link"
+                    )}
+                  </span>
+
+                  <div
+                    className={
+                      styles.studentAccessRow
+                    }
+                  >
+                    <div
+                      className={
+                        styles.studentAccessLink
+                      }
+                      title={
+                        studentUrl
+                      }
+                    >
+                      {studentUrl ||
+                        t(
+                          "quizDetails.studentAccess.preparingLink"
+                        )}
+                    </div>
+
+                    <button
+                      type="button"
+                      className="app-button app-button-secondary"
+                      disabled={
+                        !studentUrl
+                      }
+                      onClick={() =>
+                        copyToClipboard(
+                          studentUrl,
+                          "link"
+                        )
+                      }
+                    >
+                      {copiedField ===
+                      "link"
+                        ? t(
+                            "quizDetails.studentAccess.copied"
+                          )
+                        : t(
+                            "quizDetails.studentAccess.copy"
+                          )}
+                    </button>
+                  </div>
+
+                  <small>
+                    {t(
+                      "quizDetails.studentAccess.linkHelp"
+                    )}
+                  </small>
+                </div>
+
+                {/* Session information */}
+
+                <div
+                  className={
+                    styles.studentAccessSession
+                  }
+                >
+                  <div>
+                    <span>
+                      {t(
+                        "quizDetails.studentAccess.mode"
+                      )}
+                    </span>
+
+                    <strong>
+                      {quiz.availabilityMode ===
+                      "open_window"
+                        ? t(
+                            "quizDetails.modes.openWindow"
+                          )
+                        : t(
+                            "quizDetails.modes.scheduledSession"
+                          )}
+                    </strong>
+                  </div>
+
+                  <div>
+                    <span>
+                      {quiz.availabilityMode ===
+                      "scheduled_session"
+                        ? t(
+                            "quizDetails.studentAccess.starts"
+                          )
+                        : t(
+                            "quizDetails.studentAccess.availableFrom"
+                          )}
+                    </span>
+
+                    <strong>
+                      {quiz.availableFrom
+                        ? formatInTimeZone(
+                            quiz.availableFrom,
+                            timeZone
+                          )
+                        : t(
+                            "quizDetails.summary.whenLaunched"
+                          )}
+                    </strong>
+                  </div>
+
+                  <div>
+                    <span>
+                      {t(
+                        "quizDetails.studentAccess.ends"
+                      )}
+                    </span>
+
+                    <strong>
+                      {quiz.availableUntil
+                        ? formatInTimeZone(
+                            quiz.availableUntil,
+                            timeZone
+                          )
+                        : t(
+                            "quizDetails.summary.notSet"
+                          )}
+                    </strong>
+                  </div>
+
+                  <div>
+                    <span>
+                      {quiz.availabilityMode ===
+                      "open_window"
+                        ? t(
+                            "quizDetails.studentAccess.studentTime"
+                          )
+                        : t(
+                            "quizDetails.studentAccess.sessionTime"
+                          )}
+                    </span>
+
+                    <strong>
+                      {formatQuizDuration(
+                        quiz.timeLimitMinutes,
+                        language
+                      )}
+                    </strong>
+                  </div>
+                </div>
+              </div>
+            </section>
+          </div>
+        )}
+
+      {/* =====================================================
+          Delete Modal
           ===================================================== */}
 
       {deleteModalOpen && (

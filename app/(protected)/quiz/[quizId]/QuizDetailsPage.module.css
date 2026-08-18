@@ -6,6 +6,7 @@
 
 .card {
   width: min(1500px, 96vw);
+
   margin: 0 auto;
   padding: 2.5rem;
 
@@ -13,6 +14,7 @@
   border-radius: 28px;
 
   background: #ffffff;
+
   box-shadow: var(--shadow);
 }
 
@@ -39,7 +41,12 @@
 
   color: var(--main-color);
 
-  font-size: clamp(2.5rem, 5vw, 4.2rem);
+  font-size: clamp(
+    2.5rem,
+    5vw,
+    4.2rem
+  );
+
   font-weight: 900;
   line-height: 1;
 
@@ -49,7 +56,12 @@
 .description {
   max-width: 850px;
 
-  color: rgba(23, 23, 23, 0.7);
+  color: rgba(
+    23,
+    23,
+    23,
+    0.7
+  );
 
   font-size: 1rem;
   line-height: 1.7;
@@ -77,7 +89,10 @@
   display: grid;
 
   grid-template-columns:
-    repeat(3, minmax(0, 1fr));
+    repeat(
+      3,
+      minmax(0, 1fr)
+    );
 
   gap: 1rem;
 
@@ -105,7 +120,12 @@
 
   margin-bottom: 0.35rem;
 
-  color: rgba(23, 23, 23, 0.58);
+  color: rgba(
+    23,
+    23,
+    23,
+    0.58
+  );
 
   font-size: 0.78rem;
   font-weight: 700;
@@ -121,6 +141,23 @@
   line-height: 1.4;
 
   overflow-wrap: anywhere;
+}
+
+.summaryItem small {
+  display: block;
+
+  margin-top: 0.35rem;
+
+  color: rgba(
+    23,
+    23,
+    23,
+    0.55
+  );
+
+  font-size: 0.7rem;
+  font-weight: 700;
+  line-height: 1.4;
 }
 
 /* =========================================================
@@ -144,7 +181,7 @@
 }
 
 /* =========================================================
-   Main actions
+   Actions
    ========================================================= */
 
 .actions {
@@ -163,7 +200,468 @@
 }
 
 /* =========================================================
-   Delete confirmation overlay
+   Floating Student Access button
+   ========================================================= */
+
+.studentAccessFloatingButton {
+  position: fixed;
+
+  right: 1.5rem;
+  bottom: 5.9rem;
+
+  z-index: 890;
+
+  min-height: var(--button-height);
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 0.65rem;
+
+  padding: 0 1.1rem;
+
+  border: 1px solid var(--border-color);
+
+  border-radius: var(--button-border-radius);
+
+  background: #ffffff;
+  color: var(--main-color);
+
+  box-shadow:
+    0 16px 36px
+      rgba(
+        42,
+        3,
+        105,
+        0.18
+      ),
+    0 0 0 5px
+      rgba(
+        42,
+        3,
+        105,
+        0.05
+      );
+
+  font-size: 0.9rem;
+  font-weight: 900;
+
+  cursor: pointer;
+
+  transition:
+    transform 0.25s ease,
+    background-color 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+.studentAccessFloatingButton:hover {
+  transform: translateY(-3px);
+
+  background: var(--soft-purple);
+
+  box-shadow:
+    0 20px 42px
+      rgba(
+        42,
+        3,
+        105,
+        0.24
+      ),
+    0 0 0 7px
+      rgba(
+        42,
+        3,
+        105,
+        0.07
+      );
+}
+
+.studentAccessFloatingButton:focus-visible {
+  outline: 3px solid
+    rgba(
+      42,
+      3,
+      105,
+      0.22
+    );
+
+  outline-offset: 4px;
+}
+
+.studentAccessFloatingIcon {
+  width: 27px;
+  height: 27px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  flex-shrink: 0;
+
+  border-radius: 50%;
+
+  background: var(--main-color);
+  color: #ffffff;
+
+  font-size: 0.85rem;
+  font-weight: 900;
+}
+
+.studentAccessFloatingText {
+  display: inline;
+}
+
+/* =========================================================
+   Student Access overlay
+   ========================================================= */
+
+.studentAccessOverlay {
+  position: fixed;
+
+  inset: 0;
+
+  z-index: 1400;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 1.5rem;
+
+  background:
+    rgba(
+      18,
+      11,
+      30,
+      0.54
+    );
+
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+
+  animation:
+    studentAccessOverlayIn
+    0.2s
+    ease-out;
+}
+
+/* =========================================================
+   Student Access modal
+   ========================================================= */
+
+.studentAccessModal {
+  width: min(
+    700px,
+    100%
+  );
+
+  max-height:
+    calc(
+      100vh - 3rem
+    );
+
+  max-height:
+    calc(
+      100dvh - 3rem
+    );
+
+  overflow-y: auto;
+
+  padding: 1.6rem;
+
+  border: 1px solid var(--border-color);
+  border-radius: 24px;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(
+        42,
+        3,
+        105,
+        0.035
+      ),
+      #ffffff 38%
+    );
+
+  box-shadow:
+    0 28px 80px
+      rgba(
+        22,
+        6,
+        45,
+        0.3
+      ),
+    var(--shadow);
+
+  animation:
+    studentAccessModalIn
+    0.24s
+    ease-out;
+}
+
+/* =========================================================
+   Student Access header
+   ========================================================= */
+
+.studentAccessModalHeader {
+  display: flex;
+
+  justify-content: space-between;
+  align-items: flex-start;
+
+  gap: 1rem;
+
+  padding-bottom: 1rem;
+
+  border-bottom: 1px solid var(--border-color);
+}
+
+.studentAccessBadge {
+  width: fit-content;
+
+  display: inline-flex;
+
+  margin-bottom: 0.55rem;
+
+  padding:
+    0.35rem
+    0.65rem;
+
+  border-radius: 999px;
+
+  background: var(--soft-purple);
+  color: var(--main-color);
+
+  font-size: 0.72rem;
+  font-weight: 900;
+}
+
+.studentAccessModalHeader h2 {
+  margin-bottom: 0.45rem;
+
+  color: var(--main-color);
+
+  font-size: 1.8rem;
+  font-weight: 900;
+  line-height: 1.1;
+}
+
+.studentAccessModalHeader p {
+  max-width: 520px;
+
+  color: rgba(
+    23,
+    23,
+    23,
+    0.64
+  );
+
+  font-size: 0.82rem;
+  line-height: 1.55;
+}
+
+.studentAccessClose {
+  width: 42px;
+  height: 42px;
+
+  flex-shrink: 0;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  border: 1px solid var(--border-color);
+  border-radius: 13px;
+
+  background: #ffffff;
+  color: var(--main-color);
+
+  font-size: 1.5rem;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition:
+    transform 0.2s ease,
+    background-color 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.studentAccessClose:hover {
+  transform: rotate(4deg);
+
+  border-color:
+    rgba(
+      42,
+      3,
+      105,
+      0.3
+    );
+
+  background: var(--soft-purple);
+}
+
+/* =========================================================
+   Student Access content
+   ========================================================= */
+
+.studentAccessContent {
+  display: grid;
+
+  gap: 1.1rem;
+
+  padding-top: 1.2rem;
+}
+
+.studentAccessField {
+  display: grid;
+
+  gap: 0.5rem;
+}
+
+.studentAccessField > span {
+  color: var(--main-color);
+
+  font-size: 0.78rem;
+  font-weight: 900;
+}
+
+.studentAccessField small {
+  color:
+    rgba(
+      23,
+      23,
+      23,
+      0.55
+    );
+
+  font-size: 0.68rem;
+  font-weight: 600;
+  line-height: 1.45;
+}
+
+/* =========================================================
+   Code and link rows
+   ========================================================= */
+
+.studentAccessRow {
+  display: grid;
+
+  grid-template-columns:
+    minmax(
+      0,
+      1fr
+    )
+    auto;
+
+  gap: 0.7rem;
+
+  align-items: center;
+}
+
+.studentAccessCode,
+.studentAccessLink {
+  min-width: 0;
+  min-height: 50px;
+
+  display: flex;
+  align-items: center;
+
+  padding:
+    0.7rem
+    0.9rem;
+
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+
+  background: var(--soft-purple);
+  color: var(--main-color);
+}
+
+.studentAccessCode {
+  justify-content: center;
+
+  font-size: 1.35rem;
+  font-weight: 900;
+
+  letter-spacing: 0.14em;
+}
+
+.studentAccessLink {
+  overflow: hidden;
+
+  font-size: 0.78rem;
+  font-weight: 800;
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* =========================================================
+   Student Access session details
+   ========================================================= */
+
+.studentAccessSession {
+  display: grid;
+
+  grid-template-columns:
+    repeat(
+      2,
+      minmax(
+        0,
+        1fr
+      )
+    );
+
+  gap: 0.75rem;
+
+  margin-top: 0.25rem;
+}
+
+.studentAccessSession > div {
+  min-width: 0;
+
+  padding: 0.9rem;
+
+  border: 1px solid var(--border-color);
+  border-radius: 13px;
+
+  background: var(--soft-purple);
+}
+
+.studentAccessSession span {
+  display: block;
+
+  margin-bottom: 0.3rem;
+
+  color:
+    rgba(
+      23,
+      23,
+      23,
+      0.55
+    );
+
+  font-size: 0.68rem;
+  font-weight: 800;
+}
+
+.studentAccessSession strong {
+  display: block;
+
+  color: var(--main-color);
+
+  font-size: 0.78rem;
+  font-weight: 900;
+  line-height: 1.5;
+
+  overflow-wrap: anywhere;
+}
+
+/* =========================================================
+   Delete overlay
    ========================================================= */
 
 .deleteOverlay {
@@ -178,12 +676,21 @@
 
   padding: 1.5rem;
 
-  background: rgba(18, 11, 30, 0.54);
+  background:
+    rgba(
+      18,
+      11,
+      30,
+      0.54
+    );
 
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
 
-  animation: deleteOverlayIn 0.2s ease-out;
+  animation:
+    deleteOverlayIn
+    0.2s
+    ease-out;
 }
 
 /* =========================================================
@@ -191,9 +698,22 @@
    ========================================================= */
 
 .deleteModal {
-  width: min(540px, 100%);
+  width: min(
+    540px,
+    100%
+  );
 
-  overflow: hidden;
+  max-height:
+    calc(
+      100vh - 3rem
+    );
+
+  max-height:
+    calc(
+      100dvh - 3rem
+    );
+
+  overflow-y: auto;
 
   padding: 1.65rem;
 
@@ -203,23 +723,38 @@
   background:
     linear-gradient(
       145deg,
-      rgba(42, 3, 105, 0.035),
+      rgba(
+        42,
+        3,
+        105,
+        0.035
+      ),
       #ffffff 38%
     );
 
   box-shadow:
-    0 28px 80px rgba(22, 6, 45, 0.3),
+    0 28px 80px
+      rgba(
+        22,
+        6,
+        45,
+        0.3
+      ),
     var(--shadow);
 
-  animation: deleteModalIn 0.24s ease-out;
+  animation:
+    deleteModalIn
+    0.24s
+    ease-out;
 }
 
 /* =========================================================
-   Delete modal header
+   Delete header
    ========================================================= */
 
 .deleteModalHeader {
   display: flex;
+
   justify-content: space-between;
   align-items: flex-start;
 
@@ -236,9 +771,20 @@
   display: inline-flex;
 
   margin-bottom: 0.55rem;
-  padding: 0.35rem 0.65rem;
 
-  border: 1px solid var(--border-color);
+  padding:
+    0.35rem
+    0.65rem;
+
+  border:
+    1px solid
+    rgba(
+      42,
+      3,
+      105,
+      0.14
+    );
+
   border-radius: 999px;
 
   background: var(--soft-purple);
@@ -287,25 +833,30 @@
 .deleteCloseButton:hover {
   transform: rotate(4deg);
 
-  border-color: rgba(42, 3, 105, 0.3);
+  border-color:
+    rgba(
+      42,
+      3,
+      105,
+      0.3
+    );
 
   background: var(--soft-purple);
 }
 
-.deleteCloseButton:focus-visible {
-  outline: none;
-  box-shadow: 0 0 0 4px var(--soft-purple);
-}
-
 /* =========================================================
-   Delete warning content
+   Delete content
    ========================================================= */
 
 .deleteContent {
   display: grid;
 
   grid-template-columns:
-    48px minmax(0, 1fr);
+    48px
+    minmax(
+      0,
+      1fr
+    );
 
   gap: 1rem;
 
@@ -320,7 +871,7 @@
   align-items: center;
   justify-content: center;
 
-  border: 1px solid
+border: 1px solid
     rgba(
       176,
       0,
@@ -352,7 +903,13 @@
 .deleteText p {
   margin: 0;
 
-  color: rgba(23, 23, 23, 0.76);
+  color:
+    rgba(
+      23,
+      23,
+      23,
+      0.76
+    );
 
   font-size: 0.95rem;
   line-height: 1.65;
@@ -362,22 +919,24 @@
   color: var(--main-color);
 
   font-weight: 900;
+
+  overflow-wrap: anywhere;
 }
 
-/*
- * Important:
- * This warning text uses the main ULearn purple.
- * Only the Delete Quiz button remains red/danger.
- */
-
 .deleteWarningText {
-  margin-top: 0.65rem !important;
+  margin-top:
+    0.65rem !important;
 
-  color: var(--main-color) !important;
+  color:
+    var(--main-color) !important;
 
-  font-size: 0.84rem !important;
+  font-size:
+    0.84rem !important;
+
   font-weight: 800;
-  line-height: 1.55 !important;
+
+  line-height:
+    1.55 !important;
 }
 
 /* =========================================================
@@ -386,19 +945,62 @@
 
 .deleteActions {
   display: flex;
+
   justify-content: flex-end;
   align-items: center;
 
   gap: 0.8rem;
 }
 
-.deleteActions :global(.app-button) {
-  flex-shrink: 0;
+/*
+ * Important:
+ *
+ * Only the real destructive action remains red.
+ *
+ * If app-button-danger is already defined globally,
+ * this can be removed.
+ */
+
+.deleteActions :global(.app-button-danger) {
+  background: var(--danger-color);
+  color: #ffffff;
+}
+
+.deleteActions :global(.app-button-danger):hover {
+  filter: brightness(0.92);
 }
 
 /* =========================================================
-   Delete animations
+   Animations
    ========================================================= */
+
+@keyframes studentAccessOverlayIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes studentAccessModalIn {
+  from {
+    opacity: 0;
+
+    transform:
+      translateY(14px)
+      scale(0.98);
+  }
+
+  to {
+    opacity: 1;
+
+    transform:
+      translateY(0)
+      scale(1);
+  }
+}
 
 @keyframes deleteOverlayIn {
   from {
@@ -429,15 +1031,25 @@
 }
 
 /* =========================================================
-   Responsive
+   Responsive - Tablet
    ========================================================= */
 
 @media (max-width: 1000px) {
   .summary {
     grid-template-columns:
-      repeat(2, minmax(0, 1fr));
+      repeat(
+        2,
+        minmax(
+          0,
+          1fr
+        )
+      );
   }
 }
+
+/* =========================================================
+   Responsive - Mobile
+   ========================================================= */
 
 @media (max-width: 700px) {
   .page {
@@ -446,11 +1058,14 @@
 
   .card {
     width: 100%;
+
     padding: 1.4rem;
   }
 
   .header {
     flex-direction: column;
+
+    gap: 1rem;
   }
 
   .summary {
@@ -459,12 +1074,73 @@
 
   .actions {
     display: grid;
+
     grid-template-columns: 1fr;
   }
 
   .actions :global(.app-button) {
     width: 100%;
   }
+
+  /* =====================================================
+     Student floating access
+     ===================================================== */
+
+  .studentAccessFloatingButton {
+    right: 1rem;
+    bottom: 5.5rem;
+
+    width: 52px;
+    min-width: 52px;
+
+    padding: 0;
+  }
+
+  .studentAccessFloatingText {
+    display: none;
+  }
+
+  /* =====================================================
+     Student modal
+     ===================================================== */
+
+  .studentAccessOverlay {
+    align-items: flex-end;
+
+    padding: 0;
+  }
+
+  .studentAccessModal {
+    width: 100%;
+
+    max-height: 92vh;
+    max-height: 92dvh;
+
+    padding: 1.3rem;
+
+    border-right: none;
+    border-bottom: none;
+    border-left: none;
+
+    border-radius:
+      24px 24px 0 0;
+  }
+
+  .studentAccessRow {
+    grid-template-columns: 1fr;
+  }
+
+  .studentAccessRow :global(.app-button) {
+    width: 100%;
+  }
+
+  .studentAccessSession {
+    grid-template-columns: 1fr;
+  }
+
+  /* =====================================================
+     Delete modal
+     ===================================================== */
 
   .deleteOverlay {
     align-items: flex-end;
@@ -475,13 +1151,17 @@
   .deleteModal {
     width: 100%;
 
+    max-height: 92vh;
+    max-height: 92dvh;
+
     padding: 1.35rem;
 
     border-right: none;
     border-bottom: none;
     border-left: none;
 
-    border-radius: 24px 24px 0 0;
+    border-radius:
+      24px 24px 0 0;
   }
 
   .deleteActions {
@@ -495,7 +1175,15 @@
   }
 }
 
+/* =========================================================
+   Responsive - Small phone
+   ========================================================= */
+
 @media (max-width: 480px) {
+  .titleBlock h1 {
+    font-size: 2.5rem;
+  }
+
   .deleteContent {
     grid-template-columns: 1fr;
   }
@@ -508,14 +1196,30 @@
   .deleteModalHeader h2 {
     font-size: 1.7rem;
   }
+
+  .studentAccessModalHeader h2 {
+    font-size: 1.55rem;
+  }
+
+  .studentAccessCode {
+    font-size: 1.12rem;
+  }
 }
 
+/* =========================================================
+   Reduced motion
+   ========================================================= */
+
 @media (prefers-reduced-motion: reduce) {
+  .studentAccessOverlay,
+  .studentAccessModal,
   .deleteOverlay,
   .deleteModal {
     animation: none;
   }
 
+  .studentAccessFloatingButton,
+  .studentAccessClose,
   .deleteCloseButton {
     transition: none;
   }

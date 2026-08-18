@@ -155,7 +155,9 @@
     "account": {
       "loading": "Chargement du compte...",
       "notSignedIn": "Non connecté",
-      "authenticatedUser": "Utilisateur authentifié"
+      "notIdentified": "Non identifié",
+      "authenticatedUser": "Utilisateur authentifié",
+      "student": "Étudiant"
     },
 
     "form": {
@@ -417,7 +419,20 @@
     "shuffleQuestions": "Mélanger les questions",
     "shuffleChoices": "Mélanger les choix",
     "showFinalScore": "Afficher la note finale",
-    "showCorrectAnswers": "Afficher les bonnes réponses"
+    "showCorrectAnswers": "Afficher les bonnes réponses",
+    "createdQuestions": "Questions créées",
+    "assignedPoints": "Points attribués"
+  },
+  "structure": {
+  "title": "Structure du quiz",
+  "ready": "PRÊT ✓",
+  "incomplete": "INCOMPLET",
+  "complete": "Complet ✓",
+  "questionsRemaining": "questions restantes",
+  "pointsRemaining": "points restants",
+  "readyText": "La structure du quiz est complète.",
+  "incompleteText": "Complétez la structure du quiz avant de le lancer.",
+  "launchBlocked": "Créez toutes les questions prévues et attribuez tous les points avant de lancer le quiz."
   },
 
   "modes": {
@@ -456,7 +471,28 @@
     "closeAria": "Fermer la confirmation de suppression",
     "confirmBefore": "Voulez-vous vraiment supprimer",
     "warning": "Cette action est irréversible. Le quiz et toutes les données associées seront supprimés définitivement."
-  }
+  },
+  "studentAccess": {
+  "button": "Accès étudiants",
+  "badge": "Accès étudiants",
+  "title": "Partagez ce quiz avec vos étudiants",
+  "description": "Les étudiants peuvent utiliser le lien direct ou saisir le code d’accès pour rejoindre ce quiz.",
+  "close": "Fermer l’accès étudiant",
+  "code": "Code d’accès",
+  "codeHelp": "Partagez ce code court avec les étudiants qui souhaitent rejoindre le quiz manuellement.",
+  "link": "Lien étudiant",
+  "linkHelp": "Partagez ce lien pour envoyer directement les étudiants vers la page d’accès au quiz.",
+  "copy": "Copier",
+  "copied": "Copié",
+  "copyError": "Impossible de copier dans le presse-papiers.",
+  "preparingLink": "Préparation du lien...",
+  "mode": "Mode de disponibilité",
+  "starts": "Début de la session",
+  "availableFrom": "Disponible à partir de",
+  "ends": "Fin",
+  "studentTime": "Temps par étudiant",
+  "sessionTime": "Durée de la session"
+}
 },
 "quizSettings": {
   "badge": "Paramètres du quiz",
@@ -611,6 +647,8 @@
     "addAnswer": "Ajouter une réponse",
     "developmentTitle": "Question de développement",
     "specialCharacters": "Caractères spéciaux",
+    "automaticCounterLabel": "auto-corrigées",
+    "developmentCounterLabel": "développement",
     "developmentHelp": "L’étudiant rédigera une réponse libre qui sera corrigée manuellement par l’enseignant."
   },
 
@@ -629,6 +667,27 @@
     "deleted": "Question supprimée avec succès.",
     "deleteError": "Impossible de supprimer la question."
   },
+  "typeStats": {
+  "title": "Types de questions",
+  "description": "Suivez les limites avant de créer de nouvelles questions.",
+  "qcm": "QCM",
+  "qcmHelp": "Une seule bonne réponse",
+  "multipleChoice": "Choix multiples",
+  "multipleChoiceHelp": "Plusieurs bonnes réponses",
+  "development": "Développement",
+  "developmentHelp": "Correction manuelle",
+  "autoGraded": "Auto-corrigées",
+  "autoGradedHelp": "QCM + choix multiples",
+  "total": "total"
+},
+
+"multipleChoice": {
+  "option": "Choix multiples — plusieurs bonnes réponses",
+  "answersTitle": "Bonnes réponses",
+  "answersHelp": "Sélectionnez au moins deux bonnes réponses. Plusieurs lettres peuvent être actives.",
+  "correctAnswerSelected": "bonne réponse sélectionnée",
+  "correctAnswersSelected": "bonnes réponses sélectionnées"
+},
 
   "validation": {
     "questionRequired": "Le texte de la question est obligatoire.",
@@ -636,7 +695,8 @@
     "maximumPoints": "Le nombre maximal de points disponibles pour cette question est",
     "twoChoices": "Une question QCM doit contenir au moins deux réponses.",
     "emptyChoice": "Tous les choix de réponse doivent contenir du texte.",
-    "correctAnswer": "Sélectionnez la bonne réponse."
+    "correctAnswer": "Sélectionnez la bonne réponse.",
+    "multipleCorrectMinimum": "Sélectionnez au moins deux bonnes réponses."
   },
 
   "deleteModal": {
@@ -671,6 +731,174 @@
   "formula": {
     "title": "Formules avancées",
     "description": "Les fractions, matrices, limites et formules complexes seront disponibles dans l’éditeur de formules."
+  }
+},
+"joinQuiz": {
+  "loading": "Chargement de l’accès au quiz...",
+
+  "badge": "Quiz étudiant",
+  "noDescription": "Aucune description fournie.",
+  "teacher": {
+  "label": "Créé par"},
+
+  "starting": {
+    "title": "Démarrage du quiz...",
+    "subtitle": "Préparation de votre session de quiz personnelle..."
+  },
+
+  "notFound": {
+    "title": "Quiz introuvable",
+    "text": "Ce code d’accès est invalide ou n’est plus disponible."
+  },
+
+  "waiting": {
+    "label": "Commence dans",
+    "text": "Ce quiz n’a pas encore commencé. Vous pouvez garder cette page ouverte."
+  },
+
+  "ended": {
+    "title": "Quiz terminé",
+    "text": "La période d’accès à ce quiz est terminée."
+  },
+
+  "unavailable": {
+    "title": "Quiz indisponible",
+    "text": "Ce quiz n’est pas actuellement disponible pour les étudiants."
+  },
+
+  "summary": {
+    "questions": "Questions",
+    "points": "Nombre total de points",
+    "timePerStudent": "Temps par étudiant",
+    "sessionDuration": "Durée de la session",
+    "mode": "Mode",
+    "starts": "Début",
+    "ends": "Fin",
+    "timeZone": "Fuseau horaire du quiz",
+    "timeRemaining": "Temps restant",
+    "immediately": "Immédiatement",
+    "notSet": "Non défini"
+  },
+
+  "modes": {
+    "openWindow": "Fenêtre ouverte",
+    "scheduledSession": "Session planifiée"
+  },
+
+  "student": {
+    "badge": "Identification de l’étudiant",
+    "title": "Entrez vos informations",
+    "description": "Votre nom et votre adresse courriel permettront d’identifier votre tentative.",
+    "name": "Nom complet",
+    "namePlaceholder": "Exemple : Jean Dupont",
+    "email": "Adresse courriel",
+    "emailPlaceholder": "nom@exemple.com",
+    "start": "Commencer le quiz"
+  },
+
+  "validation": {
+    "nameRequired": "Veuillez saisir votre nom complet.",
+    "emailRequired": "Veuillez saisir votre adresse courriel.",
+    "invalidEmail": "Veuillez saisir une adresse courriel valide."
+  },
+
+  "messages": {
+    "loadError": "Impossible de charger ce quiz.",
+    "startError": "Impossible de démarrer le quiz. Veuillez réessayer."
+  }
+},
+"quizSession": {
+  "loading": "Chargement de votre session de quiz...",
+
+  "access": {
+    "title": "Quiz indisponible",
+    "text": "Cette session de quiz est indisponible ou n’a pas pu être chargée.",
+    "notFound": "Cette tentative de quiz est introuvable.",
+    "loadError": "Impossible de charger votre session de quiz."
+  },
+
+  "header": {
+    "timeRemaining": "Temps restant",
+    "answered": "Répondues"
+  },
+
+  "questions": {
+    "title": "Questions",
+    "development": "Développement"
+  },
+
+  "questionTypes": {
+    "qcm": "QCM",
+    "multipleChoice": "Choix multiples",
+    "development": "Développement"
+  },
+
+  "question": {
+    "label": "Question",
+    "points": "pts",
+    "developmentAnswer": "Votre réponse",
+    "developmentPlaceholder": "Écrivez votre réponse ici..."
+  },
+
+  "choiceInstructions": {
+    "singleTitle": "Une seule réponse",
+    "singleText": "Sélectionnez la meilleure réponse.",
+    "multipleTitle": "Plusieurs réponses possibles",
+    "multipleText": "Sélectionnez toutes les réponses que vous pensez correctes. Vous pouvez sélectionner ou désélectionner plusieurs choix."
+  },
+
+  "symbols": {
+    "open": "Caractères spéciaux",
+    "close": "Fermer",
+    "panelAria": "Outils de caractères spéciaux",
+    "insertSymbol": "Insérer le symbole",
+
+    "superscript": "Exposant",
+    "superscriptPlaceholder": "Ex. : 12",
+    "insertSuperscript": "Insérer l’exposant",
+
+    "subscript": "Indice",
+    "subscriptPlaceholder": "Ex. : 23",
+    "insertSubscript": "Insérer l’indice",
+
+    "fraction": "Fraction",
+    "numerator": "Numérateur",
+    "denominator": "Dénominateur",
+    "numeratorPlaceholder": "1",
+    "denominatorPlaceholder": "2",
+    "insert": "Insérer"
+  },
+
+  "saving": {
+    "saving": "Enregistrement...",
+    "saved": "Enregistré ✓"
+  },
+
+  "actions": {
+    "previous": "Précédente",
+    "next": "Suivante",
+    "submit": "Soumettre le quiz",
+    "cancel": "Annuler"
+  },
+
+  "submit": {
+    "badge": "Soumission finale",
+    "title": "Soumettre votre quiz ?",
+    "text": "Après la soumission, vos réponses ne pourront plus être modifiées. Vérifiez que vous êtes prêt avant de continuer.",
+    "submitting": "Soumission...",
+    "closeAria": "Fermer la confirmation de soumission"
+  },
+
+  "submitted": {
+    "title": "Quiz soumis",
+    "text": "Vos réponses ont été soumises avec succès. Votre résultat sera traité selon les paramètres du quiz.",
+    "student": "Étudiant",
+    "email": "Adresse courriel"
+  },
+
+  "messages": {
+    "saveError": "Impossible d’enregistrer votre réponse. Veuillez réessayer.",
+    "submitError": "Impossible de soumettre votre quiz. Veuillez réessayer."
   }
 }
 }

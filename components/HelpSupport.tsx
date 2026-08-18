@@ -9,9 +9,17 @@ import {
   type MouseEvent,
 } from "react";
 
-import { useUser } from "@clerk/nextjs";
+import {
+  useUser,
+} from "@clerk/nextjs";
 
-import { useLanguage } from "@/hooks/useLanguage";
+import {
+  useLanguage,
+} from "@/hooks/useLanguage";
+
+/* =========================================================
+   Types
+   ========================================================= */
 
 type FormState = {
   action: string;
@@ -19,49 +27,149 @@ type FormState = {
   email: string;
 };
 
-const INITIAL_FORM: FormState = {
+export type HelpSupportContext =
+  | "teacher"
+  | "student"
+  | "anonymous";
+
+export type HelpSupportStudentIdentity = {
+  name?: string;
+  email?: string;
+  attemptId?: string;
+  quizId?: string;
+};
+
+type HelpSupportProps = {
+  /*
+   * Default remains teacher so existing
+   * authenticated teacher pages keep working.
+   */
+  context?:
+    HelpSupportContext;
+
+  /*
+   * Used only in student context.
+   */
+  studentIdentity?:
+    HelpSupportStudentIdentity | null;
+};
+
+/* =========================================================
+   Constants
+   ========================================================= */
+
+const INITIAL_FORM:
+  FormState = {
   action: "",
   description: "",
   email: "",
 };
 
-export default function HelpSupport() {
+const MAX_ACTION_LENGTH =
+  150;
+
+const MAX_DESCRIPTION_LENGTH =
+  1500;
+
+const MAX_EMAIL_LENGTH =
+  200;
+
+/* =========================================================
+   Email validation
+   ========================================================= */
+
+function isValidEmail(
+  value: string
+) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(
+    value
+  );
+}
+
+/* =========================================================
+   Component
+   ========================================================= */
+
+export default function HelpSupport({
+  context = "teacher",
+  studentIdentity = null,
+}: HelpSupportProps) {
   const {
     user,
     isLoaded,
-  } = useUser();
+  } =
+    useUser();
 
-  const { t } = useLanguage();
+  const {
+    t,
+  } =
+    useLanguage();
 
   const firstInputRef =
     useRef<HTMLInputElement | null>(
       null
     );
 
-  const [open, setOpen] =
+  const [
+    open,
+    setOpen,
+  ] =
     useState(false);
 
-  const [form, setForm] =
+  const [
+    form,
+    setForm,
+  ] =
     useState<FormState>(
       INITIAL_FORM
     );
 
-  const [message, setMessage] =
+  const [
+    message,
+    setMessage,
+  ] =
     useState("");
 
   const [
     submitting,
     setSubmitting,
-  ] = useState(false);
+  ] =
+    useState(false);
 
   const [
     submitted,
     setSubmitted,
-  ] = useState(false);
+  ] =
+    useState(false);
 
-  const userEmail =
+  /* =========================================================
+     Context helpers
+     ========================================================= */
+
+  const isTeacherContext =
+    context ===
+    "teacher";
+
+  const isStudentContext =
+    context ===
+    "student";
+
+  const isAnonymousContext =
+    context ===
+    "anonymous";
+
+  /* =========================================================
+     Clerk teacher identity
+     ========================================================= */
+
+  const clerkEmail =
     useMemo(() => {
+      /*
+       * Clerk is intentionally ignored outside
+       * the teacher context.
+       */
       if (
+        !isTeacherContext ||
         !isLoaded ||
         !user
       ) {
@@ -70,56 +178,282 @@ export default function HelpSupport() {
 
       return (
         user.primaryEmailAddress
-          ?.emailAddress || ""
+          ?.emailAddress
+          ?.trim() ??
+        ""
       );
     }, [
+      isTeacherContext,
       isLoaded,
       user,
     ]);
 
-  const signedInAccount =
+  const clerkName =
     useMemo(() => {
-      if (!isLoaded) {
+      if (
+        !isTeacherContext ||
+        !isLoaded ||
+        !user
+      ) {
+        return "";
+      }
+
+      return (
+        user.fullName
+          ?.trim() ??
+        ""
+      );
+    }, [
+      isTeacherContext,
+      isLoaded,
+      user,
+    ]);
+
+  /* =========================================================
+     Student identity
+     ========================================================= */
+
+  const studentEmail =
+    useMemo(() => {
+      if (
+        !isStudentContext
+      ) {
+        return "";
+      }
+
+      return (
+        studentIdentity
+          ?.email
+          ?.trim()
+          ?.toLowerCase() ??
+        ""
+      );
+    }, [
+      isStudentContext,
+      studentIdentity,
+    ]);
+
+  const studentName =
+    useMemo(() => {
+      if (
+        !isStudentContext
+      ) {
+        return "";
+      }
+
+      return (
+        studentIdentity
+          ?.name
+          ?.trim() ??
+        ""
+      );
+    }, [
+      isStudentContext,
+      studentIdentity,
+    ]);
+
+  const hasStudentIdentity =
+    Boolean(
+      studentName ||
+      studentEmail
+    );
+
+  /* =========================================================
+     Effective support email
+     ========================================================= */
+
+  const supportEmail =
+    useMemo(() => {
+      if (
+        isStudentContext
+      ) {
+        return studentEmail;
+      }
+
+      if (
+        isAnonymousContext
+      ) {
+        return "";
+      }
+
+      return clerkEmail;
+    }, [
+      isStudentContext,
+      isAnonymousContext,
+      studentEmail,
+      clerkEmail,
+    ]);
+
+  /* =========================================================
+     Effective support account
+     ========================================================= */
+
+  const supportAccount =
+    useMemo(() => {
+      /* =====================================================
+         Anonymous
+         ===================================================== */
+
+      if (
+        isAnonymousContext
+      ) {
+        return t(
+          "help.account.notIdentified"
+        );
+      }
+
+      /* =====================================================
+         Student
+         ===================================================== */
+
+      if (
+        isStudentContext
+      ) {
+        if (
+          hasStudentIdentity
+        ) {
+          return (
+            studentName ||
+            studentEmail ||
+            t(
+              "help.account.student"
+            )
+          );
+        }
+
+        return t(
+          "help.account.notIdentified"
+        );
+      }
+
+      /* =====================================================
+         Teacher
+         ===================================================== */
+
+      if (
+        !isLoaded
+      ) {
         return t(
           "help.account.loading"
         );
       }
 
-      if (!user) {
+      if (
+        !user
+      ) {
         return t(
           "help.account.notSignedIn"
         );
       }
 
       return (
-        user.fullName ||
-        userEmail ||
+        clerkName ||
+        clerkEmail ||
         t(
           "help.account.authenticatedUser"
         )
       );
     }, [
+      isAnonymousContext,
+      isStudentContext,
+      hasStudentIdentity,
+      studentName,
+      studentEmail,
       isLoaded,
       user,
-      userEmail,
+      clerkName,
+      clerkEmail,
       t,
     ]);
 
+  /* =========================================================
+     Account type
+     ========================================================= */
+
+  const supportAccountType:
+    | "teacher"
+    | "student"
+    | "anonymous" =
+    useMemo(() => {
+      if (
+        isAnonymousContext
+      ) {
+        return "anonymous";
+      }
+
+      if (
+        isStudentContext
+      ) {
+        return hasStudentIdentity
+          ? "student"
+          : "anonymous";
+      }
+
+      if (
+        isTeacherContext &&
+        user
+      ) {
+        return "teacher";
+      }
+
+      return "anonymous";
+    }, [
+      isAnonymousContext,
+      isStudentContext,
+      isTeacherContext,
+      hasStudentIdentity,
+      user,
+    ]);
+
+  /* =========================================================
+     Reset modal form
+     ========================================================= */
+
+  function createInitialModalForm():
+    FormState {
+    return {
+      action:
+        "",
+
+      description:
+        "",
+
+      email:
+        supportEmail,
+    };
+  }
+
+  /* =========================================================
+     Open modal initialization
+     ========================================================= */
+
   useEffect(() => {
-    if (!open) {
+    if (
+      !open
+    ) {
       return;
     }
 
-    setSubmitted(false);
-    setMessage("");
+    setSubmitted(
+      false
+    );
 
-    setForm((current) => ({
-      ...current,
+    setMessage(
+      ""
+    );
 
-      email:
-        current.email ||
-        userEmail,
-    }));
+    /*
+     * Important:
+     *
+     * We do NOT preserve an email from an old context.
+     *
+     * anonymous  -> ""
+     * student    -> student email
+     * teacher    -> Clerk email
+     */
+    setForm(
+      createInitialModalForm()
+    );
 
     const timer =
       window.setTimeout(
@@ -137,23 +471,74 @@ export default function HelpSupport() {
     };
   }, [
     open,
-    userEmail,
+    supportEmail,
   ]);
 
+  /* =========================================================
+     Synchronize identity while modal is open
+     ========================================================= */
+
   useEffect(() => {
-    if (!open) {
+    if (
+      !open
+    ) {
+      return;
+    }
+
+    setForm(
+      (
+        current
+      ) => ({
+        ...current,
+
+        /*
+         * This deliberately becomes an empty
+         * string for anonymous context.
+         */
+        email:
+          supportEmail,
+      })
+    );
+  }, [
+    open,
+    supportEmail,
+  ]);
+
+  /* =========================================================
+     Escape + body lock
+     ========================================================= */
+
+  useEffect(() => {
+    if (
+      !open
+    ) {
       return;
     }
 
     function handleEscape(
-      event: KeyboardEvent
+      event:
+        KeyboardEvent
     ) {
       if (
         event.key ===
           "Escape" &&
         !submitting
       ) {
-        closeModal();
+        setOpen(
+          false
+        );
+
+        setMessage(
+          ""
+        );
+
+        setSubmitted(
+          false
+        );
+
+        setForm(
+          INITIAL_FORM
+        );
       }
     }
 
@@ -166,7 +551,8 @@ export default function HelpSupport() {
       document.body.style
         .overflow;
 
-    document.body.style.overflow =
+    document.body.style
+      .overflow =
       "hidden";
 
     return () => {
@@ -175,7 +561,8 @@ export default function HelpSupport() {
         handleEscape
       );
 
-      document.body.style.overflow =
+      document.body.style
+        .overflow =
         previousOverflow;
     };
   }, [
@@ -183,31 +570,61 @@ export default function HelpSupport() {
     submitting,
   ]);
 
+  /* =========================================================
+     Modal helpers
+     ========================================================= */
+
   function openModal() {
-    setOpen(true);
+    setOpen(
+      true
+    );
   }
 
   function closeModal() {
-    if (submitting) {
+    if (
+      submitting
+    ) {
       return;
     }
 
-    setOpen(false);
-    setMessage("");
-    setSubmitted(false);
-    setForm(INITIAL_FORM);
+    setOpen(
+      false
+    );
+
+    setMessage(
+      ""
+    );
+
+    setSubmitted(
+      false
+    );
+
+    setForm(
+      INITIAL_FORM
+    );
   }
 
   function updateField(
-    field: keyof FormState,
-    value: string
-  ) {
-    setForm((current) => ({
-      ...current,
-      [field]: value,
-    }));
+    field:
+      keyof FormState,
 
-    setMessage("");
+    value:
+      string
+  ) {
+    setForm(
+      (
+        current
+      ) => ({
+        ...current,
+
+        [field]:
+          value,
+      })
+    );
+
+    setMessage(
+      ""
+    );
   }
 
   function handleOverlayClick(
@@ -223,13 +640,19 @@ export default function HelpSupport() {
     }
   }
 
+  /* =========================================================
+     Submit
+     ========================================================= */
+
   async function handleSubmit(
     event:
       FormEvent<HTMLFormElement>
   ) {
     event.preventDefault();
 
-    if (submitting) {
+    if (
+      submitting
+    ) {
       return;
     }
 
@@ -240,9 +663,17 @@ export default function HelpSupport() {
       form.description.trim();
 
     const cleanEmail =
-      form.email.trim();
+      form.email
+        .trim()
+        .toLowerCase();
 
-    if (!cleanAction) {
+    /* =====================================================
+       Validation
+       ===================================================== */
+
+    if (
+      !cleanAction
+    ) {
       setMessage(
         t(
           "help.validation.actionRequired"
@@ -252,7 +683,9 @@ export default function HelpSupport() {
       return;
     }
 
-    if (!cleanDescription) {
+    if (
+      !cleanDescription
+    ) {
       setMessage(
         t(
           "help.validation.descriptionRequired"
@@ -277,7 +710,7 @@ export default function HelpSupport() {
 
     if (
       cleanEmail &&
-      !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(
+      !isValidEmail(
         cleanEmail
       )
     ) {
@@ -290,8 +723,13 @@ export default function HelpSupport() {
       return;
     }
 
-    setSubmitting(true);
-    setMessage("");
+    setSubmitting(
+      true
+    );
+
+    setMessage(
+      ""
+    );
 
     try {
       const supportReport = {
@@ -305,30 +743,86 @@ export default function HelpSupport() {
           cleanEmail ||
           null,
 
-        teacherId:
-          user?.id ||
-          null,
+        accountType:
+          supportAccountType,
 
-        teacherName:
-          user?.fullName ||
-          null,
+        /* =================================================
+           Student context
+           ================================================= */
 
-        signedInAccount:
-          user
-            ? signedInAccount
+        studentName:
+          isStudentContext &&
+          hasStudentIdentity
+            ? studentName ||
+              null
             : null,
 
+        studentEmail:
+          isStudentContext &&
+          hasStudentIdentity
+            ? studentEmail ||
+              null
+            : null,
+
+        attemptId:
+          isStudentContext
+            ? studentIdentity
+                ?.attemptId ??
+              null
+            : null,
+
+        quizId:
+          isStudentContext
+            ? studentIdentity
+                ?.quizId ??
+              null
+            : null,
+
+        /* =================================================
+           Teacher context
+           ================================================= */
+
+        teacherId:
+          isTeacherContext
+            ? user?.id ??
+              null
+            : null,
+
+        teacherName:
+          isTeacherContext
+            ? clerkName ||
+              null
+            : null,
+
+        teacherEmail:
+          isTeacherContext
+            ? clerkEmail ||
+              null
+            : null,
+
+        signedInAccount:
+          supportAccount,
+
         createdAt:
-          new Date().toISOString(),
+          new Date()
+            .toISOString(),
       };
 
+      /*
+       * Temporary development output.
+       *
+       * Later this can be connected to Firestore,
+       * an API route or email delivery.
+       */
       console.log(
         "ULearn support report:",
         supportReport
       );
 
       await new Promise<void>(
-        (resolve) => {
+        (
+          resolve
+        ) => {
           window.setTimeout(
             resolve,
             700
@@ -336,12 +830,16 @@ export default function HelpSupport() {
         }
       );
 
-      setSubmitted(true);
+      setSubmitted(
+        true
+      );
 
       setForm(
-        INITIAL_FORM
+        createInitialModalForm()
       );
-    } catch (error) {
+    } catch (
+      error
+    ) {
       console.error(
         "Unable to prepare the support report:",
         error
@@ -353,23 +851,36 @@ export default function HelpSupport() {
         )
       );
     } finally {
-      setSubmitting(false);
+      setSubmitting(
+        false
+      );
     }
   }
+
+  /* =========================================================
+     UI
+     ========================================================= */
 
   return (
     <>
       <button
         type="button"
         className="help-support-button"
-        onClick={openModal}
+        onClick={
+          openModal
+        }
         aria-label={t(
           "help.openAriaLabel"
         )}
         aria-haspopup="dialog"
-        aria-expanded={open}
+        aria-expanded={
+          open
+        }
       >
-        <span className="help-support-icon">
+        <span
+          className="help-support-icon"
+          aria-hidden="true"
+        >
           ?
         </span>
 
@@ -401,7 +912,9 @@ export default function HelpSupport() {
                   )}
                 </span>
 
-                <h2 id="help-dialog-title">
+                <h2
+                  id="help-dialog-title"
+                >
                   {t(
                     "help.title"
                   )}
@@ -433,7 +946,10 @@ export default function HelpSupport() {
 
             {submitted ? (
               <div className="help-support-success">
-                <div className="help-support-success-icon">
+                <div
+                  className="help-support-success-icon"
+                  aria-hidden="true"
+                >
                   ✓
                 </div>
 
@@ -488,7 +1004,7 @@ export default function HelpSupport() {
                       form.action
                     }
                     maxLength={
-                      150
+                      MAX_ACTION_LENGTH
                     }
                     placeholder={t(
                       "help.form.actionPlaceholder"
@@ -507,8 +1023,12 @@ export default function HelpSupport() {
                     {
                       form.action
                         .length
-                    }{" "}
-                    / 150{" "}
+                    }
+                    {" / "}
+                    {
+                      MAX_ACTION_LENGTH
+                    }
+                    {" "}
                     {t(
                       "help.form.characters"
                     )}
@@ -525,7 +1045,7 @@ export default function HelpSupport() {
                       form.description
                     }
                     maxLength={
-                      1500
+                      MAX_DESCRIPTION_LENGTH
                     }
                     placeholder={t(
                       "help.form.descriptionPlaceholder"
@@ -544,8 +1064,12 @@ export default function HelpSupport() {
                     {
                       form.description
                         .length
-                    }{" "}
-                    / 1500{" "}
+                    }
+                    {" / "}
+                    {
+                      MAX_DESCRIPTION_LENGTH
+                    }
+                    {" "}
                     {t(
                       "help.form.characters"
                     )}
@@ -571,7 +1095,7 @@ export default function HelpSupport() {
                       form.email
                     }
                     maxLength={
-                      200
+                      MAX_EMAIL_LENGTH
                     }
                     placeholder={t(
                       "help.form.emailPlaceholder"
@@ -609,9 +1133,19 @@ export default function HelpSupport() {
 
                     <p>
                       {
-                        signedInAccount
+                        supportAccount
                       }
                     </p>
+
+                    {isStudentContext &&
+                      hasStudentIdentity &&
+                      studentEmail && (
+                        <small>
+                          {
+                            studentEmail
+                          }
+                        </small>
+                      )}
                   </div>
                 </div>
 
@@ -620,7 +1154,9 @@ export default function HelpSupport() {
                     className="help-support-message"
                     role="alert"
                   >
-                    {message}
+                    {
+                      message
+                    }
                   </p>
                 )}
 

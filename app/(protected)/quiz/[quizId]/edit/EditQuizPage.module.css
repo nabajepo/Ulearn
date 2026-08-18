@@ -1,14 +1,11 @@
 .page {
   min-height: 100vh;
-
   padding: 1.5rem 2%;
-
   background: var(--page-gradient);
 }
 
 .card {
   width: min(1600px, 96vw);
-
   margin: 0 auto;
   padding: 2rem;
 
@@ -16,7 +13,6 @@
   border-radius: 28px;
 
   background: #ffffff;
-
   box-shadow: var(--shadow);
 }
 
@@ -26,7 +22,6 @@
 
 .header {
   display: flex;
-
   justify-content: space-between;
   align-items: flex-start;
 
@@ -61,12 +56,7 @@
 
   color: var(--main-color);
 
-  font-size: clamp(
-    2.5rem,
-    5vw,
-    4rem
-  );
-
+  font-size: clamp(2.5rem, 5vw, 4rem);
   font-weight: 900;
   line-height: 1;
 
@@ -85,12 +75,7 @@
 .description {
   max-width: 800px;
 
-  color: rgba(
-    23,
-    23,
-    23,
-    0.65
-  );
+  color: rgba(23, 23, 23, 0.65);
 
   font-size: 0.95rem;
   line-height: 1.6;
@@ -116,24 +101,17 @@
 
 .progressGrid {
   display: grid;
-
-  grid-template-columns:
-    repeat(
-      3,
-      minmax(0, 1fr)
-    );
+  grid-template-columns: repeat(3, minmax(0, 1fr));
 
   gap: 1rem;
 
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
 }
 
 .progressCard {
   padding: 1rem 1.2rem;
 
-  border: 1px solid
-    var(--border-color);
-
+  border: 1px solid var(--border-color);
   border-radius: 16px;
 
   background: var(--soft-purple);
@@ -144,12 +122,7 @@
 
   margin-bottom: 0.4rem;
 
-  color: rgba(
-    23,
-    23,
-    23,
-    0.58
-  );
+  color: rgba(23, 23, 23, 0.58);
 
   font-size: 0.74rem;
   font-weight: 800;
@@ -167,41 +140,135 @@
 }
 
 .progressCard small {
-  color: rgba(
-    23,
-    23,
-    23,
-    0.58
-  );
+  color: rgba(23, 23, 23, 0.58);
 
   font-size: 0.72rem;
   font-weight: 600;
 }
 
 .completeCard {
-  border-color: rgba(
-    42,
-    3,
-    105,
-    0.3
-  );
+  border-color: rgba(42, 3, 105, 0.3);
 
   background:
     linear-gradient(
       145deg,
-      rgba(
-        42,
-        3,
-        105,
-        0.12
-      ),
-      rgba(
-        42,
-        3,
-        105,
-        0.04
-      )
+      rgba(42, 3, 105, 0.12),
+      rgba(42, 3, 105, 0.04)
     );
+}
+
+/* =========================================================
+   Question type statistics
+   ========================================================= */
+
+.typeStatsSection {
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+
+  border: 1px solid var(--border-color);
+  border-radius: 18px;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(42, 3, 105, 0.025),
+      #ffffff 45%
+    );
+}
+
+.typeStatsHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  gap: 1rem;
+
+  margin-bottom: 0.9rem;
+}
+
+.typeStatsHeader h2 {
+  margin-bottom: 0.2rem;
+
+  color: var(--main-color);
+
+  font-size: 0.95rem;
+  font-weight: 900;
+}
+
+.typeStatsHeader p {
+  color: rgba(23, 23, 23, 0.56);
+
+  font-size: 0.7rem;
+  line-height: 1.4;
+}
+
+.totalLimitBadge {
+  flex-shrink: 0;
+
+  padding: 0.45rem 0.7rem;
+
+  border-radius: 999px;
+
+  background: var(--soft-purple);
+  color: var(--main-color);
+
+  font-size: 0.7rem;
+  font-weight: 900;
+}
+
+.typeStatsGrid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+
+  gap: 0.7rem;
+}
+
+.typeStatCard {
+  min-width: 0;
+
+  padding: 0.8rem;
+
+  border: 1px solid var(--border-color);
+  border-radius: 13px;
+
+  background: #ffffff;
+}
+
+.typeStatCard span {
+  display: block;
+
+  margin-bottom: 0.3rem;
+
+  color: rgba(23, 23, 23, 0.58);
+
+  font-size: 0.68rem;
+  font-weight: 800;
+}
+
+.typeStatCard strong {
+  display: block;
+
+  margin-bottom: 0.2rem;
+
+  color: var(--main-color);
+
+  font-size: 1rem;
+  font-weight: 900;
+}
+
+.typeStatCard small {
+  display: block;
+
+  color: rgba(23, 23, 23, 0.52);
+
+  font-size: 0.62rem;
+  line-height: 1.35;
+}
+
+.limitReachedCard {
+  border-color: rgba(42, 3, 105, 0.32);
+
+  background: var(--soft-purple);
 }
 
 /* =========================================================
@@ -237,27 +304,19 @@
 
   padding: 1rem;
 
-  border: 1px solid
-    var(--border-color);
-
+  border: 1px solid var(--border-color);
   border-radius: 20px;
 
   background:
     linear-gradient(
       145deg,
-      rgba(
-        42,
-        3,
-        105,
-        0.03
-      ),
+      rgba(42, 3, 105, 0.03),
       #ffffff 35%
     );
 }
 
 .questionPanelHeader {
   display: flex;
-
   justify-content: space-between;
   align-items: center;
 
@@ -265,8 +324,7 @@
 
   padding-bottom: 0.9rem;
 
-  border-bottom: 1px solid
-    var(--border-color);
+  border-bottom: 1px solid var(--border-color);
 }
 
 .questionPanelHeader h2 {
@@ -279,12 +337,7 @@
 }
 
 .questionPanelHeader p {
-  color: rgba(
-    23,
-    23,
-    23,
-    0.58
-  );
+  color: rgba(23, 23, 23, 0.58);
 
   font-size: 0.75rem;
   font-weight: 700;
@@ -295,7 +348,6 @@
   height: 40px;
 
   display: inline-flex;
-
   align-items: center;
   justify-content: center;
 
@@ -318,24 +370,52 @@
     opacity 0.2s ease;
 }
 
-.addQuestionButton:hover:not(
-    :disabled
-  ) {
+.addQuestionButton:hover:not(:disabled) {
   transform: translateY(-2px);
 
-  background:
-    var(--main-color-hover);
+  background: var(--main-color-hover);
 }
 
 .addQuestionButton:disabled {
   opacity: 0.45;
-
   cursor: not-allowed;
+}
+
+/* =========================================================
+   Mini type counters
+   ========================================================= */
+
+.miniTypeCounters {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+
+  gap: 0.35rem;
+}
+
+.miniTypeCounters span {
+  min-width: 0;
+
+  padding: 0.45rem 0.35rem;
+
+  border: 1px solid var(--border-color);
+  border-radius: 9px;
+
+  background: var(--soft-purple);
+  color: rgba(23, 23, 23, 0.62);
+
+  text-align: center;
+
+  font-size: 0.58rem;
+  font-weight: 800;
+}
+
+.miniTypeCounters strong {
+  color: var(--main-color);
+  font-weight: 900;
 }
 
 .questionList {
   display: grid;
-
   gap: 0.65rem;
 
   max-height: 500px;
@@ -361,9 +441,7 @@
 
   padding: 0.8rem;
 
-  border: 1px solid
-    var(--border-color);
-
+  border: 1px solid var(--border-color);
   border-radius: 13px;
 
   background: #ffffff;
@@ -383,23 +461,14 @@
 .questionItem:hover {
   transform: translateY(-1px);
 
-  border-color: rgba(
-    42,
-    3,
-    105,
-    0.28
-  );
-
+  border-color: rgba(42, 3, 105, 0.28);
   background: var(--soft-purple);
 }
 
 .questionItemSelected {
-  border-color:
-    var(--main-color);
+  border-color: var(--main-color);
 
-  background:
-    var(--main-color);
-
+  background: var(--main-color);
   color: #ffffff;
 }
 
@@ -408,7 +477,6 @@
   height: 32px;
 
   display: inline-flex;
-
   align-items: center;
   justify-content: center;
 
@@ -416,25 +484,15 @@
 
   border-radius: 10px;
 
-  background:
-    var(--soft-purple);
-
-  color:
-    var(--main-color);
+  background: var(--soft-purple);
+  color: var(--main-color);
 
   font-size: 0.72rem;
   font-weight: 900;
 }
 
-.questionItemSelected
-  .questionNumber {
-  background: rgba(
-    255,
-    255,
-    255,
-    0.16
-  );
-
+.questionItemSelected .questionNumber {
+  background: rgba(255, 255, 255, 0.16);
   color: #ffffff;
 }
 
@@ -454,12 +512,7 @@
 .questionItemContent small {
   overflow: hidden;
 
-  color: rgba(
-    23,
-    23,
-    23,
-    0.6
-  );
+  color: rgba(23, 23, 23, 0.6);
 
   font-size: 0.67rem;
   line-height: 1.35;
@@ -468,15 +521,8 @@
   white-space: nowrap;
 }
 
-.questionItemSelected
-  .questionItemContent
-  small {
-  color: rgba(
-    255,
-    255,
-    255,
-    0.78
-  );
+.questionItemSelected .questionItemContent small {
+  color: rgba(255, 255, 255, 0.78);
 }
 
 .questionPoints {
@@ -489,13 +535,10 @@
 .emptyQuestions {
   padding: 1.1rem;
 
-  border: 1px dashed
-    var(--border-color);
-
+  border: 1px dashed var(--border-color);
   border-radius: 14px;
 
-  background:
-    var(--soft-purple);
+  background: var(--soft-purple);
 }
 
 .emptyQuestions strong {
@@ -510,12 +553,7 @@
 }
 
 .emptyQuestions p {
-  color: rgba(
-    23,
-    23,
-    23,
-    0.6
-  );
+  color: rgba(23, 23, 23, 0.6);
 
   font-size: 0.72rem;
   line-height: 1.5;
@@ -530,9 +568,7 @@
 
   padding: 1.3rem;
 
-  border: 1px solid
-    var(--border-color);
-
+  border: 1px solid var(--border-color);
   border-radius: 20px;
 
   background: #ffffff;
@@ -540,7 +576,6 @@
 
 .editorHeader {
   display: flex;
-
   justify-content: space-between;
   align-items: flex-start;
 
@@ -549,8 +584,7 @@
   margin-bottom: 1.3rem;
   padding-bottom: 1rem;
 
-  border-bottom: 1px solid
-    var(--border-color);
+  border-bottom: 1px solid var(--border-color);
 }
 
 .editorEyebrow {
@@ -558,12 +592,7 @@
 
   margin-bottom: 0.35rem;
 
-  color: rgba(
-    23,
-    23,
-    23,
-    0.55
-  );
+  color: rgba(23, 23, 23, 0.55);
 
   font-size: 0.72rem;
   font-weight: 800;
@@ -598,9 +627,7 @@
 .editorForm select {
   width: 100%;
 
-  border: 1px solid
-    var(--border-color);
-
+  border: 1px solid var(--border-color);
   border-radius: 13px;
 
   background: #ffffff;
@@ -634,19 +661,13 @@
 .editorForm input:hover,
 .editorForm textarea:hover,
 .editorForm select:hover {
-  border-color: rgba(
-    42,
-    3,
-    105,
-    0.3
-  );
+  border-color: rgba(42, 3, 105, 0.3);
 }
 
 .editorForm input:focus,
 .editorForm textarea:focus,
 .editorForm select:focus {
-  border-color:
-    var(--main-color);
+  border-color: var(--main-color);
 
   box-shadow:
     0 0 0 3px
@@ -656,12 +677,7 @@
 }
 
 .editorForm small {
-  color: rgba(
-    23,
-    23,
-    23,
-    0.56
-  );
+  color: rgba(23, 23, 23, 0.56);
 
   font-size: 0.7rem;
   font-weight: 600;
@@ -672,14 +688,13 @@
 }
 
 /* =========================================================
-   Special character controls
+   Special characters
    ========================================================= */
 
 .symbolToggleButton {
   width: fit-content;
 
   display: inline-flex;
-
   align-items: center;
   justify-content: center;
 
@@ -687,9 +702,7 @@
 
   padding: 0.55rem 0.8rem;
 
-  border: 1px solid
-    var(--border-color);
-
+  border: 1px solid var(--border-color);
   border-radius: 10px;
 
   background: #ffffff;
@@ -709,21 +722,12 @@
 .symbolToggleButton:hover {
   transform: translateY(-1px);
 
-  border-color: rgba(
-    42,
-    3,
-    105,
-    0.3
-  );
-
-  background:
-    var(--soft-purple);
+  border-color: rgba(42, 3, 105, 0.3);
+  background: var(--soft-purple);
 }
 
 .symbolToggleButton:focus-visible {
-  outline: 2px solid
-    var(--main-color);
-
+  outline: 2px solid var(--main-color);
   outline-offset: 2px;
 }
 
@@ -736,17 +740,10 @@
 
   padding: 1rem;
 
-  border: 1px solid
-    var(--border-color);
-
+  border: 1px solid var(--border-color);
   border-radius: 16px;
 
-  background: rgba(
-    42,
-    3,
-    105,
-    0.02
-  );
+  background: rgba(42, 3, 105, 0.02);
 }
 
 .choicesSection legend {
@@ -761,20 +758,48 @@
 .choiceHelp {
   margin-bottom: 0.8rem;
 
-  color: rgba(
-    23,
-    23,
-    23,
-    0.58
-  );
+  color: rgba(23, 23, 23, 0.58);
 
   font-size: 0.72rem;
   line-height: 1.5;
 }
 
+/* =========================================================
+   Multiple choice notice
+   ========================================================= */
+
+.multipleChoiceNotice {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 0.7rem;
+
+  margin-bottom: 0.85rem;
+  padding: 0.7rem 0.8rem;
+
+  border: 1px solid rgba(42, 3, 105, 0.18);
+  border-radius: 11px;
+
+  background: var(--soft-purple);
+}
+
+.multipleChoiceNotice strong {
+  color: var(--main-color);
+
+  font-size: 0.72rem;
+  font-weight: 900;
+}
+
+.multipleChoiceNotice span {
+  color: rgba(23, 23, 23, 0.62);
+
+  font-size: 0.68rem;
+  font-weight: 700;
+}
+
 .choiceList {
   display: grid;
-
   gap: 0.7rem;
 }
 
@@ -782,7 +807,6 @@
   min-width: 0;
 
   display: grid;
-
   gap: 0.55rem;
 }
 
@@ -791,9 +815,6 @@
 
   display: grid;
 
-  /*
-   * A / answer / Ω / delete
-   */
   grid-template-columns:
     auto
     minmax(0, 1fr)
@@ -819,15 +840,9 @@
 }
 
 .correctChoice {
-  border-color: rgba(
-    42,
-    3,
-    105,
-    0.18
-  );
+  border-color: rgba(42, 3, 105, 0.18);
 
-  background:
-    var(--soft-purple);
+  background: var(--soft-purple);
 }
 
 .correctSelector {
@@ -843,13 +858,10 @@
   height: 36px;
 
   display: inline-flex;
-
   align-items: center;
   justify-content: center;
 
-  border: 1px solid
-    var(--border-color);
-
+  border: 1px solid var(--border-color);
   border-radius: 10px;
 
   background: #ffffff;
@@ -861,50 +873,40 @@
   transition:
     border-color 0.2s ease,
     background-color 0.2s ease,
-    color 0.2s ease;
+    color 0.2s ease,
+    transform 0.2s ease;
 }
 
 .correctSelector:hover span {
-  border-color: rgba(
-    42,
-    3,
-    105,
-    0.35
-  );
+  transform: translateY(-1px);
+
+  border-color: rgba(42, 3, 105, 0.35);
 }
 
-.correctChoice
-  .correctSelector
-  span {
-  border-color:
-    var(--main-color);
+.correctChoice .correctSelector span {
+  border-color: var(--main-color);
 
-  background:
-    var(--main-color);
-
+  background: var(--main-color);
   color: #ffffff;
 }
 
-.choiceSymbolButton {
+.choiceSymbolButton,
+.removeChoiceButton {
   width: 40px;
   height: 40px;
 
   display: inline-flex;
-
   align-items: center;
   justify-content: center;
 
   flex-shrink: 0;
 
-  border: 1px solid
-    var(--border-color);
-
+  border: 1px solid var(--border-color);
   border-radius: 11px;
 
   background: #ffffff;
   color: var(--main-color);
 
-  font-size: 0.95rem;
   font-weight: 900;
 
   cursor: pointer;
@@ -912,78 +914,34 @@
   transition:
     background-color 0.2s ease,
     border-color 0.2s ease,
-    transform 0.2s ease;
-}
-
-.choiceSymbolButton:hover {
-  transform: translateY(-1px);
-
-  border-color: rgba(
-    42,
-    3,
-    105,
-    0.3
-  );
-
-  background:
-    var(--soft-purple);
-}
-
-.choiceSymbolButton:focus-visible {
-  outline: 2px solid
-    var(--main-color);
-
-  outline-offset: 2px;
-}
-
-.removeChoiceButton {
-  width: 40px;
-  height: 40px;
-
-  display: inline-flex;
-
-  align-items: center;
-  justify-content: center;
-
-  flex-shrink: 0;
-
-  border: 1px solid
-    var(--border-color);
-
-  border-radius: 11px;
-
-  background: #ffffff;
-  color: var(--main-color);
-
-  font-size: 1.2rem;
-  font-weight: 800;
-
-  cursor: pointer;
-
-  transition:
-    background-color 0.2s ease,
-    border-color 0.2s ease,
+    transform 0.2s ease,
     opacity 0.2s ease;
 }
 
-.removeChoiceButton:hover:not(
-    :disabled
-  ) {
-  border-color: rgba(
-    42,
-    3,
-    105,
-    0.3
-  );
+.choiceSymbolButton {
+  font-size: 0.95rem;
+}
 
-  background:
-    var(--soft-purple);
+.removeChoiceButton {
+  font-size: 1.2rem;
+}
+
+.choiceSymbolButton:hover,
+.removeChoiceButton:hover:not(:disabled) {
+  transform: translateY(-1px);
+
+  border-color: rgba(42, 3, 105, 0.3);
+  background: var(--soft-purple);
 }
 
 .removeChoiceButton:disabled {
   opacity: 0.35;
-
   cursor: not-allowed;
+}
+
+.choiceSymbolButton:focus-visible {
+  outline: 2px solid var(--main-color);
+  outline-offset: 2px;
 }
 
 .addChoiceButton {
@@ -993,9 +951,7 @@
 
   padding: 0.7rem 0.95rem;
 
-  border: 1px solid
-    var(--border-color);
-
+  border: 1px solid var(--border-color);
   border-radius: 11px;
 
   background: #ffffff;
@@ -1015,31 +971,21 @@
 .addChoiceButton:hover {
   transform: translateY(-1px);
 
-  border-color: rgba(
-    42,
-    3,
-    105,
-    0.3
-  );
-
-  background:
-    var(--soft-purple);
+  border-color: rgba(42, 3, 105, 0.3);
+  background: var(--soft-purple);
 }
 
 /* =========================================================
-   Development info
+   Development
    ========================================================= */
 
 .developmentInfo {
   padding: 1rem;
 
-  border: 1px dashed
-    var(--border-color);
-
+  border: 1px dashed var(--border-color);
   border-radius: 14px;
 
-  background:
-    var(--soft-purple);
+  background: var(--soft-purple);
 }
 
 .developmentInfo strong {
@@ -1054,34 +1000,24 @@
 }
 
 .developmentInfo p {
-  color: rgba(
-    23,
-    23,
-    23,
-    0.62
-  );
+  color: rgba(23, 23, 23, 0.62);
 
   font-size: 0.75rem;
   line-height: 1.5;
 }
 
 /* =========================================================
-   Message + actions
+   Messages + actions
    ========================================================= */
 
 .message {
   padding: 0.9rem 1rem;
 
-  border: 1px solid
-    var(--border-color);
-
+  border: 1px solid var(--border-color);
   border-radius: 13px;
 
-  background:
-    var(--soft-purple);
-
-  color:
-    var(--main-color);
+  background: var(--soft-purple);
+  color: var(--main-color);
 
   font-size: 0.82rem;
   font-weight: 800;
@@ -1090,7 +1026,6 @@
 
 .editorActions {
   display: flex;
-
   align-items: center;
 
   gap: 0.8rem;
@@ -1101,7 +1036,7 @@
 }
 
 /* =========================================================
-   Locked state
+   Locked
    ========================================================= */
 
 .lockedState {
@@ -1125,71 +1060,44 @@
 
 .deleteOverlay {
   position: fixed;
-
   inset: 0;
 
   z-index: 1500;
 
   display: flex;
-
   align-items: center;
   justify-content: center;
 
   padding: 1.5rem;
 
-  background: rgba(
-    18,
-    11,
-    30,
-    0.54
-  );
+  background: rgba(18, 11, 30, 0.54);
 
-  backdrop-filter:
-    blur(8px);
-
-  -webkit-backdrop-filter:
-    blur(8px);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
 }
 
 .deleteModal {
-  width: min(
-    540px,
-    100%
-  );
+  width: min(540px, 100%);
 
   padding: 1.5rem;
 
-  border: 1px solid
-    var(--border-color);
-
+  border: 1px solid var(--border-color);
   border-radius: 24px;
 
   background:
     linear-gradient(
       145deg,
-      rgba(
-        42,
-        3,
-        105,
-        0.035
-      ),
+      rgba(42, 3, 105, 0.035),
       #ffffff 38%
     );
 
   box-shadow:
-    0 28px 80px
-      rgba(
-        22,
-        6,
-        45,
-        0.3
-      ),
+    0 28px 80px rgba(22, 6, 45, 0.3),
     var(--shadow);
 }
 
 .deleteModalHeader {
   display: flex;
-
   justify-content: space-between;
   align-items: flex-start;
 
@@ -1197,34 +1105,26 @@
 
   padding-bottom: 1rem;
 
-  border-bottom: 1px solid
-    var(--border-color);
+  border-bottom: 1px solid var(--border-color);
 }
 
 .deleteBadge {
   display: inline-flex;
 
   margin-bottom: 0.5rem;
-
-  padding:
-    0.35rem
-    0.65rem;
+  padding: 0.35rem 0.65rem;
 
   border-radius: 999px;
 
-  background:
-    var(--soft-purple);
-
-  color:
-    var(--main-color);
+  background: var(--soft-purple);
+  color: var(--main-color);
 
   font-size: 0.7rem;
   font-weight: 900;
 }
 
 .deleteModalHeader h2 {
-  color:
-    var(--main-color);
+  color: var(--main-color);
 
   font-size: 1.9rem;
   font-weight: 900;
@@ -1235,15 +1135,12 @@
   height: 40px;
 
   display: inline-flex;
-
   align-items: center;
   justify-content: center;
 
   flex-shrink: 0;
 
-  border: 1px solid
-    var(--border-color);
-
+  border: 1px solid var(--border-color);
   border-radius: 12px;
 
   background: #ffffff;
@@ -1272,30 +1169,15 @@
   height: 48px;
 
   display: inline-flex;
-
   align-items: center;
   justify-content: center;
 
-  border: 1px solid
-    rgba(
-      176,
-      0,
-      32,
-      0.18
-    );
-
+  border: 1px solid rgba(176, 0, 32, 0.18);
   border-radius: 14px;
 
-  background:
-    rgba(
-      176,
-      0,
-      32,
-      0.08
-    );
+  background: rgba(176, 0, 32, 0.08);
 
-  color:
-    var(--danger-color);
+  color: var(--danger-color);
 
   font-size: 1.4rem;
   font-weight: 900;
@@ -1306,12 +1188,7 @@
 }
 
 .deleteText p {
-  color: rgba(
-    23,
-    23,
-    23,
-    0.72
-  );
+  color: rgba(23, 23, 23, 0.72);
 
   font-size: 0.9rem;
   line-height: 1.6;
@@ -1322,8 +1199,7 @@
 
   margin: 0.5rem 0;
 
-  color:
-    var(--main-color);
+  color: var(--main-color);
 
   font-size: 0.92rem;
   font-weight: 900;
@@ -1332,16 +1208,13 @@
 }
 
 .deleteWarningText {
-  color:
-    var(--main-color)
-    !important;
+  color: var(--main-color) !important;
 
   font-weight: 800;
 }
 
 .deleteActions {
   display: flex;
-
   justify-content: flex-end;
   align-items: center;
 
@@ -1349,21 +1222,22 @@
 }
 
 /* =========================================================
-   Responsive - Tablet
+   Tablet
    ========================================================= */
 
 @media (max-width: 1000px) {
   .progressGrid {
     grid-template-columns:
-      repeat(
-        2,
-        minmax(0, 1fr)
-      );
+      repeat(2, minmax(0, 1fr));
+  }
+
+  .typeStatsGrid {
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
   }
 
   .editorLayout {
-    grid-template-columns:
-      1fr;
+    grid-template-columns: 1fr;
   }
 
   .questionPanel {
@@ -1372,11 +1246,6 @@
     min-height: 0;
   }
 
-  /*
-   * On tablets and phones the
-   * question navigator becomes
-   * horizontal.
-   */
   .questionList {
     display: flex;
 
@@ -1389,23 +1258,20 @@
 
     padding-bottom: 0.4rem;
 
-    scroll-snap-type:
-      x proximity;
+    scroll-snap-type: x proximity;
 
-    -webkit-overflow-scrolling:
-      touch;
+    -webkit-overflow-scrolling: touch;
   }
 
   .questionItem {
     min-width: 220px;
 
-    scroll-snap-align:
-      start;
+    scroll-snap-align: start;
   }
 }
 
 /* =========================================================
-   Responsive - Mobile
+   Mobile
    ========================================================= */
 
 @media (max-width: 700px) {
@@ -1422,29 +1288,27 @@
   }
 
   .header {
-    flex-direction:
-      column;
+    flex-direction: column;
 
     gap: 1rem;
   }
 
   .header h1 {
-    font-size:
-      clamp(
-        2.1rem,
-        11vw,
-        3rem
-      );
+    font-size: clamp(2.1rem, 11vw, 3rem);
   }
 
   .statusBadge {
-    align-self:
-      flex-start;
+    align-self: flex-start;
   }
 
-  .progressGrid {
-    grid-template-columns:
-      1fr;
+  .progressGrid,
+  .typeStatsGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .typeStatsHeader {
+    align-items: flex-start;
+    flex-direction: column;
   }
 
   .questionPanel,
@@ -1453,25 +1317,25 @@
   }
 
   .editorHeader {
-    flex-direction:
-      column;
+    flex-direction: column;
   }
 
   .editorActions {
     display: grid;
-
-    grid-template-columns:
-      1fr;
+    grid-template-columns: 1fr;
   }
 
-  .editorActions
-    :global(.app-button) {
+  .editorActions :global(.app-button) {
     width: 100%;
   }
 
+  .multipleChoiceNotice {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
   .deleteOverlay {
-    align-items:
-      flex-end;
+    align-items: flex-end;
 
     padding: 0;
   }
@@ -1484,27 +1348,22 @@
     border-left: none;
 
     border-radius:
-      24px
-      24px
-      0
-      0;
+      24px 24px 0 0;
   }
 
   .deleteActions {
     display: grid;
 
-    grid-template-columns:
-      1fr;
+    grid-template-columns: 1fr;
   }
 
-  .deleteActions
-    :global(.app-button) {
+  .deleteActions :global(.app-button) {
     width: 100%;
   }
 }
 
 /* =========================================================
-   Responsive - Small mobile
+   Small mobile
    ========================================================= */
 
 @media (max-width: 500px) {
@@ -1532,17 +1391,18 @@
     max-width: none;
   }
 
+  .miniTypeCounters {
+    grid-template-columns: 1fr;
+  }
+
   /*
-   * Mobile QCM layout:
+   * Mobile answer layout:
    *
    * Row 1:
    * A | answer
    *
    * Row 2:
    *   | Ω | ×
-   *
-   * This prevents the answer input
-   * from becoming too narrow.
    */
   .choiceRow {
     grid-template-columns:
@@ -1558,11 +1418,8 @@
     grid-row: 1;
   }
 
-  .choiceRow
-    > input[type="text"] {
-    grid-column:
-      2 / 4;
-
+  .choiceRow > input[type="text"] {
+    grid-column: 2 / 4;
     grid-row: 1;
   }
 
@@ -1586,16 +1443,12 @@
     height: 36px;
   }
 
-  .symbolToggleButton {
-    width: 100%;
-  }
-
+  .symbolToggleButton,
   .addChoiceButton {
     width: 100%;
   }
 
   .deleteContent {
-    grid-template-columns:
-      1fr;
+    grid-template-columns: 1fr;
   }
 }
