@@ -3,7 +3,6 @@
 import {
   addDoc,
   collection,
-  deleteDoc,
   doc,
   getDoc,
   getDocs,
@@ -11,6 +10,7 @@ import {
   query,
   updateDoc,
   where,
+  writeBatch,
 } from "firebase/firestore";
 
 import {
@@ -2965,6 +2965,12 @@ export async function deleteQuiz(
       quizId
     );
 
+  /*
+   * Idempotent deletion.
+   *
+   * If the quiz no longer exists, there is
+   * nothing left to delete.
+   */
   if (
     !quiz
   ) {
@@ -2977,16 +2983,90 @@ export async function deleteQuiz(
     };
   }
 
-  await deleteDoc(
+  /*
+   * IMPORTANT:
+   *
+   * Once a quiz has been launched, it may already
+   * have student attempts, answers and grading data.
+   *
+   * ULearn therefore only allows deletion while the
+   * quiz is still a draft.
+   */
+  if (
+    quiz.status !==
+    "draft"
+  ) {
+    return {
+      success:
+        false,
+
+      message:
+        "Only draft quizzes can be deleted.",
+    };
+  }
+
+  /* =====================================================
+     Load linked draft questions
+     ===================================================== */
+
+  const questionsQuery =
+    query(
+      collection(
+        db,
+        QUESTIONS_COLLECTION
+      ),
+
+      where(
+        "quizId",
+        "==",
+        quizId
+      )
+    );
+
+  const questionsSnapshot =
+    await getDocs(
+      questionsQuery
+    );
+
+  /* =====================================================
+     Delete quiz + linked questions atomically
+     ===================================================== */
+
+  const batch =
+    writeBatch(
+      db
+    );
+
+  questionsSnapshot.docs.forEach(
+    (
+      questionDocument
+    ) => {
+      batch.delete(
+        questionDocument.ref
+      );
+    }
+  );
+
+  batch.delete(
     quizRef(
       quizId
     )
   );
 
+  await batch.commit();
+
+  /* =====================================================
+     Release teacher quiz slot
+     ===================================================== */
+
   await updateTeacherQuiz(
     quiz.teacherId,
     null
   );
+
+  /* =====================================================
+     Global statistics
+     ===================================================== */
 
   await decreaseActiveQuizzes();
 
@@ -2995,7 +3075,7 @@ export async function deleteQuiz(
       true,
 
     message:
-      "Quiz deleted successfully.",
+      "Draft quiz and linked questions deleted successfully.",
   };
 }
 

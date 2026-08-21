@@ -1079,7 +1079,23 @@ p {
 
     padding: 0;
   }
+    .resultSummary {
+    grid-template-columns:
+      1fr;
+  }
 
+  .resultActions {
+    display: grid;
+
+    grid-template-columns:
+      1fr;
+
+    width: 100%;
+  }
+
+  .resultActions .app-button {
+  width: 100%;
+}
   .help-support-button-text {
     display: none;
   }

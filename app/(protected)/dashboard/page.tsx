@@ -12,68 +12,120 @@
  * • Display the account expiration countdown.
  * • Allow the teacher to create one quiz.
  * • Allow the teacher to open the existing quiz.
+ * • Allow the teacher to send feedback about ULearn.
  * • Allow the user to change the application language.
  * ============================================================================
  */
 
-import { useState } from "react";
+import {
+  useState,
+} from "react";
 
-import { UserButton } from "@clerk/nextjs";
-import { useRouter } from "next/navigation";
+import {
+  UserButton,
+} from "@clerk/nextjs";
+
+import {
+  useRouter,
+} from "next/navigation";
 
 import AppLoading from "@/components/AppLoading";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
 
-import { useTeacher } from "@/hooks/useTeacher";
-import { useCountdown } from "@/hooks/useCountdown";
-import { useLanguage } from "@/hooks/useLanguage";
+import {
+  useTeacher,
+} from "@/hooks/useTeacher";
+
+import {
+  useCountdown,
+} from "@/hooks/useCountdown";
+
+import {
+  useLanguage,
+} from "@/hooks/useLanguage";
 
 import styles from "./DashboardPage.module.css";
+
+/* =========================================================
+   Types
+   ========================================================= */
 
 type NavigationTarget =
   | "create"
   | "open"
+  | "feedback"
   | "";
 
-export default function DashboardPage() {
-  const router = useRouter();
+/* =========================================================
+   Page
+   ========================================================= */
 
-  const { t } = useLanguage();
+export default function DashboardPage() {
+  const router =
+    useRouter();
+
+  const {
+    t,
+  } =
+    useLanguage();
 
   const {
     teacher,
     loading,
     blocked,
     message,
-  } = useTeacher();
+  } =
+    useTeacher();
 
-  const timeLeft = useCountdown(
-    teacher?.expiresAt ?? null
-  );
+  const timeLeft =
+    useCountdown(
+      teacher?.expiresAt ??
+      null
+    );
 
   const [
     navigationTarget,
     setNavigationTarget,
-  ] = useState<NavigationTarget>("");
+  ] =
+    useState<NavigationTarget>(
+      ""
+    );
+
+  /* =========================================================
+     Navigation
+     ========================================================= */
 
   function navigateTo(
     path: string,
-    target: "create" | "open"
+
+    target:
+      Exclude<
+        NavigationTarget,
+        ""
+      >
   ) {
-    if (navigationTarget) {
+    if (
+      navigationTarget
+    ) {
       return;
     }
 
-    setNavigationTarget(target);
+    setNavigationTarget(
+      target
+    );
 
-    router.push(path);
+    router.push(
+      path
+    );
   }
 
   /* =========================================================
-     Loading
+     Initial loading
      ========================================================= */
 
-  if (loading) {
+  if (
+    loading
+  ) {
     return (
       <AppLoading
         title="ULearn"
@@ -83,6 +135,10 @@ export default function DashboardPage() {
       />
     );
   }
+
+  /* =========================================================
+     Create quiz navigation
+     ========================================================= */
 
   if (
     navigationTarget ===
@@ -100,6 +156,10 @@ export default function DashboardPage() {
     );
   }
 
+  /* =========================================================
+     Open quiz navigation
+     ========================================================= */
+
   if (
     navigationTarget ===
     "open"
@@ -111,6 +171,26 @@ export default function DashboardPage() {
         )}
         subtitle={t(
           "dashboard.loadingOpenSubtitle"
+        )}
+      />
+    );
+  }
+
+  /* =========================================================
+     Feedback navigation
+     ========================================================= */
+
+  if (
+    navigationTarget ===
+    "feedback"
+  ) {
+    return (
+      <AppLoading
+        title={t(
+          "dashboard.feedback.loadingTitle"
+        )}
+        subtitle={t(
+          "dashboard.feedback.loadingSubtitle"
         )}
       />
     );
@@ -152,6 +232,10 @@ export default function DashboardPage() {
     );
   }
 
+  /* =========================================================
+     Quiz state
+     ========================================================= */
+
   const hasQuiz =
     Boolean(
       teacher.quizId
@@ -167,6 +251,10 @@ export default function DashboardPage() {
         styles.page
       }
     >
+      {/* =====================================================
+          Header
+          ===================================================== */}
+
       <header
         className={
           styles.header
@@ -188,7 +276,9 @@ export default function DashboardPage() {
               "dashboard.welcome"
             )}
             {", "}
-            {teacher.name}
+            {
+              teacher.name
+            }
             {" 👋"}
           </p>
         </div>
@@ -207,7 +297,9 @@ export default function DashboardPage() {
           </span>
 
           <strong>
-            {timeLeft}
+            {
+              timeLeft
+            }
           </strong>
         </div>
 
@@ -224,14 +316,18 @@ export default function DashboardPage() {
         </div>
       </header>
 
+      {/* =====================================================
+          Main cards
+          ===================================================== */}
+
       <section
         className={
           styles.main
         }
       >
         {/* ===================================================
-           Create Quiz
-           =================================================== */}
+            Create Quiz
+            =================================================== */}
 
         <article
           className={`${styles.card} ${
@@ -244,6 +340,7 @@ export default function DashboardPage() {
             className={
               styles.icon
             }
+            aria-hidden="true"
           >
             ＋
           </div>
@@ -270,12 +367,12 @@ export default function DashboardPage() {
                   navigationTarget
                 )
               }
-              onClick={() =>
+              onClick={() => {
                 navigateTo(
                   "/quiz/create",
                   "create"
-                )
-              }
+                );
+              }}
             >
               {hasQuiz
                 ? t(
@@ -299,8 +396,8 @@ export default function DashboardPage() {
         </article>
 
         {/* ===================================================
-           Existing Quiz
-           =================================================== */}
+            Existing Quiz
+            =================================================== */}
 
         <article
           className={
@@ -311,6 +408,7 @@ export default function DashboardPage() {
             className={
               styles.icon
             }
+            aria-hidden="true"
           >
             ☰
           </div>
@@ -365,6 +463,66 @@ export default function DashboardPage() {
                 : t(
                     "dashboard.quizzes.createFirst"
                   )}
+            </small>
+          </div>
+        </article>
+
+        {/* ===================================================
+            Feedback
+            =================================================== */}
+
+        <article
+          className={
+            styles.card
+          }
+        >
+          <div
+            className={
+              styles.icon
+            }
+            aria-hidden="true"
+          >
+            ★
+          </div>
+
+          <div>
+            <h2>
+              {t(
+                "dashboard.feedback.title"
+              )}
+            </h2>
+
+            <p>
+              {t(
+                "dashboard.feedback.description"
+              )}
+            </p>
+
+            <button
+              type="button"
+              className="app-button"
+              disabled={
+                Boolean(
+                  navigationTarget
+                )
+              }
+              onClick={() => {
+                navigateTo(
+                  "/feedback",
+                  "feedback"
+                );
+              }}
+            >
+              {t(
+                "dashboard.feedback.button"
+              )}
+              {" →"}
+            </button>
+
+            <small>
+              {t(
+                "dashboard.feedback.help"
+              )}
             </small>
           </div>
         </article>

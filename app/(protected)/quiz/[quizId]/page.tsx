@@ -10,6 +10,8 @@ import {
   useRouter,
 } from "next/navigation";
 
+import QRCode from "qrcode";
+
 import AppLoading from "@/components/AppLoading";
 
 import {
@@ -90,8 +92,9 @@ export default function QuizDetailsPage() {
 
   const quizId =
     String(
-      params.quizId
-    );
+      params.quizId ??
+        ""
+    ).trim();
 
   const {
     teacher,
@@ -169,15 +172,47 @@ export default function QuizDetailsPage() {
       ""
     );
 
+  const [
+    qrCodeDataUrl,
+    setQrCodeDataUrl,
+  ] =
+    useState("");
+
+  const [
+    qrCodeGenerating,
+    setQrCodeGenerating,
+  ] =
+    useState(false);
+
   /*
-   * These will later come from
-   * student attempts.
+   * Temporary values.
+   *
+   * Later these will come from
+   * the student attempts collection.
    */
   const activeStudents =
     0;
 
   const finishedStudents =
     0;
+
+  /* =========================================================
+     Student URL
+     
+     IMPORTANT:
+     This value is intentionally calculated BEFORE all
+     conditional returns because the QR useEffect depends
+     on it.
+     
+     quiz may still be null during loading, therefore
+     optional chaining is required.
+     ========================================================= */
+
+  const studentUrl =
+    quiz?.accessCode &&
+    appOrigin
+      ? `${appOrigin}/join/${quiz.accessCode}`
+      : "";
 
   /* =========================================================
      Browser origin
@@ -190,7 +225,7 @@ export default function QuizDetailsPage() {
   }, []);
 
   /* =========================================================
-     Load quiz + real structure
+     Load quiz + structure
      ========================================================= */
 
   useEffect(() => {
@@ -279,7 +314,8 @@ export default function QuizDetailsPage() {
       document.body.style
         .overflow;
 
-    document.body.style.overflow =
+    document.body.style
+      .overflow =
       "hidden";
 
     function handleKeyDown(
@@ -293,6 +329,10 @@ export default function QuizDetailsPage() {
         return;
       }
 
+      /*
+       * Do not allow the modal to close
+       * while a destructive delete is running.
+       */
       if (
         processing ===
         "delete"
@@ -323,7 +363,8 @@ export default function QuizDetailsPage() {
     );
 
     return () => {
-      document.body.style.overflow =
+      document.body.style
+        .overflow =
         previousOverflow;
 
       document.removeEventListener(
@@ -368,6 +409,122 @@ export default function QuizDetailsPage() {
   ]);
 
   /* =========================================================
+     QR code generation
+
+     IMPORTANT:
+     This Hook MUST stay before every conditional return.
+
+     Previous problem:
+     -----------------
+     This effect was below:
+
+       if (loading) return ...
+       if (processing) return ...
+       if (!quiz) return ...
+
+     React therefore saw a different number/order of Hooks
+     between renders.
+
+     Now every render always reaches this Hook.
+     ========================================================= */
+
+  useEffect(() => {
+    let cancelled =
+      false;
+
+    async function generateQrCode() {
+      /*
+       * During initial loading studentUrl is empty.
+       * That is completely normal.
+       */
+      if (
+        !studentUrl
+      ) {
+        if (
+          !cancelled
+        ) {
+          setQrCodeDataUrl(
+            ""
+          );
+
+          setQrCodeGenerating(
+            false
+          );
+        }
+
+        return;
+      }
+
+      setQrCodeGenerating(
+        true
+      );
+
+      try {
+        const dataUrl =
+          await QRCode.toDataURL(
+            studentUrl,
+            {
+              width:
+                320,
+
+              margin:
+                2,
+
+              errorCorrectionLevel:
+                "M",
+            }
+          );
+
+        if (
+          !cancelled
+        ) {
+          setQrCodeDataUrl(
+            dataUrl
+          );
+        }
+      } catch (error) {
+        console.error(
+          "Unable to generate QR code:",
+          error
+        );
+
+        if (
+          !cancelled
+        ) {
+          setQrCodeDataUrl(
+            ""
+          );
+        }
+      } finally {
+        if (
+          !cancelled
+        ) {
+          setQrCodeGenerating(
+            false
+          );
+        }
+      }
+    }
+
+    generateQrCode();
+
+    return () => {
+      cancelled =
+        true;
+    };
+  }, [
+    studentUrl,
+  ]);
+
+  /* =========================================================
+     IMPORTANT
+     
+     No React Hook may be placed below this point.
+     
+     From here onward we may safely use conditional returns.
+     ========================================================= */
+
+  /* =========================================================
      Loading
      ========================================================= */
 
@@ -386,6 +543,10 @@ export default function QuizDetailsPage() {
       />
     );
   }
+
+  /* =========================================================
+     Processing
+     ========================================================= */
 
   if (
     processing
@@ -549,18 +710,44 @@ export default function QuizDetailsPage() {
      Student access
      ========================================================= */
 
-  const studentUrl =
-    quiz.accessCode &&
-    appOrigin
-      ? `${appOrigin}/join/${quiz.accessCode}`
-      : "";
-
   const showStudentAccess =
     quiz.status !==
       "draft" &&
     Boolean(
       quiz.accessCode
     );
+
+  /* =========================================================
+     Download QR code
+     ========================================================= */
+
+  function downloadQrCode() {
+    if (
+      !qrCodeDataUrl ||
+      !quiz.accessCode
+    ) {
+      return;
+    }
+
+    const link =
+      document.createElement(
+        "a"
+      );
+
+    link.href =
+      qrCodeDataUrl;
+
+    link.download =
+      `ulearn-quiz-${quiz.accessCode}-qr.png`;
+
+    document.body.appendChild(
+      link
+    );
+
+    link.click();
+
+    link.remove();
+  }
 
   /* =========================================================
      Status translation
@@ -641,12 +828,16 @@ export default function QuizDetailsPage() {
       processing ||
       quiz.status !==
         "draft" ||
-      !structureComplete
+      !structureComplete ||
+      deadlinePassed ||
+      accountExpired
     ) {
       return;
     }
 
-    setMessage("");
+    setMessage(
+      ""
+    );
 
     setProcessing(
       "launch"
@@ -700,8 +891,11 @@ export default function QuizDetailsPage() {
       );
 
       /*
-       * Show the generated access information
-       * immediately after launch.
+       * Once updatedQuiz contains the generated accessCode,
+       * studentUrl changes.
+       *
+       * The QR effect above will then automatically generate
+       * the QR code.
        */
       setStudentAccessOpen(
         true
@@ -729,13 +923,21 @@ export default function QuizDetailsPage() {
      ========================================================= */
 
   function openDeleteModal() {
+    /*
+     * A launched or closed quiz must not
+     * be deletable from this interface.
+     */
     if (
-      processing
+      processing ||
+      quiz.status !==
+        "draft"
     ) {
       return;
     }
 
-    setMessage("");
+    setMessage(
+      ""
+    );
 
     setDeleteModalOpen(
       true
@@ -756,14 +958,23 @@ export default function QuizDetailsPage() {
   }
 
   async function handleDelete() {
+    /*
+     * Second protection:
+     * even if the modal somehow remained open,
+     * deletion is refused if the quiz is not draft.
+     */
     if (
       processing ||
-      !deleteModalOpen
+      !deleteModalOpen ||
+      quiz.status !==
+        "draft"
     ) {
       return;
     }
 
-    setMessage("");
+    setMessage(
+      ""
+    );
 
     setProcessing(
       "delete"
@@ -904,6 +1115,10 @@ export default function QuizDetailsPage() {
             styles.card
           }
         >
+          {/* =================================================
+              Dashboard
+              ================================================= */}
+
           <button
             type="button"
             className="app-button app-button-secondary"
@@ -989,7 +1204,7 @@ export default function QuizDetailsPage() {
               </strong>
             </div>
 
-            {/* Real question progress */}
+            {/* Questions */}
 
             <div
               className={
@@ -1023,7 +1238,7 @@ export default function QuizDetailsPage() {
               </small>
             </div>
 
-            {/* Real points */}
+            {/* Points */}
 
             <div
               className={
@@ -1260,7 +1475,7 @@ export default function QuizDetailsPage() {
               </strong>
             </div>
 
-            {/* Teacher account */}
+            {/* Account expiration */}
 
             <div
               className={
@@ -1421,7 +1636,7 @@ export default function QuizDetailsPage() {
             )}
 
           {/* =================================================
-              Messages
+              Deadline
               ================================================= */}
 
           {deadlinePassed &&
@@ -1438,6 +1653,10 @@ export default function QuizDetailsPage() {
               </p>
             )}
 
+          {/* =================================================
+              Account expired
+              ================================================= */}
+
           {accountExpired && (
             <p
               className={
@@ -1449,6 +1668,10 @@ export default function QuizDetailsPage() {
               )}
             </p>
           )}
+
+          {/* =================================================
+              Message
+              ================================================= */}
 
           {message && (
             <p
@@ -1472,6 +1695,8 @@ export default function QuizDetailsPage() {
               styles.actions
             }
           >
+            {/* Settings */}
+
             <button
               type="button"
               className="app-button"
@@ -1489,6 +1714,8 @@ export default function QuizDetailsPage() {
               )}
             </button>
 
+            {/* Edit */}
+
             <button
               type="button"
               className="app-button"
@@ -1505,6 +1732,8 @@ export default function QuizDetailsPage() {
                 "quizDetails.actions.edit"
               )}
             </button>
+
+            {/* Launch */}
 
             <button
               type="button"
@@ -1532,6 +1761,8 @@ export default function QuizDetailsPage() {
               )}
             </button>
 
+            {/* Students */}
+
             <button
               type="button"
               className="app-button"
@@ -1544,9 +1775,15 @@ export default function QuizDetailsPage() {
               )}
             </button>
 
+            {/* Delete */}
+
             <button
               type="button"
               className="app-button app-button-secondary app-button-action"
+              disabled={
+                quiz.status !==
+                "draft"
+              }
               onClick={
                 openDeleteModal
               }
@@ -1570,11 +1807,11 @@ export default function QuizDetailsPage() {
             className={
               styles.studentAccessFloatingButton
             }
-            onClick={() =>
+            onClick={() => {
               setStudentAccessOpen(
                 true
-              )
-            }
+              );
+            }}
             aria-haspopup="dialog"
             aria-expanded={
               studentAccessOpen
@@ -1632,6 +1869,10 @@ export default function QuizDetailsPage() {
               aria-modal="true"
               aria-labelledby="student-access-title"
             >
+              {/* =============================================
+                  Header
+                  ============================================= */}
+
               <header
                 className={
                   styles.studentAccessModalHeader
@@ -1668,11 +1909,11 @@ export default function QuizDetailsPage() {
                   className={
                     styles.studentAccessClose
                   }
-                  onClick={() =>
+                  onClick={() => {
                     setStudentAccessOpen(
                       false
-                    )
-                  }
+                    );
+                  }}
                   aria-label={t(
                     "quizDetails.studentAccess.close"
                   )}
@@ -1681,12 +1922,18 @@ export default function QuizDetailsPage() {
                 </button>
               </header>
 
+              {/* =============================================
+                  Content
+                  ============================================= */}
+
               <div
                 className={
                   styles.studentAccessContent
                 }
               >
-                {/* Access code */}
+                {/* ===========================================
+                    Access code
+                    =========================================== */}
 
                 <div
                   className={
@@ -1717,12 +1964,12 @@ export default function QuizDetailsPage() {
                     <button
                       type="button"
                       className="app-button app-button-secondary"
-                      onClick={() =>
+                      onClick={() => {
                         copyToClipboard(
                           quiz.accessCode!,
                           "code"
-                        )
-                      }
+                        );
+                      }}
                     >
                       {copiedField ===
                       "code"
@@ -1742,7 +1989,9 @@ export default function QuizDetailsPage() {
                   </small>
                 </div>
 
-                {/* Student link */}
+                {/* ===========================================
+                    Student link
+                    =========================================== */}
 
                 <div
                   className={
@@ -1780,12 +2029,12 @@ export default function QuizDetailsPage() {
                       disabled={
                         !studentUrl
                       }
-                      onClick={() =>
+                      onClick={() => {
                         copyToClipboard(
                           studentUrl,
                           "link"
-                        )
-                      }
+                        );
+                      }}
                     >
                       {copiedField ===
                       "link"
@@ -1805,13 +2054,107 @@ export default function QuizDetailsPage() {
                   </small>
                 </div>
 
-                {/* Session information */}
+                {/* ===========================================
+                    QR code
+                    =========================================== */}
+
+                <div
+                  className={
+                    styles.studentAccessQrSection
+                  }
+                >
+                  <div
+                    className={
+                      styles.studentAccessQrHeader
+                    }
+                  >
+                    <div>
+                      <span
+                        className={
+                          styles.studentAccessQrLabel
+                        }
+                      >
+                        {t(
+                          "quizDetails.studentAccess.qrCode"
+                        )}
+                      </span>
+
+                      <small>
+                        {t(
+                          "quizDetails.studentAccess.qrHelp"
+                        )}
+                      </small>
+                    </div>
+                  </div>
+
+                  <div
+                    className={
+                      styles.studentAccessQrBox
+                    }
+                  >
+                    {qrCodeGenerating ? (
+                      <p
+                        className={
+                          styles.studentAccessQrStatus
+                        }
+                      >
+                        {t(
+                          "quizDetails.studentAccess.generatingQr"
+                        )}
+                      </p>
+                    ) : qrCodeDataUrl ? (
+                      <img
+                        className={
+                          styles.studentAccessQrImage
+                        }
+                        src={
+                          qrCodeDataUrl
+                        }
+                        alt={t(
+                          "quizDetails.studentAccess.qrAlt"
+                        )}
+                      />
+                    ) : (
+                      <p
+                        className={
+                          styles.studentAccessQrStatus
+                        }
+                      >
+                        {t(
+                          "quizDetails.studentAccess.qrUnavailable"
+                        )}
+                      </p>
+                    )}
+                  </div>
+
+                  <button
+                    type="button"
+                    className="app-button app-button-secondary"
+                    disabled={
+                      !qrCodeDataUrl ||
+                      qrCodeGenerating
+                    }
+                    onClick={
+                      downloadQrCode
+                    }
+                  >
+                    {t(
+                      "quizDetails.studentAccess.downloadQr"
+                    )}
+                  </button>
+                </div>
+
+                {/* ===========================================
+                    Session information
+                    =========================================== */}
 
                 <div
                   className={
                     styles.studentAccessSession
                   }
                 >
+                  {/* Mode */}
+
                   <div>
                     <span>
                       {t(
@@ -1830,6 +2173,8 @@ export default function QuizDetailsPage() {
                           )}
                     </strong>
                   </div>
+
+                  {/* Starts */}
 
                   <div>
                     <span>
@@ -1855,6 +2200,8 @@ export default function QuizDetailsPage() {
                     </strong>
                   </div>
 
+                  {/* Ends */}
+
                   <div>
                     <span>
                       {t(
@@ -1873,6 +2220,8 @@ export default function QuizDetailsPage() {
                           )}
                     </strong>
                   </div>
+
+                  {/* Duration */}
 
                   <div>
                     <span>
@@ -1929,6 +2278,10 @@ export default function QuizDetailsPage() {
             aria-labelledby="delete-quiz-title"
             aria-describedby="delete-quiz-description"
           >
+            {/* ===============================================
+                Header
+                =============================================== */}
+
             <header
               className={
                 styles.deleteModalHeader
@@ -1970,6 +2323,10 @@ export default function QuizDetailsPage() {
               </button>
             </header>
 
+            {/* ===============================================
+                Content
+                =============================================== */}
+
             <div
               className={
                 styles.deleteContent
@@ -1994,7 +2351,8 @@ export default function QuizDetailsPage() {
                 >
                   {t(
                     "quizDetails.deleteModal.confirmBefore"
-                  )}{" "}
+                  )}
+                  {" "}
 
                   <strong>
                     “{quiz.title}”
@@ -2014,6 +2372,10 @@ export default function QuizDetailsPage() {
                 </p>
               </div>
             </div>
+
+            {/* ===============================================
+                Actions
+                =============================================== */}
 
             <div
               className={

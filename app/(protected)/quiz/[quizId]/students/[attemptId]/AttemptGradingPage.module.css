@@ -1,0 +1,1236 @@
+.page {
+  min-height: 100vh;
+
+  padding: 1.5rem 2%;
+
+  background:
+    var(--page-gradient);
+}
+
+/* =========================================================
+   Main card
+   ========================================================= */
+
+.card {
+  width:
+    min(
+      1500px,
+      100%
+    );
+
+  margin: 0 auto;
+
+  padding: 2rem;
+
+  border:
+    1px solid
+    var(--border-color);
+
+  border-radius: 28px;
+
+  background: #ffffff;
+
+  box-shadow:
+    var(--shadow);
+}
+
+/* =========================================================
+   Top bar
+   ========================================================= */
+
+.topBar {
+  display: flex;
+
+  justify-content: space-between;
+  align-items: center;
+
+  gap: 1rem;
+
+  margin-bottom: 1.8rem;
+}
+
+.statusBadge,
+.badge,
+.typeBadge {
+  width: fit-content;
+
+  display: inline-flex;
+
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 999px;
+
+  background:
+    var(--soft-purple);
+
+  color:
+    var(--main-color);
+
+  font-weight: 900;
+}
+
+.statusBadge {
+  padding:
+    0.55rem
+    0.85rem;
+
+  font-size: 0.75rem;
+}
+
+.badge {
+  margin-bottom: 0.7rem;
+
+  padding:
+    0.4rem
+    0.75rem;
+
+  font-size: 0.7rem;
+}
+
+.typeBadge {
+  margin-bottom: 1rem;
+
+  padding:
+    0.35rem
+    0.65rem;
+
+  font-size: 0.66rem;
+}
+
+/* =========================================================
+   Header
+   ========================================================= */
+
+.header {
+  margin-bottom: 1.4rem;
+}
+
+.header h1 {
+  margin-bottom: 0.5rem;
+
+  color:
+    var(--main-color);
+
+  font-size:
+    clamp(
+      2.3rem,
+      5vw,
+      4rem
+    );
+
+  font-weight: 900;
+  line-height: 1.05;
+
+  letter-spacing: -1.5px;
+}
+
+.header p {
+  color:
+    rgba(
+      23,
+      23,
+      23,
+      0.62
+    );
+
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+/* =========================================================
+   Student card
+   ========================================================= */
+
+.studentCard {
+  display: flex;
+
+  align-items: center;
+
+  gap: 0.9rem;
+
+  margin-bottom: 1.5rem;
+
+  padding: 1rem;
+
+  border:
+    1px solid
+    var(--border-color);
+
+  border-radius: 16px;
+
+  background:
+    var(--soft-purple);
+}
+
+.studentAvatar {
+  width: 50px;
+  height: 50px;
+
+  display: inline-flex;
+
+  align-items: center;
+  justify-content: center;
+
+  flex-shrink: 0;
+
+  border-radius: 50%;
+
+  background:
+    var(--main-color);
+
+  color: #ffffff;
+
+  font-size: 0.9rem;
+  font-weight: 900;
+}
+
+.studentInfo {
+  min-width: 0;
+}
+
+.studentInfo span {
+  display: block;
+
+  margin-bottom: 0.15rem;
+
+  color:
+    rgba(
+      23,
+      23,
+      23,
+      0.52
+    );
+
+  font-size: 0.68rem;
+  font-weight: 800;
+}
+
+.studentInfo strong {
+  display: block;
+
+  color:
+    var(--main-color);
+
+  font-size: 0.95rem;
+  font-weight: 900;
+
+  overflow-wrap: anywhere;
+}
+
+.studentInfo small {
+  display: block;
+
+  margin-top: 0.15rem;
+
+  color:
+    rgba(
+      23,
+      23,
+      23,
+      0.58
+    );
+
+  font-size: 0.7rem;
+  font-weight: 600;
+
+  overflow-wrap: anywhere;
+}
+
+/* =========================================================
+   Summary
+   ========================================================= */
+
+.summary {
+  display: grid;
+
+  grid-template-columns:
+    repeat(
+      3,
+      minmax(
+        0,
+        1fr
+      )
+    );
+
+  gap: 0.9rem;
+
+  margin-bottom: 2rem;
+}
+
+.summary article {
+  min-width: 0;
+
+  padding: 1rem;
+
+  border:
+    1px solid
+    var(--border-color);
+
+  border-radius: 15px;
+
+  background:
+    rgba(
+      42,
+      3,
+      105,
+      0.035
+    );
+}
+
+.summary span {
+  display: block;
+
+  margin-bottom: 0.3rem;
+
+  color:
+    rgba(
+      23,
+      23,
+      23,
+      0.52
+    );
+
+  font-size: 0.68rem;
+  font-weight: 800;
+}
+
+.summary strong {
+  display: block;
+
+  color:
+    var(--main-color);
+
+  font-size: 0.95rem;
+  font-weight: 900;
+
+  overflow-wrap: anywhere;
+}
+
+/* =========================================================
+   Section heading
+   ========================================================= */
+
+.questionsSection {
+  margin-top: 1.5rem;
+}
+
+.sectionHeading {
+  margin-bottom: 1rem;
+}
+
+.sectionHeading h2 {
+  margin-bottom: 0.35rem;
+
+  color:
+    var(--main-color);
+
+  font-size: 1.6rem;
+  font-weight: 900;
+}
+
+.sectionHeading p {
+  max-width: 780px;
+
+  color:
+    rgba(
+      23,
+      23,
+      23,
+      0.6
+    );
+
+  font-size: 0.82rem;
+  line-height: 1.6;
+}
+
+/* =========================================================
+   Question list
+   ========================================================= */
+
+.questionList {
+  display: grid;
+
+  gap: 1rem;
+}
+
+/* =========================================================
+   Question card
+   ========================================================= */
+
+.questionCard {
+  padding: 1.25rem;
+
+  border:
+    1px solid
+    var(--border-color);
+
+  border-radius: 18px;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(
+        42,
+        3,
+        105,
+        0.025
+      ),
+      #ffffff 42%
+    );
+}
+
+.questionHeader {
+  display: flex;
+
+  justify-content: space-between;
+  align-items: flex-start;
+
+  gap: 1rem;
+
+  margin-bottom: 0.8rem;
+}
+
+.questionNumber {
+  display: block;
+
+  margin-bottom: 0.4rem;
+
+  color:
+    rgba(
+      23,
+      23,
+      23,
+      0.5
+    );
+
+  font-size: 0.68rem;
+  font-weight: 800;
+}
+
+.questionHeader h3 {
+  max-width: 1050px;
+
+  color:
+    var(--main-color);
+
+  font-size: 1.1rem;
+  font-weight: 900;
+
+  line-height: 1.5;
+
+  overflow-wrap: anywhere;
+}
+
+.questionPoints {
+  flex-shrink: 0;
+
+  padding:
+    0.5rem
+    0.7rem;
+
+  border-radius: 999px;
+
+  background:
+    var(--soft-purple);
+
+  color:
+    var(--main-color);
+
+  font-size: 0.72rem;
+  font-weight: 900;
+}
+
+/* =========================================================
+   Answers
+   ========================================================= */
+
+.answerBlock {
+  display: grid;
+
+  gap: 0.4rem;
+
+  margin-top: 0.4rem;
+}
+
+.answerBlock > span {
+  color:
+    rgba(
+      23,
+      23,
+      23,
+      0.55
+    );
+
+  font-size: 0.68rem;
+  font-weight: 800;
+}
+
+.developmentAnswer {
+  min-height: 100px;
+
+  padding: 1rem;
+
+  border:
+    1px solid
+    var(--border-color);
+
+  border-radius: 13px;
+
+  background: #ffffff;
+
+  color:
+    var(--foreground);
+
+  font-size: 0.85rem;
+  line-height: 1.7;
+
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.noAnswer {
+  padding: 0.85rem;
+
+  border:
+    1px dashed
+    var(--border-color);
+
+  border-radius: 11px;
+
+  color:
+    rgba(
+      23,
+      23,
+      23,
+      0.5
+    );
+
+  font-size: 0.75rem;
+  font-style: italic;
+}
+
+/* =========================================================
+   Choices
+   ========================================================= */
+
+.choiceList {
+  display: grid;
+
+  gap: 0.55rem;
+}
+
+.choiceItem {
+  display: grid;
+
+  grid-template-columns:
+    auto
+    minmax(
+      0,
+      1fr
+    )
+    auto;
+
+  align-items: center;
+
+  gap: 0.7rem;
+
+  padding: 0.75rem;
+
+  border:
+    1px solid
+    var(--border-color);
+
+  border-radius: 12px;
+
+  background: #ffffff;
+}
+
+.choiceSelected {
+  border-color:
+    rgba(
+      42,
+      3,
+      105,
+      0.35
+    );
+
+  background:
+    rgba(
+      42,
+      3,
+      105,
+      0.04
+    );
+}
+
+.choiceCorrect {
+  box-shadow:
+    inset
+    4px
+    0
+    0
+    var(--main-color);
+}
+
+.choiceLetter {
+  width: 34px;
+  height: 34px;
+
+  display: inline-flex;
+
+  align-items: center;
+  justify-content: center;
+
+  border:
+    1px solid
+    var(--border-color);
+
+  border-radius: 9px;
+
+  background:
+    var(--soft-purple);
+
+  color:
+    var(--main-color);
+
+  font-size: 0.72rem;
+  font-weight: 900;
+}
+
+.choiceText {
+  min-width: 0;
+
+  color:
+    var(--foreground);
+
+  font-size: 0.8rem;
+  font-weight: 700;
+
+  line-height: 1.5;
+
+  overflow-wrap: anywhere;
+}
+
+.choiceLabels {
+  display: flex;
+
+  align-items: center;
+
+  gap: 0.4rem;
+
+  flex-wrap: wrap;
+}
+
+.choiceLabels span,
+.choiceLabels strong {
+  display: inline-flex;
+
+  padding:
+    0.28rem
+    0.45rem;
+
+  border-radius: 999px;
+
+  font-size: 0.6rem;
+  font-weight: 900;
+}
+
+.choiceLabels span {
+  border:
+    1px solid
+    var(--border-color);
+
+  color:
+    var(--main-color);
+}
+
+.choiceLabels strong {
+  background:
+    var(--main-color);
+
+  color: #ffffff;
+}
+
+/* =========================================================
+   Automatic result
+   ========================================================= */
+
+.automaticResult {
+  display: flex;
+
+  justify-content: space-between;
+  align-items: center;
+
+  gap: 1rem;
+
+  margin-top: 0.9rem;
+
+  padding:
+    0.75rem
+    0.85rem;
+
+  border:
+    1px solid
+    var(--border-color);
+
+  border-radius: 11px;
+
+  background:
+    var(--soft-purple);
+}
+
+.automaticResult span {
+  color:
+    rgba(
+      23,
+      23,
+      23,
+      0.58
+    );
+
+  font-size: 0.7rem;
+  font-weight: 800;
+}
+
+.automaticResult strong {
+  color:
+    var(--main-color);
+
+  font-size: 0.82rem;
+  font-weight: 900;
+}
+
+/* =========================================================
+   Development grading
+   ========================================================= */
+
+.gradingBox {
+  display: grid;
+
+  grid-template-columns:
+    minmax(
+      0,
+      1fr
+    )
+    auto;
+
+  align-items: center;
+
+  gap: 1rem;
+
+  margin-top: 1rem;
+
+  padding: 1rem;
+
+  border:
+    1px solid
+    var(--border-color);
+
+  border-radius: 13px;
+
+  background:
+    var(--soft-purple);
+}
+
+.gradingBox label {
+  display: block;
+
+  margin-bottom: 0.25rem;
+
+  color:
+    var(--main-color);
+
+  font-size: 0.78rem;
+  font-weight: 900;
+}
+
+.gradingBox small {
+  color:
+    rgba(
+      23,
+      23,
+      23,
+      0.55
+    );
+
+  font-size: 0.65rem;
+  font-weight: 700;
+}
+
+.gradeInputRow {
+  display: flex;
+
+  align-items: center;
+
+  gap: 0.5rem;
+}
+
+.gradeInputRow input {
+  width: 100px;
+  min-height: 42px;
+
+  padding:
+    0 0.65rem;
+
+  border:
+    1px solid
+    var(--border-color);
+
+  border-radius: 10px;
+
+  background: #ffffff;
+
+  color:
+    var(--main-color);
+
+  font-size: 0.82rem;
+  font-weight: 900;
+
+  text-align: center;
+
+  outline: none;
+}
+
+.gradeInputRow input:focus {
+  border-color:
+    var(--main-color);
+
+  box-shadow:
+    0 0 0
+    3px
+    rgba(
+      42,
+      3,
+      105,
+      0.08
+    );
+}
+
+.gradeInputRow input:disabled {
+  opacity: 0.55;
+
+  cursor: not-allowed;
+}
+
+.gradeInputRow span {
+  color:
+    var(--main-color);
+
+  font-size: 0.78rem;
+  font-weight: 900;
+}
+
+/* =========================================================
+   Messages
+   ========================================================= */
+
+.warningMessage,
+.errorMessage,
+.successMessage {
+  margin-top: 1.2rem;
+
+  padding:
+    0.9rem
+    1rem;
+
+  border:
+    1px solid
+    var(--border-color);
+
+  border-radius: 12px;
+
+  font-size: 0.76rem;
+  font-weight: 800;
+
+  line-height: 1.55;
+}
+
+.warningMessage {
+  background:
+    var(--soft-purple);
+
+  color:
+    var(--main-color);
+}
+
+.errorMessage {
+  background:
+    rgba(
+      176,
+      0,
+      32,
+      0.06
+    );
+
+  color:
+    var(--danger-color);
+}
+
+.successMessage {
+  background:
+    var(--soft-purple);
+
+  color:
+    var(--main-color);
+}
+
+/* =========================================================
+   Final score section
+   ========================================================= */
+
+.finalSection {
+  display: grid;
+
+  grid-template-columns:
+    minmax(
+      220px,
+      0.8fr
+    )
+    minmax(
+      0,
+      1.2fr
+    );
+
+  gap: 1rem;
+
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+
+  border-top:
+    1px solid
+    var(--border-color);
+}
+
+.finalScoreBlock {
+  display: grid;
+
+  justify-items: center;
+
+  gap: 0.3rem;
+
+  padding: 1.4rem;
+
+  border:
+    1px solid
+    var(--border-color);
+
+  border-radius: 17px;
+
+  background:
+    var(--main-color);
+
+  color: #ffffff;
+
+  text-align: center;
+}
+
+.finalScoreBlock span {
+  font-size: 0.7rem;
+  font-weight: 800;
+
+  opacity: 0.78;
+}
+
+.finalScoreBlock strong {
+  font-size: 1.7rem;
+  font-weight: 900;
+}
+
+.finalScoreBlock small {
+  font-size: 0.8rem;
+  font-weight: 900;
+}
+
+.finalBreakdown {
+  display: grid;
+
+  grid-template-columns:
+    repeat(
+      2,
+      minmax(
+        0,
+        1fr
+      )
+    );
+
+  gap: 0.8rem;
+}
+
+.finalBreakdown div {
+  display: flex;
+
+  flex-direction: column;
+  justify-content: center;
+
+  padding: 1rem;
+
+  border:
+    1px solid
+    var(--border-color);
+
+  border-radius: 15px;
+
+  background:
+    var(--soft-purple);
+}
+
+.finalBreakdown span {
+  margin-bottom: 0.3rem;
+
+  color:
+    rgba(
+      23,
+      23,
+      23,
+      0.52
+    );
+
+  font-size: 0.68rem;
+  font-weight: 800;
+}
+
+.finalBreakdown strong {
+  color:
+    var(--main-color);
+
+  font-size: 1rem;
+  font-weight: 900;
+}
+
+/* =========================================================
+   Footer actions
+   ========================================================= */
+
+.actions {
+  display: flex;
+
+  justify-content: space-between;
+  align-items: center;
+
+  gap: 1rem;
+
+  margin-top: 1.5rem;
+}
+
+/* =========================================================
+   Access card
+   ========================================================= */
+
+.accessCard {
+  width:
+    min(
+      600px,
+      100%
+    );
+
+  margin-top: 6vh;
+
+  text-align: center;
+}
+
+.accessIcon {
+  width: 70px;
+  height: 70px;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  margin:
+    1.4rem
+    auto;
+
+  border-radius: 50%;
+
+  background:
+    var(--soft-purple);
+
+  color:
+    var(--main-color);
+
+  font-size: 1.8rem;
+  font-weight: 900;
+}
+
+.accessCard h1 {
+  margin-bottom: 0.6rem;
+
+  color:
+    var(--main-color);
+
+  font-size: 2rem;
+  font-weight: 900;
+}
+
+.accessCard p {
+  max-width: 480px;
+
+  margin:
+    0 auto
+    1.2rem;
+
+  color:
+    rgba(
+      23,
+      23,
+      23,
+      0.62
+    );
+
+  font-size: 0.85rem;
+  line-height: 1.6;
+}
+
+/* =========================================================
+   Tablet
+   ========================================================= */
+
+@media (
+  max-width: 1000px
+) {
+  .summary {
+    grid-template-columns:
+      repeat(
+        2,
+        minmax(
+          0,
+          1fr
+        )
+      );
+  }
+
+  .finalSection {
+    grid-template-columns:
+      1fr;
+  }
+}
+
+/* =========================================================
+   Mobile
+   ========================================================= */
+
+@media (
+  max-width: 700px
+) {
+  .page {
+    padding: 0.8rem;
+  }
+
+  .card {
+    padding: 1.2rem;
+
+    border-radius: 22px;
+  }
+
+  .topBar {
+    align-items: stretch;
+
+    flex-direction: column;
+  }
+
+  .topBar
+    :global(.app-button) {
+    width: 100%;
+  }
+
+  .statusBadge {
+    align-self: flex-start;
+  }
+
+  .header h1 {
+    font-size: 2.2rem;
+  }
+
+  .summary {
+    grid-template-columns:
+      1fr;
+  }
+
+  .questionHeader {
+    flex-direction: column;
+  }
+
+  .questionPoints {
+    align-self: flex-start;
+  }
+
+  .choiceItem {
+    grid-template-columns:
+      auto
+      minmax(
+        0,
+        1fr
+      );
+  }
+
+  .choiceLabels {
+    grid-column:
+      1 / -1;
+  }
+
+  .gradingBox {
+    grid-template-columns:
+      1fr;
+  }
+
+  .gradeInputRow input {
+    width: 120px;
+  }
+
+  .finalBreakdown {
+    grid-template-columns:
+      1fr;
+  }
+
+  .actions {
+    display: grid;
+
+    grid-template-columns:
+      1fr;
+  }
+
+  .actions
+    :global(.app-button) {
+    width: 100%;
+  }
+}
+
+/* =========================================================
+   Small phones
+   ========================================================= */
+
+@media (
+  max-width: 480px
+) {
+  .page {
+    padding: 0.5rem;
+  }
+
+  .card {
+    padding: 1rem;
+  }
+
+  .studentCard {
+    align-items: flex-start;
+  }
+
+  .questionCard {
+    padding: 1rem;
+  }
+
+  .choiceItem {
+    padding: 0.65rem;
+  }
+
+  .gradeInputRow {
+    width: 100%;
+  }
+
+  .gradeInputRow input {
+    flex: 1;
+
+    width: auto;
+  }
+}

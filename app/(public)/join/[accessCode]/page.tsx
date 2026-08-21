@@ -399,6 +399,38 @@ export default function JoinQuizPage() {
     ]);
 
   /* =========================================================
+     Start attempt error translation
+     ========================================================= */
+
+  function getStartAttemptErrorMessage(
+    serviceMessage: string
+  ) {
+    switch (
+      serviceMessage
+    ) {
+      case "You have already submitted this quiz.":
+        return t(
+          "joinQuiz.messages.alreadySubmitted"
+        );
+
+      case "This quiz attempt has already been graded.":
+        return t(
+          "joinQuiz.messages.alreadyGraded"
+        );
+
+      case "Your quiz attempt has expired.":
+        return t(
+          "joinQuiz.messages.attemptExpired"
+        );
+
+      default:
+        return t(
+          "joinQuiz.messages.startError"
+        );
+    }
+  }
+
+  /* =========================================================
      Start / resume attempt
      ========================================================= */
 
@@ -507,44 +539,57 @@ export default function JoinQuizPage() {
             cleanEmail,
         });
 
+      /* ===================================================
+         Attempt rejected
+         =================================================== */
+
       if (
         !result.success ||
         !result.attempt
       ) {
-        /*
-         * We intentionally do NOT display
-         * result.message here because attempts.ts
-         * still contains service-layer English
-         * messages.
-         *
-         * The public UI must remain fully i18n.
-         */
-
         setSubmitting(
           false
         );
 
         setMessage(
-          t(
-            "joinQuiz.messages.startError"
+          getStartAttemptErrorMessage(
+            result.message
           )
         );
 
         return;
       }
 
+      /* ===================================================
+         New attempt OR resumed attempt
+         =================================================== */
+
       /*
-       * Important:
+       * startAttempt() already handles both cases:
        *
-       * Do NOT set submitting back to false here.
+       * 1. A completely new attempt.
        *
-       * The loading screen remains visible until
-       * Next.js finishes navigating to the student's
-       * quiz session.
+       * 2. An existing "in_progress" attempt.
+       *
+       * If the attempt is still valid, result.success is true
+       * and result.attempt contains the existing attempt.
+       *
+       * Therefore both situations navigate to the same
+       * quiz-session route.
        */
+
       router.push(
         `/quiz-session/${result.attempt.id}`
       );
+
+      /*
+       * IMPORTANT:
+       *
+       * Do NOT set submitting back to false here.
+       *
+       * AppLoading remains visible while Next.js
+       * navigates to the quiz session.
+       */
     } catch (error) {
       console.error(
         "Unable to start quiz:",
@@ -1193,10 +1238,7 @@ export default function JoinQuizPage() {
 
           Clerk is ignored completely here.
 
-          Support therefore remains anonymous:
-          - no teacher identity
-          - no teacher email
-          - no student identity yet
+          Support therefore remains anonymous.
           ===================================================== */}
 
       <HelpSupport

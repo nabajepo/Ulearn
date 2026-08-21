@@ -2893,3 +2893,65 @@ export async function deleteQuestionsByQuizId(
         : "All quiz questions deleted successfully.",
   };
 }
+
+/* =========================================================
+   Development questions
+   ========================================================= */
+
+/**
+ * Returns only development questions for one quiz.
+ *
+ * Useful for teacher grading.
+ */
+export async function getDevelopmentQuestionsByQuizId(
+  quizId: string
+): Promise<DevelopmentQuestion[]> {
+  const questions =
+    await getQuizQuestions(
+      quizId
+    );
+
+  return questions.filter(
+    (
+      question
+    ): question is DevelopmentQuestion =>
+      question.type ===
+      "development"
+  );
+}
+
+/* =========================================================
+   Question map
+   ========================================================= */
+
+/**
+ * Returns the quiz questions indexed by their ID.
+ *
+ * This is useful when an attempt contains a frozen
+ * questionOrder and we need to rebuild the student's
+ * exact quiz order.
+ */
+export async function getQuizQuestionMap(
+  quizId: string
+): Promise<
+  Map<
+    string,
+    Question
+  >
+> {
+  const questions =
+    await getQuizQuestions(
+      quizId
+    );
+
+  return new Map(
+    questions.map(
+      (
+        question
+      ) => [
+        question.id,
+        question,
+      ]
+    )
+  );
+}

@@ -218,6 +218,14 @@
     "deleteCurrent": "Siba quiz yawe iriho nimba ushaka gukora iyindi.",
     "limit": "Muri iyi verisiyo ushobora gukora quiz imwe gusa."
   },
+  "feedback": {
+  "title": "Tanga iciyumviro",
+  "description": "Tubwire ingene ukoresha ULearn kandi udufashe kunoza urubuga ku barimu no ku banyeshure.",
+  "button": "Tanga iciyumviro",
+  "help": "Iciyumviro cawe kidufasha kunoza ULearn.",
+  "loadingTitle": "Iciyumviro",
+  "loadingSubtitle": "Turiko turafungura urupapuro rw’iciyumviro..."
+},
 
   "quizzes": {
     "title": "Quiz",
@@ -491,7 +499,13 @@
   "availableFrom": "Iboneka kuva",
   "ends": "Ihera",
   "studentTime": "Igihe c’umunyeshure",
-  "sessionTime": "Igihe session imara"
+  "sessionTime": "Igihe session imara",
+  "qrCode": "Kode QR",
+  "qrHelp": "Abanyeshure barashobora gusikana iyi kode QR kugira bafungure ikizami ubwo nyene ku gikoresho cabo.",
+  "generatingQr": "Kode QR iriko irategurwa...",
+  "qrAlt": "Kode QR yo kwinjira mu kizami c'umunyeshure",
+  "qrUnavailable": "Kode QR ntiboneka ubu.",
+  "downloadQr": "Kurura kode QR"
 }
 },
 "quizSettings": {
@@ -549,34 +563,71 @@
     "save": "Bika ivyahinduwe"
   }
 },
-"students": {
-  "backQuiz": "Subira kuri quiz",
-  "badge": "Abanyeshure n’ugukosora",
-  "description": "Raba quiz zatanzwe hanyuma ukosore ibibazo bisaba inyishu zanditse.",
+  "students": {
+    "loading": {
+      "title": "Turiko turazana abanyeshure",
+      "subtitle": "Turiko turazana abanyeshure n'ivyo bakoze...",
+      "returning": "Turiko turasubira kuri quiz...",
+      "openingStudent": "Turiko turugurura ivyo umunyeshure yakoze..."
+    },
 
-  "loading": {
-    "title": "Abanyeshure n’ugukosora",
-    "subtitle": "Turiko turazana inyishu z’abanyeshure...",
-    "returning": "Turiko turasubira kuri quiz..."
-  },
+    "access": {
+      "title": "Nta burenganzira ufise",
+      "text": "Nta burenganzira ufise bwo kubona abanyeshure b'iyi quiz."
+    },
 
-  "access": {
-    "title": "Nta burenganzira",
-    "text": "Quiz ntiyabonetse canke nta burenganzira bwo kuyifungura."
-  },
+    "backQuiz": "Subira kuri quiz",
+    "badge": "Abanyeshure n'ikosorwa",
+    "description": "Kurikirana aho abanyeshure bageze, raba ivyo bakoze kandi ukosore inyishu zisaba gukosorwa n'umwigisha.",
+    "students": "abanyeshure",
 
-  "empty": {
-    "title": "Nta nyishu ziratangwa",
-    "text": "Abanyeshure barangije quiz bazoboneka hano hakurikijwe igihe bayirangirije."
-  },
+    "stats": {
+      "participants": "Abitabiriye",
+      "inProgress": "Bariko barakora",
+      "waitingCorrection": "Ivyo gukosora",
+      "graded": "Vyakozwe amanota",
+      "finished": "Barangije"
+    },
 
-  "future": {
-    "title": "Uburyo bwo gukosora buzokoreshwa",
-    "step1": "1. Abanyeshure bazotondekwa hakurikijwe igihe batanze inyishu.",
-    "step2": "2. Ibibazo vya QCM bizokosorwa ubwavyo.",
-    "step3": "3. Fyonda ku munyeshure kugira ukosore inyishu ziwe zanditse.",
-    "step4": "4. Tangaza amanota ya nyuma igihe ugukosora kurangiye."
-  }
+    "status": {
+      "inProgress": "Ariko arakora",
+      "waitingCorrection": "Gukosora",
+      "graded": "Vyakozwe amanota"
+    },
+
+    "actions": {
+      "view": "Raba",
+      "grade": "Kosora",
+      "viewCorrection": "Raba ikosorwa"
+    },
+
+    "list": {
+      "badge": "Ivyakozwe",
+      "title": "Urutonde rw'abanyeshure",
+      "results": "igisubizo",
+      "answers": "Inyishu",
+      "startedAt": "Yatanguye",
+      "submittedAt": "Yarungitse",
+      "score": "Amanota"
+    },
+
+    "filters": {
+      "all": "Bose",
+      "inProgress": "Bariko barakora",
+      "waitingCorrection": "Ivyo gukosora",
+      "graded": "Vyakozwe amanota",
+      "emptyTitle": "Nta vyakozwe bihari",
+      "emptyText": "Nta vyakozwe bihuye n'ivyo wahisemwo."
+    },
+
+    "empty": {
+      "title": "Nta banyeshure baratangura",
+      "text": "Abanyeshure bazoboneka hano igihe bazotangura gukora iyi quiz."
+    },
+
+    "messages": {
+      "loadError": "Ntivyashobotse kuzana abanyeshure n'ivyo bakoze."
+    }
 },
 "quizEdit": {
   "backQuiz": "Subira kuri quiz",
@@ -739,8 +790,8 @@
   "badge": "Quiz y'umunyeshure",
   "noDescription": "Nta nsiguro yatanzwe.",
   "teacher": {
-  "label": "Yakozwe na"
-},
+  "createdBy": "Yakozwe na : "
+ },
   "starting": {
     "title": "Tugira dutanguze quiz...",
     "subtitle": "Turiko turategura session yawe ya quiz..."
@@ -804,7 +855,10 @@
 
   "messages": {
     "loadError": "Ntivyashobotse kuzana iyi quiz.",
-    "startError": "Ntivyashobotse gutangura quiz. Subira ugerageze."
+    "startError": "Ntivyashobotse gutangura quiz. Subira ugerageze.",
+  "alreadySubmitted": "Wararangije gutanga iki kibazo ukoresheje iyi aderesi ya imeyili.",
+  "alreadyGraded": "Wararangije gukora iki kibazo ukoresheje iyi aderesi ya imeyili.",
+  "attemptExpired": "Igihe co gukomeza iki kibazo wari watanguye cararangiye."
   }
 },
 "quizSession": {
@@ -846,6 +900,20 @@
     "multipleTitle": "Inyishu nyinshi zirashobora kuba nziza",
     "multipleText": "Hitamwo inyishu zose wibaza ko ari zo. Ushobora guhitamwo canke gukuraho amahitamwo menshi."
   },
+  "result": {
+  "completedTitle": "Quiz yarangiye",
+  "completedText": "Quiz yawe yakosowe neza.",
+  "scoreHiddenText": "Quiz yawe yakosowe. Umwigisha yahisemwo kuterekana amanota ya nyuma.",
+  "submittedTitle": "Quiz yatanzwe",
+  "pendingText": "Umwigisha wawe aracarindiriye gukosora ibibazo bisaba inyishu zanditse imbere y’uko amanota ya nyuma aboneka.",
+  "score": "Amanota",
+  "percentage": "Ijanisha",
+  "status": "Uko bimeze",
+  "pending": "Ugukosora kuracarindiriwe",
+  "viewCorrection": "Raba ugukosora",
+  "correctionPending": "Ugukosora kuracarindiriwe",
+  "leaveFeedback": "Tanga iciyumviro"
+},
 
   "symbols": {
     "open": "Ibimenyetso bidasanzwe",
@@ -900,5 +968,280 @@
     "saveError": "Ntivyashobotse kubika inyishu yawe. Subira ugerageze.",
     "submitError": "Ntivyashobotse gutanga quiz. Subira ugerageze."
   }
-}
+},
+"feedbackForm": {
+  "badge": "Iciyumviro kuri ULearn",
+  "title": "Tanga iciyumviro cawe",
+  "description": "Tubwire ingene wakoresheje ULearn. Iciyumviro cawe kidufasha kunoza urubuga.",
+
+  "identity": {
+    "student": "Umunyeshure",
+    "teacher": "Umwigisha"
+  },
+
+  "rating": {
+    "label": "Amanota yawe",
+    "help": "Hitamwo amanota kuva ku nyenyeri 1 gushika kuri 5.",
+    "star": "inyenyeri",
+    "stars": "inyenyeri",
+    "notSelected": "Nta manota aratoranywa"
+  },
+
+  "comment": {
+    "label": "Iciyumviro cawe",
+    "placeholder": "Tubwire ivyo wakunze, ivyo twokosora canke ikindi ciyumviro ufise ku buryo wakoresheje ULearn...",
+    "characters": "inyuguti"
+  },
+
+  "actions": {
+    "submit": "Rungika ",
+    "submitting": "Turiko turarungika iciyumviro..."
+  },
+
+  "success": {
+    "title": "Urakoze!",
+    "text": "Iciyumviro cawe carungitswe neza."
+  },
+
+  "validation": {
+    "ratingRequired": "Hitamwo amanota kuva ku nyenyeri 1 gushika kuri 5.",
+    "commentRequired": "Andika iciyumviro cawe.",
+    "commentTooShort": "Tanga amakuru yiyongereye gatoyi mu ciyumviro cawe.",
+    "studentIdentityMissing": "Amakuru ajanye n’igerageza rya quiz yawe ntiyabonetse.",
+    "teacherLoading": "Konti yawe y’umwigisha iracariko irazanwa.",
+    "teacherRequired": "Utegerezwa kuba winjiye nk’umwigisha kugira utange iciyumviro.",
+    "studentAlreadySubmitted": "Iciyumviro caramaze gutangwa kuri iri gerageza rya quiz.",
+    "teacherAlreadySubmitted": "Waramaze gutanga iciyumviro.",
+    "submitError": "Ntivyashobotse kurungika iciyumviro cawe. Subira ugerageze."
+  }
+},
+"studentFeedback": {
+  "loading": {
+    "title": "Iciyumviro",
+    "subtitle": "Turiko turazana urupapuro rw’iciyumviro..."
+  },
+
+  "badge": "Iciyumviro c’umunyeshure",
+  "title": "Tanga iciyumviro cawe",
+  "description": "Iciyumviro cawe kidufasha kunoza ULearn ku banyeshure no ku barimu.",
+
+  "student": {
+    "label": "Umunyeshure"
+  },
+
+  "access": {
+    "title": "Iciyumviro ntikiboneka",
+    "invalidAttempt": "Iyi lien y’iciyumviro ntiyemewe.",
+    "notFound": "Iki kigeragezo ca quiz nticabonetse.",
+    "loadError": "Ntivyashobotse kuzana urupapuro rw’iciyumviro."
+  },
+
+  "actions": {
+    "backToQuiz": "Subira kuri quiz",
+    "home": "Subira ahabanza"
+  }
+},
+"teacherFeedback": {
+  "loading": {
+    "title": "Iciyumviro",
+    "subtitle": "Turiko turategura urupapuro rw’iciyumviro...",
+    "returning": "Turiko turasubira ku rubuga nyamukuru..."
+  },
+
+  "badge": "Iciyumviro c’umwigisha",
+  "title": "Tanga iciyumviro cawe",
+  "description": "Tubwire ico wiyumvira kuri ULearn. Iciyumviro cawe kidufasha kunoza urubuga ku barimu no ku banyeshure.",
+
+  "teacher": {
+    "label": "Umwigisha"
+  },
+
+  "access": {
+    "title": "Iciyumviro ntikiboneka",
+    "text": "Ntivyashobotse kuzana konti yawe y’umwigisha."
+  },
+
+  "actions": {
+    "dashboard": "Subira inyuma"
+  },
+
+  "footer": "Urakoze kudufasha kunoza ULearn."
+},
+"attempts": {
+    "grading": {
+      "unauthorized": "Ntimwemerewe gukosora iki kigeragezo."
+    }
+  },
+  "attemptGrading": {
+  "loading": {
+    "title": "Gufungura inyishu z'umunyeshure",
+    "subtitle": "Turiko turazana inyishu z'umunyeshure n'amakuru yo gukosora.",
+    "returning": "Gusubira ku banyeshure no gukosora.",
+    "savingTitle": "Kubika amanota",
+    "savingSubtitle": "Turiko turahindura amanota ya nyuma y'umunyeshure."
+  },
+
+  "access": {
+    "title": "Ntushobora gukosora",
+    "text": "Nta burenganzira ufise bwo kubona iki kigeragezo c'umunyeshure."
+  },
+
+  "badge": "Gukosora umunyeshure",
+  "title": "Raba kandi ukosore ikigeragezo",
+
+  "status": {
+    "inProgress": "Aracariko arakora",
+    "submitted": "Yararungitse",
+    "graded": "Yarakosowe"
+  },
+
+  "student": {
+    "label": "Umunyeshure"
+  },
+
+  "summary": {
+    "status": "Uko ikigeragezo kimeze",
+    "automaticScore": "Amanota yatanzwe na sisitemu",
+    "manualScore": "Amanota yatanzwe n'umwigisha",
+    "finalScore": "Amanota ya nyuma",
+    "percentage": "Ijanisha",
+    "questions": "Ibibazo"
+  },
+
+  "questions": {
+    "title": "Inyishu z'umunyeshure",
+    "description": "Raba inyishu z'umunyeshure maze utange amanota ku bibazo bisaba inyishu ndende.",
+
+    "question": "Ikibazo",
+    "point": "inota",
+    "points": "amanota",
+
+    "types": {
+      "qcm": "Inyishu imwe",
+      "multipleChoice": "Inyishu nyinshi",
+      "development": "Inyishu ndende"
+    },
+
+    "studentAnswer": "Inyishu y'umunyeshure",
+    "noAnswer": "Nta nyishu yatanzwe.",
+
+    "selected": "Yahisemwo",
+    "correct": "Inyishu ibereye",
+
+    "automaticGrade": "Amanota yatanzwe na sisitemu",
+
+    "manualGrade": "Amanota y'umwigisha",
+    "maximum": "Menshi ashoboka"
+  },
+
+  "final": {
+    "title": "Amanota ya nyuma"
+  },
+
+  "messages": {
+    "loadError": "Ntivyashobotse kuzana iki kigeragezo c'umunyeshure.",
+    "notSubmitted": "Umunyeshure aracari gukora quiz. Ntishobora gukosorwa ubu.",
+    "invalidDevelopmentScore": "Hari amanota y'inyishu ndende atari yo.",
+    "saved": "Amanota y'umunyeshure yabitswe neza.",
+    "saveError": "Ntivyashobotse kubika amanota y'umunyeshure."
+  },
+
+  "actions": {
+    "backStudents": "Abanyeshure no gukosora",
+    "finalizeGrade": "Sozera gukosora",
+    "updateGrade": "Hindura amanota"
+  }
+},
+  "correction": {
+    "loading": {
+      "title": "Turiko turafungura ikosorwa",
+      "subtitle": "Turiko turategura ikosorwa ry'ikibazo cawe.",
+      "returning": "Turiko turasubira ku vyavuye mu kibazo cawe.",
+      "feedback": "Turiko turafungura urupapuro rwo gutanga iciyumviro."
+    },
+
+    "messages": {
+      "invalidAttempt": "Iki kigeragezo c'ikibazo nticemewe.",
+      "attemptNotFound": "Iki kigeragezo c'ikibazo nticabonetse.",
+      "quizNotFound": "Ikibazo gifitaniye isano n'iki kigeragezo nticabonetse.",
+      "loadError": "Ntivyashobotse gufungura ikosorwa. Subira ugerageze."
+    },
+
+    "error": {
+      "title": "Ikosorwa ntiriboneka"
+    },
+
+    "inProgress": {
+      "title": "Ikibazo kiracariko kirakorwa",
+      "text": "Utegerezwa kurangiza no gutanga ikibazo cawe imbere yo kubona ikosorwa."
+    },
+
+    "waiting": {
+      "title": "Ikosorwa ririndiriwe",
+      "text": "Ikibazo cawe caratanzwe neza. Inyishu zimwe ziracarindiriye gukosorwa n'umwigisha imbere y'uko ikosorwa riboneka."
+    },
+
+    "status": {
+      "graded": "Carakosowe"
+    },
+
+    "badge": "Ikosorwa ry'ikibazo",
+
+    "title": "Ikosorwa ryawe",
+
+    "student": {
+      "label": "Umunyeshure"
+    },
+
+    "summary": {
+      "questions": "Ibibazo",
+      "status": "Uko bimeze",
+      "score": "Amanota ya nyuma",
+      "percentage": "Ijanisha"
+    },
+
+    "scoreHidden": {
+      "title": "Amanota ya nyuma ntiyerekanwa",
+      "text": "Umwigisha yahisemwo kuterekana amanota ya nyuma y'iki kibazo."
+    },
+
+    "answersHidden": {
+      "title": "Inyishu nziza ntizerekanwa",
+      "text": "Umwigisha yahisemwo kuterekana inyishu nziza z'iki kibazo."
+    },
+
+    "questions": {
+      "badge": "Isubiramwo",
+      "title": "Inyishu z'ikibazo",
+      "description": "Raba inyishu watanze kandi, iyo umwigisha avyemeye, uzigereranye n'inyishu nziza.",
+
+      "question": "Ikibazo",
+
+      "point": "inota",
+      "points": "amanota",
+
+      "types": {
+        "qcm": "Inyishu imwe",
+        "multipleChoice": "Inyishu nyinshi",
+        "development": "Inyishu yanditswe"
+      },
+
+      "yourAnswer": "Inyishu yawe",
+      "yourChoice": "Ico wahisemwo",
+      "correct": "Inyishu nziza",
+      "noAnswer": "Nta nyishu yatanzwe kuri iki kibazo.",
+      "pointsReceived": "Amanota waronse"
+    },
+
+    "final": {
+      "label": "Igisubizo ca nyuma"
+    },
+
+    "actions": {
+      "home": "Subira ahabanza",
+      "returnQuiz": "Subira ku kibazo",
+      "backResult": "Subira ku gisubizo",
+      "feedback": "Tanga iciyumviro"
+    }
+  }
 }

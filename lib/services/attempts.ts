@@ -38,14 +38,14 @@ export type AttemptStatus =
 export type AttemptAnswer = {
   /*
    * QCM:
-   * one original choice index.
+   * original choice index.
    */
   selectedChoiceIndex?:
     number;
 
   /*
    * MULTIPLE CHOICE:
-   * several original choice indexes.
+   * original choice indexes.
    */
   selectedChoiceIndexes?:
     number[];
@@ -60,6 +60,18 @@ export type AttemptAnswer = {
   updatedAt:
     string;
 };
+
+/*
+ * Manual score assigned by the teacher
+ * to each development question.
+ *
+ * questionId -> score
+ */
+export type DevelopmentScores =
+  Record<
+    string,
+    number
+  >;
 
 export type Attempt = {
   id:
@@ -105,7 +117,7 @@ export type Attempt = {
     string | null;
 
   /* =====================================================
-     Frozen quiz options
+     Frozen student options
      ===================================================== */
 
   allowBackNavigation:
@@ -131,24 +143,8 @@ export type Attempt = {
     string[];
 
   /*
-   * For QCM and MULTIPLE CHOICE:
-   *
-   * questionId -> ORIGINAL choice indexes
-   * in the order displayed to the student.
-   *
-   * Example:
-   *
-   * Original:
-   * [A, B, C, D]
-   *
-   * Displayed:
-   * [C, A, D, B]
-   *
-   * Stored:
-   * [2, 0, 3, 1]
-   *
-   * Automatic grading always uses
-   * original indexes.
+   * questionId -> original indexes
+   * in displayed order.
    */
   choiceOrders:
     Record<
@@ -179,6 +175,12 @@ export type Attempt = {
   finalScore:
     number | null;
 
+  /*
+   * Individual development question scores.
+   */
+  developmentScores:
+    DevelopmentScores;
+
   /* =====================================================
      Dates
      ===================================================== */
@@ -191,7 +193,7 @@ export type Attempt = {
 };
 
 /* =========================================================
-   Start attempt input
+   Start attempt
    ========================================================= */
 
 export type StartAttemptInput = {
@@ -205,10 +207,6 @@ export type StartAttemptInput = {
     string;
 };
 
-/* =========================================================
-   Start attempt result
-   ========================================================= */
-
 export type StartAttemptResult = {
   success:
     boolean;
@@ -219,12 +217,27 @@ export type StartAttemptResult = {
   resumed:
     boolean;
 
+  /*
+   * Stable i18n key.
+   *
+   * UI:
+   * t(result.messageKey)
+   */
+  messageKey:
+    string;
+
+  /*
+   * Developer/debug fallback.
+   *
+   * Do not display this directly
+   * in translated public pages.
+   */
   message:
     string;
 };
 
 /* =========================================================
-   Submit attempt result
+   Submit attempt
    ========================================================= */
 
 export type SubmitAttemptResult = {
@@ -243,12 +256,15 @@ export type SubmitAttemptResult = {
   requiresManualGrading:
     boolean;
 
+  messageKey:
+    string;
+
   message:
     string;
 };
 
 /* =========================================================
-   Save answer input
+   Save answer
    ========================================================= */
 
 export type SaveAttemptAnswerInput = {
@@ -263,7 +279,97 @@ export type SaveAttemptAnswerInput = {
 };
 
 /* =========================================================
-   Automatic grading result
+   Save answer result
+   ========================================================= */
+
+export type AttemptActionResult = {
+  success:
+    boolean;
+
+  messageKey:
+    string;
+
+  message:
+    string;
+};
+
+/* =========================================================
+   Teacher grading
+   ========================================================= */
+
+export type GradeAttemptInput = {
+  /*
+   * Authenticated teacher performing the correction.
+   *
+   * The correction page should pass teacher.id here.
+   */
+  teacherId:
+    string;
+
+  /*
+   * questionId -> points assigned
+   */
+  developmentScores:
+    DevelopmentScores;
+};
+
+export type GradeAttemptResult = {
+  success:
+    boolean;
+
+  attempt:
+    Attempt | null;
+
+  automaticScore:
+    number | null;
+
+  manualScore:
+    number | null;
+
+  finalScore:
+    number | null;
+
+  messageKey:
+    string;
+
+  message:
+    string;
+};
+
+/* =========================================================
+   Quiz attempt statistics
+   ========================================================= */
+
+export type QuizAttemptStats = {
+  total:
+    number;
+
+  inProgress:
+    number;
+
+  submitted:
+    number;
+
+  graded:
+    number;
+
+  /*
+   * Students who have finished answering:
+   *
+   * submitted + graded
+   */
+  finished:
+    number;
+
+  /*
+   * Students waiting for manual correction.
+   */
+  waitingForCorrection:
+    number;
+};
+
+/* =========================================================
+   Automatic grading
    ========================================================= */
 
 type AutomaticGradingResult = {
@@ -311,7 +417,7 @@ function attemptRef(
 }
 
 /* =========================================================
-   Email helper
+   Helpers
    ========================================================= */
 
 function normalizeEmail(
@@ -322,10 +428,6 @@ function normalizeEmail(
     .toLowerCase();
 }
 
-/* =========================================================
-   Email validation
-   ========================================================= */
-
 function isValidEmail(
   email: string
 ) {
@@ -334,21 +436,6 @@ function isValidEmail(
   );
 }
 
-/* =========================================================
-   Score rounding
-   ========================================================= */
-
-/*
- * Multiple-choice questions can produce
- * fractional scores.
- *
- * Example:
- *
- * 1 point / 3 correct answers
- * = 0.333333...
- *
- * We keep up to 4 decimal places.
- */
 function roundScore(
   value: number
 ) {
@@ -364,22 +451,41 @@ function roundScore(
   );
 }
 
+function safeDateMs(
+  value: string | null
+) {
+  if (
+    !value
+  ) {
+    return 0;
+  }
+
+  const timestamp =
+    new Date(
+      value
+    ).getTime();
+
+  return Number.isNaN(
+    timestamp
+  )
+    ? 0
+    : timestamp;
+}
+
 /* =========================================================
-   Shuffle helper
+   Shuffle
    ========================================================= */
 
 function shuffleArray<T>(
   values: T[]
 ) {
-  const result =
-    [
-      ...values,
-    ];
+  const result = [
+    ...values,
+  ];
 
   for (
     let index =
-      result.length -
-      1;
+      result.length - 1;
 
     index >
     0;
@@ -409,7 +515,7 @@ function shuffleArray<T>(
 }
 
 /* =========================================================
-   Number array helper
+   Index arrays
    ========================================================= */
 
 function normalizeIndexArray(
@@ -445,7 +551,7 @@ function normalizeIndexArray(
 }
 
 /* =========================================================
-   Map choice orders
+   Choice orders
    ========================================================= */
 
 function mapChoiceOrders(
@@ -488,7 +594,7 @@ function mapChoiceOrders(
 }
 
 /* =========================================================
-   Map attempt answers
+   Attempt answers
    ========================================================= */
 
 function mapAttemptAnswers(
@@ -578,6 +684,56 @@ function mapAttemptAnswers(
       questionId
     ] =
       answer;
+  }
+
+  return result;
+}
+
+/* =========================================================
+   Development scores
+   ========================================================= */
+
+function mapDevelopmentScores(
+  value: unknown
+): DevelopmentScores {
+  const result:
+    DevelopmentScores = {};
+
+  if (
+    !value ||
+    typeof value !==
+      "object"
+  ) {
+    return result;
+  }
+
+  for (
+    const [
+      questionId,
+      rawScore,
+    ] of Object.entries(
+      value as Record<
+        string,
+        unknown
+      >
+    )
+  ) {
+    if (
+      typeof rawScore !==
+        "number" ||
+      !Number.isFinite(
+        rawScore
+      )
+    ) {
+      continue;
+    }
+
+    result[
+      questionId
+    ] =
+      roundScore(
+        rawScore
+      );
   }
 
   return result;
@@ -728,6 +884,11 @@ function mapAttempt(
         ? data.finalScore
         : null,
 
+    developmentScores:
+      mapDevelopmentScores(
+        data.developmentScores
+      ),
+
     createdAt:
       typeof data.createdAt ===
       "string"
@@ -743,7 +904,7 @@ function mapAttempt(
 }
 
 /* =========================================================
-   Get attempt
+   Get one attempt
    ========================================================= */
 
 export async function getAttempt(
@@ -771,7 +932,153 @@ export async function getAttempt(
 }
 
 /* =========================================================
-   Find attempt by student email + quiz
+   Get all attempts belonging to a quiz
+   ========================================================= */
+
+/*
+ * We deliberately sort client-side.
+ *
+ * This avoids requiring an additional
+ * Firestore composite index for:
+ *
+ * where("quizId", "==", ...)
+ * + orderBy(...)
+ */
+export async function getQuizAttempts(
+  quizId: string
+): Promise<
+  Attempt[]
+> {
+  const cleanQuizId =
+    quizId.trim();
+
+  if (
+    !cleanQuizId
+  ) {
+    return [];
+  }
+
+  const attemptsQuery =
+    query(
+      collection(
+        db,
+        ATTEMPTS_COLLECTION
+      ),
+
+      where(
+        "quizId",
+        "==",
+        cleanQuizId
+      )
+    );
+
+  const snapshot =
+    await getDocs(
+      attemptsQuery
+    );
+
+  const attempts =
+    snapshot.docs.map(
+      (
+        attemptDocument
+      ) =>
+        mapAttempt(
+          attemptDocument.id,
+          attemptDocument.data()
+        )
+    );
+
+  /*
+   * Latest participant first.
+   */
+  return attempts.sort(
+    (
+      first,
+      second
+    ) =>
+      safeDateMs(
+        second.createdAt ||
+          second.startedAt
+      ) -
+      safeDateMs(
+        first.createdAt ||
+          first.startedAt
+      )
+  );
+}
+
+/* =========================================================
+   Quiz attempt statistics
+   ========================================================= */
+
+export async function getQuizAttemptStats(
+  quizId: string
+): Promise<
+  QuizAttemptStats
+> {
+  const attempts =
+    await getQuizAttempts(
+      quizId
+    );
+
+  let inProgress =
+    0;
+
+  let submitted =
+    0;
+
+  let graded =
+    0;
+
+  for (
+    const attempt of
+    attempts
+  ) {
+    if (
+      attempt.status ===
+      "in_progress"
+    ) {
+      inProgress +=
+        1;
+
+      continue;
+    }
+
+    if (
+      attempt.status ===
+      "submitted"
+    ) {
+      submitted +=
+        1;
+
+      continue;
+    }
+
+    graded +=
+      1;
+  }
+
+  return {
+    total:
+      attempts.length,
+
+    inProgress,
+
+    submitted,
+
+    graded,
+
+    finished:
+      submitted +
+      graded,
+
+    waitingForCorrection:
+      submitted,
+  };
+}
+
+/* =========================================================
+   Find attempt by email + quiz
    ========================================================= */
 
 export async function getAttemptByStudentEmail(
@@ -833,7 +1140,7 @@ export async function getAttemptByStudentEmail(
 }
 
 /* =========================================================
-   Quiz availability helper
+   Quiz availability
    ========================================================= */
 
 function validateQuizAvailabilityForStudent(
@@ -849,6 +1156,9 @@ function validateQuizAvailabilityForStudent(
     return {
       success:
         false,
+
+      messageKey:
+        "attempts.availability.unavailable",
 
       message:
         "This quiz is not currently available.",
@@ -880,6 +1190,9 @@ function validateQuizAvailabilityForStudent(
       success:
         false,
 
+      messageKey:
+        "attempts.availability.invalidStart",
+
       message:
         "The quiz start time is invalid.",
     };
@@ -896,6 +1209,9 @@ function validateQuizAvailabilityForStudent(
       success:
         false,
 
+      messageKey:
+        "attempts.availability.invalidEnd",
+
       message:
         "The quiz deadline is invalid.",
     };
@@ -908,6 +1224,9 @@ function validateQuizAvailabilityForStudent(
     return {
       success:
         false,
+
+      messageKey:
+        "attempts.availability.missingDeadline",
 
       message:
         "The quiz does not have a valid deadline.",
@@ -930,6 +1249,9 @@ function validateQuizAvailabilityForStudent(
         success:
           false,
 
+        messageKey:
+          "attempts.availability.missingScheduledStart",
+
         message:
           "The scheduled session does not have a valid start time.",
       };
@@ -942,6 +1264,9 @@ function validateQuizAvailabilityForStudent(
       return {
         success:
           false,
+
+        messageKey:
+          "attempts.availability.notStarted",
 
         message:
           "The scheduled session has not started yet.",
@@ -956,6 +1281,9 @@ function validateQuizAvailabilityForStudent(
         success:
           false,
 
+        messageKey:
+          "attempts.availability.ended",
+
         message:
           "The scheduled session has ended.",
       };
@@ -964,6 +1292,9 @@ function validateQuizAvailabilityForStudent(
     return {
       success:
         true,
+
+      messageKey:
+        "attempts.availability.available",
 
       message:
         "The scheduled session is available.",
@@ -984,6 +1315,9 @@ function validateQuizAvailabilityForStudent(
       success:
         false,
 
+      messageKey:
+        "attempts.availability.notStarted",
+
       message:
         "This quiz is not open yet.",
     };
@@ -997,6 +1331,9 @@ function validateQuizAvailabilityForStudent(
       success:
         false,
 
+      messageKey:
+        "attempts.availability.ended",
+
       message:
         "This quiz is closed.",
     };
@@ -1006,13 +1343,16 @@ function validateQuizAvailabilityForStudent(
     success:
       true,
 
+    messageKey:
+      "attempts.availability.available",
+
     message:
       "The quiz is available.",
   };
 }
 
 /* =========================================================
-   Calculate expiresAt
+   Calculate attempt expiration
    ========================================================= */
 
 function calculateAttemptExpiration(
@@ -1042,10 +1382,6 @@ function calculateAttemptExpiration(
      Scheduled session
      ===================================================== */
 
-  /*
-   * In scheduled-session mode every student
-   * shares the same ending time.
-   */
   if (
     quiz.availabilityMode ===
     "scheduled_session"
@@ -1059,11 +1395,6 @@ function calculateAttemptExpiration(
      Open window
      ===================================================== */
 
-  /*
-   * In open-window mode the student receives
-   * timeLimitMinutes starting from now,
-   * without exceeding availableUntil.
-   */
   const personalExpiration =
     now +
     quiz.timeLimitMinutes *
@@ -1107,7 +1438,7 @@ function buildQuestionOrder(
 }
 
 /* =========================================================
-   Build choice orders
+   Build choice order
    ========================================================= */
 
 function buildChoiceOrders(
@@ -1156,7 +1487,7 @@ function buildChoiceOrders(
 }
 
 /* =========================================================
-   Validate questions before attempt
+   Validate quiz questions
    ========================================================= */
 
 function validateQuizQuestionsForStudent(
@@ -1169,9 +1500,13 @@ function validateQuizQuestionsForStudent(
     questions.length !==
     quiz.targetQuestions
   ) {
-    return (
-      "The quiz structure is incomplete."
-    );
+    return {
+      messageKey:
+        "attempts.structure.questionsIncomplete",
+
+      message:
+        "The quiz structure is incomplete.",
+    };
   }
 
   const totalPoints =
@@ -1190,9 +1525,13 @@ function validateQuizQuestionsForStudent(
     totalPoints !==
     quiz.totalPoints
   ) {
-    return (
-      "The quiz point structure is incomplete."
-    );
+    return {
+      messageKey:
+        "attempts.structure.pointsIncomplete",
+
+      message:
+        "The quiz point structure is incomplete.",
+    };
   }
 
   for (
@@ -1202,9 +1541,13 @@ function validateQuizQuestionsForStudent(
     if (
       !question.text.trim()
     ) {
-      return (
-        "The quiz contains an invalid question."
-      );
+      return {
+        messageKey:
+          "attempts.structure.invalidQuestion",
+
+        message:
+          "The quiz contains an invalid question.",
+      };
     }
 
     if (
@@ -1214,14 +1557,14 @@ function validateQuizQuestionsForStudent(
       question.points <
         1
     ) {
-      return (
-        "The quiz contains invalid question points."
-      );
-    }
+      return {
+        messageKey:
+          "attempts.structure.invalidPoints",
 
-    /* =====================================================
-       Development
-       ===================================================== */
+        message:
+          "The quiz contains invalid question points.",
+      };
+    }
 
     if (
       question.type ===
@@ -1230,17 +1573,17 @@ function validateQuizQuestionsForStudent(
       continue;
     }
 
-    /* =====================================================
-       Choice questions
-       ===================================================== */
-
     if (
       question.choices.length <
       2
     ) {
-      return (
-        "The quiz contains a choice question with fewer than 2 answers."
-      );
+      return {
+        messageKey:
+          "attempts.structure.notEnoughChoices",
+
+        message:
+          "The quiz contains a choice question with fewer than 2 answers.",
+      };
     }
 
     if (
@@ -1251,14 +1594,14 @@ function validateQuizQuestionsForStudent(
           !choice.trim()
       )
     ) {
-      return (
-        "The quiz contains an empty choice answer."
-      );
-    }
+      return {
+        messageKey:
+          "attempts.structure.emptyChoice",
 
-    /* =====================================================
-       QCM
-       ===================================================== */
+        message:
+          "The quiz contains an empty choice answer.",
+      };
+    }
 
     if (
       question.type ===
@@ -1273,17 +1616,17 @@ function validateQuizQuestionsForStudent(
         question.correctChoiceIndex >=
           question.choices.length
       ) {
-        return (
-          "The quiz contains an invalid QCM correct answer."
-        );
+        return {
+          messageKey:
+            "attempts.structure.invalidQcmAnswer",
+
+          message:
+            "The quiz contains an invalid QCM correct answer.",
+        };
       }
 
       continue;
     }
-
-    /* =====================================================
-       Multiple choice
-       ===================================================== */
 
     const correctIndexes =
       question.correctChoiceIndexes;
@@ -1295,25 +1638,32 @@ function validateQuizQuestionsForStudent(
       correctIndexes.length <
         2
     ) {
-      return (
-        "The quiz contains an invalid multiple-choice question."
-      );
+      return {
+        messageKey:
+          "attempts.structure.invalidMultipleChoice",
+
+        message:
+          "The quiz contains an invalid multiple-choice question.",
+      };
     }
 
-    const uniqueCorrectIndexes =
-      [
-        ...new Set(
-          correctIndexes
-        ),
-      ];
+    const uniqueCorrectIndexes = [
+      ...new Set(
+        correctIndexes
+      ),
+    ];
 
     if (
       uniqueCorrectIndexes.length !==
       correctIndexes.length
     ) {
-      return (
-        "The quiz contains duplicated multiple-choice correct answers."
-      );
+      return {
+        messageKey:
+          "attempts.structure.duplicateCorrectAnswers",
+
+        message:
+          "The quiz contains duplicated multiple-choice correct answers.",
+      };
     }
 
     if (
@@ -1330,9 +1680,13 @@ function validateQuizQuestionsForStudent(
             question.choices.length
       )
     ) {
-      return (
-        "The quiz contains an invalid multiple-choice correct answer."
-      );
+      return {
+        messageKey:
+          "attempts.structure.invalidMultipleChoiceAnswer",
+
+        message:
+          "The quiz contains an invalid multiple-choice correct answer.",
+      };
     }
   }
 
@@ -1340,7 +1694,7 @@ function validateQuizQuestionsForStudent(
 }
 
 /* =========================================================
-   Start or resume attempt
+   Start / resume attempt
    ========================================================= */
 
 export async function startAttempt(
@@ -1363,26 +1717,9 @@ export async function startAttempt(
      ===================================================== */
 
   if (
-    !cleanName
-  ) {
-    return {
-      success:
-        false,
-
-      attempt:
-        null,
-
-      resumed:
-        false,
-
-      message:
-        "Please enter your full name.",
-    };
-  }
-
-  if (
+    !cleanName ||
     cleanName.length <
-    2
+      2
   ) {
     return {
       success:
@@ -1393,6 +1730,9 @@ export async function startAttempt(
 
       resumed:
         false,
+
+      messageKey:
+        "attempts.start.invalidName",
 
       message:
         "Please enter a valid full name.",
@@ -1413,6 +1753,9 @@ export async function startAttempt(
       resumed:
         false,
 
+      messageKey:
+        "attempts.start.nameTooLong",
+
       message:
         "Student name is too long.",
     };
@@ -1430,6 +1773,9 @@ export async function startAttempt(
 
       resumed:
         false,
+
+      messageKey:
+        "attempts.start.emailRequired",
 
       message:
         "Please enter your email address.",
@@ -1451,6 +1797,9 @@ export async function startAttempt(
       resumed:
         false,
 
+      messageKey:
+        "attempts.start.invalidEmail",
+
       message:
         "Please enter a valid email address.",
     };
@@ -1470,13 +1819,16 @@ export async function startAttempt(
       resumed:
         false,
 
+      messageKey:
+        "attempts.start.emailTooLong",
+
       message:
         "Email address is too long.",
     };
   }
 
   /* =====================================================
-     Load quiz
+     Quiz
      ===================================================== */
 
   const quiz =
@@ -1496,6 +1848,9 @@ export async function startAttempt(
 
       resumed:
         false,
+
+      messageKey:
+        "attempts.start.quizNotFound",
 
       message:
         "Quiz not found.",
@@ -1529,6 +1884,9 @@ export async function startAttempt(
         resumed:
           false,
 
+        messageKey:
+          "attempts.start.alreadySubmitted",
+
         message:
           "You have already submitted this quiz.",
       };
@@ -1547,6 +1905,9 @@ export async function startAttempt(
 
         resumed:
           false,
+
+        messageKey:
+          "attempts.start.alreadyGraded",
 
         message:
           "This quiz attempt has already been graded.",
@@ -1575,6 +1936,9 @@ export async function startAttempt(
         resumed:
           false,
 
+        messageKey:
+          "attempts.start.expired",
+
         message:
           "Your quiz attempt has expired.",
       };
@@ -1589,6 +1953,9 @@ export async function startAttempt(
 
       resumed:
         true,
+
+      messageKey:
+        "attempts.start.resumed",
 
       message:
         "Your existing quiz attempt was found.",
@@ -1617,13 +1984,16 @@ export async function startAttempt(
       resumed:
         false,
 
+      messageKey:
+        availability.messageKey,
+
       message:
         availability.message,
     };
   }
 
   /* =====================================================
-     Load questions
+     Questions
      ===================================================== */
 
   const questions =
@@ -1650,8 +2020,11 @@ export async function startAttempt(
       resumed:
         false,
 
+      messageKey:
+        questionError.messageKey,
+
       message:
-        questionError,
+        questionError.message,
     };
   }
 
@@ -1676,6 +2049,9 @@ export async function startAttempt(
 
       resumed:
         false,
+
+      messageKey:
+        "attempts.start.expirationError",
 
       message:
         "Unable to calculate the quiz expiration time.",
@@ -1704,13 +2080,16 @@ export async function startAttempt(
       resumed:
         false,
 
+      messageKey:
+        "attempts.start.notEnoughTime",
+
       message:
         "There is not enough time remaining to start this quiz.",
     };
   }
 
   /* =====================================================
-     Frozen ordering
+     Ordering
      ===================================================== */
 
   const questionOrder =
@@ -1765,11 +2144,7 @@ export async function startAttempt(
       null,
 
     /*
-     * Student options are frozen here.
-     *
-     * Therefore changing the quiz later
-     * cannot unexpectedly change an
-     * already-started attempt.
+     * Freeze options at attempt creation.
      */
     allowBackNavigation:
       quiz.allowBackNavigation,
@@ -1801,6 +2176,9 @@ export async function startAttempt(
 
     finalScore:
       null,
+
+    developmentScores:
+      {},
 
     createdAt:
       now,
@@ -1836,6 +2214,9 @@ export async function startAttempt(
     resumed:
       false,
 
+    messageKey:
+      "attempts.start.created",
+
     message:
       "Quiz attempt created successfully.",
   };
@@ -1852,7 +2233,9 @@ export async function saveAttemptAnswer(
 
   answer:
     SaveAttemptAnswerInput
-) {
+): Promise<
+  AttemptActionResult
+> {
   const attempt =
     await getAttempt(
       attemptId
@@ -1864,6 +2247,9 @@ export async function saveAttemptAnswer(
     return {
       success:
         false,
+
+      messageKey:
+        "attempts.save.notFound",
 
       message:
         "Attempt not found.",
@@ -1877,6 +2263,9 @@ export async function saveAttemptAnswer(
     return {
       success:
         false,
+
+      messageKey:
+        "attempts.save.notEditable",
 
       message:
         "This attempt is no longer editable.",
@@ -1899,6 +2288,9 @@ export async function saveAttemptAnswer(
       success:
         false,
 
+      messageKey:
+        "attempts.save.expired",
+
       message:
         "This attempt has expired.",
     };
@@ -1913,14 +2305,13 @@ export async function saveAttemptAnswer(
       success:
         false,
 
+      messageKey:
+        "attempts.save.invalidQuestion",
+
       message:
         "Question does not belong to this attempt.",
     };
   }
-
-  /* =====================================================
-     Load real question
-     ===================================================== */
 
   const questions =
     await getQuizQuestions(
@@ -1943,6 +2334,9 @@ export async function saveAttemptAnswer(
       success:
         false,
 
+      messageKey:
+        "attempts.save.questionNotFound",
+
       message:
         "Question not found.",
     };
@@ -1963,31 +2357,26 @@ export async function saveAttemptAnswer(
     question.type ===
     "qcm"
   ) {
-    if (
-      answer.selectedChoiceIndex ===
-      undefined
-    ) {
-      return {
-        success:
-          false,
-
-        message:
-          "No QCM answer was provided.",
-      };
-    }
+    const selected =
+      answer.selectedChoiceIndex;
 
     if (
+      selected ===
+      undefined ||
       !Number.isInteger(
-        answer.selectedChoiceIndex
+        selected
       ) ||
-      answer.selectedChoiceIndex <
+      selected <
         0 ||
-      answer.selectedChoiceIndex >=
+      selected >=
         question.choices.length
     ) {
       return {
         success:
           false,
+
+        messageKey:
+          "attempts.save.invalidChoice",
 
         message:
           "Invalid selected answer.",
@@ -1996,7 +2385,7 @@ export async function saveAttemptAnswer(
 
     nextAnswer = {
       selectedChoiceIndex:
-        answer.selectedChoiceIndex,
+        selected,
 
       updatedAt:
         now,
@@ -2020,23 +2409,19 @@ export async function saveAttemptAnswer(
         success:
           false,
 
+        messageKey:
+          "attempts.save.invalidMultipleChoice",
+
         message:
           "No multiple-choice answer was provided.",
       };
     }
 
-    /*
-     * Empty array is valid.
-     *
-     * It allows a student to uncheck
-     * all currently selected answers.
-     */
-    const selectedIndexes =
-      [
-        ...new Set(
-          answer.selectedChoiceIndexes
-        ),
-      ];
+    const selectedIndexes = [
+      ...new Set(
+        answer.selectedChoiceIndexes
+      ),
+    ];
 
     if (
       selectedIndexes.some(
@@ -2055,6 +2440,9 @@ export async function saveAttemptAnswer(
       return {
         success:
           false,
+
+        messageKey:
+          "attempts.save.invalidMultipleChoice",
 
         message:
           "One or more selected answers are invalid.",
@@ -2083,31 +2471,27 @@ export async function saveAttemptAnswer(
         success:
           false,
 
+        messageKey:
+          "attempts.save.invalidDevelopment",
+
         message:
           "Invalid development answer.",
       };
     }
 
-    const safeDevelopmentAnswer =
-      answer
-        .developmentAnswer
-        .slice(
-          0,
-          MAX_DEVELOPMENT_ANSWER_LENGTH
-        );
-
     nextAnswer = {
       developmentAnswer:
-        safeDevelopmentAnswer,
+        answer
+          .developmentAnswer
+          .slice(
+            0,
+            MAX_DEVELOPMENT_ANSWER_LENGTH
+          ),
 
       updatedAt:
         now,
     };
   }
-
-  /* =====================================================
-     Save
-     ===================================================== */
 
   const nextAnswers = {
     ...attempt.answers,
@@ -2134,13 +2518,16 @@ export async function saveAttemptAnswer(
     success:
       true,
 
+    messageKey:
+      "attempts.save.success",
+
     message:
       "Answer saved successfully.",
   };
 }
 
 /* =========================================================
-   Grade QCM
+   QCM grading
    ========================================================= */
 
 function calculateQcmScore(
@@ -2164,78 +2551,16 @@ function calculateQcmScore(
     return 0;
   }
 
-  if (
-    answer.selectedChoiceIndex ===
+  return answer.selectedChoiceIndex ===
     question.correctChoiceIndex
-  ) {
-    return question.points;
-  }
-
-  return 0;
+    ? question.points
+    : 0;
 }
 
 /* =========================================================
-   Grade multiple choice
+   Multiple-choice grading
    ========================================================= */
 
-/*
- * ULearn multiple-choice rule:
- *
- * STEP 1
- * ------
- * Divide the question points by the
- * number of correct choices.
- *
- * Example:
- *
- * Question = 4 points
- *
- * Correct answers:
- * A, C, D, E
- *
- * 4 / 4 = 1 point per correct answer.
- *
- *
- * STEP 2
- * ------
- * Each correct selected choice:
- *
- * +1 share
- *
- * Each incorrect selected choice:
- *
- * -1 share
- *
- *
- * Example:
- *
- * Correct:
- * A, C, D, E
- *
- * Student:
- * A + D
- *
- * Score:
- * +1 +1 = 2
- *
- *
- * Student:
- * A + D + B
- *
- * Score:
- * +1 +1 -1 = 1
- *
- *
- * STEP 3
- * ------
- * Score cannot be:
- *
- * < 0
- *
- * or
- *
- * > question.points
- */
 function calculateMultipleChoiceScore(
   question:
     Extract<
@@ -2258,12 +2583,11 @@ function calculateMultipleChoiceScore(
     return 0;
   }
 
-  const correctIndexes =
-    [
-      ...new Set(
-        question.correctChoiceIndexes
-      ),
-    ];
+  const correctIndexes = [
+    ...new Set(
+      question.correctChoiceIndexes
+    ),
+  ];
 
   if (
     correctIndexes.length ===
@@ -2272,12 +2596,11 @@ function calculateMultipleChoiceScore(
     return 0;
   }
 
-  const selectedIndexes =
-    [
-      ...new Set(
-        answer.selectedChoiceIndexes
-      ),
-    ];
+  const selectedIndexes = [
+    ...new Set(
+      answer.selectedChoiceIndexes
+    ),
+  ];
 
   if (
     selectedIndexes.length ===
@@ -2330,12 +2653,6 @@ function calculateMultipleChoiceScore(
     earnedPoints -
     penalty;
 
-  /*
-   * Score cannot become negative.
-   *
-   * It also cannot exceed the maximum
-   * configured points for the question.
-   */
   const finalQuestionScore =
     Math.max(
       0,
@@ -2404,10 +2721,6 @@ function calculateAutomaticScore(
         question.id
       ];
 
-    /* =====================================================
-       Development
-       ===================================================== */
-
     if (
       question.type ===
       "development"
@@ -2417,10 +2730,6 @@ function calculateAutomaticScore(
 
       continue;
     }
-
-    /* =====================================================
-       QCM
-       ===================================================== */
 
     if (
       question.type ===
@@ -2437,10 +2746,6 @@ function calculateAutomaticScore(
 
       continue;
     }
-
-    /* =====================================================
-       Multiple choice
-       ===================================================== */
 
     multipleChoiceQuestions +=
       1;
@@ -2467,7 +2772,7 @@ function calculateAutomaticScore(
 }
 
 /* =========================================================
-   Validate attempt before submission
+   Validate attempt
    ========================================================= */
 
 function validateAttemptForSubmission(
@@ -2480,29 +2785,30 @@ function validateAttemptForSubmission(
 ) {
   if (
     attempt.quizId !==
-    quiz.id
-  ) {
-    return (
-      "This attempt is not linked correctly to the quiz."
-    );
-  }
-
-  if (
+    quiz.id ||
     attempt.teacherId !==
     quiz.teacherId
   ) {
-    return (
-      "This attempt is not linked correctly to the teacher."
-    );
+    return {
+      messageKey:
+        "attempts.submit.invalidAttempt",
+
+      message:
+        "This attempt is not linked correctly to the quiz.",
+    };
   }
 
   if (
     attempt.questionOrder.length !==
     questions.length
   ) {
-    return (
-      "The attempt question structure is invalid."
-    );
+    return {
+      messageKey:
+        "attempts.submit.invalidStructure",
+
+      message:
+        "The attempt question structure is invalid.",
+    };
   }
 
   const questionIds =
@@ -2524,9 +2830,13 @@ function validateAttemptForSubmission(
     uniqueQuestionIds.size !==
     attempt.questionOrder.length
   ) {
-    return (
-      "The attempt contains duplicate questions."
-    );
+    return {
+      messageKey:
+        "attempts.submit.duplicateQuestions",
+
+      message:
+        "The attempt contains duplicate questions.",
+    };
   }
 
   for (
@@ -2538,9 +2848,13 @@ function validateAttemptForSubmission(
         questionId
       )
     ) {
-      return (
-        "The attempt contains an invalid question."
-      );
+      return {
+        messageKey:
+          "attempts.submit.invalidQuestion",
+
+        message:
+          "The attempt contains an invalid question.",
+      };
     }
   }
 
@@ -2551,16 +2865,6 @@ function validateAttemptForSubmission(
    Merge final development answers
    ========================================================= */
 
-/*
- * Development answers use autosave.
- *
- * A student can however click Submit before
- * the final autosave timeout completes.
- *
- * Therefore QuizSessionPage can provide its
- * current development drafts directly to
- * submitAttempt().
- */
 function mergeFinalDevelopmentAnswers(
   attempt: Attempt,
 
@@ -2621,29 +2925,21 @@ function mergeFinalDevelopmentAnswers(
     if (
       !question ||
       question.type !==
-        "development"
-    ) {
-      continue;
-    }
-
-    if (
+        "development" ||
       typeof value !==
-      "string"
+        "string"
     ) {
       continue;
     }
-
-    const safeValue =
-      value.slice(
-        0,
-        MAX_DEVELOPMENT_ANSWER_LENGTH
-      );
 
     nextAnswers[
       questionId
     ] = {
       developmentAnswer:
-        safeValue,
+        value.slice(
+          0,
+          MAX_DEVELOPMENT_ANSWER_LENGTH
+        ),
 
       updatedAt:
         now,
@@ -2668,10 +2964,6 @@ export async function submitAttempt(
 ): Promise<
   SubmitAttemptResult
 > {
-  /* =====================================================
-     Attempt
-     ===================================================== */
-
   const attempt =
     await getAttempt(
       attemptId
@@ -2696,14 +2988,13 @@ export async function submitAttempt(
       requiresManualGrading:
         false,
 
+      messageKey:
+        "attempts.submit.notFound",
+
       message:
         "Attempt not found.",
     };
   }
-
-  /* =====================================================
-     Already graded
-     ===================================================== */
 
   if (
     attempt.status ===
@@ -2725,14 +3016,13 @@ export async function submitAttempt(
       requiresManualGrading:
         false,
 
+      messageKey:
+        "attempts.submit.alreadyGraded",
+
       message:
         "Attempt has already been graded.",
     };
   }
-
-  /* =====================================================
-     Already submitted
-     ===================================================== */
 
   if (
     attempt.status ===
@@ -2752,17 +3042,15 @@ export async function submitAttempt(
         attempt.finalScore,
 
       requiresManualGrading:
-        attempt.finalScore ===
-        null,
+        true,
+
+      messageKey:
+        "attempts.submit.alreadySubmitted",
 
       message:
         "Attempt has already been submitted.",
     };
   }
-
-  /* =====================================================
-     Quiz
-     ===================================================== */
 
   const quiz =
     await getQuiz(
@@ -2788,14 +3076,13 @@ export async function submitAttempt(
       requiresManualGrading:
         false,
 
+      messageKey:
+        "attempts.submit.quizNotFound",
+
       message:
         "Quiz not found.",
     };
   }
-
-  /* =====================================================
-     Questions
-     ===================================================== */
 
   const questions =
     await getQuizQuestions(
@@ -2822,14 +3109,13 @@ export async function submitAttempt(
       requiresManualGrading:
         false,
 
+      messageKey:
+        "attempts.submit.questionsUnavailable",
+
       message:
         "Quiz questions could not be loaded.",
     };
   }
-
-  /* =====================================================
-     Validate structure
-     ===================================================== */
 
   const attemptError =
     validateAttemptForSubmission(
@@ -2857,14 +3143,13 @@ export async function submitAttempt(
       requiresManualGrading:
         false,
 
+      messageKey:
+        attemptError.messageKey,
+
       message:
-        attemptError,
+        attemptError.message,
     };
   }
-
-  /* =====================================================
-     Merge final development drafts
-     ===================================================== */
 
   const finalAnswers =
     mergeFinalDevelopmentAnswers(
@@ -2880,10 +3165,6 @@ export async function submitAttempt(
     answers:
       finalAnswers,
   };
-
-  /* =====================================================
-     Automatic grading
-     ===================================================== */
 
   const grading =
     calculateAutomaticScore(
@@ -2903,18 +3184,9 @@ export async function submitAttempt(
       .toISOString();
 
   /* =====================================================
-     Fully automatic quiz
+     Automatic quiz
      ===================================================== */
 
-  /*
-   * If the quiz contains only:
-   *
-   * - QCM
-   * - MULTIPLE CHOICE
-   *
-   * then the quiz can immediately
-   * become graded.
-   */
   if (
     !requiresManualGrading
   ) {
@@ -2942,6 +3214,9 @@ export async function submitAttempt(
 
         finalScore,
 
+        developmentScores:
+          {},
+
         submittedAt:
           now,
 
@@ -2967,22 +3242,18 @@ export async function submitAttempt(
       requiresManualGrading:
         false,
 
+      messageKey:
+        "attempts.submit.graded",
+
       message:
         "Quiz submitted and graded successfully.",
     };
   }
 
   /* =====================================================
-     Development questions require teacher correction
+     Manual correction required
      ===================================================== */
 
-  /*
-   * QCM + MULTIPLE CHOICE have already
-   * been graded automatically.
-   *
-   * Development questions still require
-   * teacher grading.
-   */
   await updateDoc(
     attemptRef(
       attempt.id
@@ -3002,6 +3273,9 @@ export async function submitAttempt(
 
       finalScore:
         null,
+
+      developmentScores:
+        {},
 
       submittedAt:
         now,
@@ -3029,7 +3303,395 @@ export async function submitAttempt(
     requiresManualGrading:
       true,
 
+    messageKey:
+      "attempts.submit.waitingForCorrection",
+
     message:
       "Quiz submitted successfully. Development questions are waiting for teacher grading.",
+  };
+}
+
+/* =========================================================
+   Teacher manual grading
+   ========================================================= */
+
+/*
+ * Grades every development question and
+ * finalizes the attempt.
+ *
+ * Important:
+ * ----------
+ * The caller must also verify that the
+ * authenticated teacher owns this quiz.
+ *
+ * The protected correction page will do this
+ * using useTeacher() + quiz.teacherId.
+ */
+export async function gradeAttempt(
+  attemptId: string,
+
+  input:
+    GradeAttemptInput
+): Promise<
+  GradeAttemptResult
+> {
+  const attempt =
+    await getAttempt(
+      attemptId
+    );
+
+  if (
+    !attempt
+  ) {
+    return {
+      success:
+        false,
+
+      attempt:
+        null,
+
+      automaticScore:
+        null,
+
+      manualScore:
+        null,
+
+      finalScore:
+        null,
+
+      messageKey:
+        "attempts.grading.notFound",
+
+      message:
+        "Attempt not found.",
+    };
+  }
+
+  if (
+    attempt.status ===
+    "in_progress"
+  ) {
+    return {
+      success:
+        false,
+
+      attempt,
+
+      automaticScore:
+        attempt.automaticScore,
+
+      manualScore:
+        attempt.manualScore,
+
+      finalScore:
+        attempt.finalScore,
+
+      messageKey:
+        "attempts.grading.notSubmitted",
+
+      message:
+        "The student has not submitted this attempt yet.",
+    };
+  }
+
+  const quiz =
+    await getQuiz(
+      attempt.quizId
+    );
+
+  if (
+    !quiz
+  ) {
+    return {
+      success:
+        false,
+
+      attempt,
+
+      automaticScore:
+        attempt.automaticScore,
+
+      manualScore:
+        attempt.manualScore,
+
+      finalScore:
+        attempt.finalScore,
+
+      messageKey:
+        "attempts.grading.quizNotFound",
+
+      message:
+        "Quiz not found.",
+    };
+  }
+
+  const cleanTeacherId =
+    input.teacherId
+      .trim();
+
+  if (
+    !cleanTeacherId ||
+    quiz.teacherId !==
+      cleanTeacherId ||
+    attempt.teacherId !==
+      cleanTeacherId
+  ) {
+    return {
+      success:
+        false,
+
+      attempt,
+
+      automaticScore:
+        attempt.automaticScore,
+
+      manualScore:
+        attempt.manualScore,
+
+      finalScore:
+        attempt.finalScore,
+
+      messageKey:
+        "attempts.grading.unauthorized",
+
+      message:
+        "You are not authorized to grade this attempt.",
+    };
+  }
+
+  const questions =
+    await getQuizQuestions(
+      quiz.id
+    );
+
+  const automaticGrading =
+    calculateAutomaticScore(
+      attempt,
+      questions
+    );
+
+  const automaticScore =
+    automaticGrading.automaticScore;
+
+  const developmentQuestions =
+    questions.filter(
+      (
+        question
+      ) =>
+        question.type ===
+        "development"
+    );
+
+  if (
+    developmentQuestions.length ===
+    0
+  ) {
+    return {
+      success:
+        false,
+
+      attempt,
+
+      automaticScore:
+        attempt.automaticScore,
+
+      manualScore:
+        attempt.manualScore,
+
+      finalScore:
+        attempt.finalScore,
+
+      messageKey:
+        "attempts.grading.noDevelopment",
+
+      message:
+        "This quiz has no development questions to grade.",
+    };
+  }
+
+  const safeScores:
+    DevelopmentScores = {};
+
+  let manualScore =
+    0;
+
+  for (
+    const question of
+    developmentQuestions
+  ) {
+    const score =
+      input.developmentScores[
+        question.id
+      ];
+
+    if (
+      typeof score !==
+        "number" ||
+      !Number.isFinite(
+        score
+      )
+    ) {
+      return {
+        success:
+          false,
+
+        attempt,
+
+        automaticScore:
+          attempt.automaticScore,
+
+        manualScore:
+          attempt.manualScore,
+
+        finalScore:
+          attempt.finalScore,
+
+        messageKey:
+          "attempts.grading.missingScore",
+
+        message:
+          "Every development question must receive a score.",
+      };
+    }
+
+    if (
+      score <
+        0 ||
+      score >
+        question.points
+    ) {
+      return {
+        success:
+          false,
+
+        attempt,
+
+        automaticScore:
+          attempt.automaticScore,
+
+        manualScore:
+          attempt.manualScore,
+
+        finalScore:
+          attempt.finalScore,
+
+        messageKey:
+          "attempts.grading.invalidScore",
+
+        message:
+          "One or more development scores are invalid.",
+      };
+    }
+
+    const roundedScore =
+      roundScore(
+        score
+      );
+
+    safeScores[
+      question.id
+    ] =
+      roundedScore;
+
+    manualScore +=
+      roundedScore;
+  }
+
+  manualScore =
+    roundScore(
+      manualScore
+    );
+
+  const finalScore =
+    roundScore(
+      automaticScore +
+      manualScore
+    );
+
+  /*
+   * Defensive validation.
+   */
+  if (
+    finalScore <
+      0 ||
+    finalScore >
+      quiz.totalPoints
+  ) {
+    return {
+      success:
+        false,
+
+      attempt,
+
+      automaticScore:
+        attempt.automaticScore,
+
+      manualScore:
+        attempt.manualScore,
+
+      finalScore:
+        attempt.finalScore,
+
+      messageKey:
+        "attempts.grading.invalidFinalScore",
+
+      message:
+        "The calculated final score is invalid.",
+    };
+  }
+
+  const now =
+    new Date()
+      .toISOString();
+
+  await updateDoc(
+    attemptRef(
+      attempt.id
+    ),
+
+    {
+      status:
+        "graded",
+
+      automaticScore,
+
+      developmentScores:
+        safeScores,
+
+      manualScore,
+
+      finalScore,
+
+      gradedAt:
+        now,
+
+      updatedAt:
+        now,
+    }
+  );
+
+  const updatedAttempt =
+    await getAttempt(
+      attempt.id
+    );
+
+  return {
+    success:
+      true,
+
+    attempt:
+      updatedAttempt,
+
+    automaticScore,
+
+    manualScore,
+
+    finalScore,
+
+    messageKey:
+      "attempts.grading.success",
+
+    message:
+      "Attempt graded successfully.",
   };
 }

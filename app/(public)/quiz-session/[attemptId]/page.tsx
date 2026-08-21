@@ -9,6 +9,7 @@ import {
 
 import {
   useParams,
+  useRouter,
 } from "next/navigation";
 
 import AppLoading from "@/components/AppLoading";
@@ -242,6 +243,9 @@ function isChoiceQuestion(
 export default function QuizSessionPage() {
   const params =
     useParams();
+
+  const router =
+    useRouter();
 
   const {
     t,
@@ -1738,7 +1742,7 @@ export default function QuizSessionPage() {
   }
 
   /* =========================================================
-     Submitted
+     Submitted / graded result
      ========================================================= */
 
   if (
@@ -1749,80 +1753,247 @@ export default function QuizSessionPage() {
     submissionState ===
       "submitted"
   ) {
+    const isGraded =
+      attempt.status ===
+      "graded";
+
+    const finalScore =
+      attempt.finalScore ??
+      attempt.automaticScore ??
+      0;
+
+    const safeTotalPoints =
+      Math.max(
+        0,
+        quiz.totalPoints
+      );
+
+    const percentage =
+      safeTotalPoints > 0
+        ? Math.round(
+            (
+              finalScore /
+              safeTotalPoints
+            ) * 100
+          )
+        : 0;
+
+    const showScore =
+      isGraded &&
+      attempt.showResultsToStudents;
+
+    const showCorrection =
+      isGraded &&
+      attempt.showCorrectAnswers;
+
     return (
       <>
         <main
-        className={
-          styles.page
-        }
-      >
-        <section
           className={
-            styles.submittedCard
+            styles.page
           }
         >
-          <span
+          <section
             className={
-              styles.badge
+              styles.submittedCard
             }
           >
-            ULearn
-          </span>
+            <span
+              className={
+                styles.badge
+              }
+            >
+              ULearn
+            </span>
 
-          <div
-            className={
-              styles.submittedIcon
-            }
-          >
-            ✓
-          </div>
-
-          <h1>
-            {t(
-              "quizSession.submitted.title"
-            )}
-          </h1>
-
-          <p>
-            {t(
-              "quizSession.submitted.text"
-            )}
-          </p>
-
-          <div
-            className={
-              styles.submittedInfo
-            }
-          >
-            <div>
-              <span>
-                {t(
-                  "quizSession.submitted.student"
-                )}
-              </span>
-
-              <strong>
-                {
-                  attempt.studentName
-                }
-              </strong>
+            <div
+              className={
+                styles.submittedIcon
+              }
+              aria-hidden="true"
+            >
+              ✓
             </div>
 
-            <div>
-              <span>
-                {t(
-                  "quizSession.submitted.email"
-                )}
-              </span>
+            <h1>
+              {isGraded
+                ? t(
+                    "quizSession.result.completedTitle"
+                  )
+                : t(
+                    "quizSession.result.submittedTitle"
+                  )}
+            </h1>
 
-              <strong>
-                {
-                  attempt.studentEmail
+            <p>
+              {isGraded
+                ? showScore
+                  ? t(
+                      "quizSession.result.completedText"
+                    )
+                  : t(
+                      "quizSession.result.scoreHiddenText"
+                    )
+                : t(
+                    "quizSession.result.pendingText"
+                  )}
+            </p>
+
+            {isGraded ? (
+              <div
+                className={
+                  styles.resultSummary
                 }
-              </strong>
+              >
+                <div
+                  className={
+                    styles.resultStudent
+                  }
+                >
+                  <span>
+                    {t(
+                      "quizSession.submitted.student"
+                    )}
+                  </span>
+
+                  <strong>
+                    {
+                      attempt.studentName
+                    }
+                  </strong>
+
+                  <small>
+                    {
+                      attempt.studentEmail
+                    }
+                  </small>
+                </div>
+
+                {showScore && (
+                  <>
+                    <div>
+                      <span>
+                        {t(
+                          "quizSession.result.score"
+                        )}
+                      </span>
+
+                      <strong>
+                        {finalScore}
+                        {" / "}
+                        {safeTotalPoints}
+                      </strong>
+                    </div>
+
+                    <div>
+                      <span>
+                        {t(
+                          "quizSession.result.percentage"
+                        )}
+                      </span>
+
+                      <strong>
+                        {percentage}%
+                      </strong>
+                    </div>
+                  </>
+                )}
+              </div>
+            ) : (
+              <div
+                className={
+                  styles.resultSummary
+                }
+              >
+                <div>
+                  <span>
+                    {t(
+                      "quizSession.result.status"
+                    )}
+                  </span>
+
+                  <strong>
+                    {t(
+                      "quizSession.result.pending"
+                    )}
+                  </strong>
+                </div>
+
+                <div
+                  className={
+                    styles.resultStudent
+                  }
+                >
+                  <span>
+                    {t(
+                      "quizSession.submitted.student"
+                    )}
+                  </span>
+
+                  <strong>
+                    {
+                      attempt.studentName
+                    }
+                  </strong>
+
+                  <small>
+                    {
+                      attempt.studentEmail
+                    }
+                  </small>
+                </div>
+              </div>
+            )}
+
+            <div
+              className={
+                styles.resultActions
+              }
+            >
+              {showCorrection && (
+                <button
+                  type="button"
+                  className="app-button app-button-action"
+                  onClick={() => {
+                    router.push(
+                      `/correction/${attempt.id}`
+                    );
+                  }}
+                >
+                  {t(
+                    "quizSession.result.viewCorrection"
+                  )}
+                </button>
+              )}
+
+              {!isGraded && (
+                <button
+                  type="button"
+                  className="app-button app-button-secondary app-button-action"
+                  disabled
+                  aria-disabled="true"
+                >
+                  {t(
+                    "quizSession.result.correctionPending"
+                  )}
+                </button>
+              )}
+
+              <button
+                type="button"
+                className="app-button app-button-secondary app-button-action"
+                onClick={() => {
+                  router.push(
+                    `/feedback/${attempt.id}`
+                  );
+                }}
+              >
+                {t(
+                  "quizSession.result.leaveFeedback"
+                )}
+              </button>
             </div>
-          </div>
-        </section>
+          </section>
         </main>
 
         <HelpSupport

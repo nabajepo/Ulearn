@@ -209,6 +209,14 @@
   "loadError": "Your dashboard cannot be loaded.",
   "welcome": "Welcome",
   "accountExpires": "Account expires in",
+  "feedback": {
+  "title": "Give Feedback",
+  "description": "Share your experience with ULearn and help us improve the platform for teachers and students.",
+  "button": "Leave Feedback",
+  "help": "Your feedback helps us improve ULearn.",
+  "loadingTitle": "Feedback",
+  "loadingSubtitle": "Opening the feedback page..."
+},
 
   "create": {
     "title": "Create a Quiz",
@@ -491,7 +499,13 @@
   "availableFrom": "Available from",
   "ends": "Ends",
   "studentTime": "Time per student",
-  "sessionTime": "Session duration"
+  "sessionTime": "Session duration",
+  "qrCode": "QR code",
+"qrHelp": "Students can scan this QR code to open the quiz directly on their device.",
+"generatingQr": "Generating QR code...",
+"qrAlt": "QR code for student quiz access",
+"qrUnavailable": "QR code is currently unavailable.",
+"downloadQr": "Download QR code"
 }
 },
 "quizSettings": {
@@ -549,34 +563,71 @@
     "save": "Save Changes"
   }
 },
-"students": {
-  "backQuiz": "Back to Quiz",
-  "badge": "Students & grading",
-  "description": "Review submitted quizzes and grade development questions.",
+  "students": {
+    "loading": {
+      "title": "Loading students",
+      "subtitle": "We are loading participants and their attempts...",
+      "returning": "Returning to the quiz...",
+      "openingStudent": "Opening the student's attempt..."
+    },
 
-  "loading": {
-    "title": "Students & Grading",
-    "subtitle": "Loading student submissions...",
-    "returning": "Returning to your quiz..."
-  },
+    "access": {
+      "title": "Access denied",
+      "text": "You do not have access to the students of this quiz."
+    },
 
-  "access": {
-    "title": "Access denied",
-    "text": "Quiz not found or access denied."
-  },
+    "backQuiz": "Back to quiz",
+    "badge": "Students and grading",
+    "description": "Track student progress, review their attempts, and grade answers that require manual evaluation.",
+    "students": "students",
 
-  "empty": {
-    "title": "No submissions yet",
-    "text": "Students who complete the quiz will appear here in submission order."
-  },
+    "stats": {
+      "participants": "Participants",
+      "inProgress": "In progress",
+      "waitingCorrection": "To grade",
+      "graded": "Graded",
+      "finished": "Finished"
+    },
 
-  "future": {
-    "title": "Future grading workflow",
-    "step1": "1. Students will be ordered by submission time.",
-    "step2": "2. QCM questions will be corrected automatically.",
-    "step3": "3. Click a student to grade development answers.",
-    "step4": "4. Publish the final result when grading is complete."
-  }
+    "status": {
+      "inProgress": "In progress",
+      "waitingCorrection": "To grade",
+      "graded": "Graded"
+    },
+
+    "actions": {
+      "view": "View",
+      "grade": "Grade",
+      "viewCorrection": "View grading"
+    },
+
+    "list": {
+      "badge": "Attempts",
+      "title": "Student list",
+      "results": "result(s)",
+      "answers": "Answers",
+      "startedAt": "Started",
+      "submittedAt": "Submitted",
+      "score": "Score"
+    },
+
+    "filters": {
+      "all": "All",
+      "inProgress": "In progress",
+      "waitingCorrection": "To grade",
+      "graded": "Graded",
+      "emptyTitle": "No attempts",
+      "emptyText": "No attempts match this filter."
+    },
+
+    "empty": {
+      "title": "No students yet",
+      "text": "Students will appear here as soon as they start this quiz."
+    },
+
+    "messages": {
+      "loadError": "Unable to load students and their attempts."
+    }
 },
 "quizEdit": {
   "backQuiz": "Back to Quiz",
@@ -738,9 +789,10 @@
 
   "badge": "Student quiz",
   "noDescription": "No description provided.",
+  
   "teacher": {
-  "label": "Created by"
-   },
+  "createdBy": "Created by : "
+  },
 
   "starting": {
     "title": "Starting quiz...",
@@ -805,7 +857,10 @@
 
   "messages": {
     "loadError": "Unable to load this quiz.",
-    "startError": "Unable to start the quiz. Please try again."
+    "startError": "Unable to start the quiz. Please try again.",
+    "alreadySubmitted": "You have already submitted this quiz with this email address.",
+  "alreadyGraded": "You have already completed this quiz with this email address.",
+  "attemptExpired": "Your previous quiz attempt has expired and can no longer be resumed."
   }
 },
 "quizSession": {
@@ -817,6 +872,20 @@
     "notFound": "This quiz attempt could not be found.",
     "loadError": "Unable to load your quiz session."
   },
+  "result": {
+  "completedTitle": "Quiz completed",
+  "completedText": "Your quiz has been graded successfully.",
+  "scoreHiddenText": "Your quiz has been graded. The teacher has chosen not to display the final score.",
+  "submittedTitle": "Quiz submitted",
+  "pendingText": "Your teacher still needs to grade the development questions before your final result is available.",
+  "score": "Score",
+  "percentage": "Percentage",
+  "status": "Status",
+  "pending": "Grading pending",
+  "viewCorrection": "View correction",
+  "correctionPending": "Correction pending",
+  "leaveFeedback": "Leave feedback"
+},
 
   "header": {
     "timeRemaining": "Time remaining",
@@ -901,5 +970,281 @@
     "saveError": "Unable to save your answer. Please try again.",
     "submitError": "Unable to submit your quiz. Please try again."
   }
-}
+},
+"feedbackForm": {
+  "badge": "ULearn feedback",
+  "title": "Share your feedback",
+  "description": "Tell us about your experience with ULearn. Your feedback helps us improve the platform.",
+
+  "identity": {
+    "student": "Student",
+    "teacher": "Teacher"
+  },
+
+  "rating": {
+    "label": "Your rating",
+    "help": "Select a rating from 1 to 5 stars.",
+    "star": "star",
+    "stars": "stars",
+    "notSelected": "No rating selected"
+  },
+
+  "comment": {
+    "label": "Your comment",
+    "placeholder": "Tell us what you liked, what could be improved, or anything else about your experience...",
+    "characters": "characters"
+  },
+
+  "actions": {
+    "submit": "Submit feedback",
+    "submitting": "Submitting feedback..."
+  },
+
+  "success": {
+    "title": "Thank you!",
+    "text": "Your feedback has been submitted successfully."
+  },
+
+  "validation": {
+    "ratingRequired": "Please select a rating from 1 to 5 stars.",
+    "commentRequired": "Please write a comment.",
+    "commentTooShort": "Please provide a little more detail in your comment.",
+    "studentIdentityMissing": "Your student quiz information could not be identified.",
+    "teacherLoading": "Your teacher account is still loading.",
+    "teacherRequired": "You must be signed in as a teacher to submit feedback.",
+    "studentAlreadySubmitted": "Feedback has already been submitted for this quiz attempt.",
+    "teacherAlreadySubmitted": "You have already submitted feedback.",
+    "submitError": "Unable to submit your feedback. Please try again."
+  }
+},
+"studentFeedback": {
+  "loading": {
+    "title": "Feedback",
+    "subtitle": "Loading your feedback page..."
+  },
+
+  "badge": "Student feedback",
+  "title": "Share your experience",
+  "description": "Your feedback helps us improve ULearn for students and teachers.",
+
+  "student": {
+    "label": "Student"
+  },
+
+  "access": {
+    "title": "Feedback unavailable",
+    "invalidAttempt": "This feedback link is invalid.",
+    "notFound": "This quiz attempt could not be found.",
+    "loadError": "Unable to load this feedback page."
+  },
+
+  "actions": {
+    "backToQuiz": "Back to quiz",
+    "home": "Back to home"
+  }
+},
+"teacherFeedback": {
+  "loading": {
+    "title": "Feedback",
+    "subtitle": "Preparing your feedback page...",
+    "returning": "Returning to your dashboard..."
+  },
+
+  "badge": "Teacher feedback",
+  "title": "Share your experience",
+  "description": "Tell us what you think about ULearn. Your feedback helps us improve the platform for teachers and students.",
+
+  "teacher": {
+    "label": "Teacher"
+  },
+
+  "access": {
+    "title": "Feedback unavailable",
+    "text": "Your teacher account could not be loaded."
+  },
+
+  "actions": {
+    "dashboard": "Back "
+  },
+
+  "footer": "Thank you for helping us improve ULearn."
+},
+  "attempts": {
+    "grading": {
+      "unauthorized": "You are not authorized to grade this attempt."
+    }
+  },
+  "attemptGrading": {
+  "loading": {
+    "title": "Opening student attempt",
+    "subtitle": "Loading the student answers and grading information.",
+    "returning": "Returning to students and grading.",
+    "savingTitle": "Saving grading",
+    "savingSubtitle": "Updating the student's final grade."
+  },
+
+  "access": {
+    "title": "Grading unavailable",
+    "text": "You do not have access to this student attempt."
+  },
+
+  "badge": "Student grading",
+  "title": "Review and grade attempt",
+
+  "status": {
+    "inProgress": "In progress",
+    "submitted": "Submitted",
+    "graded": "Graded"
+  },
+
+  "student": {
+    "label": "Student"
+  },
+
+  "summary": {
+    "status": "Attempt status",
+    "automaticScore": "Automatic score",
+    "manualScore": "Manual score",
+    "finalScore": "Final score",
+    "percentage": "Percentage",
+    "questions": "Questions"
+  },
+
+  "questions": {
+    "title": "Student answers",
+    "description": "Review the student's answers and grade development questions when required.",
+
+    "question": "Question",
+    "point": "point",
+    "points": "points",
+
+    "types": {
+      "qcm": "Single answer",
+      "multipleChoice": "Multiple answers",
+      "development": "Development"
+    },
+
+    "studentAnswer": "Student answer",
+    "noAnswer": "No answer was provided.",
+
+    "selected": "Selected",
+    "correct": "Correct answer",
+
+    "automaticGrade": "Automatic score",
+
+    "manualGrade": "Teacher score",
+    "maximum": "Maximum"
+  },
+
+  "final": {
+    "title": "Final score"
+  },
+
+  "messages": {
+    "loadError": "Unable to load this student attempt.",
+    "notSubmitted": "This student is still completing the quiz. The attempt cannot be graded yet.",
+    "invalidDevelopmentScore": "One or more development scores are invalid.",
+    "saved": "The student's grading was saved successfully.",
+    "saveError": "Unable to save the student's grading."
+  },
+
+  "actions": {
+    "backStudents": "Students and grading",
+    "finalizeGrade": "Finalize grading",
+    "updateGrade": "Update grading"
+  }
+},
+  "correction": {
+    "loading": {
+      "title": "Loading correction",
+      "subtitle": "We are preparing your corrected quiz.",
+      "returning": "Returning to your quiz result.",
+      "feedback": "Opening the feedback page."
+    },
+
+    "messages": {
+      "invalidAttempt": "This quiz attempt is invalid.",
+      "attemptNotFound": "This quiz attempt could not be found.",
+      "quizNotFound": "The quiz linked to this attempt could not be found.",
+      "loadError": "Unable to load the correction. Please try again."
+    },
+
+    "error": {
+      "title": "Correction unavailable"
+    },
+
+    "inProgress": {
+      "title": "Quiz still in progress",
+      "text": "You must finish and submit your quiz before you can access the correction."
+    },
+
+    "waiting": {
+      "title": "Correction pending",
+      "text": "Your quiz has been submitted successfully. Some answers still need to be reviewed by your teacher before the correction becomes available."
+    },
+
+    "status": {
+      "graded": "Graded"
+    },
+
+    "badge": "Quiz correction",
+
+    "title": "Your correction",
+
+    "student": {
+      "label": "Student"
+    },
+
+    "summary": {
+      "questions": "Questions",
+      "status": "Status",
+      "score": "Final score",
+      "percentage": "Percentage"
+    },
+
+    "scoreHidden": {
+      "title": "Final score hidden",
+      "text": "Your teacher has chosen not to display the final score for this quiz."
+    },
+
+    "answersHidden": {
+      "title": "Correct answers hidden",
+      "text": "Your teacher has chosen not to reveal the correct answers for this quiz."
+    },
+
+    "questions": {
+      "badge": "Review",
+      "title": "Quiz answers",
+      "description": "Review your answers and, when allowed by your teacher, compare them with the correct answers.",
+
+      "question": "Question",
+
+      "point": "point",
+      "points": "points",
+
+      "types": {
+        "qcm": "Single choice",
+        "multipleChoice": "Multiple choice",
+        "development": "Development"
+      },
+
+      "yourAnswer": "Your answer",
+      "yourChoice": "Your choice",
+      "correct": "Correct answer",
+      "noAnswer": "No answer was submitted for this question.",
+      "pointsReceived": "Points received"
+    },
+
+    "final": {
+      "label": "Final result"
+    },
+
+    "actions": {
+      "home": "Back to home",
+      "returnQuiz": "Return to quiz",
+      "backResult": "Back to result",
+      "feedback": "Give feedback"
+    }
+  }
+
 }

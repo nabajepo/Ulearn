@@ -1445,6 +1445,131 @@
 
   overflow-wrap: anywhere;
 }
+/* =========================================================
+   Final result summary
+   ========================================================= */
+
+.resultSummary {
+  display: grid;
+
+  grid-template-columns:
+    repeat(
+      3,
+      minmax(
+        0,
+        1fr
+      )
+    );
+
+  gap: 0.8rem;
+
+  margin-top: 1.5rem;
+}
+
+.resultSummary > div {
+  min-width: 0;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+
+  min-height: 82px;
+
+  padding:
+    0.9rem
+    1rem;
+
+  border:
+    1px solid
+    var(--border-color);
+
+  border-radius: 13px;
+
+  background:
+    var(--soft-purple);
+}
+
+.resultSummary span {
+  display: block;
+
+  margin-bottom: 0.35rem;
+
+  color:
+    rgba(
+      23,
+      23,
+      23,
+      0.52
+    );
+
+  font-size: 0.68rem;
+  font-weight: 800;
+}
+
+.resultSummary strong {
+  display: block;
+
+  color:
+    var(--main-color);
+
+  font-size: 0.82rem;
+  font-weight: 900;
+  line-height: 1.45;
+
+  overflow-wrap: anywhere;
+}
+
+
+/* =========================================================
+   Student information in final result
+   ========================================================= */
+
+.resultStudent small {
+  display: block;
+
+  margin-top: 0.25rem;
+
+  color:
+    rgba(
+      23,
+      23,
+      23,
+      0.56
+    );
+
+  font-size: 0.68rem;
+  font-weight: 600;
+  line-height: 1.4;
+
+  overflow-wrap: anywhere;
+}
+
+
+/* =========================================================
+   Final result actions
+   ========================================================= */
+
+.resultActions {
+  display: flex;
+
+  justify-content: center;
+  align-items: center;
+
+  flex-wrap: wrap;
+
+  gap: 0.8rem;
+
+  /*
+   * Important:
+   * creates visible separation between
+   * score cards and result buttons.
+   */
+  margin-top: 1.7rem;
+}
+
+.resultActions :global(.app-button) {
+  flex-shrink: 0;
+}
 
 /* =========================================================
    Submit modal

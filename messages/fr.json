@@ -218,6 +218,14 @@
     "deleteCurrent": "Supprimez votre quiz actuel si vous souhaitez en créer un autre.",
     "limit": "Vous ne pouvez créer qu’un seul quiz dans cette version."
   },
+  "feedback": {
+  "title": "Donner un avis",
+  "description": "Partagez votre expérience avec ULearn et aidez-nous à améliorer la plateforme pour les enseignants et les étudiants.",
+  "button": "Donner mon avis",
+  "help": "Votre avis nous aide à améliorer ULearn.",
+  "loadingTitle": "Avis",
+  "loadingSubtitle": "Ouverture de la page d’avis..."
+},
 
   "quizzes": {
     "title": "Quiz",
@@ -491,7 +499,13 @@
   "availableFrom": "Disponible à partir de",
   "ends": "Fin",
   "studentTime": "Temps par étudiant",
-  "sessionTime": "Durée de la session"
+  "sessionTime": "Durée de la session",
+  "qrCode": "Code QR",
+"qrHelp": "Les étudiants peuvent scanner ce code QR pour ouvrir directement le quiz sur leur appareil.",
+"generatingQr": "Génération du code QR...",
+"qrAlt": "Code QR pour accéder au quiz étudiant",
+"qrUnavailable": "Le code QR est actuellement indisponible.",
+"downloadQr": "Télécharger le code QR"
 }
 },
 "quizSettings": {
@@ -549,34 +563,71 @@
     "save": "Enregistrer"
   }
 },
-"students": {
-  "backQuiz": "Retour au quiz",
-  "badge": "Étudiants et correction",
-  "description": "Consultez les quiz soumis et corrigez les questions de développement.",
+  "students": {
+    "loading": {
+      "title": "Chargement des étudiants",
+      "subtitle": "Nous récupérons les participants et leurs tentatives...",
+      "returning": "Retour au quiz...",
+      "openingStudent": "Ouverture de la tentative de l’étudiant..."
+    },
 
-  "loading": {
-    "title": "Étudiants et correction",
-    "subtitle": "Chargement des soumissions des étudiants...",
-    "returning": "Retour au quiz..."
-  },
+    "access": {
+      "title": "Accès refusé",
+      "text": "Vous n’avez pas accès aux étudiants de ce quiz."
+    },
 
-  "access": {
-    "title": "Accès refusé",
-    "text": "Quiz introuvable ou accès refusé."
-  },
+    "backQuiz": "Retour au quiz",
+    "badge": "Étudiants et corrections",
+    "description": "Suivez la progression des étudiants, consultez leurs tentatives et corrigez les réponses qui nécessitent une évaluation manuelle.",
+    "students": "étudiants",
 
-  "empty": {
-    "title": "Aucune soumission pour le moment",
-    "text": "Les étudiants qui terminent le quiz apparaîtront ici dans l’ordre de soumission."
-  },
+    "stats": {
+      "participants": "Participants",
+      "inProgress": "En cours",
+      "waitingCorrection": "À corriger",
+      "graded": "Corrigés",
+      "finished": "Terminés"
+    },
 
-  "future": {
-    "title": "Processus de correction prévu",
-    "step1": "1. Les étudiants seront classés selon l’heure de soumission.",
-    "step2": "2. Les questions QCM seront corrigées automatiquement.",
-    "step3": "3. Cliquez sur un étudiant pour corriger ses réponses de développement.",
-    "step4": "4. Publiez le résultat final lorsque la correction est terminée."
-  }
+    "status": {
+      "inProgress": "En cours",
+      "waitingCorrection": "À corriger",
+      "graded": "Corrigé"
+    },
+
+    "actions": {
+      "view": "Voir",
+      "grade": "Corriger",
+      "viewCorrection": "Voir la correction"
+    },
+
+    "list": {
+      "badge": "Tentatives",
+      "title": "Liste des étudiants",
+      "results": "résultat(s)",
+      "answers": "Réponses",
+      "startedAt": "Commencé",
+      "submittedAt": "Soumis",
+      "score": "Note"
+    },
+
+    "filters": {
+      "all": "Tous",
+      "inProgress": "En cours",
+      "waitingCorrection": "À corriger",
+      "graded": "Corrigés",
+      "emptyTitle": "Aucune tentative",
+      "emptyText": "Aucune tentative ne correspond à ce filtre."
+    },
+
+    "empty": {
+      "title": "Aucun étudiant pour le moment",
+      "text": "Les étudiants apparaîtront ici dès qu’ils commenceront ce quiz."
+    },
+
+    "messages": {
+      "loadError": "Impossible de charger les étudiants et leurs tentatives."
+    }
 },
 "quizEdit": {
   "backQuiz": "Retour au quiz",
@@ -738,8 +789,9 @@
 
   "badge": "Quiz étudiant",
   "noDescription": "Aucune description fournie.",
-  "teacher": {
-  "label": "Créé par"},
+   "teacher": {
+   "createdBy": "Créé par : "
+   },
 
   "starting": {
     "title": "Démarrage du quiz...",
@@ -804,7 +856,10 @@
 
   "messages": {
     "loadError": "Impossible de charger ce quiz.",
-    "startError": "Impossible de démarrer le quiz. Veuillez réessayer."
+    "startError": "Impossible de démarrer le quiz. Veuillez réessayer.",
+    "alreadySubmitted": "Vous avez déjà soumis ce quiz avec cette adresse courriel.",
+  "alreadyGraded": "Vous avez déjà terminé ce quiz avec cette adresse courriel.",
+  "attemptExpired": "Votre tentative précédente a expiré et ne peut plus être reprise."
   }
 },
 "quizSession": {
@@ -816,6 +871,20 @@
     "notFound": "Cette tentative de quiz est introuvable.",
     "loadError": "Impossible de charger votre session de quiz."
   },
+  "result": {
+  "completedTitle": "Quiz terminé",
+  "completedText": "Votre quiz a été corrigé avec succès.",
+  "scoreHiddenText": "Votre quiz a été corrigé. L’enseignant a choisi de ne pas afficher la note finale.",
+  "submittedTitle": "Quiz soumis",
+  "pendingText": "Votre professeur doit encore corriger les questions à développement avant que votre résultat final soit disponible.",
+  "score": "Note",
+  "percentage": "Pourcentage",
+  "status": "Statut",
+  "pending": "Correction en attente",
+  "viewCorrection": "Voir la correction",
+  "correctionPending": "Correction en attente",
+  "leaveFeedback": "Donner un avis"
+},
 
   "header": {
     "timeRemaining": "Temps restant",
@@ -900,5 +969,280 @@
     "saveError": "Impossible d’enregistrer votre réponse. Veuillez réessayer.",
     "submitError": "Impossible de soumettre votre quiz. Veuillez réessayer."
   }
-}
+},
+"feedbackForm": {
+  "badge": "Avis ULearn",
+  "title": "Partagez votre avis",
+  "description": "Parlez-nous de votre expérience avec ULearn. Votre avis nous aide à améliorer la plateforme.",
+
+  "identity": {
+    "student": "Étudiant",
+    "teacher": "Enseignant"
+  },
+
+  "rating": {
+    "label": "Votre note",
+    "help": "Sélectionnez une note de 1 à 5 étoiles.",
+    "star": "étoile",
+    "stars": "étoiles",
+    "notSelected": "Aucune note sélectionnée"
+  },
+
+  "comment": {
+    "label": "Votre commentaire",
+    "placeholder": "Dites-nous ce que vous avez apprécié, ce qui pourrait être amélioré ou tout autre commentaire sur votre expérience...",
+    "characters": "caractères"
+  },
+
+  "actions": {
+    "submit": "Envoyer l’avis",
+    "submitting": "Envoi de l’avis..."
+  },
+
+  "success": {
+    "title": "Merci !",
+    "text": "Votre avis a été envoyé avec succès."
+  },
+
+  "validation": {
+    "ratingRequired": "Veuillez sélectionner une note de 1 à 5 étoiles.",
+    "commentRequired": "Veuillez écrire un commentaire.",
+    "commentTooShort": "Veuillez fournir un peu plus de détails dans votre commentaire.",
+    "studentIdentityMissing": "Les informations de votre tentative de quiz n’ont pas pu être identifiées.",
+    "teacherLoading": "Votre compte enseignant est encore en cours de chargement.",
+    "teacherRequired": "Vous devez être connecté comme enseignant pour envoyer un avis.",
+    "studentAlreadySubmitted": "Un avis a déjà été envoyé pour cette tentative de quiz.",
+    "teacherAlreadySubmitted": "Vous avez déjà envoyé un avis.",
+    "submitError": "Impossible d’envoyer votre avis. Veuillez réessayer."
+  }
+},
+"studentFeedback": {
+  "loading": {
+    "title": "Avis",
+    "subtitle": "Chargement de votre page d’avis..."
+  },
+
+  "badge": "Avis étudiant",
+  "title": "Partagez votre expérience",
+  "description": "Votre avis nous aide à améliorer ULearn pour les étudiants et les enseignants.",
+
+  "student": {
+    "label": "Étudiant"
+  },
+
+  "access": {
+    "title": "Avis indisponible",
+    "invalidAttempt": "Ce lien d’avis est invalide.",
+    "notFound": "Cette tentative de quiz est introuvable.",
+    "loadError": "Impossible de charger cette page d’avis."
+  },
+
+  "actions": {
+    "backToQuiz": "Retour au quiz",
+    "home": "Retour à l’accueil"
+  }
+},
+"teacherFeedback": {
+  "loading": {
+    "title": "Avis",
+    "subtitle": "Préparation de votre page d’avis...",
+    "returning": "Retour au tableau de bord..."
+  },
+
+  "badge": "Avis enseignant",
+  "title": "Partagez votre expérience",
+  "description": "Dites-nous ce que vous pensez de ULearn. Votre avis nous aide à améliorer la plateforme pour les enseignants et les étudiants.",
+
+  "teacher": {
+    "label": "Enseignant"
+  },
+
+  "access": {
+    "title": "Avis indisponible",
+    "text": "Impossible de charger votre compte enseignant."
+  },
+
+  "actions": {
+    "dashboard": "Retour"
+  },
+
+  "footer": "Merci de nous aider à améliorer ULearn."
+},
+"attempts": {
+    "grading": {
+      "unauthorized": "Vous n’êtes pas autorisé à corriger cette tentative."
+    }
+  },
+  "attemptGrading": {
+  "loading": {
+    "title": "Ouverture de la tentative",
+    "subtitle": "Chargement des réponses de l'étudiant et des informations de correction.",
+    "returning": "Retour vers les étudiants et la correction.",
+    "savingTitle": "Enregistrement de la correction",
+    "savingSubtitle": "Mise à jour de la note finale de l'étudiant."
+  },
+
+  "access": {
+    "title": "Correction indisponible",
+    "text": "Vous n'avez pas accès à cette tentative étudiante."
+  },
+
+  "badge": "Correction étudiante",
+  "title": "Consulter et corriger la tentative",
+
+  "status": {
+    "inProgress": "En cours",
+    "submitted": "Remis",
+    "graded": "Corrigé"
+  },
+
+  "student": {
+    "label": "Étudiant"
+  },
+
+  "summary": {
+    "status": "Statut de la tentative",
+    "automaticScore": "Note automatique",
+    "manualScore": "Note manuelle",
+    "finalScore": "Note finale",
+    "percentage": "Pourcentage",
+    "questions": "Questions"
+  },
+
+  "questions": {
+    "title": "Réponses de l'étudiant",
+    "description": "Consultez les réponses de l'étudiant et attribuez les points aux questions à développement lorsque nécessaire.",
+
+    "question": "Question",
+    "point": "point",
+    "points": "points",
+
+    "types": {
+      "qcm": "Réponse unique",
+      "multipleChoice": "Réponses multiples",
+      "development": "Développement"
+    },
+
+    "studentAnswer": "Réponse de l'étudiant",
+    "noAnswer": "Aucune réponse n'a été fournie.",
+
+    "selected": "Sélectionnée",
+    "correct": "Bonne réponse",
+
+    "automaticGrade": "Note automatique",
+
+    "manualGrade": "Note de l'enseignant",
+    "maximum": "Maximum"
+  },
+
+  "final": {
+    "title": "Note finale"
+  },
+
+  "messages": {
+    "loadError": "Impossible de charger cette tentative étudiante.",
+    "notSubmitted": "Cet étudiant est encore en train de compléter le quiz. La tentative ne peut pas encore être corrigée.",
+    "invalidDevelopmentScore": "Une ou plusieurs notes de développement sont invalides.",
+    "saved": "La correction de l'étudiant a été enregistrée avec succès.",
+    "saveError": "Impossible d'enregistrer la correction de l'étudiant."
+  },
+
+  "actions": {
+    "backStudents": "Étudiants et correction",
+    "finalizeGrade": "Finaliser la correction",
+    "updateGrade": "Mettre à jour la correction"
+  }
+},
+  "correction": {
+    "loading": {
+      "title": "Chargement de la correction",
+      "subtitle": "Nous préparons la correction de votre quiz.",
+      "returning": "Retour vers le résultat de votre quiz.",
+      "feedback": "Ouverture de la page d'avis."
+    },
+
+    "messages": {
+      "invalidAttempt": "Cette tentative de quiz est invalide.",
+      "attemptNotFound": "Cette tentative de quiz est introuvable.",
+      "quizNotFound": "Le quiz associé à cette tentative est introuvable.",
+      "loadError": "Impossible de charger la correction. Veuillez réessayer."
+    },
+
+    "error": {
+      "title": "Correction indisponible"
+    },
+
+    "inProgress": {
+      "title": "Quiz encore en cours",
+      "text": "Vous devez terminer et soumettre votre quiz avant de pouvoir consulter la correction."
+    },
+
+    "waiting": {
+      "title": "Correction en attente",
+      "text": "Votre quiz a été soumis avec succès. Certaines réponses doivent encore être corrigées par votre enseignant avant que la correction soit disponible."
+    },
+
+    "status": {
+      "graded": "Corrigé"
+    },
+
+    "badge": "Correction du quiz",
+
+    "title": "Votre correction",
+
+    "student": {
+      "label": "Étudiant"
+    },
+
+    "summary": {
+      "questions": "Questions",
+      "status": "Statut",
+      "score": "Note finale",
+      "percentage": "Pourcentage"
+    },
+
+    "scoreHidden": {
+      "title": "Note finale masquée",
+      "text": "Votre enseignant a choisi de ne pas afficher la note finale pour ce quiz."
+    },
+
+    "answersHidden": {
+      "title": "Bonnes réponses masquées",
+      "text": "Votre enseignant a choisi de ne pas afficher les bonnes réponses pour ce quiz."
+    },
+
+    "questions": {
+      "badge": "Révision",
+      "title": "Réponses du quiz",
+      "description": "Consultez vos réponses et, si votre enseignant l'autorise, comparez-les avec les bonnes réponses.",
+
+      "question": "Question",
+
+      "point": "point",
+      "points": "points",
+
+      "types": {
+        "qcm": "Choix unique",
+        "multipleChoice": "Choix multiples",
+        "development": "Développement"
+      },
+
+      "yourAnswer": "Votre réponse",
+      "yourChoice": "Votre choix",
+      "correct": "Bonne réponse",
+      "noAnswer": "Aucune réponse n'a été fournie pour cette question.",
+      "pointsReceived": "Points obtenus"
+    },
+
+    "final": {
+      "label": "Résultat final"
+    },
+
+    "actions": {
+      "home": "Retour à l'accueil",
+      "returnQuiz": "Retourner au quiz",
+      "backResult": "Retour au résultat",
+      "feedback": "Donner un avis"
+    }
+  }
 }
