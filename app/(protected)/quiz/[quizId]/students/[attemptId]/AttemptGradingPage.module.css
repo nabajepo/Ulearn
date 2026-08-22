@@ -1,5 +1,6 @@
 .page {
   min-height: 100vh;
+  min-height: 100dvh;
 
   padding: 1.5rem 2%;
 
@@ -44,15 +45,31 @@
   justify-content: space-between;
   align-items: center;
 
+  flex-wrap: wrap;
+
   gap: 1rem;
 
   margin-bottom: 1.8rem;
+}
+
+.topBar
+  :global(.app-button) {
+  width: auto;
+
+  max-width: 100%;
+
+  flex:
+    0
+    1
+    auto;
 }
 
 .statusBadge,
 .badge,
 .typeBadge {
   width: fit-content;
+
+  max-width: 100%;
 
   display: inline-flex;
 
@@ -68,6 +85,10 @@
     var(--main-color);
 
   font-weight: 900;
+
+  text-align: center;
+
+  overflow-wrap: anywhere;
 }
 
 .statusBadge {
@@ -120,9 +141,13 @@
     );
 
   font-weight: 900;
+
   line-height: 1.05;
 
-  letter-spacing: -1.5px;
+  letter-spacing:
+    -1.5px;
+
+  overflow-wrap: anywhere;
 }
 
 .header p {
@@ -136,6 +161,8 @@
 
   font-size: 0.95rem;
   font-weight: 700;
+
+  overflow-wrap: anywhere;
 }
 
 /* =========================================================
@@ -304,6 +331,8 @@
   font-size: 0.95rem;
   font-weight: 900;
 
+  line-height: 1.4;
+
   overflow-wrap: anywhere;
 }
 
@@ -327,6 +356,8 @@
 
   font-size: 1.6rem;
   font-weight: 900;
+
+  overflow-wrap: anywhere;
 }
 
 .sectionHeading p {
@@ -341,6 +372,7 @@
     );
 
   font-size: 0.82rem;
+
   line-height: 1.6;
 }
 
@@ -359,6 +391,8 @@
    ========================================================= */
 
 .questionCard {
+  min-width: 0;
+
   padding: 1.25rem;
 
   border:
@@ -384,11 +418,17 @@
   display: flex;
 
   justify-content: space-between;
-  align-items: flex-start;
+
+  align-items:
+    flex-start;
 
   gap: 1rem;
 
   margin-bottom: 0.8rem;
+}
+
+.questionHeader > div {
+  min-width: 0;
 }
 
 .questionNumber {
@@ -425,6 +465,8 @@
 .questionPoints {
   flex-shrink: 0;
 
+  max-width: 100%;
+
   padding:
     0.5rem
     0.7rem;
@@ -439,6 +481,10 @@
 
   font-size: 0.72rem;
   font-weight: 900;
+
+  text-align: center;
+
+  overflow-wrap: anywhere;
 }
 
 /* =========================================================
@@ -483,9 +529,11 @@
     var(--foreground);
 
   font-size: 0.85rem;
+
   line-height: 1.7;
 
   white-space: pre-wrap;
+
   overflow-wrap: anywhere;
 }
 
@@ -507,6 +555,7 @@
     );
 
   font-size: 0.75rem;
+
   font-style: italic;
 }
 
@@ -521,6 +570,8 @@
 }
 
 .choiceItem {
+  min-width: 0;
+
   display: grid;
 
   grid-template-columns:
@@ -582,6 +633,8 @@
   align-items: center;
   justify-content: center;
 
+  flex-shrink: 0;
+
   border:
     1px solid
     var(--border-color);
@@ -617,6 +670,9 @@
 
   align-items: center;
 
+  justify-content:
+    flex-end;
+
   gap: 0.4rem;
 
   flex-wrap: wrap;
@@ -624,6 +680,8 @@
 
 .choiceLabels span,
 .choiceLabels strong {
+  max-width: 100%;
+
   display: inline-flex;
 
   padding:
@@ -634,6 +692,10 @@
 
   font-size: 0.6rem;
   font-weight: 900;
+
+  text-align: center;
+
+  overflow-wrap: anywhere;
 }
 
 .choiceLabels span {
@@ -660,7 +722,10 @@
   display: flex;
 
   justify-content: space-between;
+
   align-items: center;
+
+  flex-wrap: wrap;
 
   gap: 1rem;
 
@@ -733,6 +798,10 @@
     var(--soft-purple);
 }
 
+.gradingBox > div {
+  min-width: 0;
+}
+
 .gradingBox label {
   display: block;
 
@@ -743,6 +812,8 @@
 
   font-size: 0.78rem;
   font-weight: 900;
+
+  overflow-wrap: anywhere;
 }
 
 .gradingBox small {
@@ -763,15 +834,20 @@
 
   align-items: center;
 
+  justify-content:
+    flex-end;
+
   gap: 0.5rem;
 }
 
 .gradeInputRow input {
-  width: 100px;
+  width: 110px;
+
   min-height: 42px;
 
   padding:
-    0 0.65rem;
+    0
+    0.65rem;
 
   border:
     1px solid
@@ -819,6 +895,8 @@
 
   font-size: 0.78rem;
   font-weight: 900;
+
+  white-space: nowrap;
 }
 
 /* =========================================================
@@ -844,6 +922,8 @@
   font-weight: 800;
 
   line-height: 1.55;
+
+  overflow-wrap: anywhere;
 }
 
 .warningMessage {
@@ -895,6 +975,7 @@
   gap: 1rem;
 
   margin-top: 2rem;
+
   padding-top: 1.5rem;
 
   border-top:
@@ -935,6 +1016,8 @@
 .finalScoreBlock strong {
   font-size: 1.7rem;
   font-weight: 900;
+
+  overflow-wrap: anywhere;
 }
 
 .finalScoreBlock small {
@@ -958,9 +1041,12 @@
 }
 
 .finalBreakdown div {
+  min-width: 0;
+
   display: flex;
 
   flex-direction: column;
+
   justify-content: center;
 
   padding: 1rem;
@@ -996,6 +1082,8 @@
 
   font-size: 1rem;
   font-weight: 900;
+
+  overflow-wrap: anywhere;
 }
 
 /* =========================================================
@@ -1006,11 +1094,51 @@
   display: flex;
 
   justify-content: space-between;
-  align-items: center;
+
+  align-items: stretch;
+
+  flex-wrap: wrap;
 
   gap: 1rem;
 
   margin-top: 1.5rem;
+
+  padding-top: 0.2rem;
+}
+
+/*
+ * IMPORTANT:
+ *
+ * Do not force the fixed global
+ * app-button-action width here.
+ *
+ * Translations can be longer:
+ * "Finalize grading"
+ * "Finaliser la correction"
+ * etc.
+ *
+ * The button is allowed to grow.
+ */
+
+.actions
+  :global(.app-button) {
+  width: auto;
+
+  min-width:
+    max(
+      var(--button-min-width),
+      180px
+    );
+
+  max-width: 100%;
+
+  flex:
+    0
+    1
+    auto;
+
+  padding-left: 1.25rem;
+  padding-right: 1.25rem;
 }
 
 /* =========================================================
@@ -1062,6 +1190,8 @@
 
   font-size: 2rem;
   font-weight: 900;
+
+  overflow-wrap: anywhere;
 }
 
 .accessCard p {
@@ -1080,7 +1210,15 @@
     );
 
   font-size: 0.85rem;
+
   line-height: 1.6;
+}
+
+.accessCard
+  :global(.app-button) {
+  width: auto;
+
+  max-width: 100%;
 }
 
 /* =========================================================
@@ -1124,29 +1262,69 @@
     border-radius: 22px;
   }
 
+  /* =====================================================
+     Top bar
+     ===================================================== */
+
   .topBar {
     align-items: stretch;
 
     flex-direction: column;
+
+    gap: 0.7rem;
   }
 
   .topBar
     :global(.app-button) {
     width: 100%;
+
+    min-width: 0;
+
+    max-width: 100%;
   }
 
   .statusBadge {
-    align-self: flex-start;
+    width: 100%;
+
+    align-self: stretch;
   }
 
+  /* =====================================================
+     Header
+     ===================================================== */
+
   .header h1 {
-    font-size: 2.2rem;
+    font-size:
+      clamp(
+        2rem,
+        10vw,
+        2.5rem
+      );
+
+    letter-spacing:
+      -1px;
   }
+
+  /* =====================================================
+     Student
+     ===================================================== */
+
+  .studentCard {
+    align-items: flex-start;
+  }
+
+  /* =====================================================
+     Summary
+     ===================================================== */
 
   .summary {
     grid-template-columns:
       1fr;
   }
+
+  /* =====================================================
+     Questions
+     ===================================================== */
 
   .questionHeader {
     flex-direction: column;
@@ -1168,32 +1346,71 @@
   .choiceLabels {
     grid-column:
       1 / -1;
+
+    justify-content:
+      flex-start;
   }
+
+  /* =====================================================
+     Development grading
+     ===================================================== */
 
   .gradingBox {
     grid-template-columns:
       1fr;
   }
 
+  .gradeInputRow {
+    justify-content:
+      flex-start;
+  }
+
   .gradeInputRow input {
     width: 120px;
   }
+
+  /* =====================================================
+     Final score
+     ===================================================== */
 
   .finalBreakdown {
     grid-template-columns:
       1fr;
   }
 
+  /* =====================================================
+     Footer actions
+     ===================================================== */
+
   .actions {
     display: grid;
 
     grid-template-columns:
       1fr;
+
+    width: 100%;
+
+    gap: 0.75rem;
   }
 
   .actions
     :global(.app-button) {
     width: 100%;
+
+    min-width: 0;
+
+    max-width: 100%;
+  }
+
+  /* =====================================================
+     Access
+     ===================================================== */
+
+  .accessCard
+    :global(.app-button) {
+    width: 100%;
+
+    min-width: 0;
   }
 }
 
@@ -1210,18 +1427,34 @@
 
   .card {
     padding: 1rem;
+
+    border-radius: 18px;
   }
 
   .studentCard {
     align-items: flex-start;
   }
 
+  .studentAvatar {
+    width: 44px;
+    height: 44px;
+  }
+
   .questionCard {
     padding: 1rem;
   }
 
+  .questionHeader h3 {
+    font-size: 1rem;
+  }
+
   .choiceItem {
     padding: 0.65rem;
+  }
+
+  .choiceLetter {
+    width: 31px;
+    height: 31px;
   }
 
   .gradeInputRow {
@@ -1232,5 +1465,31 @@
     flex: 1;
 
     width: auto;
+
+    min-width: 0;
+  }
+
+  .finalScoreBlock {
+    padding: 1.1rem;
+  }
+
+  .finalScoreBlock strong {
+    font-size: 1.5rem;
+  }
+
+  .actions
+    :global(.app-button),
+  .topBar
+    :global(.app-button) {
+    min-height: 50px;
+
+    height: auto;
+
+    padding-top: 0.75rem;
+    padding-bottom: 0.75rem;
+
+    white-space: normal;
+
+    line-height: 1.25;
   }
 }

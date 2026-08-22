@@ -1242,7 +1242,7 @@
     "actions": {
       "home": "Back to home",
       "returnQuiz": "Return to quiz",
-      "backResult": "Back to result",
+      "backResult": "Back ",
       "feedback": "Give feedback"
     }
   }

@@ -2965,12 +2965,10 @@ export async function deleteQuiz(
       quizId
     );
 
-  /*
-   * Idempotent deletion.
-   *
-   * If the quiz no longer exists, there is
-   * nothing left to delete.
-   */
+  /* =====================================================
+     Idempotent deletion
+     ===================================================== */
+
   if (
     !quiz
   ) {
@@ -2983,30 +2981,37 @@ export async function deleteQuiz(
     };
   }
 
+  /* =====================================================
+     Deletion protection
+     ===================================================== */
+
   /*
-   * IMPORTANT:
+   * Deletion rules:
    *
-   * Once a quiz has been launched, it may already
-   * have student attempts, answers and grading data.
+   * draft   -> allowed
+   * launched -> forbidden
+   * closed  -> allowed
    *
-   * ULearn therefore only allows deletion while the
-   * quiz is still a draft.
+   * A launched quiz may currently have students
+   * completing their attempts, so it must not be
+   * deleted while active.
    */
+
   if (
-    quiz.status !==
-    "draft"
+    quiz.status ===
+    "launched"
   ) {
     return {
       success:
         false,
 
       message:
-        "Only draft quizzes can be deleted.",
+        "An active quiz cannot be deleted.",
     };
   }
 
   /* =====================================================
-     Load linked draft questions
+     Load linked questions
      ===================================================== */
 
   const questionsQuery =
@@ -3029,13 +3034,40 @@ export async function deleteQuiz(
     );
 
   /* =====================================================
-     Delete quiz + linked questions atomically
+     Load linked attempts
+     ===================================================== */
+
+  const attemptsQuery =
+    query(
+      collection(
+        db,
+        "attempts"
+      ),
+
+      where(
+        "quizId",
+        "==",
+        quizId
+      )
+    );
+
+  const attemptsSnapshot =
+    await getDocs(
+      attemptsQuery
+    );
+
+  /* =====================================================
+     Delete questions + attempts + quiz
      ===================================================== */
 
   const batch =
     writeBatch(
       db
     );
+
+  /* -----------------------------------------------------
+     Questions
+     ----------------------------------------------------- */
 
   questionsSnapshot.docs.forEach(
     (
@@ -3046,6 +3078,24 @@ export async function deleteQuiz(
       );
     }
   );
+
+  /* -----------------------------------------------------
+     Attempts
+     ----------------------------------------------------- */
+
+  attemptsSnapshot.docs.forEach(
+    (
+      attemptDocument
+    ) => {
+      batch.delete(
+        attemptDocument.ref
+      );
+    }
+  );
+
+  /* -----------------------------------------------------
+     Quiz
+     ----------------------------------------------------- */
 
   batch.delete(
     quizRef(
@@ -3075,9 +3125,13 @@ export async function deleteQuiz(
       true,
 
     message:
-      "Draft quiz and linked questions deleted successfully.",
+      quiz.status ===
+      "draft"
+        ? "Draft quiz deleted successfully."
+        : "Completed quiz and associated data deleted successfully.",
   };
 }
+
 
 /* =========================================================
    Question counters

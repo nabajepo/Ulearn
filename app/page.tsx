@@ -9,7 +9,6 @@ import ShowFeedbacks from "@/components/ShowFeedbacks";
 import PlatformStats from "@/components/PlatformStats";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
 
-
 import {
   SignInButtonBox,
 } from "@/components/SignInButtonBox";
@@ -27,6 +26,10 @@ export default function Home() {
 
   return (
     <>
+      {/* =====================================================
+          Header
+          ===================================================== */}
+
       <header
         className={
           styles.header
@@ -34,30 +37,55 @@ export default function Home() {
       >
         <div
           className={
-            styles.name
+            styles.headerInner
           }
         >
-          ULearn
-        </div>
-
-        <nav
-          className={
-            styles.navbar
-          }
-        >
-          <LanguageSwitcher />
-
-          <SignInButtonBox
-            text={
-              t(
-                "common.signIn"
-              )
+          <div
+            className={
+              styles.name
             }
-            classNameC="navName"
-          />
+          >
+            ULearn
+          </div>
 
-          <SectionBox />
-        </nav>
+          <nav
+            className={
+              styles.navbar
+            }
+            aria-label="Main navigation"
+          >
+            <div
+              className={
+                styles.languageArea
+              }
+            >
+              <LanguageSwitcher />
+            </div>
+
+            <div
+              className={
+                styles.signInArea
+              }
+            >
+              <SignInButtonBox
+                text={
+                  t(
+                    "common.signIn"
+                  )
+                }
+                classNameC="navName"
+              />
+            </div>
+
+            <div
+              className={
+                styles.menuArea
+              }
+            >
+              <SectionBox />
+            </div>
+          </nav>
+        </div>
       </header>
 
       <main>
@@ -592,7 +620,10 @@ export default function Home() {
           </section>
         </Reveal>
       </main>
-      <HelpSupport context="anonymous"/>
+
+      <HelpSupport
+        context="anonymous"
+      />
     </>
   );
 }

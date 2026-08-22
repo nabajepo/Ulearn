@@ -11,7 +11,18 @@ import {
   useRouter,
 } from "next/navigation";
 
+import {
+  collection,
+  onSnapshot,
+  query,
+  where,
+} from "firebase/firestore";
+
 import AppLoading from "@/components/AppLoading";
+
+import {
+  db,
+} from "@/lib/firebase";
 
 import {
   getQuiz,
@@ -20,7 +31,6 @@ import {
 
 import {
   getQuizAttempts,
-  getQuizAttemptStats,
   type Attempt,
   type QuizAttemptStats,
 } from "@/lib/services/attempts";
@@ -57,10 +67,15 @@ type StatusFilter =
 const EMPTY_STATS:
   QuizAttemptStats = {
   total: 0,
+
   inProgress: 0,
+
   submitted: 0,
+
   graded: 0,
+
   finished: 0,
+
   waitingForCorrection: 0,
 };
 
@@ -102,6 +117,10 @@ function getStudentInitials(
   ).toUpperCase();
 }
 
+/* =========================================================
+   Date formatting
+   ========================================================= */
+
 function formatAttemptDate(
   value: string | null,
   language: string
@@ -126,7 +145,7 @@ function formatAttemptDate(
   }
 
   /*
-   * English is the default language.
+   * English remains the default language.
    */
   const locale =
     language === "fr"
@@ -157,6 +176,82 @@ function formatAttemptDate(
 }
 
 /* =========================================================
+   Calculate statistics
+   ========================================================= */
+
+function calculateStats(
+  attempts: Attempt[]
+): QuizAttemptStats {
+  let inProgress =
+    0;
+
+  let submitted =
+    0;
+
+  let graded =
+    0;
+
+  for (
+    const attempt of
+    attempts
+  ) {
+    if (
+      attempt.status ===
+      "in_progress"
+    ) {
+      inProgress +=
+        1;
+
+      continue;
+    }
+
+    if (
+      attempt.status ===
+      "submitted"
+    ) {
+      submitted +=
+        1;
+
+      continue;
+    }
+
+    if (
+      attempt.status ===
+      "graded"
+    ) {
+      graded +=
+        1;
+    }
+  }
+
+  return {
+    total:
+      attempts.length,
+
+    inProgress,
+
+    submitted,
+
+    graded,
+
+    /*
+     * Submitted + graded students
+     * have finished taking the quiz.
+     */
+    finished:
+      submitted +
+      graded,
+
+    /*
+     * Submitted means:
+     * waiting for manual teacher correction.
+     */
+    waitingForCorrection:
+      submitted,
+  };
+}
+
+/* =========================================================
    Page
    ========================================================= */
 
@@ -170,7 +265,8 @@ export default function StudentsPage() {
   const {
     t,
     language,
-  } = useLanguage();
+  } =
+    useLanguage();
 
   const quizId =
     String(
@@ -182,7 +278,8 @@ export default function StudentsPage() {
     teacher,
     loading:
       teacherLoading,
-  } = useTeacher();
+  } =
+    useTeacher();
 
   /* =========================================================
      Quiz
@@ -227,6 +324,12 @@ export default function StudentsPage() {
     useState(true);
 
   const [
+    realtimeReady,
+    setRealtimeReady,
+  ] =
+    useState(false);
+
+  const [
     message,
     setMessage,
   ] =
@@ -249,14 +352,14 @@ export default function StudentsPage() {
     );
 
   /* =========================================================
-     Load quiz + attempts
+     Load quiz once
      ========================================================= */
 
   useEffect(() => {
     let cancelled =
       false;
 
-    async function loadPage() {
+    async function loadQuiz() {
       try {
         setLoading(
           true
@@ -266,24 +369,20 @@ export default function StudentsPage() {
           ""
         );
 
-        const [
-          quizData,
-          attemptsData,
-          statsData,
-        ] =
-          await Promise.all([
-            getQuiz(
-              quizId
-            ),
+        if (
+          !quizId
+        ) {
+          setQuiz(
+            null
+          );
 
-            getQuizAttempts(
-              quizId
-            ),
+          return;
+        }
 
-            getQuizAttemptStats(
-              quizId
-            ),
-          ]);
+        const quizData =
+          await getQuiz(
+            quizId
+          );
 
         if (
           cancelled
@@ -294,17 +393,9 @@ export default function StudentsPage() {
         setQuiz(
           quizData
         );
-
-        setAttempts(
-          attemptsData
-        );
-
-        setStats(
-          statsData
-        );
       } catch (error) {
         console.error(
-          "Unable to load quiz students:",
+          "Unable to load quiz:",
           error
         );
 
@@ -328,11 +419,176 @@ export default function StudentsPage() {
       }
     }
 
-    loadPage();
+    loadQuiz();
 
     return () => {
       cancelled =
         true;
+    };
+  }, [
+    quizId,
+    t,
+  ]);
+
+  /* =========================================================
+     Real-time attempts listener
+     ========================================================= */
+
+  useEffect(() => {
+    if (
+      !quizId
+    ) {
+      setAttempts(
+        []
+      );
+
+      setStats(
+        EMPTY_STATS
+      );
+
+      setRealtimeReady(
+        true
+      );
+
+      return;
+    }
+
+    setRealtimeReady(
+      false
+    );
+
+    /*
+     * We listen to every attempt belonging
+     * to this quiz.
+     *
+     * Any Firestore update to:
+     *
+     * - answers
+     * - status
+     * - score
+     * - submittedAt
+     * - gradedAt
+     *
+     * will automatically trigger this listener.
+     */
+    const attemptsQuery =
+      query(
+        collection(
+          db,
+          "attempts"
+        ),
+
+        where(
+          "quizId",
+          "==",
+          quizId
+        )
+      );
+
+    const unsubscribe =
+      onSnapshot(
+        attemptsQuery,
+
+        async () => {
+          try {
+            /*
+             * Reuse the existing attempts
+             * service mapping.
+             *
+             * This keeps Firestore document
+             * parsing centralized inside
+             * attempts.ts.
+             */
+            const realtimeAttempts =
+              await getQuizAttempts(
+                quizId
+              );
+
+            /*
+             * Sort newest attempts first.
+             */
+            const sortedAttempts =
+              [
+                ...realtimeAttempts,
+              ].sort(
+                (
+                  first,
+                  second
+                ) => {
+                  const firstTime =
+                    new Date(
+                      first.startedAt
+                    ).getTime();
+
+                  const secondTime =
+                    new Date(
+                      second.startedAt
+                    ).getTime();
+
+                  return (
+                    secondTime -
+                    firstTime
+                  );
+                }
+              );
+
+            setAttempts(
+              sortedAttempts
+            );
+
+            setStats(
+              calculateStats(
+                sortedAttempts
+              )
+            );
+
+            setMessage(
+              ""
+            );
+
+            setRealtimeReady(
+              true
+            );
+          } catch (error) {
+            console.error(
+              "Unable to refresh realtime quiz attempts:",
+              error
+            );
+
+            setMessage(
+              t(
+                "students.messages.loadError"
+              )
+            );
+
+            setRealtimeReady(
+              true
+            );
+          }
+        },
+
+        (
+          error
+        ) => {
+          console.error(
+            "Realtime quiz attempts listener failed:",
+            error
+          );
+
+          setMessage(
+            t(
+              "students.messages.loadError"
+            )
+          );
+
+          setRealtimeReady(
+            true
+          );
+        }
+      );
+
+    return () => {
+      unsubscribe();
     };
   }, [
     quizId,
@@ -370,7 +626,8 @@ export default function StudentsPage() {
 
   if (
     teacherLoading ||
-    loading
+    loading ||
+    !realtimeReady
   ) {
     return (
       <AppLoading
@@ -494,11 +751,8 @@ export default function StudentsPage() {
     }
 
     /*
-     * An attempt can only be opened for correction
-     * after the student has submitted it.
-     *
-     * submitted -> teacher must grade development answers.
-     * graded    -> teacher may review the correction.
+     * A running attempt cannot yet
+     * be opened for correction.
      */
     if (
       attempt.status ===

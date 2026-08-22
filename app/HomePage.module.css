@@ -1,314 +1,1181 @@
+/* =========================================================
+   Global scrollbar
+   ========================================================= */
+
+:global(html) {
+  scrollbar-color:
+    var(--main-color)
+    var(--soft-purple);
+
+  scrollbar-width:
+    thin;
+}
+
+:global(body) {
+  scrollbar-color:
+    var(--main-color)
+    var(--soft-purple);
+
+  scrollbar-width:
+    thin;
+}
+
+/* Chrome / Edge / Safari */
+
+:global(*)::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+:global(*)::-webkit-scrollbar-track {
+  background:
+    var(--soft-purple);
+}
+
+:global(*)::-webkit-scrollbar-thumb {
+  border:
+    2px solid
+    var(--soft-purple);
+
+  border-radius:
+    999px;
+
+  background:
+    var(--main-color);
+}
+
+:global(*)::-webkit-scrollbar-thumb:hover {
+  background:
+    var(--main-color-hover);
+}
+
+/* =========================================================
+   Header
+   ========================================================= */
+
 .header {
   position: fixed;
+
   top: 0;
   left: 0;
-  z-index: 100;
+
+  z-index: 1000;
+
   width: 100%;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 1.2rem 5%;
-  border-bottom: 1px solid var(--border-color);
-  background: rgba(255, 255, 255, 0.86);
-  backdrop-filter: blur(22px);
+
+  border-bottom:
+    1px solid
+    var(--border-color);
+
+  background:
+    rgba(
+      255,
+      255,
+      255,
+      0.92
+    );
+
+  backdrop-filter:
+    blur(22px);
+
+  -webkit-backdrop-filter:
+    blur(22px);
+
+  overflow:
+    visible;
 }
+
+.headerInner {
+  width: 100%;
+
+  display: flex;
+  align-items: center;
+  justify-content:
+    space-between;
+
+  gap: 2rem;
+
+  padding:
+    1.2rem
+    5%;
+
+  overflow:
+    visible;
+}
+
+/* =========================================================
+   Brand
+   ========================================================= */
 
 .name {
-  color: var(--main-color);
-  font-size: 2.4rem;
-  font-weight: 900;
-  letter-spacing: -1px;
+  flex-shrink: 0;
+
+  color:
+    var(--main-color);
+
+  font-size:
+    2.4rem;
+
+  font-weight:
+    900;
+
+  line-height:
+    1;
+
+  letter-spacing:
+    -1px;
 }
+
+/* =========================================================
+   Navigation
+   ========================================================= */
 
 .navbar {
+  min-width: 0;
+
   display: flex;
   align-items: center;
+  justify-content:
+    flex-end;
+
   gap: 2rem;
+
+  overflow:
+    visible;
 }
 
+.languageArea,
+.signInArea,
+.menuArea {
+  position: relative;
+
+  min-width: 0;
+
+  flex-shrink: 0;
+}
+
+.languageArea {
+  z-index: 1100;
+
+  overflow:
+    visible;
+}
+
+/* =========================================================
+   Main sections
+   ========================================================= */
+
 .section {
-  min-height: 100vh;
-  padding: 8rem 5% 5rem;
+  min-height:
+    100vh;
+
+  padding:
+    8rem
+    5%
+    5rem;
 }
 
 .sectionHeading {
-  max-width: 760px;
-  margin-bottom: 2.5rem;
+  max-width:
+    760px;
+
+  margin-bottom:
+    2.5rem;
 }
 
 .sectionTag,
 .heroBadge {
-  display: inline-flex;
-  margin-bottom: 1rem;
-  padding: 0.55rem 1rem;
-  border-radius: 999px;
-  background: var(--soft-purple);
-  color: var(--main-color);
-  font-size: 0.95rem;
-  font-weight: 700;
+  display:
+    inline-flex;
+
+  width:
+    fit-content;
+
+  margin-bottom:
+    1rem;
+
+  padding:
+    0.55rem
+    1rem;
+
+  border-radius:
+    999px;
+
+  background:
+    var(--soft-purple);
+
+  color:
+    var(--main-color);
+
+  font-size:
+    0.95rem;
+
+  font-weight:
+    700;
 }
 
 .sectionHeading h2 {
-  margin-bottom: 1rem;
-  color: var(--main-color);
-  font-size: clamp(2rem, 4vw, 3.4rem);
-  font-weight: 800;
-  line-height: 1.1;
+  margin-bottom:
+    1rem;
+
+  color:
+    var(--main-color);
+
+  font-size:
+    clamp(
+      2rem,
+      4vw,
+      3.4rem
+    );
+
+  font-weight:
+    800;
+
+  line-height:
+    1.1;
 }
 
 .sectionHeading p {
-  font-size: 1.15rem;
+  font-size:
+    1.15rem;
+
+  line-height:
+    1.65;
 }
+
+/* =========================================================
+   Hero
+   ========================================================= */
 
 .heroSection {
   display: grid;
-  grid-template-columns: 1.1fr 0.9fr;
-  align-items: center;
+
+  grid-template-columns:
+    minmax(
+      0,
+      1.1fr
+    )
+    minmax(
+      0,
+      0.9fr
+    );
+
+  align-items:
+    center;
+
   gap: 3rem;
 }
 
 .heroContent {
-  max-width: 780px;
+  min-width: 0;
+
+  max-width:
+    780px;
 }
 
 .homeTitle {
-  margin-bottom: 1.3rem;
-  color: var(--main-color);
-  font-size: clamp(3rem, 7vw, 6.5rem);
-  font-weight: 900;
-  line-height: 1;
-  letter-spacing: -3px;
+  margin-bottom:
+    1.3rem;
+
+  color:
+    var(--main-color);
+
+  font-size:
+    clamp(
+      3rem,
+      7vw,
+      6.5rem
+    );
+
+  font-weight:
+    900;
+
+  line-height:
+    1;
+
+  letter-spacing:
+    -3px;
+
+  overflow-wrap:
+    anywhere;
 }
 
 .heroContent h2 {
-  margin-bottom: 1rem;
-  color: var(--foreground);
-  font-size: clamp(1.8rem, 3vw, 3rem);
-  font-weight: 800;
-  line-height: 1.1;
+  margin-bottom:
+    1rem;
+
+  color:
+    var(--foreground);
+
+  font-size:
+    clamp(
+      1.8rem,
+      3vw,
+      3rem
+    );
+
+  font-weight:
+    800;
+
+  line-height:
+    1.1;
+
+  overflow-wrap:
+    anywhere;
 }
 
 .heroContent p {
-  font-size: 1.15rem;
+  font-size:
+    1.15rem;
+
+  line-height:
+    1.65;
 }
 
 .heroActions {
   display: flex;
   align-items: center;
-  gap: 1rem;
-  margin-top: 2rem;
+
   flex-wrap: wrap;
+
+  gap: 1rem;
+
+  margin-top:
+    2rem;
 }
+
+/* =========================================================
+   Hero buttons
+   ========================================================= */
 
 .primaryButton,
 .secondaryButton {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0.95rem 1.4rem;
-  border-radius: 14px;
-  font-size: 1rem;
-  font-weight: 700;
-  cursor: pointer;
-  transition: 0.25s ease;
+  min-height:
+    48px;
+
+  display:
+    inline-flex;
+
+  align-items:
+    center;
+
+  justify-content:
+    center;
+
+  padding:
+    0.95rem
+    1.4rem;
+
+  border-radius:
+    14px;
+
+  font-size:
+    1rem;
+
+  font-weight:
+    700;
+
+  text-decoration:
+    none;
+
+  cursor:
+    pointer;
+
+  transition:
+    transform 0.25s ease,
+    background-color 0.25s ease,
+    box-shadow 0.25s ease;
 }
 
 .primaryButton {
-  background: var(--main-color);
-  color: #ffffff;
-  box-shadow: 0 14px 30px rgba(42, 3, 105, 0.22);
+  background:
+    var(--main-color);
+
+  color:
+    #ffffff;
+
+  box-shadow:
+    0 14px 30px
+    rgba(
+      42,
+      3,
+      105,
+      0.22
+    );
 }
 
 .primaryButton:hover {
-  transform: translateY(-2px);
-  background: var(--main-color-hover);
+  transform:
+    translateY(-2px);
+
+  background:
+    var(--main-color-hover);
 }
 
 .secondaryButton {
-  border: 1px solid var(--border-color);
-  background: #ffffff;
-  color: var(--main-color);
+  border:
+    1px solid
+    var(--border-color);
+
+  background:
+    #ffffff;
+
+  color:
+    var(--main-color);
 }
 
 .secondaryButton:hover {
-  background: var(--soft-purple);
+  background:
+    var(--soft-purple);
 }
 
+/* =========================================================
+   Hero preview card
+   ========================================================= */
+
 .heroCard {
-  padding: 1.5rem;
-  border: 1px solid var(--border-color);
-  border-radius: 28px;
-  background: #ffffff;
-  box-shadow: var(--shadow);
+  min-width: 0;
+
+  padding:
+    1.5rem;
+
+  border:
+    1px solid
+    var(--border-color);
+
+  border-radius:
+    28px;
+
+  background:
+    #ffffff;
+
+  box-shadow:
+    var(--shadow);
 }
 
 .heroCardTop {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  margin-bottom: 1.5rem;
-  color: var(--main-color);
-  font-weight: 700;
+  justify-content:
+    space-between;
+
+  gap: 1rem;
+
+  margin-bottom:
+    1.5rem;
+
+  color:
+    var(--main-color);
+
+  font-weight:
+    700;
 }
 
 .quizPreview {
-  padding: 1.5rem;
-  border-radius: 22px;
-  background: linear-gradient(
-    135deg,
-    rgba(42, 3, 105, 0.08),
-    rgba(42, 3, 105, 0.02)
-  );
+  padding:
+    1.5rem;
+
+  border-radius:
+    22px;
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(
+        42,
+        3,
+        105,
+        0.08
+      ),
+      rgba(
+        42,
+        3,
+        105,
+        0.02
+      )
+    );
 }
 
 .quizPreview h3 {
-  margin-bottom: 0.7rem;
-  color: var(--main-color);
-  font-size: 1.5rem;
-  font-weight: 800;
+  margin-bottom:
+    0.7rem;
+
+  color:
+    var(--main-color);
+
+  font-size:
+    1.5rem;
+
+  font-weight:
+    800;
+}
+
+.quizPreview p {
+  line-height:
+    1.55;
 }
 
 .answer {
-  margin-top: 0.8rem;
-  padding: 1rem;
-  border: 1px solid var(--border-color);
-  border-radius: 14px;
-  background: #ffffff;
-  font-weight: 600;
+  margin-top:
+    0.8rem;
+
+  padding:
+    1rem;
+
+  border:
+    1px solid
+    var(--border-color);
+
+  border-radius:
+    14px;
+
+  background:
+    #ffffff;
+
+  font-weight:
+    600;
 }
 
 .activeAnswer {
-  background: var(--main-color);
-  color: #ffffff;
+  background:
+    var(--main-color);
+
+  color:
+    #ffffff;
 }
+
+/* =========================================================
+   Cards
+   ========================================================= */
 
 .cardsGrid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 1.4rem;
+
+  grid-template-columns:
+    repeat(
+      3,
+      minmax(
+        0,
+        1fr
+      )
+    );
+
+  gap:
+    1.4rem;
 }
 
 .infoCard,
 .faqCard {
-  padding: 1.8rem;
-  border: 1px solid var(--border-color);
-  border-radius: 24px;
-  background: #ffffff;
-  box-shadow: var(--small-shadow);
-  transition: 0.25s ease;
+  min-width: 0;
+
+  padding:
+    1.8rem;
+
+  border:
+    1px solid
+    var(--border-color);
+
+  border-radius:
+    24px;
+
+  background:
+    #ffffff;
+
+  box-shadow:
+    var(--small-shadow);
+
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease;
 }
 
 .infoCard:hover,
 .faqCard:hover {
-  transform: translateY(-5px);
-  box-shadow: var(--shadow);
+  transform:
+    translateY(-5px);
+
+  box-shadow:
+    var(--shadow);
 }
 
 .infoCard h3,
 .faqCard h3 {
-  margin-bottom: 0.7rem;
-  color: var(--main-color);
-  font-size: 1.5rem;
-  font-weight: 800;
+  margin-bottom:
+    0.7rem;
+
+  color:
+    var(--main-color);
+
+  font-size:
+    1.5rem;
+
+  font-weight:
+    800;
+
+  overflow-wrap:
+    anywhere;
+}
+
+.infoCard p,
+.faqCard p {
+  line-height:
+    1.65;
+
+  overflow-wrap:
+    anywhere;
 }
 
 .cardNumber {
-  display: inline-flex;
-  margin-bottom: 1rem;
-  padding: 0.6rem 0.8rem;
-  border-radius: 12px;
-  background: var(--soft-purple);
-  color: var(--main-color);
-  font-weight: 900;
+  display:
+    inline-flex;
+
+  width:
+    fit-content;
+
+  margin-bottom:
+    1rem;
+
+  padding:
+    0.6rem
+    0.8rem;
+
+  border-radius:
+    12px;
+
+  background:
+    var(--soft-purple);
+
+  color:
+    var(--main-color);
+
+  font-weight:
+    900;
 }
+
+/* =========================================================
+   Stats / Feedback
+   ========================================================= */
 
 .statsSection,
 .feedbackSection {
-  min-height: auto;
+  min-height:
+    auto;
 }
 
+/* =========================================================
+   Start section
+   ========================================================= */
+
 .startSection {
-  min-height: auto;
-  padding-top: 4rem;
+  min-height:
+    auto;
+
+  padding-top:
+    4rem;
 }
 
 .startBox {
-  padding: 3rem;
-  border-radius: 30px;
-  background: var(--main-color);
-  color: #ffffff;
-  text-align: center;
-  box-shadow: var(--shadow);
+  padding:
+    3rem;
+
+  border-radius:
+    30px;
+
+  background:
+    var(--main-color);
+
+  color:
+    #ffffff;
+
+  text-align:
+    center;
+
+  box-shadow:
+    var(--shadow);
 }
 
 .startBox h2,
 .startBox p {
-  color: #ffffff;
+  color:
+    #ffffff;
 }
 
 .startBox h2 {
-  margin-bottom: 1rem;
-  font-size: clamp(2rem, 4vw, 3.4rem);
+  margin-bottom:
+    1rem;
+
+  font-size:
+    clamp(
+      2rem,
+      4vw,
+      3.4rem
+    );
 }
 
 .startBox p {
-  margin-bottom: 1.5rem;
-  opacity: 0.85;
+  margin-bottom:
+    1.5rem;
+
+  opacity:
+    0.85;
+
+  line-height:
+    1.65;
 }
 
-@media (max-width: 992px) {
-  .heroSection {
-    grid-template-columns: 1fr;
-  }
+/* =========================================================
+   Tablet
+   ========================================================= */
 
-  .cardsGrid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-@media (max-width: 768px) {
-  .header {
-    padding: 1rem 4%;
-  }
-
-  .name {
-    font-size: 2rem;
+@media (
+  max-width: 992px
+) {
+  .headerInner {
+    padding:
+      1rem
+      4%;
   }
 
   .navbar {
-    gap: 1rem;
+    gap:
+      1rem;
   }
 
-  .section {
-    padding: 7rem 5% 4rem;
+  .heroSection {
+    grid-template-columns:
+      1fr;
   }
 
-  .cardsGrid {
-    grid-template-columns: 1fr;
+  .heroContent {
+    max-width:
+      none;
   }
 
   .heroCard {
-    padding: 1rem;
+    width:
+      100%;
+  }
+
+  .cardsGrid {
+    grid-template-columns:
+      repeat(
+        2,
+        minmax(
+          0,
+          1fr
+        )
+      );
   }
 }
 
-@media (max-width: 480px) {
-  .header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0.8rem;
+/* =========================================================
+   Small tablet
+   ========================================================= */
+
+@media (
+  max-width: 768px
+) {
+  .headerInner {
+    gap:
+      1rem;
+
+    padding:
+      0.9rem
+      1rem;
+  }
+
+  .name {
+    font-size:
+      1.8rem;
   }
 
   .navbar {
-    width: 100%;
-    justify-content: space-between;
+    gap:
+      0.7rem;
   }
 
-  .homeTitle {
-    letter-spacing: -1px;
+  .section {
+    padding:
+      7rem
+      1rem
+      4rem;
+  }
+
+  .cardsGrid {
+    grid-template-columns:
+      1fr;
+  }
+
+  .heroCard {
+    padding:
+      1rem;
+  }
+
+  .quizPreview {
+    padding:
+      1.1rem;
   }
 
   .startBox {
-    padding: 2rem;
+    padding:
+      2.2rem
+      1.5rem;
+  }
+}
+
+/* =========================================================
+   Phone
+   ========================================================= */
+
+@media (
+  max-width: 600px
+) {
+  /* ---------------------------------------------------------
+     Header
+     --------------------------------------------------------- */
+
+  .header {
+    overflow:
+      visible;
+  }
+
+  .headerInner {
+    display: grid;
+
+    grid-template-columns:
+      1fr;
+
+    gap:
+      0.8rem;
+
+    padding:
+      0.9rem
+      1rem;
+
+    overflow:
+      visible;
+  }
+
+  .name {
+    font-size:
+      2rem;
+  }
+
+  /* ---------------------------------------------------------
+     Mobile navbar
+     --------------------------------------------------------- */
+
+  .navbar {
+    width:
+      100%;
+
+    display: grid;
+
+    grid-template-columns:
+      auto
+      1fr
+      auto;
+
+    align-items:
+      center;
+
+    gap:
+      0.6rem;
+
+    overflow:
+      visible;
+  }
+
+  /*
+   * LANGUAGE SWITCHER
+   *
+   * We keep the language button on the LEFT side
+   * of the navbar.
+   *
+   * Its dropdown will therefore have the whole
+   * width of the screen available toward the RIGHT.
+   */
+
+  .languageArea {
+    position: relative;
+
+    justify-self:
+      start;
+
+    z-index:
+      2000;
+
+    overflow:
+      visible;
+  }
+
+  /*
+   * If LanguageSwitcher uses an element with
+   * role="menu", force the dropdown to open
+   * toward the RIGHT on mobile.
+   */
+
+  .languageArea
+    :global([role="menu"]) {
+    left:
+      0 !important;
+
+    right:
+      auto !important;
+
+    transform:
+      none !important;
+
+    max-width:
+      calc(
+        100vw - 2rem
+      );
+  }
+
+  /*
+   * Same protection for common dropdown/listbox
+   * accessibility implementations.
+   */
+
+  .languageArea
+    :global([role="listbox"]) {
+    left:
+      0 !important;
+
+    right:
+      auto !important;
+
+    transform:
+      none !important;
+
+    max-width:
+      calc(
+        100vw - 2rem
+      );
+  }
+
+  .signInArea {
+    min-width:
+      0;
+
+    justify-self:
+      center;
+  }
+
+  .menuArea {
+    justify-self:
+      end;
+  }
+
+  /* ---------------------------------------------------------
+     Main content
+     --------------------------------------------------------- */
+
+  .section {
+    padding:
+      8.5rem
+      1rem
+      3.5rem;
+  }
+
+  .heroSection {
+    gap:
+      2rem;
+  }
+
+  .homeTitle {
+    font-size:
+      clamp(
+        2.6rem,
+        14vw,
+        4.3rem
+      );
+
+    letter-spacing:
+      -1.5px;
+  }
+
+  .heroContent h2 {
+    font-size:
+      clamp(
+        1.55rem,
+        8vw,
+        2.2rem
+      );
+  }
+
+  .heroContent p {
+    font-size:
+      1rem;
+  }
+
+  /* ---------------------------------------------------------
+     Hero buttons
+     --------------------------------------------------------- */
+
+  .heroActions {
+    width:
+      100%;
+
+    display: grid;
+
+    grid-template-columns:
+      1fr;
+  }
+
+  .heroActions
+    .primaryButton,
+  .heroActions
+    .secondaryButton {
+    width:
+      100%;
+  }
+
+  /* ---------------------------------------------------------
+     Section headings
+     --------------------------------------------------------- */
+
+  .sectionHeading {
+    margin-bottom:
+      1.7rem;
+  }
+
+  .sectionHeading h2 {
+    font-size:
+      2rem;
+  }
+
+  .sectionHeading p {
+    font-size:
+      1rem;
+  }
+
+  /* ---------------------------------------------------------
+     Cards
+     --------------------------------------------------------- */
+
+  .infoCard,
+  .faqCard {
+    padding:
+      1.4rem;
+
+    border-radius:
+      20px;
+  }
+
+  .heroCardTop {
+    align-items:
+      flex-start;
+
+    flex-direction:
+      column;
+
+    gap:
+      0.35rem;
+  }
+
+  .startBox {
+    border-radius:
+      24px;
+  }
+}
+
+/* =========================================================
+   Small phone
+   ========================================================= */
+
+@media (
+  max-width: 420px
+) {
+  .headerInner {
+    padding:
+      0.85rem
+      0.75rem;
+  }
+
+  .name {
+    font-size:
+      1.85rem;
+  }
+
+  .navbar {
+    grid-template-columns:
+      auto
+      1fr
+      auto;
+
+    gap:
+      0.35rem;
+  }
+
+  /*
+   * Dropdown starts exactly from the left side
+   * of the language button and expands RIGHT.
+   */
+
+  .languageArea
+    :global([role="menu"]),
+  .languageArea
+    :global([role="listbox"]) {
+    left:
+      0 !important;
+
+    right:
+      auto !important;
+
+    transform:
+      none !important;
+
+    width:
+      min(
+        220px,
+        calc(
+          100vw - 1.5rem
+        )
+      );
+
+    max-width:
+      calc(
+        100vw - 1.5rem
+      );
+  }
+
+  .section {
+    padding-right:
+      0.75rem;
+
+    padding-left:
+      0.75rem;
+  }
+
+  .homeTitle {
+    font-size:
+      2.65rem;
+  }
+
+  .heroBadge,
+  .sectionTag {
+    padding:
+      0.45rem
+      0.75rem;
+
+    font-size:
+      0.78rem;
+  }
+
+  .heroCard {
+    border-radius:
+      22px;
+  }
+
+  .quizPreview {
+    border-radius:
+      18px;
+  }
+
+  .startBox {
+    padding:
+      1.8rem
+      1rem;
   }
 }

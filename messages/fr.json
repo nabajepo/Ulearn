@@ -1241,7 +1241,7 @@
     "actions": {
       "home": "Retour à l'accueil",
       "returnQuiz": "Retourner au quiz",
-      "backResult": "Retour au résultat",
+      "backResult": "Retour ",
       "feedback": "Donner un avis"
     }
   }

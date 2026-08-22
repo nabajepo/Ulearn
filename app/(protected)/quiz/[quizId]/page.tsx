@@ -10,9 +10,21 @@ import {
   useRouter,
 } from "next/navigation";
 
+import {
+  collection,
+  doc,
+  onSnapshot,
+  query,
+  where,
+} from "firebase/firestore";
+
 import QRCode from "qrcode";
 
 import AppLoading from "@/components/AppLoading";
+
+import {
+  db,
+} from "@/lib/firebase";
 
 import {
   deleteQuiz,
@@ -184,28 +196,27 @@ export default function QuizDetailsPage() {
   ] =
     useState(false);
 
-  /*
-   * Temporary values.
-   *
-   * Later these will come from
-   * the student attempts collection.
-   */
-  const activeStudents =
-    0;
+  /* =========================================================
+     Real-time student counters
+     ========================================================= */
 
-  const finishedStudents =
-    0;
+  const [
+    activeStudents,
+    setActiveStudents,
+  ] =
+    useState(0);
+
+  const [
+    finishedStudents,
+    setFinishedStudents,
+  ] =
+    useState(0);
 
   /* =========================================================
      Student URL
-     
-     IMPORTANT:
-     This value is intentionally calculated BEFORE all
-     conditional returns because the QR useEffect depends
-     on it.
-     
-     quiz may still be null during loading, therefore
-     optional chaining is required.
+
+     This must remain above conditional returns because
+     the QR-code effect depends on it.
      ========================================================= */
 
   const studentUrl =
@@ -225,7 +236,7 @@ export default function QuizDetailsPage() {
   }, []);
 
   /* =========================================================
-     Load quiz + structure
+     Initial quiz + structure load
      ========================================================= */
 
   useEffect(() => {
@@ -234,6 +245,10 @@ export default function QuizDetailsPage() {
 
     async function loadQuiz() {
       try {
+        setLoading(
+          true
+        );
+
         const [
           quizData,
           structureData,
@@ -287,7 +302,15 @@ export default function QuizDetailsPage() {
       }
     }
 
-    loadQuiz();
+    if (
+      quizId
+    ) {
+      loadQuiz();
+    } else {
+      setLoading(
+        false
+      );
+    }
 
     return () => {
       cancelled =
@@ -296,6 +319,224 @@ export default function QuizDetailsPage() {
   }, [
     quizId,
     t,
+  ]);
+
+  /* =========================================================
+     REAL-TIME QUIZ LISTENER
+
+     This is important for status changes.
+
+     Example:
+
+     launched
+        ↓
+     deadline reached / system closes quiz
+        ↓
+     closed
+        ↓
+     this listener immediately updates quiz.status
+        ↓
+     delete button becomes available automatically
+
+     No browser refresh required.
+     ========================================================= */
+
+  useEffect(() => {
+    if (
+      !quizId
+    ) {
+      return;
+    }
+
+    const quizDocument =
+      doc(
+        db,
+        "quizzes",
+        quizId
+      );
+
+    const unsubscribe =
+      onSnapshot(
+        quizDocument,
+
+        (snapshot) => {
+          /*
+           * The document was deleted.
+           */
+          if (
+            !snapshot.exists()
+          ) {
+            setQuiz(
+              null
+            );
+
+            return;
+          }
+
+          /*
+           * We still use getQuiz() instead of manually
+           * rebuilding the Quiz object here.
+           *
+           * This keeps all Firestore -> Quiz mapping logic
+           * centralized inside quizzes.ts.
+           *
+           * onSnapshot tells us WHEN something changed;
+           * getQuiz gives us the correctly mapped object.
+           */
+          void getQuiz(
+            quizId
+          )
+            .then(
+              (
+                updatedQuiz
+              ) => {
+                setQuiz(
+                  updatedQuiz
+                );
+              }
+            )
+            .catch(
+              (error) => {
+                console.error(
+                  "Unable to refresh realtime quiz data:",
+                  error
+                );
+              }
+            );
+        },
+
+        (error) => {
+          console.error(
+            "Unable to listen to quiz in real time:",
+            error
+          );
+        }
+      );
+
+    return () => {
+      unsubscribe();
+    };
+  }, [
+    quizId,
+  ]);
+
+  /* =========================================================
+     REAL-TIME STUDENT ATTEMPTS
+
+     Firestore updates the counters immediately whenever
+     an attempt changes.
+
+     in_progress -> active student
+
+     submitted
+     graded      -> finished student
+     ========================================================= */
+
+  useEffect(() => {
+    if (
+      !quizId
+    ) {
+      setActiveStudents(
+        0
+      );
+
+      setFinishedStudents(
+        0
+      );
+
+      return;
+    }
+
+    const attemptsQuery =
+      query(
+        collection(
+          db,
+          "attempts"
+        ),
+
+        where(
+          "quizId",
+          "==",
+          quizId
+        )
+      );
+
+    const unsubscribe =
+      onSnapshot(
+        attemptsQuery,
+
+        (snapshot) => {
+          let nextActiveStudents =
+            0;
+
+          let nextFinishedStudents =
+            0;
+
+          snapshot.forEach(
+            (
+              attemptDocument
+            ) => {
+              const data =
+                attemptDocument.data();
+
+              const status =
+                typeof data.status ===
+                "string"
+                  ? data.status
+                  : "";
+
+              if (
+                status ===
+                "in_progress"
+              ) {
+                nextActiveStudents +=
+                  1;
+
+                return;
+              }
+
+              if (
+                status ===
+                  "submitted" ||
+                status ===
+                  "graded"
+              ) {
+                nextFinishedStudents +=
+                  1;
+              }
+            }
+          );
+
+          setActiveStudents(
+            nextActiveStudents
+          );
+
+          setFinishedStudents(
+            nextFinishedStudents
+          );
+        },
+
+        (error) => {
+          console.error(
+            "Unable to listen to quiz attempts in real time:",
+            error
+          );
+
+          setActiveStudents(
+            0
+          );
+
+          setFinishedStudents(
+            0
+          );
+        }
+      );
+
+    return () => {
+      unsubscribe();
+    };
+  }, [
+    quizId,
   ]);
 
   /* =========================================================
@@ -329,10 +570,6 @@ export default function QuizDetailsPage() {
         return;
       }
 
-      /*
-       * Do not allow the modal to close
-       * while a destructive delete is running.
-       */
       if (
         processing ===
         "delete"
@@ -409,23 +646,7 @@ export default function QuizDetailsPage() {
   ]);
 
   /* =========================================================
-     QR code generation
-
-     IMPORTANT:
-     This Hook MUST stay before every conditional return.
-
-     Previous problem:
-     -----------------
-     This effect was below:
-
-       if (loading) return ...
-       if (processing) return ...
-       if (!quiz) return ...
-
-     React therefore saw a different number/order of Hooks
-     between renders.
-
-     Now every render always reaches this Hook.
+     QR code
      ========================================================= */
 
   useEffect(() => {
@@ -433,10 +654,6 @@ export default function QuizDetailsPage() {
       false;
 
     async function generateQrCode() {
-      /*
-       * During initial loading studentUrl is empty.
-       * That is completely normal.
-       */
       if (
         !studentUrl
       ) {
@@ -517,11 +734,7 @@ export default function QuizDetailsPage() {
   ]);
 
   /* =========================================================
-     IMPORTANT
-     
-     No React Hook may be placed below this point.
-     
-     From here onward we may safely use conditional returns.
+     No React Hooks below this point
      ========================================================= */
 
   /* =========================================================
@@ -675,7 +888,7 @@ export default function QuizDetailsPage() {
     now;
 
   /* =========================================================
-     Real structure progress
+     Structure
      ========================================================= */
 
   const remainingQuestions =
@@ -718,7 +931,19 @@ export default function QuizDetailsPage() {
     );
 
   /* =========================================================
-     Download QR code
+     DELETE PERMISSION
+
+     draft    -> yes
+     launched -> no
+     closed   -> yes
+     ========================================================= */
+
+  const canDeleteQuiz =
+    quiz.status !==
+    "launched";
+
+  /* =========================================================
+     Download QR
      ========================================================= */
 
   function downloadQrCode() {
@@ -890,13 +1115,6 @@ export default function QuizDetailsPage() {
         )
       );
 
-      /*
-       * Once updatedQuiz contains the generated accessCode,
-       * studentUrl changes.
-       *
-       * The QR effect above will then automatically generate
-       * the QR code.
-       */
       setStudentAccessOpen(
         true
       );
@@ -923,14 +1141,9 @@ export default function QuizDetailsPage() {
      ========================================================= */
 
   function openDeleteModal() {
-    /*
-     * A launched or closed quiz must not
-     * be deletable from this interface.
-     */
     if (
       processing ||
-      quiz.status !==
-        "draft"
+      !canDeleteQuiz
     ) {
       return;
     }
@@ -959,15 +1172,18 @@ export default function QuizDetailsPage() {
 
   async function handleDelete() {
     /*
-     * Second protection:
-     * even if the modal somehow remained open,
-     * deletion is refused if the quiz is not draft.
+     * Important:
+     *
+     * We verify canDeleteQuiz again here.
+     *
+     * Even if the modal was opened while the quiz was
+     * deletable and Firestore changes its status before
+     * confirmation, deletion remains protected.
      */
     if (
       processing ||
       !deleteModalOpen ||
-      quiz.status !==
-        "draft"
+      !canDeleteQuiz
     ) {
       return;
     }
@@ -989,14 +1205,18 @@ export default function QuizDetailsPage() {
       if (
         !result.success
       ) {
-        setMessage(
-          t(
-            "quizDetails.messages.deleteError"
-          )
+        setProcessing(
+          ""
         );
 
         setDeleteModalOpen(
           false
+        );
+
+        setMessage(
+          t(
+            "quizDetails.messages.deleteError"
+          )
         );
 
         return;
@@ -1011,18 +1231,18 @@ export default function QuizDetailsPage() {
         error
       );
 
-      setMessage(
-        t(
-          "quizDetails.messages.deleteError"
-        )
+      setProcessing(
+        ""
       );
 
       setDeleteModalOpen(
         false
       );
-    } finally {
-      setProcessing(
-        ""
+
+      setMessage(
+        t(
+          "quizDetails.messages.deleteError"
+        )
       );
     }
   }
@@ -1475,7 +1695,7 @@ export default function QuizDetailsPage() {
               </strong>
             </div>
 
-            {/* Account expiration */}
+            {/* Teacher expiration */}
 
             <div
               className={
@@ -1544,7 +1764,7 @@ export default function QuizDetailsPage() {
               </strong>
             </div>
 
-            {/* Shuffle choices */}
+            {/* Shuffle answers */}
 
             <div
               className={
@@ -1568,7 +1788,7 @@ export default function QuizDetailsPage() {
               </strong>
             </div>
 
-            {/* Final score */}
+            {/* Score visibility */}
 
             <div
               className={
@@ -1592,7 +1812,7 @@ export default function QuizDetailsPage() {
               </strong>
             </div>
 
-            {/* Correct answers */}
+            {/* Correction visibility */}
 
             <div
               className={
@@ -1654,7 +1874,7 @@ export default function QuizDetailsPage() {
             )}
 
           {/* =================================================
-              Account expired
+              Account
               ================================================= */}
 
           {accountExpired && (
@@ -1695,8 +1915,6 @@ export default function QuizDetailsPage() {
               styles.actions
             }
           >
-            {/* Settings */}
-
             <button
               type="button"
               className="app-button"
@@ -1714,8 +1932,6 @@ export default function QuizDetailsPage() {
               )}
             </button>
 
-            {/* Edit */}
-
             <button
               type="button"
               className="app-button"
@@ -1732,8 +1948,6 @@ export default function QuizDetailsPage() {
                 "quizDetails.actions.edit"
               )}
             </button>
-
-            {/* Launch */}
 
             <button
               type="button"
@@ -1761,8 +1975,6 @@ export default function QuizDetailsPage() {
               )}
             </button>
 
-            {/* Students */}
-
             <button
               type="button"
               className="app-button"
@@ -1775,14 +1987,22 @@ export default function QuizDetailsPage() {
               )}
             </button>
 
-            {/* Delete */}
+            {/* ===============================================
+                DELETE
+
+                draft    -> enabled
+                launched -> disabled
+                closed   -> enabled
+
+                Because quiz.status is listened to with
+                onSnapshot(), this button changes automatically.
+                =============================================== */}
 
             <button
               type="button"
               className="app-button app-button-secondary app-button-action"
               disabled={
-                quiz.status !==
-                "draft"
+                !canDeleteQuiz
               }
               onClick={
                 openDeleteModal
@@ -1869,10 +2089,6 @@ export default function QuizDetailsPage() {
               aria-modal="true"
               aria-labelledby="student-access-title"
             >
-              {/* =============================================
-                  Header
-                  ============================================= */}
-
               <header
                 className={
                   styles.studentAccessModalHeader
@@ -1922,18 +2138,12 @@ export default function QuizDetailsPage() {
                 </button>
               </header>
 
-              {/* =============================================
-                  Content
-                  ============================================= */}
-
               <div
                 className={
                   styles.studentAccessContent
                 }
               >
-                {/* ===========================================
-                    Access code
-                    =========================================== */}
+                {/* Access code */}
 
                 <div
                   className={
@@ -1989,9 +2199,7 @@ export default function QuizDetailsPage() {
                   </small>
                 </div>
 
-                {/* ===========================================
-                    Student link
-                    =========================================== */}
+                {/* Link */}
 
                 <div
                   className={
@@ -2054,9 +2262,7 @@ export default function QuizDetailsPage() {
                   </small>
                 </div>
 
-                {/* ===========================================
-                    QR code
-                    =========================================== */}
+                {/* QR */}
 
                 <div
                   className={
@@ -2144,17 +2350,13 @@ export default function QuizDetailsPage() {
                   </button>
                 </div>
 
-                {/* ===========================================
-                    Session information
-                    =========================================== */}
+                {/* Session */}
 
                 <div
                   className={
                     styles.studentAccessSession
                   }
                 >
-                  {/* Mode */}
-
                   <div>
                     <span>
                       {t(
@@ -2173,8 +2375,6 @@ export default function QuizDetailsPage() {
                           )}
                     </strong>
                   </div>
-
-                  {/* Starts */}
 
                   <div>
                     <span>
@@ -2200,8 +2400,6 @@ export default function QuizDetailsPage() {
                     </strong>
                   </div>
 
-                  {/* Ends */}
-
                   <div>
                     <span>
                       {t(
@@ -2220,8 +2418,6 @@ export default function QuizDetailsPage() {
                           )}
                     </strong>
                   </div>
-
-                  {/* Duration */}
 
                   <div>
                     <span>
@@ -2278,10 +2474,6 @@ export default function QuizDetailsPage() {
             aria-labelledby="delete-quiz-title"
             aria-describedby="delete-quiz-description"
           >
-            {/* ===============================================
-                Header
-                =============================================== */}
-
             <header
               className={
                 styles.deleteModalHeader
@@ -2322,10 +2514,6 @@ export default function QuizDetailsPage() {
                 ×
               </button>
             </header>
-
-            {/* ===============================================
-                Content
-                =============================================== */}
 
             <div
               className={
@@ -2372,10 +2560,6 @@ export default function QuizDetailsPage() {
                 </p>
               </div>
             </div>
-
-            {/* ===============================================
-                Actions
-                =============================================== */}
 
             <div
               className={

@@ -1218,3 +1218,53 @@
     min-height: 150px;
   }
 }
+/* =========================================================
+   Global scrollbar
+   ========================================================= */
+
+:global(html) {
+  scrollbar-color:
+    var(--main-color)
+    var(--soft-purple);
+
+  scrollbar-width:
+    thin;
+}
+
+:global(body) {
+  scrollbar-color:
+    var(--main-color)
+    var(--soft-purple);
+
+  scrollbar-width:
+    thin;
+}
+
+/* Chrome / Edge / Safari */
+
+:global(*)::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+:global(*)::-webkit-scrollbar-track {
+  background:
+    var(--soft-purple);
+}
+
+:global(*)::-webkit-scrollbar-thumb {
+  border:
+    2px solid
+    var(--soft-purple);
+
+  border-radius:
+    999px;
+
+  background:
+    var(--main-color);
+}
+
+:global(*)::-webkit-scrollbar-thumb:hover {
+  background:
+    var(--main-color-hover);
+}

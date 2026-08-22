@@ -421,7 +421,20 @@ export default function AttemptGradingPage() {
         );
 
         /* ===================================================
-           Existing manual development scores
+           Development scores
+
+           IMPORTANT:
+           Every development question receives an explicit
+           numeric value.
+
+           New correction:
+           0
+
+           Existing correction:
+           stored score
+
+           This prevents a visible "0" in the input from
+           actually being undefined inside developmentScores.
            =================================================== */
 
         const loadedScores:
@@ -437,24 +450,42 @@ export default function AttemptGradingPage() {
             {};
 
           for (
-            const [
-              questionId,
-              score,
-            ] of Object.entries(
-              existingScores
-            )
+            const question of
+            questionData
           ) {
             if (
-              typeof score ===
+              question.type !==
+              "development"
+            ) {
+              continue;
+            }
+
+            const existingScore =
+              existingScores[
+                question.id
+              ];
+
+            if (
+              typeof existingScore ===
                 "number" &&
               Number.isFinite(
-                score
+                existingScore
               )
             ) {
               loadedScores[
-                questionId
+                question.id
               ] =
-                score;
+                roundScore(
+                  clampScore(
+                    existingScore,
+                    question.points
+                  )
+                );
+            } else {
+              loadedScores[
+                question.id
+              ] =
+                0;
             }
           }
         }
@@ -968,7 +999,7 @@ export default function AttemptGradingPage() {
   ) {
     if (
       question.type !==
-      "development" ||
+        "development" ||
       !canEditGrading
     ) {
       return;
@@ -984,6 +1015,10 @@ export default function AttemptGradingPage() {
 
     const raw =
       event.target.value;
+
+    /* =====================================================
+       Empty input = zero
+       ===================================================== */
 
     if (
       raw ===
@@ -1016,6 +1051,19 @@ export default function AttemptGradingPage() {
       return;
     }
 
+    /* =====================================================
+       Clamp immediately:
+       0 <= score <= question.points
+       ===================================================== */
+
+    const safeScore =
+      roundScore(
+        clampScore(
+          parsed,
+          question.points
+        )
+      );
+
     setDevelopmentScores(
       (
         previous
@@ -1023,12 +1071,7 @@ export default function AttemptGradingPage() {
         ...previous,
 
         [question.id]:
-          roundScore(
-            clampScore(
-              parsed,
-              question.points
-            )
-          ),
+          safeScore,
       })
     );
   }
@@ -1042,10 +1085,17 @@ export default function AttemptGradingPage() {
       const question of
       developmentQuestions
     ) {
+      /*
+       * Important:
+       *
+       * A score that has never been modified
+       * is still a valid zero.
+       */
       const score =
         developmentScores[
           question.id
-        ];
+        ] ??
+        0;
 
       if (
         typeof score !==
@@ -1090,6 +1140,10 @@ export default function AttemptGradingPage() {
       ""
     );
 
+    /* =====================================================
+       Client validation
+       ===================================================== */
+
     if (
       !validateDevelopmentScores()
     ) {
@@ -1107,6 +1161,13 @@ export default function AttemptGradingPage() {
     );
 
     try {
+      /* ===================================================
+         Normalize every development score
+
+         Every development question is included explicitly,
+         including questions receiving 0.
+         =================================================== */
+
       const normalizedScores:
         DevelopmentScores =
         {};
@@ -1115,20 +1176,29 @@ export default function AttemptGradingPage() {
         const question of
         developmentQuestions
       ) {
+        const score =
+          developmentScores[
+            question.id
+          ] ??
+          0;
+
         normalizedScores[
           question.id
         ] =
           roundScore(
             clampScore(
-              developmentScores[
-                question.id
-              ] ??
-                0,
-
+              score,
               question.points
             )
           );
       }
+
+      /* ===================================================
+         Service
+
+         Security and final calculation happen again
+         inside attempts.ts.
+         =================================================== */
 
       const result =
         await gradeAttempt({
@@ -1141,6 +1211,10 @@ export default function AttemptGradingPage() {
           developmentScores:
             normalizedScores,
         });
+
+      /* ===================================================
+         Service error
+         =================================================== */
 
       if (
         !result.success ||
@@ -1158,6 +1232,10 @@ export default function AttemptGradingPage() {
 
         return;
       }
+
+      /* ===================================================
+         Update local attempt
+         =================================================== */
 
       setAttempt(
         result.attempt
@@ -1516,6 +1594,12 @@ export default function AttemptGradingPage() {
                       ?.trim() ||
                     "";
 
+                  const developmentScore =
+                    developmentScores[
+                      question.id
+                    ] ??
+                    0;
+
                   return (
                     <article
                       key={
@@ -1558,10 +1642,7 @@ export default function AttemptGradingPage() {
                           }
                         >
                           {
-                            developmentScores[
-                              question.id
-                            ] ??
-                            0
+                            developmentScore
                           }
                           {" / "}
                           {
@@ -1654,10 +1735,7 @@ export default function AttemptGradingPage() {
                             }
                             step="0.01"
                             value={
-                              developmentScores[
-                                question.id
-                              ] ??
-                              0
+                              developmentScore
                             }
                             disabled={
                               !canEditGrading
