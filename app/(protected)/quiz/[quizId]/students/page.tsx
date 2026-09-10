@@ -1,5 +1,25 @@
 "use client";
 
+/**
+ * ============================================================================
+ * ULearn - Students and grading page
+ * ============================================================================
+ *
+ * Responsibilities:
+ * • Display every attempt for one quiz.
+ * • Update attempts in real time using Firestore.
+ * • Display quiz attempt statistics.
+ * • Allow the teacher to open submitted / graded attempts.
+ * • Export all corrected copies as PDF files inside one ZIP archive.
+ *
+ * ZIP export rule:
+ * • The button is always visible.
+ * • It remains disabled until ALL attempts are graded.
+ * • Once the last attempt is graded, Firestore updates the page in real time
+ *   and automatically enables the ZIP button.
+ * ============================================================================
+ */
+
 import {
   useEffect,
   useMemo,
@@ -18,7 +38,17 @@ import {
   where,
 } from "firebase/firestore";
 
+import {
+  pdf,
+} from "@react-pdf/renderer";
+
+import JSZip from "jszip";
+
 import AppLoading from "@/components/AppLoading";
+
+import AttemptCorrectionPdf, {
+  type PdfLanguage,
+} from "@/components/AttemptCorrectionPdf";
 
 import {
   db,
@@ -34,6 +64,10 @@ import {
   type Attempt,
   type QuizAttemptStats,
 } from "@/lib/services/attempts";
+
+import {
+  getQuizQuestions,
+} from "@/lib/services/questions";
 
 import {
   useTeacher,
@@ -67,20 +101,15 @@ type StatusFilter =
 const EMPTY_STATS:
   QuizAttemptStats = {
   total: 0,
-
   inProgress: 0,
-
   submitted: 0,
-
   graded: 0,
-
   finished: 0,
-
   waitingForCorrection: 0,
 };
 
 /* =========================================================
-   Helpers
+   Student initials
    ========================================================= */
 
 function getStudentInitials(
@@ -93,15 +122,13 @@ function getStudentInitials(
       .filter(Boolean);
 
   if (
-    words.length ===
-    0
+    words.length === 0
   ) {
     return "U";
   }
 
   if (
-    words.length ===
-    1
+    words.length === 1
   ) {
     return words[0]
       .charAt(0)
@@ -109,8 +136,7 @@ function getStudentInitials(
   }
 
   return (
-    words[0]
-      .charAt(0) +
+    words[0].charAt(0) +
     words[
       words.length - 1
     ].charAt(0)
@@ -132,9 +158,7 @@ function formatAttemptDate(
   }
 
   const date =
-    new Date(
-      value
-    );
+    new Date(value);
 
   if (
     Number.isNaN(
@@ -144,9 +168,6 @@ function formatAttemptDate(
     return "—";
   }
 
-  /*
-   * English remains the default language.
-   */
   const locale =
     language === "fr"
       ? "fr-CA"
@@ -176,7 +197,7 @@ function formatAttemptDate(
 }
 
 /* =========================================================
-   Calculate statistics
+   Statistics
    ========================================================= */
 
 function calculateStats(
@@ -234,21 +255,110 @@ function calculateStats(
 
     graded,
 
-    /*
-     * Submitted + graded students
-     * have finished taking the quiz.
-     */
     finished:
       submitted +
       graded,
 
-    /*
-     * Submitted means:
-     * waiting for manual teacher correction.
-     */
     waitingForCorrection:
       submitted,
   };
+}
+
+/* =========================================================
+   PDF language
+   ========================================================= */
+
+function getPdfLanguage(
+  language: string
+): PdfLanguage {
+  if (
+    language === "fr"
+  ) {
+    return "fr";
+  }
+
+  if (
+    language === "rn"
+  ) {
+    return "rn";
+  }
+
+  return "en";
+}
+
+/* =========================================================
+   Safe filenames
+   ========================================================= */
+
+function sanitizeFileName(
+  value: string
+) {
+  const sanitized =
+    value
+      .normalize("NFD")
+      .replace(
+        /[\u0300-\u036f]/g,
+        ""
+      )
+      .replace(
+        /[^a-zA-Z0-9-_ ]/g,
+        ""
+      )
+      .trim()
+      .replace(
+        /\s+/g,
+        "-"
+      );
+
+  return (
+    sanitized ||
+    "document"
+  );
+}
+
+/* =========================================================
+   Browser download
+   ========================================================= */
+
+function downloadBlob(
+  blob: Blob,
+  fileName: string
+) {
+  const url =
+    URL.createObjectURL(
+      blob
+    );
+
+  const link =
+    document.createElement(
+      "a"
+    );
+
+  link.href =
+    url;
+
+  link.download =
+    fileName;
+
+  link.style.display =
+    "none";
+
+  document.body.appendChild(
+    link
+  );
+
+  link.click();
+
+  link.remove();
+
+  window.setTimeout(
+    () => {
+      URL.revokeObjectURL(
+        url
+      );
+    },
+    1000
+  );
 }
 
 /* =========================================================
@@ -336,6 +446,12 @@ export default function StudentsPage() {
     useState("");
 
   const [
+    successMessage,
+    setSuccessMessage,
+  ] =
+    useState("");
+
+  const [
     navigationTarget,
     setNavigationTarget,
   ] =
@@ -351,8 +467,14 @@ export default function StudentsPage() {
       "all"
     );
 
+  const [
+    generatingZip,
+    setGeneratingZip,
+  ] =
+    useState(false);
+
   /* =========================================================
-     Load quiz once
+     Load quiz
      ========================================================= */
 
   useEffect(() => {
@@ -431,7 +553,7 @@ export default function StudentsPage() {
   ]);
 
   /* =========================================================
-     Real-time attempts listener
+     Real-time attempts
      ========================================================= */
 
   useEffect(() => {
@@ -457,20 +579,6 @@ export default function StudentsPage() {
       false
     );
 
-    /*
-     * We listen to every attempt belonging
-     * to this quiz.
-     *
-     * Any Firestore update to:
-     *
-     * - answers
-     * - status
-     * - score
-     * - submittedAt
-     * - gradedAt
-     *
-     * will automatically trigger this listener.
-     */
     const attemptsQuery =
       query(
         collection(
@@ -491,22 +599,11 @@ export default function StudentsPage() {
 
         async () => {
           try {
-            /*
-             * Reuse the existing attempts
-             * service mapping.
-             *
-             * This keeps Firestore document
-             * parsing centralized inside
-             * attempts.ts.
-             */
             const realtimeAttempts =
               await getQuizAttempts(
                 quizId
               );
 
-            /*
-             * Sort newest attempts first.
-             */
             const sortedAttempts =
               [
                 ...realtimeAttempts,
@@ -602,8 +699,7 @@ export default function StudentsPage() {
   const filteredAttempts =
     useMemo(() => {
       if (
-        filter ===
-        "all"
+        filter === "all"
       ) {
         return attempts;
       }
@@ -621,6 +717,16 @@ export default function StudentsPage() {
     ]);
 
   /* =========================================================
+     ZIP availability
+     ========================================================= */
+
+  const canDownloadAllCorrections =
+    stats.total >
+      0 &&
+    stats.graded ===
+      stats.total;
+
+  /* =========================================================
      Loading
      ========================================================= */
 
@@ -636,6 +742,25 @@ export default function StudentsPage() {
         )}
         subtitle={t(
           "students.loading.subtitle"
+        )}
+      />
+    );
+  }
+
+  /* =========================================================
+     ZIP generation loading
+     ========================================================= */
+
+  if (
+    generatingZip
+  ) {
+    return (
+      <AppLoading
+        title={t(
+          "students.zip.loadingTitle"
+        )}
+        subtitle={t(
+          "students.zip.loadingSubtitle"
         )}
       />
     );
@@ -726,7 +851,8 @@ export default function StudentsPage() {
 
   function handleBack() {
     if (
-      navigationTarget
+      navigationTarget ||
+      generatingZip
     ) {
       return;
     }
@@ -745,15 +871,12 @@ export default function StudentsPage() {
       Attempt
   ) {
     if (
-      navigationTarget
+      navigationTarget ||
+      generatingZip
     ) {
       return;
     }
 
-    /*
-     * A running attempt cannot yet
-     * be opened for correction.
-     */
     if (
       attempt.status ===
       "in_progress"
@@ -768,6 +891,185 @@ export default function StudentsPage() {
     router.push(
       `/quiz/${quizId}/students/${attempt.id}`
     );
+  }
+
+  /* =========================================================
+     ZIP export
+     ========================================================= */
+
+  async function handleDownloadAllCorrections() {
+    if (
+      generatingZip ||
+      !canDownloadAllCorrections
+    ) {
+      return;
+    }
+
+    setMessage(
+      ""
+    );
+
+    setSuccessMessage(
+      ""
+    );
+
+    setGeneratingZip(
+      true
+    );
+
+    try {
+      const questions =
+        await getQuizQuestions(
+          quiz.id
+        );
+
+      const gradedAttempts =
+        attempts.filter(
+          (
+            attempt
+          ) =>
+            attempt.status ===
+              "graded" &&
+            attempt.finalScore !==
+              null
+        );
+
+      if (
+        gradedAttempts.length !==
+          attempts.length ||
+        gradedAttempts.length ===
+          0
+      ) {
+        setMessage(
+          t(
+            "students.zip.notReady"
+          )
+        );
+
+        return;
+      }
+
+      const zip =
+        new JSZip();
+
+      const pdfLanguage =
+        getPdfLanguage(
+          String(
+            language
+          )
+        );
+
+      const correctionFolder =
+        zip.folder(
+          "ULearn-corrections"
+        );
+
+      if (
+        !correctionFolder
+      ) {
+        throw new Error(
+          "Unable to create ZIP correction folder."
+        );
+      }
+
+      for (
+        let index = 0;
+        index <
+        gradedAttempts.length;
+        index += 1
+      ) {
+        const attempt =
+          gradedAttempts[
+            index
+          ];
+
+        const pdfDocument =
+          (
+            <AttemptCorrectionPdf
+              quiz={
+                quiz
+              }
+              attempt={
+                attempt
+              }
+              questions={
+                questions
+              }
+              language={
+                pdfLanguage
+              }
+            />
+          );
+
+        const correctionBlob =
+          await pdf(
+            pdfDocument
+          ).toBlob();
+
+        const studentName =
+          sanitizeFileName(
+            attempt.studentName
+          );
+
+        const position =
+          String(
+            index + 1
+          ).padStart(
+            2,
+            "0"
+          );
+
+        correctionFolder.file(
+          `${position}-${studentName}-correction.pdf`,
+          correctionBlob
+        );
+      }
+
+      const zipBlob =
+        await zip.generateAsync({
+          type:
+            "blob",
+
+          compression:
+            "DEFLATE",
+
+          compressionOptions: {
+            level:
+              6,
+          },
+        });
+
+      const quizName =
+        sanitizeFileName(
+          quiz.title
+        );
+
+      downloadBlob(
+        zipBlob,
+        `ULearn-${quizName}-corrections.zip`
+      );
+
+      setSuccessMessage(
+        t(
+          "students.zip.success"
+        )
+      );
+    } catch (error) {
+      console.error(
+        "Unable to generate corrected copies ZIP:",
+        error
+      );
+
+      setMessage(
+        t(
+          "students.zip.error"
+        )
+      );
+    } finally {
+      setGeneratingZip(
+        false
+      );
+    }
   }
 
   /* =========================================================
@@ -844,7 +1146,7 @@ export default function StudentsPage() {
         }
       >
         {/* =================================================
-            Top
+            Top bar
             ================================================= */}
 
         <div
@@ -1001,7 +1303,64 @@ export default function StudentsPage() {
         </section>
 
         {/* =================================================
-            Error
+            Corrected copies export
+            ================================================= */}
+
+        <section
+          className={
+            styles.exportStatus
+          }
+        >
+          <div
+            className={
+              styles.exportInfo
+            }
+          >
+            <span>
+              {t(
+                "students.zip.statusLabel"
+              )}
+            </span>
+
+            <strong>
+              {
+                stats.graded
+              }
+              {" / "}
+              {
+                stats.total
+              }
+            </strong>
+          </div>
+
+          <button
+            type="button"
+            className="app-button app-button-action"
+            disabled={
+              !canDownloadAllCorrections
+            }
+            onClick={
+              handleDownloadAllCorrections
+            }
+            title={
+              canDownloadAllCorrections
+                ? t(
+                    "students.zip.readyHint"
+                  )
+                : t(
+                    "students.zip.disabledHint"
+                  )
+            }
+          >
+            ↓{" "}
+            {t(
+              "students.zip.button"
+            )}
+          </button>
+        </section>
+
+        {/* =================================================
+            Messages
             ================================================= */}
 
         {message && (
@@ -1013,6 +1372,19 @@ export default function StudentsPage() {
           >
             {
               message
+            }
+          </p>
+        )}
+
+        {successMessage && (
+          <p
+            className={
+              styles.successMessage
+            }
+            role="status"
+          >
+            {
+              successMessage
             }
           </p>
         )}
@@ -1269,10 +1641,6 @@ export default function StudentsPage() {
                           styles.studentRow
                         }
                       >
-                        {/* =================================
-                            Identity
-                            ================================= */}
-
                         <div
                           className={
                             styles.studentMain
@@ -1308,10 +1676,6 @@ export default function StudentsPage() {
                           </div>
                         </div>
 
-                        {/* =================================
-                            Progress
-                            ================================= */}
-
                         <div
                           className={
                             styles.studentMetric
@@ -1334,10 +1698,6 @@ export default function StudentsPage() {
                           </strong>
                         </div>
 
-                        {/* =================================
-                            Started
-                            ================================= */}
-
                         <div
                           className={
                             styles.studentMetric
@@ -1356,10 +1716,6 @@ export default function StudentsPage() {
                             )}
                           </strong>
                         </div>
-
-                        {/* =================================
-                            Submitted
-                            ================================= */}
 
                         <div
                           className={
@@ -1380,10 +1736,6 @@ export default function StudentsPage() {
                           </strong>
                         </div>
 
-                        {/* =================================
-                            Score
-                            ================================= */}
-
                         <div
                           className={
                             styles.studentMetric
@@ -1401,10 +1753,6 @@ export default function StudentsPage() {
                               : "—"}
                           </strong>
                         </div>
-
-                        {/* =================================
-                            Status + action
-                            ================================= */}
 
                         <div
                           className={

@@ -1,7 +1,14 @@
 .page {
   min-height: 100vh;
+  min-height: 100dvh;
 
-  padding: 2rem 2%;
+  width: 100%;
+
+  padding:
+    2rem
+    2%;
+
+  overflow-x: hidden;
 
   background:
     var(--page-gradient);
@@ -23,18 +30,26 @@
       100vh - 4rem
     );
 
+  min-height:
+    calc(
+      100dvh - 4rem
+    );
+
   margin:
     0 auto;
 
-  padding: 2rem;
+  padding:
+    2rem;
 
   border:
     1px solid
     var(--border-color);
 
-  border-radius: 28px;
+  border-radius:
+    28px;
 
-  background: #ffffff;
+  background:
+    #ffffff;
 
   box-shadow:
     var(--shadow);
@@ -45,14 +60,23 @@
    ========================================================= */
 
 .topBar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+  display:
+    flex;
 
-  gap: 1rem;
+  align-items:
+    center;
+
+  justify-content:
+    space-between;
+
+  gap:
+    1rem;
 }
 
 .topCount {
+  flex-shrink:
+    0;
+
   padding:
     0.6rem
     0.85rem;
@@ -61,7 +85,8 @@
     1px solid
     var(--border-color);
 
-  border-radius: 999px;
+  border-radius:
+    999px;
 
   background:
     var(--soft-purple);
@@ -69,8 +94,14 @@
   color:
     var(--main-color);
 
-  font-size: 0.76rem;
-  font-weight: 900;
+  font-size:
+    0.76rem;
+
+  font-weight:
+    900;
+
+  text-align:
+    center;
 }
 
 /* =========================================================
@@ -84,9 +115,11 @@
 
 .badge,
 .sectionEyebrow {
-  width: fit-content;
+  width:
+    fit-content;
 
-  display: inline-flex;
+  display:
+    inline-flex;
 
   margin-bottom:
     0.7rem;
@@ -107,7 +140,8 @@
   font-size:
     0.72rem;
 
-  font-weight: 900;
+  font-weight:
+    900;
 }
 
 .header h1 {
@@ -124,9 +158,11 @@
       4rem
     );
 
-  font-weight: 900;
+  font-weight:
+    900;
 
-  line-height: 1;
+  line-height:
+    1;
 
   letter-spacing:
     -1.5px;
@@ -159,7 +195,8 @@
    ========================================================= */
 
 .stats {
-  display: grid;
+  display:
+    grid;
 
   grid-template-columns:
     repeat(
@@ -170,14 +207,16 @@
       )
     );
 
-  gap: 0.9rem;
+  gap:
+    0.9rem;
 
   margin-bottom:
-    2rem;
+    1rem;
 }
 
 .stats article {
-  min-width: 0;
+  min-width:
+    0;
 
   padding:
     1rem;
@@ -194,7 +233,8 @@
 }
 
 .stats span {
-  display: block;
+  display:
+    block;
 
   margin-bottom:
     0.35rem;
@@ -210,11 +250,13 @@
   font-size:
     0.68rem;
 
-  font-weight: 800;
+  font-weight:
+    800;
 }
 
 .stats strong {
-  display: block;
+  display:
+    block;
 
   color:
     var(--main-color);
@@ -222,14 +264,110 @@
   font-size:
     1.05rem;
 
-  font-weight: 900;
+  font-weight:
+    900;
 }
 
 /* =========================================================
-   Message
+   Corrected copies export
    ========================================================= */
 
-.message {
+.exportStatus {
+  display:
+    flex;
+
+  align-items:
+    center;
+
+  justify-content:
+    space-between;
+
+  gap:
+    1rem;
+
+  margin-bottom:
+    1.5rem;
+
+  padding:
+    0.9rem
+    1rem;
+
+  border:
+    1px solid
+    var(--border-color);
+
+  border-radius:
+    14px;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(
+        42,
+        3,
+        105,
+        0.045
+      ),
+      #ffffff
+    );
+}
+
+.exportInfo {
+  min-width:
+    90px;
+}
+
+.exportInfo span {
+  display:
+    block;
+
+  margin-bottom:
+    0.2rem;
+
+  color:
+    rgba(
+      23,
+      23,
+      23,
+      0.52
+    );
+
+  font-size:
+    0.66rem;
+
+  font-weight:
+    800;
+}
+
+.exportInfo strong {
+  display:
+    block;
+
+  color:
+    var(--main-color);
+
+  font-size:
+    0.95rem;
+
+  font-weight:
+    900;
+}
+
+.exportStatus
+  :global(.app-button) {
+  min-width:
+    250px;
+
+  flex-shrink:
+    0;
+}
+
+/* =========================================================
+   Messages
+   ========================================================= */
+
+.message,
+.successMessage {
   margin-bottom:
     1.5rem;
 
@@ -244,19 +382,35 @@
   border-radius:
     13px;
 
+  font-size:
+    0.8rem;
+
+  font-weight:
+    800;
+
+  line-height:
+    1.55;
+}
+
+.message {
+  background:
+    rgba(
+      176,
+      0,
+      32,
+      0.05
+    );
+
+  color:
+    var(--danger-color);
+}
+
+.successMessage {
   background:
     var(--soft-purple);
 
   color:
     var(--main-color);
-
-  font-size:
-    0.8rem;
-
-  font-weight: 800;
-
-  line-height:
-    1.55;
 }
 
 /* =========================================================
@@ -291,11 +445,17 @@
 }
 
 .filterHeading {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
+  display:
+    flex;
 
-  gap: 1rem;
+  justify-content:
+    space-between;
+
+  align-items:
+    flex-end;
+
+  gap:
+    1rem;
 
   margin-bottom:
     1rem;
@@ -308,7 +468,8 @@
   font-size:
     1.4rem;
 
-  font-weight: 900;
+  font-weight:
+    900;
 }
 
 .resultCount {
@@ -323,23 +484,39 @@
   font-size:
     0.72rem;
 
-  font-weight: 800;
+  font-weight:
+    800;
 }
 
 .filters {
-  display: flex;
-  align-items: center;
+  display:
+    flex;
 
-  flex-wrap: wrap;
+  align-items:
+    center;
 
-  gap: 0.6rem;
+  flex-wrap:
+    wrap;
+
+  gap:
+    0.6rem;
 }
 
 .filters button {
-  display: inline-flex;
-  align-items: center;
+  display:
+    inline-flex;
 
-  gap: 0.5rem;
+  align-items:
+    center;
+
+  justify-content:
+    center;
+
+  gap:
+    0.5rem;
+
+  min-height:
+    42px;
 
   padding:
     0.65rem
@@ -361,9 +538,14 @@
   font-size:
     0.72rem;
 
-  font-weight: 900;
+  font-weight:
+    900;
 
-  cursor: pointer;
+  line-height:
+    1.2;
+
+  cursor:
+    pointer;
 
   transition:
     transform 0.2s ease,
@@ -388,11 +570,17 @@
 }
 
 .filters button span {
-  min-width: 24px;
+  min-width:
+    24px;
 
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
+  display:
+    inline-flex;
+
+  align-items:
+    center;
+
+  justify-content:
+    center;
 
   padding:
     0.15rem
@@ -440,13 +628,16 @@
    ========================================================= */
 
 .studentList {
-  display: grid;
+  display:
+    grid;
 
-  gap: 0.8rem;
+  gap:
+    0.8rem;
 }
 
 .studentRow {
-  display: grid;
+  display:
+    grid;
 
   grid-template-columns:
     minmax(
@@ -474,9 +665,11 @@
       auto
     );
 
-  gap: 0.9rem;
+  gap:
+    0.9rem;
 
-  align-items: center;
+  align-items:
+    center;
 
   padding:
     1rem;
@@ -511,12 +704,12 @@
 
   box-shadow:
     0 10px 28px
-      rgba(
-        42,
-        3,
-        105,
-        0.06
-      );
+    rgba(
+      42,
+      3,
+      105,
+      0.06
+    );
 }
 
 /* =========================================================
@@ -524,25 +717,40 @@
    ========================================================= */
 
 .studentMain {
-  min-width: 0;
+  min-width:
+    0;
 
-  display: flex;
-  align-items: center;
+  display:
+    flex;
 
-  gap: 0.75rem;
+  align-items:
+    center;
+
+  gap:
+    0.75rem;
 }
 
 .studentAvatar {
-  width: 44px;
-  height: 44px;
+  width:
+    44px;
 
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
+  height:
+    44px;
 
-  flex-shrink: 0;
+  display:
+    inline-flex;
 
-  border-radius: 50%;
+  align-items:
+    center;
+
+  justify-content:
+    center;
+
+  flex-shrink:
+    0;
+
+  border-radius:
+    50%;
 
   background:
     var(--main-color);
@@ -553,15 +761,18 @@
   font-size:
     0.78rem;
 
-  font-weight: 900;
+  font-weight:
+    900;
 }
 
 .studentIdentity {
-  min-width: 0;
+  min-width:
+    0;
 }
 
 .studentIdentity strong {
-  display: block;
+  display:
+    block;
 
   color:
     var(--main-color);
@@ -569,14 +780,16 @@
   font-size:
     0.82rem;
 
-  font-weight: 900;
+  font-weight:
+    900;
 
   overflow-wrap:
     anywhere;
 }
 
 .studentIdentity span {
-  display: block;
+  display:
+    block;
 
   margin-top:
     0.15rem;
@@ -592,7 +805,8 @@
   font-size:
     0.66rem;
 
-  font-weight: 600;
+  font-weight:
+    600;
 
   overflow-wrap:
     anywhere;
@@ -603,11 +817,13 @@
    ========================================================= */
 
 .studentMetric {
-  min-width: 0;
+  min-width:
+    0;
 }
 
 .studentMetric span {
-  display: block;
+  display:
+    block;
 
   margin-bottom:
     0.25rem;
@@ -623,11 +839,13 @@
   font-size:
     0.62rem;
 
-  font-weight: 800;
+  font-weight:
+    800;
 }
 
 .studentMetric strong {
-  display: block;
+  display:
+    block;
 
   color:
     var(--main-color);
@@ -635,7 +853,8 @@
   font-size:
     0.72rem;
 
-  font-weight: 900;
+  font-weight:
+    900;
 
   line-height:
     1.45;
@@ -649,45 +868,61 @@
    ========================================================= */
 
 .studentActions {
-  display: grid;
+  min-width:
+    0;
 
-  justify-items: stretch;
+  display:
+    grid;
 
-  gap: 0.55rem;
+  justify-items:
+    stretch;
+
+  gap:
+    0.55rem;
 }
 
 .studentActions
   :global(.app-button) {
-  width: 100%;
+  width:
+    100%;
 
-  white-space: nowrap;
+  min-width:
+    0;
+
+  white-space:
+    normal;
 }
-
-/*
- * Attempts still in progress cannot yet
- * be opened for teacher grading.
- */
 
 .studentActions
   :global(.app-button:disabled) {
-  opacity: 0.5;
+  opacity:
+    0.5;
 
-  cursor: not-allowed;
+  cursor:
+    not-allowed;
 
-  transform: none;
+  transform:
+    none;
 }
 
 .studentActions
   :global(.app-button:disabled:hover) {
-  transform: none;
+  transform:
+    none;
 }
 
 .statusBadge {
-  width: 100%;
+  width:
+    100%;
 
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
+  display:
+    inline-flex;
+
+  align-items:
+    center;
+
+  justify-content:
+    center;
 
   padding:
     0.45rem
@@ -699,9 +934,14 @@
   font-size:
     0.65rem;
 
-  font-weight: 900;
+  font-weight:
+    900;
 
-  text-align: center;
+  line-height:
+    1.3;
+
+  text-align:
+    center;
 }
 
 .statusProgress {
@@ -753,10 +993,17 @@
   min-height:
     360px;
 
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
+  display:
+    flex;
+
+  flex-direction:
+    column;
+
+  align-items:
+    center;
+
+  justify-content:
+    center;
 
   padding:
     2.5rem;
@@ -780,17 +1027,26 @@
       #ffffff 55%
     );
 
-  text-align: center;
+  text-align:
+    center;
 }
 
 .emptyIcon,
 .accessIcon {
-  width: 72px;
-  height: 72px;
+  width:
+    72px;
 
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
+  height:
+    72px;
+
+  display:
+    inline-flex;
+
+  align-items:
+    center;
+
+  justify-content:
+    center;
 
   margin-bottom:
     1.2rem;
@@ -818,7 +1074,8 @@
   font-size:
     1.7rem;
 
-  font-weight: 900;
+  font-weight:
+    900;
 }
 
 .emptyState h2,
@@ -832,7 +1089,8 @@
   font-size:
     1.7rem;
 
-  font-weight: 900;
+  font-weight:
+    900;
 }
 
 .emptyState p,
@@ -871,11 +1129,12 @@
   font-size:
     1rem;
 
-  font-weight: 900;
+  font-weight:
+    900;
 }
 
 /* =========================================================
-   Tablet
+   Medium desktop / tablet
    ========================================================= */
 
 @media (
@@ -911,16 +1170,6 @@
       );
   }
 
-  /*
-   * Keep:
-   * - identity
-   * - answers
-   * - start date
-   * - actions
-   *
-   * Hide submitted date and score at this width.
-   */
-
   .studentRow
     .studentMetric:nth-of-type(
       3
@@ -929,7 +1178,8 @@
     .studentMetric:nth-of-type(
       4
     ) {
-    display: none;
+    display:
+      none;
   }
 }
 
@@ -961,12 +1211,19 @@
   }
 
   .studentMetric {
-    display: none;
+    display:
+      none;
   }
 
   .studentActions {
     min-width:
       165px;
+  }
+
+  .exportStatus
+    :global(.app-button) {
+    min-width:
+      220px;
   }
 }
 
@@ -988,6 +1245,11 @@
         100vh - 2rem
       );
 
+    min-height:
+      calc(
+        100dvh - 2rem
+      );
+
     padding:
       1.2rem;
 
@@ -1005,12 +1267,13 @@
 
   .topBar
     :global(.app-button) {
-    width: 100%;
+    width:
+      100%;
   }
 
   .topCount {
-    text-align:
-      center;
+    width:
+      100%;
   }
 
   .header {
@@ -1028,6 +1291,23 @@
       1fr;
   }
 
+  .exportStatus {
+    align-items:
+      stretch;
+
+    flex-direction:
+      column;
+  }
+
+  .exportStatus
+    :global(.app-button) {
+    width:
+      100%;
+
+    min-width:
+      0;
+  }
+
   .filterHeading {
     align-items:
       flex-start;
@@ -1037,7 +1317,11 @@
   }
 
   .filters {
-    display: grid;
+    width:
+      100%;
+
+    display:
+      grid;
 
     grid-template-columns:
       repeat(
@@ -1047,11 +1331,15 @@
           1fr
         )
       );
-
-    width: 100%;
   }
 
   .filters button {
+    width:
+      100%;
+
+    min-width:
+      0;
+
     justify-content:
       space-between;
   }
@@ -1065,7 +1353,8 @@
   }
 
   .studentActions {
-    min-width: 0;
+    min-width:
+      0;
 
     grid-template-columns:
       1fr;
@@ -1073,7 +1362,11 @@
 
   .studentActions
     :global(.app-button) {
-    width: 100%;
+    width:
+      100%;
+
+    min-width:
+      0;
   }
 
   .emptyState,
@@ -1104,6 +1397,14 @@
       1rem;
   }
 
+  .header h1 {
+    font-size:
+      2rem;
+
+    letter-spacing:
+      -1px;
+  }
+
   .filters {
     grid-template-columns:
       1fr;
@@ -1121,54 +1422,40 @@
     height:
       40px;
   }
+
+  .exportStatus {
+    padding:
+      0.8rem;
+  }
 }
+
 /* =========================================================
-   Global scrollbar
+   Very small phones
    ========================================================= */
 
-:global(html) {
-  scrollbar-color:
-    var(--main-color)
-    var(--soft-purple);
+@media (
+  max-width: 380px
+) {
+  .page {
+    padding:
+      0.4rem;
+  }
 
-  scrollbar-width:
-    thin;
-}
+  .card {
+    padding:
+      0.8rem;
 
-:global(body) {
-  scrollbar-color:
-    var(--main-color)
-    var(--soft-purple);
+    border-radius:
+      18px;
+  }
 
-  scrollbar-width:
-    thin;
-}
+  .header h1 {
+    font-size:
+      1.8rem;
+  }
 
-/* Chrome / Edge / Safari */
-
-:global(*)::-webkit-scrollbar {
-  width: 10px;
-  height: 10px;
-}
-
-:global(*)::-webkit-scrollbar-track {
-  background:
-    var(--soft-purple);
-}
-
-:global(*)::-webkit-scrollbar-thumb {
-  border:
-    2px solid
-    var(--soft-purple);
-
-  border-radius:
-    999px;
-
-  background:
-    var(--main-color);
-}
-
-:global(*)::-webkit-scrollbar-thumb:hover {
-  background:
-    var(--main-color-hover);
+  .filters button {
+    font-size:
+      0.68rem;
+  }
 }

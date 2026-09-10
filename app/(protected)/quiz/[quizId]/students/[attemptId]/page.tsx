@@ -18,6 +18,7 @@
  * • Prevent development scores from exceeding question points.
  * • Save grading through lib/services/attempts.ts.
  * • Allow an already graded development attempt to be updated.
+ * • Generate and download a professional corrected PDF.
  *
  * IMPORTANT:
  * Firestore writes are intentionally NOT performed directly from this page.
@@ -37,7 +38,15 @@ import {
   useRouter,
 } from "next/navigation";
 
+import {
+  pdf,
+} from "@react-pdf/renderer";
+
 import AppLoading from "@/components/AppLoading";
+
+import AttemptCorrectionPdf, {
+  type PdfLanguage,
+} from "@/components/AttemptCorrectionPdf";
 
 import {
   getQuiz,
@@ -79,7 +88,8 @@ type DevelopmentScores =
 type ProcessingAction =
   | ""
   | "back"
-  | "saving";
+  | "saving"
+  | "pdf";
 
 /* =========================================================
    Helpers
@@ -119,6 +129,58 @@ function getChoiceLetter(
   return String.fromCharCode(
     65 + index
   );
+}
+
+/* =========================================================
+   PDF helpers
+   ========================================================= */
+
+function sanitizeFileName(
+  value: string
+) {
+  const sanitized =
+    value
+      .normalize(
+        "NFD"
+      )
+      .replace(
+        /[\u0300-\u036f]/g,
+        ""
+      )
+      .replace(
+        /[^a-zA-Z0-9-_ ]/g,
+        ""
+      )
+      .trim()
+      .replace(
+        /\s+/g,
+        "-"
+      );
+
+  return (
+    sanitized ||
+    "document"
+  );
+}
+
+function getPdfLanguage(
+  language: string
+): PdfLanguage {
+  if (
+    language ===
+    "fr"
+  ) {
+    return "fr";
+  }
+
+  if (
+    language ===
+    "rn"
+  ) {
+    return "rn";
+  }
+
+  return "en";
 }
 
 /* =========================================================
@@ -273,6 +335,7 @@ export default function AttemptGradingPage() {
 
   const {
     t,
+    language,
   } =
     useLanguage();
 
@@ -422,19 +485,6 @@ export default function AttemptGradingPage() {
 
         /* ===================================================
            Development scores
-
-           IMPORTANT:
-           Every development question receives an explicit
-           numeric value.
-
-           New correction:
-           0
-
-           Existing correction:
-           stored score
-
-           This prevents a visible "0" in the input from
-           actually being undefined inside developmentScores.
            =================================================== */
 
         const loadedScores:
@@ -783,6 +833,26 @@ export default function AttemptGradingPage() {
     );
 
   /* =========================================================
+     PDF permission
+     ========================================================= */
+
+  /*
+   * The PDF button is ALWAYS visible.
+   *
+   * It becomes active only after the grading has been
+   * finalized and a finalScore exists.
+   */
+
+  const canDownloadPdf =
+    Boolean(
+      attempt &&
+      attempt.status ===
+        "graded" &&
+      typeof attempt.finalScore ===
+        "number"
+    );
+
+  /* =========================================================
      Student initials
      ========================================================= */
 
@@ -798,7 +868,9 @@ export default function AttemptGradingPage() {
         attempt.studentName
           .trim()
           .split(/\s+/)
-          .filter(Boolean);
+          .filter(
+            Boolean
+          );
 
       if (
         words.length ===
@@ -812,17 +884,23 @@ export default function AttemptGradingPage() {
         1
       ) {
         return words[0]
-          .charAt(0)
+          .charAt(
+            0
+          )
           .toUpperCase();
       }
 
       return (
         words[0]
-          .charAt(0) +
+          .charAt(
+            0
+          ) +
         words[
           words.length -
-          1
-        ].charAt(0)
+            1
+        ].charAt(
+          0
+        )
       ).toUpperCase();
     }, [
       attempt,
@@ -873,6 +951,22 @@ export default function AttemptGradingPage() {
         )}
         subtitle={t(
           "attemptGrading.loading.savingSubtitle"
+        )}
+      />
+    );
+  }
+
+  if (
+    processing ===
+    "pdf"
+  ) {
+    return (
+      <AppLoading
+        title={t(
+          "attemptGrading.loading.pdfTitle"
+        )}
+        subtitle={t(
+          "attemptGrading.loading.pdfSubtitle"
         )}
       />
     );
@@ -1016,10 +1110,6 @@ export default function AttemptGradingPage() {
     const raw =
       event.target.value;
 
-    /* =====================================================
-       Empty input = zero
-       ===================================================== */
-
     if (
       raw ===
       ""
@@ -1051,11 +1141,6 @@ export default function AttemptGradingPage() {
       return;
     }
 
-    /* =====================================================
-       Clamp immediately:
-       0 <= score <= question.points
-       ===================================================== */
-
     const safeScore =
       roundScore(
         clampScore(
@@ -1085,12 +1170,6 @@ export default function AttemptGradingPage() {
       const question of
       developmentQuestions
     ) {
-      /*
-       * Important:
-       *
-       * A score that has never been modified
-       * is still a valid zero.
-       */
       const score =
         developmentScores[
           question.id
@@ -1140,10 +1219,6 @@ export default function AttemptGradingPage() {
       ""
     );
 
-    /* =====================================================
-       Client validation
-       ===================================================== */
-
     if (
       !validateDevelopmentScores()
     ) {
@@ -1161,13 +1236,6 @@ export default function AttemptGradingPage() {
     );
 
     try {
-      /* ===================================================
-         Normalize every development score
-
-         Every development question is included explicitly,
-         including questions receiving 0.
-         =================================================== */
-
       const normalizedScores:
         DevelopmentScores =
         {};
@@ -1193,28 +1261,17 @@ export default function AttemptGradingPage() {
           );
       }
 
-      /* ===================================================
-         Service
-
-         Security and final calculation happen again
-         inside attempts.ts.
-         =================================================== */
-
       const result =
-        await gradeAttempt({
-          attemptId:
-            attempt.id,
+        await gradeAttempt(
+          attempt.id,
+          {
+            teacherId:
+              teacher.id,
 
-          teacherId:
-            teacher.id,
-
-          developmentScores:
-            normalizedScores,
-        });
-
-      /* ===================================================
-         Service error
-         =================================================== */
+            developmentScores:
+              normalizedScores,
+          }
+        );
 
       if (
         !result.success ||
@@ -1232,10 +1289,6 @@ export default function AttemptGradingPage() {
 
         return;
       }
-
-      /* ===================================================
-         Update local attempt
-         =================================================== */
 
       setAttempt(
         result.attempt
@@ -1261,6 +1314,115 @@ export default function AttemptGradingPage() {
       setMessage(
         t(
           "attemptGrading.messages.saveError"
+        )
+      );
+    } finally {
+      setProcessing(
+        ""
+      );
+    }
+  }
+
+  /* =========================================================
+     PDF download
+     ========================================================= */
+
+  async function handleDownloadPdf() {
+    if (
+      processing ||
+      !canDownloadPdf
+    ) {
+      return;
+    }
+
+    setMessage(
+      ""
+    );
+
+    setSuccessMessage(
+      ""
+    );
+
+    setProcessing(
+      "pdf"
+    );
+
+    try {
+      const pdfLanguage =
+        getPdfLanguage(
+          String(
+            language
+          )
+        );
+
+      const pdfDocument =
+        (
+          <AttemptCorrectionPdf
+            quiz={
+              quiz
+            }
+            attempt={
+              attempt
+            }
+            questions={
+              questions
+            }
+            language={
+              pdfLanguage
+            }
+          />
+        );
+
+      const blob =
+        await pdf(
+          pdfDocument
+        ).toBlob();
+
+      const fileUrl =
+        URL.createObjectURL(
+          blob
+        );
+
+      const studentFileName =
+        sanitizeFileName(
+          attempt.studentName
+        );
+
+      const quizFileName =
+        sanitizeFileName(
+          quiz.title
+        );
+
+      const fileName =
+        `ULearn-${quizFileName}-${studentFileName}-correction.pdf`;
+
+      const link =
+        documentCreateDownloadLink(
+          fileUrl,
+          fileName
+        );
+
+      link.click();
+
+      link.remove();
+
+      window.setTimeout(
+        () => {
+          URL.revokeObjectURL(
+            fileUrl
+          );
+        },
+        1000
+      );
+    } catch (error) {
+      console.error(
+        "Unable to generate correction PDF:",
+        error
+      );
+
+      setMessage(
+        t(
+          "attemptGrading.messages.pdfError"
         )
       );
     } finally {
@@ -1820,7 +1982,7 @@ export default function AttemptGradingPage() {
                           )}{" "}
                           {
                             index +
-                            1
+                              1
                           }
                         </span>
 
@@ -2109,30 +2271,102 @@ export default function AttemptGradingPage() {
             )}
           </button>
 
-          {developmentQuestions.length >
-            0 && (
+          <div
+            className={
+              styles.gradingActions
+            }
+          >
+            {/* =============================================
+                PDF
+
+                Always visible.
+
+                Disabled until the attempt is graded.
+                ============================================= */}
+
             <button
               type="button"
-              className="app-button app-button-action"
+              className="app-button app-button-secondary"
               disabled={
-                !canEditGrading
+                !canDownloadPdf
               }
               onClick={
-                handleSaveGrading
+                handleDownloadPdf
+              }
+              title={
+                canDownloadPdf
+                  ? t(
+                      "attemptGrading.actions.downloadPdf"
+                    )
+                  : t(
+                      "attemptGrading.pdf.notReady"
+                    )
               }
             >
-              {attempt.status ===
-              "graded"
-                ? t(
-                    "attemptGrading.actions.updateGrade"
-                  )
-                : t(
-                    "attemptGrading.actions.finalizeGrade"
-                  )}
+              ↓{" "}
+              {t(
+                "attemptGrading.actions.downloadPdf"
+              )}
             </button>
-          )}
+
+            {/* =============================================
+                Manual grading
+                ============================================= */}
+
+            {developmentQuestions.length >
+              0 && (
+              <button
+                type="button"
+                className="app-button app-button-action"
+                disabled={
+                  !canEditGrading
+                }
+                onClick={
+                  handleSaveGrading
+                }
+              >
+                {attempt.status ===
+                "graded"
+                  ? t(
+                      "attemptGrading.actions.updateGrade"
+                    )
+                  : t(
+                      "attemptGrading.actions.finalizeGrade"
+                    )}
+              </button>
+            )}
+          </div>
         </footer>
       </section>
     </main>
   );
+}
+
+/* =========================================================
+   Browser download helper
+   ========================================================= */
+
+function documentCreateDownloadLink(
+  url: string,
+  fileName: string
+) {
+  const link =
+    document.createElement(
+      "a"
+    );
+
+  link.href =
+    url;
+
+  link.download =
+    fileName;
+
+  link.style.display =
+    "none";
+
+  document.body.appendChild(
+    link
+  );
+
+  return link;
 }

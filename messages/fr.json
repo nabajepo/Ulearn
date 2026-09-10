@@ -570,6 +570,19 @@
       "returning": "Retour au quiz...",
       "openingStudent": "Ouverture de la tentative de l’étudiant..."
     },
+    "zip": {
+  "button": "Télécharger toutes les copies corrigées",
+  "loadingTitle": "Préparation des copies corrigées",
+  "loadingSubtitle": "ULearn génère les PDF corrigés et prépare l'archive ZIP...",
+  "statusLabel": "Copies corrigées",
+  "waiting": "Le téléchargement ZIP sera disponible lorsque toutes les tentatives des étudiants auront été corrigées.",
+  "ready": "Toutes les tentatives ont été corrigées. Les copies corrigées sont prêtes à être téléchargées.",
+  "disabledHint": "Toutes les tentatives doivent être corrigées avant de pouvoir télécharger le ZIP.",
+  "readyHint": "Télécharger toutes les copies corrigées dans une archive ZIP.",
+  "notReady": "Toutes les tentatives doivent être corrigées avant de pouvoir télécharger les copies.",
+  "success": "L'archive ZIP des copies corrigées a été générée avec succès.",
+  "error": "Impossible de générer l'archive ZIP des copies corrigées."
+},
 
     "access": {
       "title": "Accès refusé",
@@ -1079,8 +1092,14 @@
     "subtitle": "Chargement des réponses de l'étudiant et des informations de correction.",
     "returning": "Retour vers les étudiants et la correction.",
     "savingTitle": "Enregistrement de la correction",
-    "savingSubtitle": "Mise à jour de la note finale de l'étudiant."
+    "savingSubtitle": "Mise à jour de la note finale de l'étudiant.",
+    "pdfTitle": "Préparation du PDF",
+    "pdfSubtitle": "Génération de la copie corrigée..."
   },
+   "pdf": {
+      "notReady": "Terminez la correction avant de télécharger le PDF corrigé."
+    }
+  ,
 
   "access": {
     "title": "Correction indisponible",
@@ -1144,13 +1163,15 @@
     "notSubmitted": "Cet étudiant est encore en train de compléter le quiz. La tentative ne peut pas encore être corrigée.",
     "invalidDevelopmentScore": "Une ou plusieurs notes de développement sont invalides.",
     "saved": "La correction de l'étudiant a été enregistrée avec succès.",
-    "saveError": "Impossible d'enregistrer la correction de l'étudiant."
+    "saveError": "Impossible d'enregistrer la correction de l'étudiant.",
+    "pdfError": "Impossible de générer le PDF de la copie corrigée."
   },
 
   "actions": {
     "backStudents": "Étudiants et correction",
     "finalizeGrade": "Finaliser la correction",
-    "updateGrade": "Mettre à jour la correction"
+    "updateGrade": "Mettre à jour la correction",
+    "downloadPdf": "Télécharger la copie corrigée"
   }
 },
   "correction": {

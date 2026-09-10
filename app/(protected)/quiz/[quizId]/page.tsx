@@ -15,6 +15,7 @@ import {
   doc,
   onSnapshot,
   query,
+  updateDoc,
   where,
 } from "firebase/firestore";
 
@@ -418,6 +419,169 @@ export default function QuizDetailsPage() {
     };
   }, [
     quizId,
+  ]);
+
+  /* =========================================================
+     AUTOMATIC QUIZ CLOSURE
+
+     A launched quiz must become "closed" as soon as its
+     deadline is reached.
+
+     Why this effect exists:
+     - the public/student page can already know that a quiz
+       is over from availableUntil;
+     - however, Firestore may still contain status="launched";
+     - deleteQuiz() correctly refuses to delete a launched quiz;
+     - therefore we persist status="closed" at the deadline.
+
+     The realtime quiz listener above receives that Firestore
+     update immediately, so:
+     - the status badge changes to CLOSED;
+     - the Delete quiz button becomes enabled;
+     - no browser refresh is required.
+
+     If the teacher opens the page after the deadline, the
+     update happens immediately.
+     ========================================================= */
+
+  useEffect(() => {
+    if (
+      !quizId ||
+      !quiz ||
+      quiz.status !==
+        "launched" ||
+      !quiz.availableUntil
+    ) {
+      return;
+    }
+
+    const deadlineMs =
+      new Date(
+        quiz.availableUntil
+      ).getTime();
+
+    if (
+      Number.isNaN(
+        deadlineMs
+      )
+    ) {
+      return;
+    }
+
+    let cancelled =
+      false;
+
+    let timer:
+      ReturnType<
+        typeof setTimeout
+      > | null =
+      null;
+
+    const MAX_TIMEOUT_MS =
+      2_147_000_000;
+
+    async function closeQuizIfExpired() {
+      if (
+        cancelled
+      ) {
+        return;
+      }
+
+      const remainingMs =
+        deadlineMs -
+        Date.now();
+
+      if (
+        remainingMs >
+        0
+      ) {
+        timer =
+          window.setTimeout(
+            () => {
+              void closeQuizIfExpired();
+            },
+            Math.min(
+              remainingMs,
+              MAX_TIMEOUT_MS
+            )
+          );
+
+        return;
+      }
+
+      try {
+        const latestQuiz =
+          await getQuiz(
+            quizId
+          );
+
+        if (
+          cancelled ||
+          !latestQuiz ||
+          latestQuiz.status !==
+            "launched"
+        ) {
+          return;
+        }
+
+        const latestDeadlineMs =
+          latestQuiz.availableUntil
+            ? new Date(
+                latestQuiz.availableUntil
+              ).getTime()
+            : Number.NaN;
+
+        if (
+          Number.isNaN(
+            latestDeadlineMs
+          ) ||
+          latestDeadlineMs >
+            Date.now()
+        ) {
+          return;
+        }
+
+        await updateDoc(
+          doc(
+            db,
+            "quizzes",
+            quizId
+          ),
+          {
+            status:
+              "closed",
+
+            updatedAt:
+              new Date()
+                .toISOString(),
+          }
+        );
+      } catch (error) {
+        console.error(
+          "Unable to automatically close expired quiz:",
+          error
+        );
+      }
+    }
+
+    void closeQuizIfExpired();
+
+    return () => {
+      cancelled =
+        true;
+
+      if (
+        timer !==
+        null
+      ) {
+        window.clearTimeout(
+          timer
+        );
+      }
+    };
+  }, [
+    quizId,
+    quiz,
   ]);
 
   /* =========================================================
@@ -939,8 +1103,10 @@ export default function QuizDetailsPage() {
      ========================================================= */
 
   const canDeleteQuiz =
-    quiz.status !==
-    "launched";
+    quiz.status ===
+      "draft" ||
+    quiz.status ===
+      "closed";
 
   /* =========================================================
      Download QR

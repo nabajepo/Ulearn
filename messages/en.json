@@ -570,6 +570,19 @@
       "returning": "Returning to the quiz...",
       "openingStudent": "Opening the student's attempt..."
     },
+    "zip": {
+      "button": "Download all corrected copies",
+      "loadingTitle": "Preparing corrected copies",
+      "loadingSubtitle": "ULearn is generating the corrected PDFs and creating the ZIP archive...",
+      "statusLabel": "Corrected copies",
+      "waiting": "The ZIP download will become available when all student attempts have been graded.",
+      "ready": "All student attempts have been graded. The corrected copies are ready to download.",
+      "disabledHint": "All student attempts must be graded before downloading the ZIP.",
+      "readyHint": "Download all corrected copies as a ZIP archive.",
+      "notReady": "All student attempts must be graded before the corrected copies can be downloaded.",
+      "success": "The corrected copies ZIP was generated successfully.",
+      "error": "Unable to generate the corrected copies ZIP."
+},
 
     "access": {
       "title": "Access denied",
@@ -1080,8 +1093,14 @@
     "subtitle": "Loading the student answers and grading information.",
     "returning": "Returning to students and grading.",
     "savingTitle": "Saving grading",
-    "savingSubtitle": "Updating the student's final grade."
+    "savingSubtitle": "Updating the student's final grade.",
+    "pdfTitle": "Preparing PDF",
+    "pdfSubtitle": "Generating the corrected quiz copy..."
   },
+  "pdf": {
+      "notReady": "Complete the grading before downloading the corrected PDF."
+    }
+  ,
 
   "access": {
     "title": "Grading unavailable",
@@ -1145,13 +1164,15 @@
     "notSubmitted": "This student is still completing the quiz. The attempt cannot be graded yet.",
     "invalidDevelopmentScore": "One or more development scores are invalid.",
     "saved": "The student's grading was saved successfully.",
-    "saveError": "Unable to save the student's grading."
+    "saveError": "Unable to save the student's grading.",
+    "pdfError": "Unable to generate the corrected quiz PDF."
   },
 
   "actions": {
     "backStudents": "Students and grading",
     "finalizeGrade": "Finalize grading",
-    "updateGrade": "Update grading"
+    "updateGrade": "Update grading",
+    "downloadPdf": "Download corrected copy"
   }
 },
   "correction": {

@@ -570,6 +570,19 @@
       "returning": "Turiko turasubira kuri quiz...",
       "openingStudent": "Turiko turugurura ivyo umunyeshure yakoze..."
     },
+    "zip": {
+  "button": "Kuronka amakopi yose yakosowe",
+  "loadingTitle": "Gutegura amakopi yakosowe",
+  "loadingSubtitle": "ULearn iriko irakora ama PDF yakosowe kandi igategura dosiye ZIP...",
+  "statusLabel": "Amakopi yakosowe",
+  "waiting": "Dosiye ZIP izoboneka abanyeshure bose bamaze gukorerwa amanota.",
+  "ready": "Ibikorwa vy'abanyeshure bose vyarakosowe. Amakopi yakosowe ariteguye gukururwa.",
+  "disabledHint": "Ibikorwa vy'abanyeshure bose bitegerezwa kubanza gukosorwa kugira ZIP iboneke.",
+  "readyHint": "Kuronka amakopi yose yakosowe muri dosiye ZIP.",
+  "notReady": "Ibikorwa vy'abanyeshure bose bitegerezwa kubanza gukosorwa.",
+  "success": "Dosiye ZIP y'amakopi yakosowe yakozwe neza.",
+  "error": "Ntivyashobotse gukora dosiye ZIP y'amakopi yakosowe."
+},
 
     "access": {
       "title": "Nta burenganzira ufise",
@@ -1078,9 +1091,14 @@
     "subtitle": "Turiko turazana inyishu z'umunyeshure n'amakuru yo gukosora.",
     "returning": "Gusubira ku banyeshure no gukosora.",
     "savingTitle": "Kubika amanota",
-    "savingSubtitle": "Turiko turahindura amanota ya nyuma y'umunyeshure."
+    "savingSubtitle": "Turiko turahindura amanota ya nyuma y'umunyeshure.",
+    "pdfTitle": "Gutegura PDF",
+    "pdfSubtitle": "Turiko turategura ikosorwa rya quiz muri PDF..."
   },
-
+   "pdf": {
+      "notReady": "Banza urangize gukosora imbere yo gukuraho PDF yakosowe."
+    }
+  ,
   "access": {
     "title": "Ntushobora gukosora",
     "text": "Nta burenganzira ufise bwo kubona iki kigeragezo c'umunyeshure."
@@ -1143,13 +1161,15 @@
     "notSubmitted": "Umunyeshure aracari gukora quiz. Ntishobora gukosorwa ubu.",
     "invalidDevelopmentScore": "Hari amanota y'inyishu ndende atari yo.",
     "saved": "Amanota y'umunyeshure yabitswe neza.",
-    "saveError": "Ntivyashobotse kubika amanota y'umunyeshure."
+    "saveError": "Ntivyashobotse kubika amanota y'umunyeshure.",
+    "pdfError": "Ntivyashobotse gukora PDF y'ikosorwa rya quiz."
   },
 
   "actions": {
     "backStudents": "Abanyeshure no gukosora",
     "finalizeGrade": "Sozera gukosora",
-    "updateGrade": "Hindura amanota"
+    "updateGrade": "Hindura amanota",
+    "downloadPdf": "Kuronka ikosorwa muri PDF"
   }
 },
   "correction": {

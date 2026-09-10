@@ -1105,7 +1105,42 @@
 
   padding-top: 0.2rem;
 }
+/* =========================================================
+   Grading actions
+   ========================================================= */
 
+.gradingActions {
+  display: flex;
+
+  align-items: center;
+
+  justify-content: flex-end;
+
+  flex-wrap: wrap;
+
+  gap: 0.8rem;
+}
+
+@media (
+  max-width: 700px
+) {
+  .gradingActions {
+    width: 100%;
+
+    display: grid;
+
+    grid-template-columns: 1fr;
+
+    gap: 0.75rem;
+  }
+
+  .gradingActions
+    :global(.app-button) {
+    width: 100%;
+
+    min-width: 0;
+  }
+}
 /*
  * IMPORTANT:
  *
@@ -1140,7 +1175,33 @@
   padding-left: 1.25rem;
   padding-right: 1.25rem;
 }
+.actionGroup {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
 
+  gap: 0.8rem;
+
+  flex-wrap: wrap;
+}
+
+@media (
+  max-width: 700px
+) {
+  .actionGroup {
+    display: grid;
+
+    grid-template-columns:
+      1fr;
+
+    width: 100%;
+  }
+
+  .actionGroup
+    :global(.app-button) {
+    width: 100%;
+  }
+}
 /* =========================================================
    Access card
    ========================================================= */
