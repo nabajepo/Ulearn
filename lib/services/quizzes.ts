@@ -3154,6 +3154,29 @@ export async function updateQuizQuestionCounters(
       number;
   }
 ) {
+  const quiz =
+    await getQuiz(
+      quizId
+    );
+
+  if (
+    !quiz
+  ) {
+    throw new Error(
+      "Quiz not found."
+    );
+  }
+
+  if (
+    quiz.status !==
+    "draft"
+  ) {
+    throw new Error(
+      "Question counters are locked after the quiz is launched."
+    );
+  }
+
+
   const automaticQuestions =
     counters.qcmQuestions +
     counters.multipleChoiceQuestions;

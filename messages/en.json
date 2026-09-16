@@ -384,6 +384,19 @@
 "quizDetails": {
   "backDashboard": "Back to Dashboard",
   "noDescription": "No description provided.",
+  "launchConfirmation": {
+  "badge": "Final confirmation",
+  "title": "Launch this quiz?",
+  "close": "Close confirmation",
+  "description": "The quiz will become available to students according to the dates and times you configured.",
+  "lockedTitle": "After launch:",
+  "questionsLocked": "Questions can no longer be modified.",
+  "settingsLocked": "Important quiz settings will be locked.",
+  "deleteLocked": "The quiz cannot be deleted while it is active.",
+  "finalWarning": "Review the quiz carefully before continuing. Launching is definitive.",
+  "cancel": "Cancel",
+  "confirm": "Launch quiz"
+},
 
   "loading": {
     "openingTitle": "Opening Quiz",
@@ -570,6 +583,26 @@
       "returning": "Returning to the quiz...",
       "openingStudent": "Opening the student's attempt..."
     },
+    "search": {
+  "label": "Search students",
+  "placeholder": "Search by student name or email...",
+  "clear": "Clear search",
+  "emptyTitle": "No student found",
+  "emptyText": "No student matches your search."
+},
+"pinReset": {
+  "summaryTitle": "PIN reset requests",
+  "summaryText": "One or more students are waiting for you to approve a PIN reset.",
+  "requested": "PIN reset requested",
+  "approvedBadge": "PIN reset approved",
+  "generateCode": "Generate temporary code",
+  "generating": "Generating code...",
+  "approved": "The temporary code was generated successfully.",
+  "approveError": "Unable to approve the PIN reset request.",
+  "temporaryCode": "Temporary code",
+  "giveCode": "Give this code directly to the student. It will not be displayed again.",
+  "expires": "Expires:"
+},
     "zip": {
       "button": "Download all corrected copies",
       "loadingTitle": "Preparing corrected copies",
@@ -806,6 +839,51 @@
   "teacher": {
   "createdBy": "Created by : "
   },
+  "pinReset": {
+  "title": "PIN reset",
+  "forgotPin": "Forgot your PIN?",
+  "requesting": "Sending request...",
+  "requestSent": "Your PIN reset request has been sent to your teacher.",
+  "noActiveAttempt": "No quiz attempt in progress was found with this email address.",
+  "notInProgress": "This quiz attempt is no longer in progress.",
+  "attemptExpired": "This quiz attempt has expired.",
+  "waitingTitle": "Waiting for your teacher",
+  "waitingDescription": "Your request has been sent. Stay on this page while your teacher approves it.",
+  "waitingMessage": "Your teacher must approve the request and generate a temporary code before you can choose a new PIN.",
+  "waitingStatus": "Waiting for teacher approval...",
+  "checking": "Checking request status...",
+  "checkNow": "Check now",
+  "approvedTitle": "Request approved",
+  "approvedDescription": "Your teacher approved the request. Enter the temporary code they gave you and choose a new PIN.",
+  "approvedMessage": "Your teacher generated a temporary code. Ask your teacher for this code to reset your PIN.",
+  "codeLabel": "6-digit temporary code",
+  "codeHelp": "Enter the 6-digit temporary code provided by your teacher.",
+  "newPinLabel": "New 6-digit PIN",
+  "confirmPinLabel": "Confirm new PIN",
+  "invalidCode": "The temporary code must contain exactly 6 digits.",
+  "invalidNewPin": "Your new PIN must contain exactly 6 digits.",
+  "pinMismatch": "The two PINs do not match.",
+  "incorrectCode": "The temporary code is incorrect.",
+  "tooManyCodeAttempts": "Too many incorrect codes were entered. You must submit a new PIN reset request.",
+  "codeExpired": "The temporary code has expired. You must submit a new PIN reset request.",
+  "codeUnavailable": "This temporary code is no longer available. You must submit a new PIN reset request.",
+  "resetButton": "Reset my PIN",
+  "back": "Back",
+  "resettingTitle": "Resetting PIN",
+  "resettingSubtitle": "Updating your PIN and resuming your quiz...",
+  "error": "Unable to process the PIN reset right now. Please try again."
+},
+  "pin": {
+  "label": "6-digit PIN",
+  "help": "Choose a personal 6-digit PIN. You will need it to resume your quiz if you leave the page.",
+  "infoTitle": "Keep your PIN private",
+  "infoText": "Your PIN protects your quiz attempt. Do not share it with other students.",
+  "invalid": "Your PIN must contain exactly 6 digits.",
+  "incorrect": "Incorrect PIN.",
+  "attemptsRemaining": "Attempts remaining",
+  "locked": "Too many incorrect PIN attempts. Please try again in 15 minutes.",
+  "resetRequired": "Your PIN must be reset before you can resume this quiz."
+},
 
   "starting": {
     "title": "Starting quiz...",
@@ -884,6 +962,9 @@
     "text": "This quiz session is unavailable or could not be loaded.",
     "notFound": "This quiz attempt could not be found.",
     "loadError": "Unable to load your quiz session."
+  },"timeWarning": {
+    "title": "5 minutes remaining",
+    "text": "Your quiz will be submitted automatically when the timer reaches zero. Make sure your answers are complete."
   },
   "result": {
   "completedTitle": "Quiz completed",

@@ -35,6 +35,11 @@ export type AttemptStatus =
   | "submitted"
   | "graded";
 
+export type PinResetStatus =
+  | "pending"
+  | "approved"
+  | null;
+
 export type AttemptAnswer = {
   /*
    * QCM:
@@ -97,6 +102,9 @@ export type Attempt = {
   studentEmail:
     string;
 
+  studentEmailNormalized:
+    string;
+
   /* =====================================================
      Attempt state
      ===================================================== */
@@ -114,6 +122,25 @@ export type Attempt = {
     string | null;
 
   gradedAt:
+    string | null;
+
+  /* =====================================================
+     Safe PIN reset metadata mirrored on the attempt
+     ===================================================== */
+
+  pinResetRequested:
+    boolean;
+
+  pinResetStatus:
+    PinResetStatus;
+
+  pinResetRequestedAt:
+    string | null;
+
+  pinResetApprovedAt:
+    string | null;
+
+  pinResetCompletedAt:
     string | null;
 
   /* =====================================================
@@ -780,6 +807,19 @@ function mapAttempt(
         ? data.studentEmail
         : "",
 
+    studentEmailNormalized:
+      typeof data.studentEmailNormalized ===
+      "string"
+        ? normalizeEmail(
+            data.studentEmailNormalized
+          )
+        : typeof data.studentEmail ===
+            "string"
+          ? normalizeEmail(
+              data.studentEmail
+            )
+          : "",
+
     status:
       data.status ===
       "submitted"
@@ -811,6 +851,37 @@ function mapAttempt(
       typeof data.gradedAt ===
       "string"
         ? data.gradedAt
+        : null,
+
+    pinResetRequested:
+      data.pinResetRequested ===
+      true,
+
+    pinResetStatus:
+      data.pinResetStatus ===
+      "pending"
+        ? "pending"
+        : data.pinResetStatus ===
+            "approved"
+          ? "approved"
+          : null,
+
+    pinResetRequestedAt:
+      typeof data.pinResetRequestedAt ===
+      "string"
+        ? data.pinResetRequestedAt
+        : null,
+
+    pinResetApprovedAt:
+      typeof data.pinResetApprovedAt ===
+      "string"
+        ? data.pinResetApprovedAt
+        : null,
+
+    pinResetCompletedAt:
+      typeof data.pinResetCompletedAt ===
+      "string"
+        ? data.pinResetCompletedAt
         : null,
 
     allowBackNavigation:
@@ -1107,7 +1178,7 @@ export async function getAttemptByStudentEmail(
       ),
 
       where(
-        "studentEmail",
+        "studentEmailNormalized",
         "==",
         normalizedEmail
       ),
@@ -1694,7 +1765,7 @@ function validateQuizQuestionsForStudent(
 }
 
 /* =========================================================
-   Start / resume attempt
+   Start attempt
    ========================================================= */
 
 export async function startAttempt(
@@ -1870,95 +1941,26 @@ export async function startAttempt(
   if (
     existingAttempt
   ) {
-    if (
-      existingAttempt.status ===
-      "submitted"
-    ) {
-      return {
-        success:
-          false,
-
-        attempt:
-          existingAttempt,
-
-        resumed:
-          false,
-
-        messageKey:
-          "attempts.start.alreadySubmitted",
-
-        message:
-          "You have already submitted this quiz.",
-      };
-    }
-
-    if (
-      existingAttempt.status ===
-      "graded"
-    ) {
-      return {
-        success:
-          false,
-
-        attempt:
-          existingAttempt,
-
-        resumed:
-          false,
-
-        messageKey:
-          "attempts.start.alreadyGraded",
-
-        message:
-          "This quiz attempt has already been graded.",
-      };
-    }
-
-    const attemptExpiration =
-      new Date(
-        existingAttempt.expiresAt
-      ).getTime();
-
-    if (
-      Number.isNaN(
-        attemptExpiration
-      ) ||
-      attemptExpiration <=
-        Date.now()
-    ) {
-      return {
-        success:
-          false,
-
-        attempt:
-          existingAttempt,
-
-        resumed:
-          false,
-
-        messageKey:
-          "attempts.start.expired",
-
-        message:
-          "Your quiz attempt has expired.",
-      };
-    }
-
+    /*
+     * Existing attempts are NEVER resumed here anymore.
+     * The server-side PIN route must authenticate the
+     * student before a resume is authorized.
+     */
     return {
       success:
-        true,
+        false,
 
       attempt:
         existingAttempt,
 
       resumed:
-        true,
+        false,
 
       messageKey:
-        "attempts.start.resumed",
+        "attempts.start.authenticationRequired",
 
       message:
-        "Your existing quiz attempt was found.",
+        "PIN authentication is required to resume this quiz attempt.",
     };
   }
 
@@ -2129,6 +2131,9 @@ export async function startAttempt(
     studentEmail:
       cleanEmail,
 
+    studentEmailNormalized:
+      cleanEmail,
+
     status:
       "in_progress",
 
@@ -2141,6 +2146,21 @@ export async function startAttempt(
       null,
 
     gradedAt:
+      null,
+
+    pinResetRequested:
+      false,
+
+    pinResetStatus:
+      null,
+
+    pinResetRequestedAt:
+      null,
+
+    pinResetApprovedAt:
+      null,
+
+    pinResetCompletedAt:
       null,
 
     /*

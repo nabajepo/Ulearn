@@ -384,6 +384,20 @@
 "quizDetails": {
   "backDashboard": "Subira ku rubuga nyamukuru",
   "noDescription": "Nta nsiguro yatanzwe.",
+  "launchConfirmation": {
+  "badge": "Kwemeza ubwa nyuma",
+  "title": "Gutanguza iki kibazo?",
+  "close": "Funga ukwemeza",
+  "description": "Iki kibazo kizoshobora gukorwa n’abanyeshure hakurikijwe amatariki n’amasaha watunganije.",
+  "lockedTitle": "Inyuma yo kugitanguza:",
+  "questionsLocked": "Ibibazo ntibizoshobora gusubira guhindurwa.",
+  "settingsLocked": "Ivyateguwe bikomeye vy’iki kibazo bizofungwa.",
+  "deleteLocked": "Iki kibazo ntikizoshobora gufutwa igihe kiriko kirakorwa.",
+  "finalWarning": "Banza usuzume neza iki kibazo imbere yo kubandanya. Iyo gitangujwe, ntigisubira mu nyandiko y’agateganyo.",
+  "cancel": "Guhagarika",
+  "confirm": "Gutanguza ikibazo"
+}
+,
 
   "loading": {
     "openingTitle": "Turiko turafungura quiz",
@@ -570,6 +584,26 @@
       "returning": "Turiko turasubira kuri quiz...",
       "openingStudent": "Turiko turugurura ivyo umunyeshure yakoze..."
     },
+    "search": {
+  "label": "Rondera abanyeshure",
+  "placeholder": "Rondera ukoresheje izina canke imeyili...",
+  "clear": "Siba ivyo warondera",
+  "emptyTitle": "Nta munyeshure yabonetse",
+  "emptyText": "Nta munyeshure ahuye n'ivyo warondera."
+},
+"pinReset": {
+  "summaryTitle": "Abasavye gusubiramwo PIN",
+  "summaryText": "Hari abanyeshure barindiriye ko wemeza ko basubiramwo PIN yabo.",
+  "requested": "Yasavye gusubiramwo PIN",
+  "approvedBadge": "Gusubiramwo PIN vyemejwe",
+  "generateCode": "Tanga kode y'igihe gito",
+  "generating": "Kode iriko irategurwa...",
+  "approved": "Kode y'igihe gito yatanzwe neza.",
+  "approveError": "Ntivyashobotse kwemeza ugusubiramwo PIN.",
+  "temporaryCode": "Kode y'igihe gito",
+  "giveCode": "Ha iyi kode umunyeshure ubwiwe. Ntizosubira kwerekanwa.",
+  "expires": "Ihera:"
+},
     "zip": {
   "button": "Kuronka amakopi yose yakosowe",
   "loadingTitle": "Gutegura amakopi yakosowe",
@@ -805,6 +839,51 @@
   "teacher": {
   "createdBy": "Yakozwe na : "
  },
+ "pinReset": {
+  "title": "Gusubiramwo PIN",
+  "forgotPin": "Wibagiye PIN?",
+  "requesting": "Turiko turungika ubusabe...",
+  "requestSent": "Ubusabe bwo gusubiramwo PIN bwarungikiwe umwigisha wawe.",
+  "noActiveAttempt": "Nta kigeragezo kiriko kirakorwa cabonetse kuri iyi aderesi ya imeyili.",
+  "notInProgress": "Iki kigeragezo ntikikiriko kirakorwa.",
+  "attemptExpired": "Igihe c'iki kigeragezo carangiye.",
+  "waitingTitle": "Rindira umwigisha wawe",
+  "waitingDescription": "Ubusabe bwawe bwarungitswe. Guma kuri uru rupapuro mu gihe umwigisha wawe arimo kubwemeza.",
+  "waitingMessage": "Umwigisha wawe ategerezwa kwemeza ubusabe no gukora kode y'igihe gito imbere y'uko uhitamwo PIN nshasha.",
+  "waitingStatus": "Turindiriye ko umwigisha yemeza...",
+  "checking": "Turiko turasuzuma aho ubusabe bugeze...",
+  "checkNow": "Suzuma ubu",
+  "approvedTitle": "Ubusabe bwemejwe",
+  "approvedDescription": "Umwigisha wawe yemeje ubusabe. Injiza kode y'igihe gito yaguhaye hanyuma uhitemwo PIN nshasha.",
+  "approvedMessage": "Umwigisha wawe yakoze kode y'igihe gito. Musabe iyo kode kugira usubiremwo PIN yawe.",
+  "codeLabel": "Kode y'igihe gito y'imibare 6",
+  "codeHelp": "Injiza kode y'igihe gito y'imibare 6 wahawe n'umwigisha wawe.",
+  "newPinLabel": "PIN nshasha y'imibare 6",
+  "confirmPinLabel": "Subiramwo PIN nshasha",
+  "invalidCode": "Kode y'igihe gito itegerezwa kuba igizwe n'imibare 6 neza na neza.",
+  "invalidNewPin": "PIN nshasha itegerezwa kuba igizwe n'imibare 6 neza na neza.",
+  "pinMismatch": "PIN zibiri ntizihuye.",
+  "incorrectCode": "Kode y'igihe gito si yo.",
+  "tooManyCodeAttempts": "Wagerageje kode zitari zo incuro nyinshi. Utegerezwa gusaba gusubiramwo PIN kandi.",
+  "codeExpired": "Igihe ca kode y'igihe gito carangiye. Utegerezwa gusaba gusubiramwo PIN kandi.",
+  "codeUnavailable": "Iyi kode y'igihe gito ntikiboneka. Utegerezwa gusaba gusubiramwo PIN kandi.",
+  "resetButton": "Subiramwo PIN yanje",
+  "back": "Subira inyuma",
+  "resettingTitle": "Turiko turasubiramwo PIN",
+  "resettingSubtitle": "Turiko turahindura PIN yawe kugira usubire kubandanya ikigeragezo...",
+  "error": "Ntibishobotse gusubiramwo PIN ubu. Subira ugerageze."
+},
+ "pin": {
+  "label": "PIN y'imibare 6",
+  "help": "Hitamwo PIN yawe bwite igizwe n'imibare 6. Uzoyikenera kugira usubire kubandanya ikibazo cawe niwava kuri uru rupapuro.",
+  "infoTitle": "Gumiza PIN yawe mw'ibanga",
+  "infoText": "PIN yawe irakingira ikigeragezo cawe. Ntuyisangize abandi banyeshure.",
+  "invalid": "PIN yawe itegerezwa kuba igizwe n'imibare 6 neza na neza.",
+  "incorrect": "PIN si yo.",
+  "attemptsRemaining": "Igerageza risigaye",
+  "locked": "Wagerageje PIN itari yo incuro nyinshi. Subira ugerageze inyuma y'iminota 15.",
+  "resetRequired": "PIN yawe itegerezwa gusubirwamwo imbere y'uko ubandanya iki kibazo."
+},
   "starting": {
     "title": "Tugira dutanguze quiz...",
     "subtitle": "Turiko turategura session yawe ya quiz..."
@@ -882,6 +961,10 @@
     "text": "Iyi session ya quiz ntiboneka canke ntiyashoboye kuzanwa.",
     "notFound": "Iki kigeragezo ca quiz nticabonetse.",
     "loadError": "Ntivyashobotse kuzana session ya quiz yawe."
+  },
+  "timeWarning": {
+    "title": "Hasigaye iminota 5",
+    "text": "Ikibazo cawe kizorungikwa ubwaco igihe isaha izoshika kuri zero. Raba neza ko wishuye ibibazo vyawe."
   },
 
   "header": {

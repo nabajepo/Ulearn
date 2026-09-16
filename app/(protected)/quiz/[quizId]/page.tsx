@@ -160,6 +160,12 @@ export default function QuizDetailsPage() {
     );
 
   const [
+    launchModalOpen,
+    setLaunchModalOpen,
+  ] =
+    useState(false);
+
+  const [
     deleteModalOpen,
     setDeleteModalOpen,
   ] =
@@ -709,6 +715,7 @@ export default function QuizDetailsPage() {
 
   useEffect(() => {
     if (
+      !launchModalOpen &&
       !deleteModalOpen &&
       !studentAccessOpen
     ) {
@@ -739,6 +746,14 @@ export default function QuizDetailsPage() {
         "delete"
       ) {
         return;
+      }
+
+      if (
+        launchModalOpen
+      ) {
+        setLaunchModalOpen(
+          false
+        );
       }
 
       if (
@@ -774,6 +789,7 @@ export default function QuizDetailsPage() {
       );
     };
   }, [
+    launchModalOpen,
     deleteModalOpen,
     studentAccessOpen,
     processing,
@@ -1214,9 +1230,44 @@ export default function QuizDetailsPage() {
      Launch
      ========================================================= */
 
+  function openLaunchModal() {
+    if (
+      processing ||
+      quiz.status !==
+        "draft" ||
+      !structureComplete ||
+      deadlinePassed ||
+      accountExpired
+    ) {
+      return;
+    }
+
+    setMessage(
+      ""
+    );
+
+    setLaunchModalOpen(
+      true
+    );
+  }
+
+  function closeLaunchModal() {
+    if (
+      processing ===
+      "launch"
+    ) {
+      return;
+    }
+
+    setLaunchModalOpen(
+      false
+    );
+  }
+
   async function handleLaunch() {
     if (
       processing ||
+      !launchModalOpen ||
       quiz.status !==
         "draft" ||
       !structureComplete ||
@@ -1243,6 +1294,10 @@ export default function QuizDetailsPage() {
       if (
         !result.success
       ) {
+        setLaunchModalOpen(
+          false
+        );
+
         setMessage(
           result.message ||
             t(
@@ -1275,6 +1330,10 @@ export default function QuizDetailsPage() {
         updatedStructure
       );
 
+      setLaunchModalOpen(
+        false
+      );
+
       setMessage(
         t(
           "quizDetails.messages.launchSuccess"
@@ -1288,6 +1347,10 @@ export default function QuizDetailsPage() {
       console.error(
         "Error launching quiz:",
         error
+      );
+
+      setLaunchModalOpen(
+        false
       );
 
       setMessage(
@@ -2126,7 +2189,7 @@ export default function QuizDetailsPage() {
                 accountExpired
               }
               onClick={
-                handleLaunch
+                openLaunchModal
               }
               title={
                 !structureComplete
@@ -2181,6 +2244,180 @@ export default function QuizDetailsPage() {
           </div>
         </section>
       </main>
+
+      {/* =====================================================
+          Launch confirmation modal
+          ===================================================== */}
+
+      {launchModalOpen && (
+        <div
+          className={
+            styles.launchOverlay
+          }
+          onMouseDown={(
+            event
+          ) => {
+            if (
+              event.target ===
+              event.currentTarget
+            ) {
+              closeLaunchModal();
+            }
+          }}
+        >
+          <section
+            className={
+              styles.launchModal
+            }
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="launch-confirmation-title"
+            aria-describedby="launch-confirmation-description"
+          >
+            <header
+              className={
+                styles.launchModalHeader
+              }
+            >
+              <div>
+                <span
+                  className={
+                    styles.launchBadge
+                  }
+                >
+                  {t(
+                    "quizDetails.launchConfirmation.badge"
+                  )}
+                </span>
+
+                <h2
+                  id="launch-confirmation-title"
+                >
+                  {t(
+                    "quizDetails.launchConfirmation.title"
+                  )}
+                </h2>
+              </div>
+
+              <button
+                type="button"
+                className={
+                  styles.launchCloseButton
+                }
+                onClick={
+                  closeLaunchModal
+                }
+                aria-label={t(
+                  "quizDetails.launchConfirmation.close"
+                )}
+              >
+                ×
+              </button>
+            </header>
+
+            <div
+              className={
+                styles.launchContent
+              }
+            >
+              <div
+                className={
+                  styles.launchWarningIcon
+                }
+                aria-hidden="true"
+              >
+                !
+              </div>
+
+              <div
+                className={
+                  styles.launchText
+                }
+              >
+                <p
+                  id="launch-confirmation-description"
+                >
+                  {t(
+                    "quizDetails.launchConfirmation.description"
+                  )}
+                </p>
+
+                <div
+                  className={
+                    styles.launchLockedBlock
+                  }
+                >
+                  <strong>
+                    {t(
+                      "quizDetails.launchConfirmation.lockedTitle"
+                    )}
+                  </strong>
+
+                  <ul>
+                    <li>
+                      {t(
+                        "quizDetails.launchConfirmation.questionsLocked"
+                      )}
+                    </li>
+
+                    <li>
+                      {t(
+                        "quizDetails.launchConfirmation.settingsLocked"
+                      )}
+                    </li>
+
+                    <li>
+                      {t(
+                        "quizDetails.launchConfirmation.deleteLocked"
+                      )}
+                    </li>
+                  </ul>
+                </div>
+
+                <p
+                  className={
+                    styles.launchFinalWarning
+                  }
+                >
+                  {t(
+                    "quizDetails.launchConfirmation.finalWarning"
+                  )}
+                </p>
+              </div>
+            </div>
+
+            <div
+              className={
+                styles.launchActions
+              }
+            >
+              <button
+                type="button"
+                className="app-button app-button-secondary"
+                onClick={
+                  closeLaunchModal
+                }
+              >
+                {t(
+                  "quizDetails.launchConfirmation.cancel"
+                )}
+              </button>
+
+              <button
+                type="button"
+                className="app-button"
+                onClick={
+                  handleLaunch
+                }
+              >
+                {t(
+                  "quizDetails.launchConfirmation.confirm"
+                )}
+              </button>
+            </div>
+          </section>
+        </div>
+      )}
 
       {/* =====================================================
           Floating Student Access

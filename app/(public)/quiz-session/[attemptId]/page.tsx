@@ -57,6 +57,9 @@ type SubmissionState =
   | "submitting"
   | "submitted";
 
+const FIVE_MINUTES_MS =
+  5 * 60 * 1000;
+
 /* =========================================================
    Special characters
    ========================================================= */
@@ -659,6 +662,13 @@ export default function QuizSessionPage() {
     formatRemainingTime(
       remainingMs
     );
+
+  const showFiveMinuteWarning =
+    attempt.status ===
+      "in_progress" &&
+    remainingMs > 0 &&
+    remainingMs <=
+      FIVE_MINUTES_MS;
 
   /* =========================================================
      Answered count
@@ -1410,7 +1420,9 @@ export default function QuizSessionPage() {
 
   async function performSubmission() {
     if (
-      !attempt
+      !attempt ||
+      attempt.status !==
+        "in_progress"
     ) {
       return;
     }
@@ -2229,6 +2241,53 @@ export default function QuizSessionPage() {
               </div>
             </div>
           </header>
+
+          {showFiveMinuteWarning && (
+            <section
+              className={
+                styles.timeWarning
+              }
+              role="status"
+              aria-live="polite"
+            >
+              <div
+                className={
+                  styles.timeWarningIcon
+                }
+                aria-hidden="true"
+              >
+                !
+              </div>
+
+              <div
+                className={
+                  styles.timeWarningContent
+                }
+              >
+                <strong>
+                  {t(
+                    "quizSession.timeWarning.title"
+                  )}
+                </strong>
+
+                <p>
+                  {t(
+                    "quizSession.timeWarning.text"
+                  )}
+                </p>
+              </div>
+
+              <span
+                className={
+                  styles.timeWarningTimer
+                }
+              >
+                {
+                  remainingLabel
+                }
+              </span>
+            </section>
+          )}
 
           {/* =================================================
               Main layout

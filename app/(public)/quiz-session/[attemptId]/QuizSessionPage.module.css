@@ -2245,3 +2245,75 @@
     font-size: 1.45rem;
   }
 }
+/* =========================================================
+   Five-minute warning
+   Add this block to QuizSessionPage.module.css.
+   ========================================================= */
+
+.timeWarning {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.9rem;
+  margin-bottom: 1.3rem;
+  padding: 0.95rem 1rem;
+  border: 1px solid rgba(42, 3, 105, 0.2);
+  border-radius: 16px;
+  background: var(--soft-purple);
+}
+
+.timeWarningIcon {
+  width: 40px;
+  height: 40px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: var(--main-color);
+  color: #ffffff;
+  font-size: 1rem;
+  font-weight: 900;
+}
+
+.timeWarningContent {
+  min-width: 0;
+}
+
+.timeWarningContent strong {
+  display: block;
+  color: var(--main-color);
+  font-size: 0.84rem;
+  font-weight: 900;
+}
+
+.timeWarningContent p {
+  margin-top: 0.2rem;
+  color: rgba(23, 23, 23, 0.64);
+  font-size: 0.72rem;
+  font-weight: 650;
+  line-height: 1.45;
+}
+
+.timeWarningTimer {
+  min-width: 88px;
+  padding: 0.55rem 0.7rem;
+  border-radius: 10px;
+  background: #ffffff;
+  color: var(--main-color);
+  font-size: 0.86rem;
+  font-weight: 900;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+
+@media (max-width: 700px) {
+  .timeWarning {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+
+  .timeWarningTimer {
+    grid-column: 1 / -1;
+    width: 100%;
+  }
+}

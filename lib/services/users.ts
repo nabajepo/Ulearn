@@ -31,6 +31,7 @@ import {
  * • Calculate the temporary teacher account lifetime.
  * • Detect and clean up expired teacher accounts.
  * • Maintain the quiz linked to each teacher.
+ * • Track whether the teacher welcome email has been sent.
  *
  * Important date rule
  * -------------------
@@ -90,6 +91,15 @@ export type Teacher = {
   quizId: string | null;
 
   status: TeacherStatus;
+
+  /**
+   * UTC ISO timestamp representing when the welcome
+   * email was successfully sent.
+   *
+   * null means that the welcome email has not yet
+   * been successfully sent.
+   */
+  welcomeEmailSentAt: string | null;
 };
 
 /**
@@ -286,6 +296,20 @@ export async function getTeacher(
       data.status === "expired"
         ? "expired"
         : "active",
+
+    /*
+     * Backward-compatible:
+     *
+     * Older teacher documents created before the email
+     * system was added do not contain this field.
+     *
+     * They are therefore treated as not having received
+     * the welcome email yet.
+     */
+    welcomeEmailSentAt:
+      typeof data.welcomeEmailSentAt === "string"
+        ? data.welcomeEmailSentAt
+        : null,
   };
 }
 
@@ -310,6 +334,14 @@ export async function teacherExists(
  * • The global teacher limit is enforced.
  * • createdAt and expiresAt are based on the same timestamp.
  * • expiresAt is exactly ACCOUNT_DURATION_DAYS × 24 hours later.
+ * • New teachers begin with welcomeEmailSentAt = null.
+ *
+ * Important:
+ * ----------
+ * This function does NOT send the welcome email itself.
+ *
+ * Email sending must be handled by a secure server-side route
+ * because the Resend API key must never be exposed to the browser.
  */
 export async function createTeacher(
   input: CreateTeacherInput
@@ -325,6 +357,7 @@ export async function createTeacher(
     return {
       success: true,
       teacher: existingTeacher,
+      created: false,
       message: "Teacher already exists.",
     };
   }
@@ -339,6 +372,7 @@ export async function createTeacher(
     return {
       success: false,
       teacher: null,
+      created: false,
       message: "Teacher limit reached.",
     };
   }
@@ -373,6 +407,13 @@ export async function createTeacher(
     quizId: null,
 
     status: "active",
+
+    /*
+     * The secure welcome-email route will replace this
+     * with the UTC ISO timestamp after Resend confirms
+     * that the email was accepted.
+     */
+    welcomeEmailSentAt: null,
   };
 
   /*
@@ -404,9 +445,35 @@ export async function createTeacher(
       ...teacher,
     },
 
+    created: true,
+
     message:
       "Teacher created successfully.",
   };
+}
+
+/**
+ * Marks the teacher welcome email as successfully sent.
+ *
+ * This should only be called after the secure server-side
+ * email route receives a successful response from Resend.
+ *
+ * The timestamp is stored in UTC ISO format.
+ */
+export async function markTeacherWelcomeEmailAsSent(
+  teacherId: string
+) {
+  const sentAt =
+    new Date().toISOString();
+
+  await updateDoc(
+    teacherRef(teacherId),
+    {
+      welcomeEmailSentAt: sentAt,
+    }
+  );
+
+  return sentAt;
 }
 
 /**
@@ -486,19 +553,27 @@ export async function deleteTeacher(
 /**
  * Checks whether the teacher account has expired.
  *
+ * Current behaviour:
+ * ------------------
  * If expired:
  * 1. mark the profile as expired;
  * 2. delete the Firestore profile;
  * 3. decrease the active teacher statistic.
  *
- * Important:
- * ----------
- * This cleanup currently runs when the application
- * calls this function.
+ * IMPORTANT - Future email cleanup:
+ * ---------------------------------
+ * We will later change this process.
  *
- * Later, automatic server-side cleanup can be added
- * so expired accounts are removed even when the
- * teacher never reconnects.
+ * Before deleting an expired teacher, ULearn will need to:
+ *
+ * 1. generate the final corrected-copy archive;
+ * 2. send that archive to the teacher;
+ * 3. confirm that the email/archive operation succeeded;
+ * 4. only then delete the teacher data.
+ *
+ * For now, the existing cleanup behaviour is preserved
+ * so we do not change unrelated application behaviour
+ * while implementing the welcome email.
  */
 export async function cleanupExpiredTeacher(
   teacherId: string

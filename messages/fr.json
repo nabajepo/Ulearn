@@ -384,6 +384,19 @@
 "quizDetails": {
   "backDashboard": "Retour au tableau de bord",
   "noDescription": "Aucune description fournie.",
+  "launchConfirmation": {
+  "badge": "Confirmation finale",
+  "title": "Lancer ce quiz ?",
+  "close": "Fermer la confirmation",
+  "description": "Le quiz sera accessible aux étudiants selon les dates et heures que vous avez configurées.",
+  "lockedTitle": "Après le lancement :",
+  "questionsLocked": "Les questions ne pourront plus être modifiées.",
+  "settingsLocked": "Les paramètres importants du quiz seront verrouillés.",
+  "deleteLocked": "Le quiz ne pourra pas être supprimé pendant qu’il est actif.",
+  "finalWarning": "Vérifiez attentivement le quiz avant de continuer. Le lancement est définitif.",
+  "cancel": "Annuler",
+  "confirm": "Lancer le quiz"
+},
 
   "loading": {
     "openingTitle": "Ouverture du quiz",
@@ -570,6 +583,26 @@
       "returning": "Retour au quiz...",
       "openingStudent": "Ouverture de la tentative de l’étudiant..."
     },
+    "search": {
+  "label": "Rechercher des étudiants",
+  "placeholder": "Rechercher par nom ou courriel...",
+  "clear": "Effacer la recherche",
+  "emptyTitle": "Aucun étudiant trouvé",
+  "emptyText": "Aucun étudiant ne correspond à votre recherche."
+},
+"pinReset": {
+  "summaryTitle": "Demandes de réinitialisation du NIP",
+  "summaryText": "Un ou plusieurs étudiants attendent votre approbation pour réinitialiser leur NIP.",
+  "requested": "Réinitialisation du NIP demandée",
+  "approvedBadge": "Réinitialisation du NIP approuvée",
+  "generateCode": "Générer le code temporaire",
+  "generating": "Génération du code...",
+  "approved": "Le code temporaire a été généré avec succès.",
+  "approveError": "Impossible d'approuver la demande de réinitialisation du NIP.",
+  "temporaryCode": "Code temporaire",
+  "giveCode": "Communiquez ce code directement à l'étudiant. Il ne sera plus affiché.",
+  "expires": "Expire :"
+},
     "zip": {
   "button": "Télécharger toutes les copies corrigées",
   "loadingTitle": "Préparation des copies corrigées",
@@ -804,7 +837,51 @@
   "noDescription": "Aucune description fournie.",
    "teacher": {
    "createdBy": "Créé par : "
-   },
+   },"pinReset": {
+  "title": "Réinitialisation du NIP",
+  "forgotPin": "NIP oublié ?",
+  "requesting": "Envoi de la demande...",
+  "requestSent": "Votre demande de réinitialisation a été envoyée au professeur.",
+  "noActiveAttempt": "Aucune tentative de quiz en cours n'a été trouvée avec cette adresse courriel.",
+  "notInProgress": "Cette tentative de quiz n'est plus en cours.",
+  "attemptExpired": "Cette tentative de quiz a expiré.",
+  "waitingTitle": "En attente du professeur",
+  "waitingDescription": "Votre demande a été envoyée. Restez sur cette page pendant que votre professeur l'approuve.",
+  "waitingMessage": "Votre professeur doit approuver la demande et générer un code temporaire avant que vous puissiez choisir un nouveau NIP.",
+  "waitingStatus": "En attente de l'approbation du professeur...",
+  "checking": "Vérification de l'état de la demande...",
+  "checkNow": "Vérifier maintenant",
+  "approvedTitle": "Demande approuvée",
+  "approvedDescription": "Votre professeur a approuvé la demande. Entrez le code temporaire qu'il vous a donné et choisissez un nouveau NIP.",
+  "approvedMessage": "Votre professeur a généré un code temporaire. Demandez-lui ce code pour réinitialiser votre NIP.",
+  "codeLabel": "Code temporaire à 6 chiffres",
+  "codeHelp": "Entrez le code temporaire à 6 chiffres fourni par votre professeur.",
+  "newPinLabel": "Nouveau NIP à 6 chiffres",
+  "confirmPinLabel": "Confirmer le nouveau NIP",
+  "invalidCode": "Le code temporaire doit contenir exactement 6 chiffres.",
+  "invalidNewPin": "Votre nouveau NIP doit contenir exactement 6 chiffres.",
+  "pinMismatch": "Les deux NIP ne correspondent pas.",
+  "incorrectCode": "Le code temporaire est incorrect.",
+  "tooManyCodeAttempts": "Trop de codes incorrects ont été saisis. Vous devez faire une nouvelle demande de réinitialisation.",
+  "codeExpired": "Le code temporaire a expiré. Vous devez faire une nouvelle demande de réinitialisation.",
+  "codeUnavailable": "Ce code temporaire n'est plus disponible. Vous devez faire une nouvelle demande de réinitialisation.",
+  "resetButton": "Réinitialiser mon NIP",
+  "back": "Retour",
+  "resettingTitle": "Réinitialisation du NIP",
+  "resettingSubtitle": "Mise à jour de votre NIP et reprise de votre quiz...",
+  "error": "Impossible de traiter la réinitialisation du NIP pour le moment. Veuillez réessayer."
+},
+   "pin": {
+  "label": "NIP à 6 chiffres",
+  "help": "Choisissez un NIP personnel à 6 chiffres. Vous en aurez besoin pour reprendre votre quiz si vous quittez la page.",
+  "infoTitle": "Gardez votre NIP confidentiel",
+  "infoText": "Votre NIP protège votre tentative de quiz. Ne le partagez pas avec d'autres étudiants.",
+  "invalid": "Votre NIP doit contenir exactement 6 chiffres.",
+  "incorrect": "NIP incorrect.",
+  "attemptsRemaining": "Tentatives restantes",
+  "locked": "Trop de tentatives incorrectes. Veuillez réessayer dans 15 minutes.",
+  "resetRequired": "Votre NIP doit être réinitialisé avant que vous puissiez reprendre ce quiz."
+},
 
   "starting": {
     "title": "Démarrage du quiz...",
@@ -883,6 +960,10 @@
     "text": "Cette session de quiz est indisponible ou n’a pas pu être chargée.",
     "notFound": "Cette tentative de quiz est introuvable.",
     "loadError": "Impossible de charger votre session de quiz."
+  },
+  "timeWarning": {
+    "title": "Il reste 5 minutes",
+    "text": "Votre quiz sera remis automatiquement lorsque le compteur atteindra zéro. Assurez-vous que vos réponses sont complètes."
   },
   "result": {
   "completedTitle": "Quiz terminé",
