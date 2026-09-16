@@ -1,134 +1,531 @@
 "use client";
 
-import { useEffect, useMemo, useState, type FormEvent } from "react";
+import {
+  FormEvent,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { useParams, useRouter } from "next/navigation";
+import {
+  Clock3,
+  Eye,
+  EyeOff,
+  KeyRound,
+  LockKeyhole,
+  Mail,
+  RotateCcwKey,
+  UserRound,
+} from "lucide-react";
 
 import AppLoading from "@/components/AppLoading";
 import HelpSupport from "@/components/HelpSupport";
 import { useLanguage } from "@/hooks/useLanguage";
-import { formatInTimeZone } from "@/lib/dateTime";
-import { formatQuizDuration } from "@/lib/quizDuration";
-import { getQuizByAccessCode, type Quiz } from "@/lib/services/quizzes";
+import {
+  getQuizByAccessCode,
+  type Quiz,
+} from "@/lib/services/quizzes";
 
 import styles from "./JoinQuizPage.module.css";
 
-type AvailabilityState = "available" | "waiting" | "ended" | "unavailable";
-type PinResetView = "normal" | "waiting" | "approved";
+/* =========================================================
+   Types
+   ========================================================= */
 
-type ApiBaseResponse = {
+type JoinStep =
+  | "identity"
+  | "new"
+  | "existing"
+  | "completed"
+  | "reset";
+
+type LookupMode =
+  | "new"
+  | "existing"
+  | "completed";
+
+type AttemptStatus =
+  | "submitted"
+  | "graded";
+
+type ResetStatus =
+  | "pending"
+  | "approved"
+  | null;
+
+type ApiResponseBase = {
   success: boolean;
   messageKey?: string;
   message?: string;
 };
 
-type StartAttemptApiResponse = ApiBaseResponse & {
-  attemptId?: string | null;
-  resumed?: boolean;
-  attemptsRemaining?: number;
-  lockedUntil?: string | null;
-  remainingSeconds?: number;
-};
-
-type RequestPinResetApiResponse = ApiBaseResponse & {
-  status?: "pending" | "approved";
+type LookupResponse = ApiResponseBase & {
+  mode?: LookupMode;
+  status?: AttemptStatus;
   attemptId?: string;
 };
 
-type PinResetStatusApiResponse = ApiBaseResponse & {
-  status?: "pending" | "approved" | null;
-  attemptId?: string | null;
+type StartResponse = ApiResponseBase & {
+  attemptId?: string;
+  status?: AttemptStatus;
+  authenticationRequired?: boolean;
+  locked?: boolean;
+  lockedUntil?: string | null;
+  lockRemainingSeconds?: number;
+  attemptsRemaining?: number;
 };
 
-type ResetPinApiResponse = ApiBaseResponse & {
+type ResetRequestResponse = ApiResponseBase & {
+  status?: ResetStatus;
+  attemptId?: string;
+};
+
+type ResetStatusResponse = ApiResponseBase & {
+  status?: ResetStatus;
+  attemptId?: string;
+};
+
+type ResetPinResponse = ApiResponseBase & {
   attemptId?: string;
   studentName?: string;
   attemptsRemaining?: number;
 };
 
-const STUDENT_PIN_LENGTH = 6;
-const RESET_CODE_LENGTH = 6;
-const RESET_STATUS_POLL_INTERVAL_MS = 2500;
+type PinFieldProps = {
+  label: string;
+  value: string;
+  setValue: (value: string) => void;
+  visible: boolean;
+  setVisible: (value: boolean) => void;
+  styles: Record<string, string>;
+  showLabel: string;
+  hideLabel: string;
+  disabled?: boolean;
+};
 
-function formatCountdown(milliseconds: number) {
-  const totalSeconds = Math.floor(Math.max(0, milliseconds) / 1000);
-  const hours = Math.floor(totalSeconds / 3600);
-  const minutes = Math.floor((totalSeconds % 3600) / 60);
-  const seconds = totalSeconds % 60;
+/* =========================================================
+   Constants
+   ========================================================= */
 
-  return [hours, minutes, seconds]
-    .map((value) => String(value).padStart(2, "0"))
-    .join(":");
+const PIN_LENGTH = 6;
+const RESET_STATUS_POLL_MS = 5000;
+
+/* =========================================================
+   Helpers
+   ========================================================= */
+
+function normalizeEmail(value: string) {
+  return value.trim().toLowerCase();
 }
 
-function isValidEmail(value: string) {
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+function onlyDigits(value: string) {
+  return value.replace(/\D/g, "");
 }
 
-function isValidPin(value: string) {
-  return /^\d{6}$/.test(value);
+function isValidEmail(email: string) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 }
 
-function onlyDigits(value: string, maxLength: number) {
-  return value.replace(/\D/g, "").slice(0, maxLength);
+function isValidPin(pin: string) {
+  return /^\d{6}$/.test(pin);
 }
+
+/**
+ * Safely parse an API response.
+ *
+ * If Next.js returns an HTML error page instead of JSON,
+ * this prevents response.json() from throwing:
+ *
+ * JSON.parse: unexpected character at line 1 column 1
+ */
+async function readApiResponse<T extends ApiResponseBase>(
+  response: Response
+): Promise<T | null> {
+  try {
+    const contentType =
+      response.headers.get("content-type") ?? "";
+
+    if (!contentType.includes("application/json")) {
+      const text = await response.text();
+
+      console.error(
+        "API returned a non-JSON response:",
+        response.status,
+        text.slice(0, 500)
+      );
+
+      return null;
+    }
+
+    return (await response.json()) as T;
+  } catch (error) {
+    console.error(
+      "Unable to parse API response:",
+      error
+    );
+
+    return null;
+  }
+}
+
+/* =========================================================
+   Page
+   ========================================================= */
 
 export default function JoinQuizPage() {
+  const params = useParams<{
+    accessCode: string;
+  }>();
+
   const router = useRouter();
-  const params = useParams();
-  const { t, language } = useLanguage();
+  const { t } = useLanguage();
 
-  const rawAccessCode = params.accessCode ?? params.accesscode ?? "";
-  const accessCode = String(
-    Array.isArray(rawAccessCode) ? rawAccessCode[0] ?? "" : rawAccessCode
-  )
-    .trim()
-    .toUpperCase();
+  const accessCode =
+    typeof params.accessCode === "string"
+      ? params.accessCode
+      : "";
 
-  const [quiz, setQuiz] = useState<Quiz | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [submitting, setSubmitting] = useState(false);
-  const [message, setMessage] = useState("");
+  /* =======================================================
+     Quiz
+     ======================================================= */
 
-  const [studentName, setStudentName] = useState("");
-  const [studentEmail, setStudentEmail] = useState("");
-  const [studentPin, setStudentPin] = useState("");
+  const [quiz, setQuiz] =
+    useState<Quiz | null>(null);
 
-  const [pinResetView, setPinResetView] = useState<PinResetView>("normal");
-  const [pinResetAttemptId, setPinResetAttemptId] = useState<string | null>(null);
-  const [requestingReset, setRequestingReset] = useState(false);
-  const [checkingResetStatus, setCheckingResetStatus] = useState(false);
+  const [loadingQuiz, setLoadingQuiz] =
+    useState(true);
 
-  const [resetCode, setResetCode] = useState("");
-  const [newPin, setNewPin] = useState("");
-  const [newPinConfirmation, setNewPinConfirmation] = useState("");
-  const [resettingPin, setResettingPin] = useState(false);
+  const [quizError, setQuizError] =
+    useState("");
 
-  const [now, setNow] = useState(() => Date.now());
+  const [now, setNow] =
+    useState(() => Date.now());
+
+  /* =======================================================
+     Join flow
+     ======================================================= */
+
+  const [step, setStep] =
+    useState<JoinStep>("identity");
+
+  const [studentName, setStudentName] =
+    useState("");
+
+  const [studentEmail, setStudentEmail] =
+    useState("");
+
+  const [pin, setPin] =
+    useState("");
+
+  const [confirmPin, setConfirmPin] =
+    useState("");
+
+  const [showPin, setShowPin] =
+    useState(false);
+
+  const [
+    showConfirmPin,
+    setShowConfirmPin,
+  ] = useState(false);
+
+  const [busy, setBusy] =
+    useState(false);
+
+  const [error, setError] =
+    useState("");
+
+  /* =======================================================
+     Completed attempt
+     ======================================================= */
+
+  const [
+    completedAttemptId,
+    setCompletedAttemptId,
+  ] = useState("");
+
+  const [
+    completedStatus,
+    setCompletedStatus,
+  ] = useState<AttemptStatus | null>(
+    null
+  );
+
+  /* =======================================================
+     PIN reset
+     ======================================================= */
+
+  const [resetStatus, setResetStatus] =
+    useState<ResetStatus>(null);
+
+  const [
+    temporaryCode,
+    setTemporaryCode,
+  ] = useState("");
+
+  const [newPin, setNewPin] =
+    useState("");
+
+  const [
+    confirmNewPin,
+    setConfirmNewPin,
+  ] = useState("");
+
+  const [
+    showTemporaryCode,
+    setShowTemporaryCode,
+  ] = useState(false);
+
+  const [
+    showNewPin,
+    setShowNewPin,
+  ] = useState(false);
+
+  const [
+    showConfirmNewPin,
+    setShowConfirmNewPin,
+  ] = useState(false);
+
+  const pollingRef =
+    useRef<ReturnType<typeof setInterval> | null>(
+      null
+    );
+
+  /* =======================================================
+     Translation helper
+     ======================================================= */
+
+  const translateOrFallback = useCallback(
+    (
+      key: string,
+      fallback: string
+    ) => {
+      try {
+        const translated = t(key);
+
+        if (
+          !translated ||
+          translated === key
+        ) {
+          return fallback;
+        }
+
+        return translated;
+      } catch {
+        return fallback;
+      }
+    },
+    [t]
+  );
+
+  const getMessage = useCallback(
+    (
+      messageKey: string | undefined,
+      fallback: string
+    ) => {
+      if (!messageKey) {
+        return fallback;
+      }
+
+      try {
+        const translated =
+          t(messageKey);
+
+        if (
+          !translated ||
+          translated === messageKey
+        ) {
+          return fallback;
+        }
+
+        return translated;
+      } catch {
+        return fallback;
+      }
+    },
+    [t]
+  );
+
+  /* =======================================================
+     Localized duration helpers
+     ======================================================= */
+
+  const formatDuration = useCallback(
+    (minutes: number) => {
+      if (
+        !Number.isFinite(minutes) ||
+        minutes <= 0
+      ) {
+        return "—";
+      }
+
+      if (minutes < 60) {
+        return `${minutes} ${translateOrFallback(
+          "join.time.minutesShort",
+          "min"
+        )}`;
+      }
+
+      const hours =
+        Math.floor(minutes / 60);
+
+      const remainingMinutes =
+        minutes % 60;
+
+      const hourLabel =
+        translateOrFallback(
+          "join.time.hoursShort",
+          "h"
+        );
+
+      const minuteLabel =
+        translateOrFallback(
+          "join.time.minutesShort",
+          "min"
+        );
+
+      if (remainingMinutes === 0) {
+        return `${hours} ${hourLabel}`;
+      }
+
+      return `${hours} ${hourLabel} ${remainingMinutes} ${minuteLabel}`;
+    },
+    [translateOrFallback]
+  );
+
+  const formatCountdown = useCallback(
+    (milliseconds: number) => {
+      const totalSeconds =
+        Math.max(
+          0,
+          Math.ceil(
+            milliseconds / 1000
+          )
+        );
+
+      const days =
+        Math.floor(
+          totalSeconds / 86400
+        );
+
+      const hours =
+        Math.floor(
+          (totalSeconds % 86400) /
+            3600
+        );
+
+      const minutes =
+        Math.floor(
+          (totalSeconds % 3600) /
+            60
+        );
+
+      const seconds =
+        totalSeconds % 60;
+
+      const hh =
+        String(hours).padStart(
+          2,
+          "0"
+        );
+
+      const mm =
+        String(minutes).padStart(
+          2,
+          "0"
+        );
+
+      const ss =
+        String(seconds).padStart(
+          2,
+          "0"
+        );
+
+      if (days > 0) {
+        const dayLabel =
+          translateOrFallback(
+            "join.time.daysShort",
+            "d"
+          );
+
+        return `${days} ${dayLabel} ${hh}:${mm}:${ss}`;
+      }
+
+      return `${hh}:${mm}:${ss}`;
+    },
+    [translateOrFallback]
+  );
+
+  /* =======================================================
+     Live clock
+     ======================================================= */
+
+  useEffect(() => {
+    const interval =
+      window.setInterval(() => {
+        setNow(Date.now());
+      }, 1000);
+
+    return () => {
+      window.clearInterval(interval);
+    };
+  }, []);
+
+  /* =======================================================
+     Load quiz
+     ======================================================= */
 
   useEffect(() => {
     let cancelled = false;
 
     async function loadQuiz() {
       if (!accessCode) {
-        setLoading(false);
+        setQuizError(
+          t("join.errors.invalidQuiz")
+        );
+
+        setLoadingQuiz(false);
         return;
       }
 
       try {
-        const data = await getQuizByAccessCode(accessCode);
+        setLoadingQuiz(true);
+        setQuizError("");
 
-        if (!cancelled) {
-          setQuiz(data);
+        const foundQuiz =
+          await getQuizByAccessCode(
+            accessCode
+          );
+
+        if (cancelled) {
+          return;
         }
-      } catch (error) {
-        console.error("Unable to load student quiz access:", error);
+
+        if (!foundQuiz) {
+          setQuizError(
+            t(
+              "join.errors.quizNotFound"
+            )
+          );
+
+          return;
+        }
+
+        setQuiz(foundQuiz);
+      } catch (loadError) {
+        console.error(
+          "Unable to load quiz:",
+          loadError
+        );
 
         if (!cancelled) {
-          setMessage(t("joinQuiz.messages.loadError"));
+          setQuizError(
+            t("join.errors.generic")
+          );
         }
       } finally {
         if (!cancelled) {
-          setLoading(false);
+          setLoadingQuiz(false);
         }
       }
     }
@@ -138,991 +535,2221 @@ export default function JoinQuizPage() {
     return () => {
       cancelled = true;
     };
-  }, [accessCode, t]);
+  }, [
+    accessCode,
+    t,
+  ]);
+
+  /* =======================================================
+     PIN reset polling cleanup
+     ======================================================= */
+
+  const stopResetPolling =
+    useCallback(() => {
+      if (pollingRef.current) {
+        clearInterval(
+          pollingRef.current
+        );
+
+        pollingRef.current = null;
+      }
+    }, []);
 
   useEffect(() => {
-    const interval = window.setInterval(() => {
-      setNow(Date.now());
-    }, 1000);
-
     return () => {
-      window.clearInterval(interval);
+      stopResetPolling();
     };
-  }, []);
+  }, [stopResetPolling]);
 
-  const startMs = useMemo(() => {
-    if (!quiz?.availableFrom) return null;
+  /* =======================================================
+     Quiz availability
+     ======================================================= */
 
-    const value = new Date(quiz.availableFrom).getTime();
-    return Number.isNaN(value) ? null : value;
-  }, [quiz?.availableFrom]);
+  const availableFromMs =
+    quiz?.availableFrom
+      ? new Date(
+          quiz.availableFrom
+        ).getTime()
+      : null;
 
-  const endMs = useMemo(() => {
-    if (!quiz?.availableUntil) return null;
+  const availableUntilMs =
+    quiz?.availableUntil
+      ? new Date(
+          quiz.availableUntil
+        ).getTime()
+      : null;
 
-    const value = new Date(quiz.availableUntil).getTime();
-    return Number.isNaN(value) ? null : value;
-  }, [quiz?.availableUntil]);
+  const validAvailableFromMs =
+    availableFromMs !== null &&
+    Number.isFinite(
+      availableFromMs
+    )
+      ? availableFromMs
+      : null;
 
-  const availabilityState: AvailabilityState = useMemo(() => {
-    if (!quiz || quiz.status !== "launched" || endMs === null) {
-      return "unavailable";
+  const validAvailableUntilMs =
+    availableUntilMs !== null &&
+    Number.isFinite(
+      availableUntilMs
+    )
+      ? availableUntilMs
+      : null;
+
+  const quizHasStarted =
+    validAvailableFromMs === null ||
+    now >= validAvailableFromMs;
+
+  const quizHasEnded =
+    quiz?.status === "closed" ||
+    (
+      validAvailableUntilMs !==
+        null &&
+      now >= validAvailableUntilMs
+    );
+
+  const quizAvailable =
+    quiz?.status === "launched" &&
+    quizHasStarted &&
+    !quizHasEnded;
+
+  const countdownTarget =
+    !quizHasStarted &&
+    validAvailableFromMs !== null
+      ? validAvailableFromMs
+      : !quizHasEnded &&
+          validAvailableUntilMs !==
+            null
+        ? validAvailableUntilMs
+        : null;
+
+  const countdown =
+    countdownTarget !== null
+      ? formatCountdown(
+          countdownTarget - now
+        )
+      : null;
+
+  function getAvailabilityLabel() {
+    if (!quiz) {
+      return "";
     }
 
-    if (now >= endMs) {
-      return "ended";
+    if (quizHasEnded) {
+      return t(
+        "join.availability.ended"
+      );
     }
 
-    if (startMs !== null && now < startMs) {
-      return "waiting";
+    if (!quizHasStarted) {
+      return t(
+        "join.availability.startsIn"
+      );
     }
 
-    return "available";
-  }, [quiz, startMs, endMs, now]);
-
-  const countdownLabel = useMemo(() => {
-    if (availabilityState === "waiting" && startMs !== null) {
-      return formatCountdown(startMs - now);
+    if (
+      validAvailableUntilMs !==
+      null
+    ) {
+      return t(
+        "join.availability.remaining"
+      );
     }
 
-    if (availabilityState === "available" && endMs !== null) {
-      return formatCountdown(endMs - now);
-    }
-
-    return "";
-  }, [availabilityState, startMs, endMs, now]);
-
-  function getStartApiMessage(result: StartAttemptApiResponse) {
-    switch (result.messageKey) {
-      case "attempts.start.alreadySubmitted":
-        return t("joinQuiz.messages.alreadySubmitted");
-
-      case "attempts.start.alreadyGraded":
-        return t("joinQuiz.messages.alreadyGraded");
-
-      case "attempts.start.expired":
-        return t("joinQuiz.messages.attemptExpired");
-
-      case "attempts.pin.invalidFormat":
-        return t("joinQuiz.pin.invalid");
-
-      case "attempts.pin.incorrect":
-        if (typeof result.attemptsRemaining === "number") {
-          return `${t("joinQuiz.pin.incorrect")} ${t(
-            "joinQuiz.pin.attemptsRemaining"
-          )}: ${result.attemptsRemaining}`;
-        }
-
-        return t("joinQuiz.pin.incorrect");
-
-      case "attempts.pin.locked":
-        return t("joinQuiz.pin.locked");
-
-      case "attempts.pin.resetRequired":
-        return t("joinQuiz.pin.resetRequired");
-
-      default:
-        return result.message || t("joinQuiz.messages.startError");
-    }
+    return t(
+      "join.availability.available"
+    );
   }
 
-  function getPinResetMessage(
-    result: ApiBaseResponse & { attemptsRemaining?: number }
+  /* =======================================================
+     Identity lookup
+     ======================================================= */
+
+  async function handleIdentitySubmit(
+    event: FormEvent<HTMLFormElement>
   ) {
-    switch (result.messageKey) {
-      case "attempts.pinReset.noActiveAttempt":
-        return t("joinQuiz.pinReset.noActiveAttempt");
-
-      case "attempts.pinReset.notInProgress":
-        return t("joinQuiz.pinReset.notInProgress");
-
-      case "attempts.pinReset.attemptExpired":
-        return t("joinQuiz.pinReset.attemptExpired");
-
-      case "attempts.pinReset.incorrectCode":
-        if (typeof result.attemptsRemaining === "number") {
-          return `${t("joinQuiz.pinReset.incorrectCode")} ${t(
-            "joinQuiz.pin.attemptsRemaining"
-          )}: ${result.attemptsRemaining}`;
-        }
-
-        return t("joinQuiz.pinReset.incorrectCode");
-
-      case "attempts.pinReset.tooManyCodeAttempts":
-        return t("joinQuiz.pinReset.tooManyCodeAttempts");
-
-      case "attempts.pinReset.codeExpired":
-        return t("joinQuiz.pinReset.codeExpired");
-
-      case "attempts.pinReset.codeUnavailable":
-        return t("joinQuiz.pinReset.codeUnavailable");
-
-      case "attempts.pinReset.invalidCodeFormat":
-        return t("joinQuiz.pinReset.invalidCode");
-
-      case "attempts.pinReset.invalidNewPin":
-        return t("joinQuiz.pinReset.invalidNewPin");
-
-      case "attempts.pinReset.pinMismatch":
-        return t("joinQuiz.pinReset.pinMismatch");
-
-      case "attempts.pinReset.notApproved":
-        return t("joinQuiz.pinReset.waitingMessage");
-
-      default:
-        return result.message || t("joinQuiz.pinReset.error");
-    }
-  }
-
-  function getCleanEmail() {
-    const cleanEmail = studentEmail.trim().toLowerCase();
-
-    if (!cleanEmail) {
-      setMessage(t("joinQuiz.validation.emailRequired"));
-      return null;
-    }
-
-    if (!isValidEmail(cleanEmail)) {
-      setMessage(t("joinQuiz.validation.invalidEmail"));
-      return null;
-    }
-
-    return cleanEmail;
-  }
-
-  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
-    if (!quiz || submitting) return;
-
-    setMessage("");
-
-    const cleanName = studentName.trim();
-    const cleanEmail = studentEmail.trim().toLowerCase();
-    const cleanPin = studentPin.trim();
-
-    if (!cleanName || cleanName.length < 2) {
-      setMessage(t("joinQuiz.validation.nameRequired"));
-      return;
-    }
-
-    if (!cleanEmail) {
-      setMessage(t("joinQuiz.validation.emailRequired"));
-      return;
-    }
-
-    if (!isValidEmail(cleanEmail)) {
-      setMessage(t("joinQuiz.validation.invalidEmail"));
-      return;
-    }
-
-    if (!isValidPin(cleanPin)) {
-      setMessage(t("joinQuiz.pin.invalid"));
-      return;
-    }
-
-    if (availabilityState !== "available") return;
-
-    setSubmitting(true);
-
-    try {
-      const response = await fetch("/api/student-attempt/start", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        cache: "no-store",
-        body: JSON.stringify({
-          quizId: quiz.id,
-          studentName: cleanName,
-          studentEmail: cleanEmail,
-          pin: cleanPin,
-        }),
-      });
-
-      const result = (await response.json()) as StartAttemptApiResponse;
-
-      if (!response.ok || !result.success || !result.attemptId) {
-        setMessage(getStartApiMessage(result));
-        return;
-      }
-
-      router.push(`/quiz-session/${result.attemptId}`);
-    } catch (error) {
-      console.error("Unable to start quiz:", error);
-      setMessage(t("joinQuiz.messages.startError"));
-    } finally {
-      setSubmitting(false);
-    }
-  }
-
-  async function handleRequestPinReset() {
     if (
       !quiz ||
-      requestingReset ||
-      availabilityState !== "available"
+      busy ||
+      !quizAvailable
     ) {
       return;
     }
 
-    setMessage("");
+    setError("");
 
-    // The recovery identity is quizId + normalized email.
-    // The student's name is deliberately NOT sent here.
-    const cleanEmail = getCleanEmail();
+    const cleanName =
+      studentName.trim();
 
-    if (!cleanEmail) return;
-
-    setRequestingReset(true);
-
-    try {
-      const response = await fetch(
-        "/api/student-attempt/request-pin-reset",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          cache: "no-store",
-          body: JSON.stringify({
-            quizId: quiz.id,
-            studentEmail: cleanEmail,
-          }),
-        }
+    const cleanEmail =
+      normalizeEmail(
+        studentEmail
       );
 
-      const result =
-        (await response.json()) as RequestPinResetApiResponse;
+    if (cleanName.length < 2) {
+      setError(
+        t(
+          "join.errors.invalidName"
+        )
+      );
 
-      if (!response.ok || !result.success || !result.attemptId) {
-        setMessage(getPinResetMessage(result));
+      return;
+    }
+
+    if (
+      !isValidEmail(cleanEmail)
+    ) {
+      setError(
+        t(
+          "join.errors.invalidEmail"
+        )
+      );
+
+      return;
+    }
+
+    try {
+      setBusy(true);
+
+      const response =
+        await fetch(
+          "/api/student-attempt/lookup",
+          {
+            method: "POST",
+
+            headers: {
+              "Content-Type":
+                "application/json",
+            },
+
+            cache: "no-store",
+
+            body: JSON.stringify({
+              quizId: quiz.id,
+              studentName:
+                cleanName,
+              studentEmail:
+                cleanEmail,
+            }),
+          }
+        );
+
+      const data =
+        await readApiResponse<LookupResponse>(
+          response
+        );
+
+      if (!data) {
+        setError(
+          t(
+            "join.errors.generic"
+          )
+        );
+
         return;
       }
 
-      setPinResetAttemptId(result.attemptId);
+      if (
+        !response.ok ||
+        !data.success
+      ) {
+        setError(
+          getMessage(
+            data.messageKey,
+            data.message ||
+              t(
+                "join.errors.generic"
+              )
+          )
+        );
 
-      if (result.status === "approved") {
-        setPinResetView("approved");
-        setMessage(t("joinQuiz.pinReset.approvedMessage"));
         return;
       }
 
-      setPinResetView("waiting");
-      setMessage(t("joinQuiz.pinReset.requestSent"));
-    } catch (error) {
-      console.error("Unable to request PIN reset:", error);
-      setMessage(t("joinQuiz.pinReset.error"));
+      setStudentName(
+        cleanName
+      );
+
+      setStudentEmail(
+        cleanEmail
+      );
+
+      setPin("");
+      setConfirmPin("");
+
+      if (
+        data.mode === "new"
+      ) {
+        setStep("new");
+        return;
+      }
+
+      if (
+        data.mode ===
+        "existing"
+      ) {
+        setStep("existing");
+        return;
+      }
+
+      if (
+        data.mode ===
+          "completed" &&
+        data.attemptId &&
+        data.status
+      ) {
+        setCompletedAttemptId(
+          data.attemptId
+        );
+
+        setCompletedStatus(
+          data.status
+        );
+
+        setStep("completed");
+
+        return;
+      }
+
+      setError(
+        t(
+          "join.errors.generic"
+        )
+      );
+    } catch (lookupError) {
+      console.error(
+        "Student lookup failed:",
+        lookupError
+      );
+
+      setError(
+        t(
+          "join.errors.generic"
+        )
+      );
     } finally {
-      setRequestingReset(false);
+      setBusy(false);
     }
   }
 
-  async function checkPinResetStatus() {
+  /* =======================================================
+     Create new attempt
+     ======================================================= */
+
+  async function handleCreateAttempt(
+    event: FormEvent<HTMLFormElement>
+  ) {
+    event.preventDefault();
+
     if (
       !quiz ||
-      pinResetView !== "waiting" ||
-      checkingResetStatus
+      busy ||
+      !quizAvailable
     ) {
       return;
     }
 
-    const cleanEmail = studentEmail.trim().toLowerCase();
+    setError("");
 
-    if (!cleanEmail || !isValidEmail(cleanEmail)) return;
-
-    setCheckingResetStatus(true);
-
-    try {
-      const response = await fetch(
-        "/api/student-attempt/pin-reset-status",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          cache: "no-store",
-          body: JSON.stringify({
-            quizId: quiz.id,
-            studentEmail: cleanEmail,
-          }),
-        }
+    if (!isValidPin(pin)) {
+      setError(
+        t("join.pin.invalid")
       );
 
-      const result =
-        (await response.json()) as PinResetStatusApiResponse;
+      return;
+    }
 
-      if (!response.ok || !result.success) {
+    if (pin !== confirmPin) {
+      setError(
+        t("join.pin.mismatch")
+      );
+
+      return;
+    }
+
+    try {
+      setBusy(true);
+
+      const response =
+        await fetch(
+          "/api/student-attempt/start",
+          {
+            method: "POST",
+
+            headers: {
+              "Content-Type":
+                "application/json",
+            },
+
+            cache: "no-store",
+
+            body: JSON.stringify({
+              quizId: quiz.id,
+              studentName,
+              studentEmail,
+              pin,
+            }),
+          }
+        );
+
+      const data =
+        await readApiResponse<StartResponse>(
+          response
+        );
+
+      if (!data) {
+        setError(
+          t(
+            "join.errors.generic"
+          )
+        );
+
         return;
       }
 
-      if (result.attemptId) {
-        setPinResetAttemptId(result.attemptId);
+      if (
+        !response.ok ||
+        !data.success
+      ) {
+        /*
+         * Another request may have
+         * created the credential
+         * between lookup and start.
+         */
+        if (
+          data.authenticationRequired
+        ) {
+          setPin("");
+          setConfirmPin("");
+          setStep("existing");
+
+          return;
+        }
+
+        setError(
+          getMessage(
+            data.messageKey,
+            data.message ||
+              t(
+                "join.errors.generic"
+              )
+          )
+        );
+
+        return;
       }
 
-      if (result.status === "approved") {
-        setPinResetView("approved");
-        setMessage(t("joinQuiz.pinReset.approvedMessage"));
+      if (!data.attemptId) {
+        setError(
+          t(
+            "join.errors.generic"
+          )
+        );
+
+        return;
       }
-    } catch (error) {
-      console.error("Unable to check PIN reset status:", error);
+
+      router.push(
+        `/quiz-session/${data.attemptId}`
+      );
+    } catch (startError) {
+      console.error(
+        "Unable to start quiz:",
+        startError
+      );
+
+      setError(
+        t(
+          "join.errors.generic"
+        )
+      );
     } finally {
-      setCheckingResetStatus(false);
+      setBusy(false);
     }
   }
 
-  useEffect(() => {
-    if (pinResetView !== "waiting") return;
+  /* =======================================================
+     Resume existing attempt
+     ======================================================= */
 
-    const interval = window.setInterval(() => {
-      void checkPinResetStatus();
-    }, RESET_STATUS_POLL_INTERVAL_MS);
-
-    return () => {
-      window.clearInterval(interval);
-    };
-    // checkPinResetStatus uses the latest render state.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pinResetView, quiz?.id, studentEmail]);
-
-  async function handleResetPin(event: FormEvent<HTMLFormElement>) {
+  async function handleResumeAttempt(
+    event: FormEvent<HTMLFormElement>
+  ) {
     event.preventDefault();
 
-    if (!quiz || resettingPin) return;
-
-    setMessage("");
-
-    const cleanEmail = studentEmail.trim().toLowerCase();
-    const cleanResetCode = resetCode.trim();
-    const cleanNewPin = newPin.trim();
-    const cleanConfirmation = newPinConfirmation.trim();
-
-    if (!cleanEmail || !isValidEmail(cleanEmail)) {
-      setMessage(t("joinQuiz.validation.invalidEmail"));
+    if (!quiz || busy) {
       return;
     }
 
-    if (!isValidPin(cleanResetCode)) {
-      setMessage(t("joinQuiz.pinReset.invalidCode"));
+    setError("");
+
+    if (!isValidPin(pin)) {
+      setError(
+        t("join.pin.invalid")
+      );
+
       return;
     }
-
-    if (!isValidPin(cleanNewPin)) {
-      setMessage(t("joinQuiz.pinReset.invalidNewPin"));
-      return;
-    }
-
-    if (cleanNewPin !== cleanConfirmation) {
-      setMessage(t("joinQuiz.pinReset.pinMismatch"));
-      return;
-    }
-
-    setResettingPin(true);
 
     try {
-      const response = await fetch("/api/student-attempt/reset-pin", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        cache: "no-store",
-        body: JSON.stringify({
-          quizId: quiz.id,
-          studentEmail: cleanEmail,
-          resetCode: cleanResetCode,
-          newPin: cleanNewPin,
-          newPinConfirmation: cleanConfirmation,
-        }),
-      });
+      setBusy(true);
 
-      const result = (await response.json()) as ResetPinApiResponse;
+      const response =
+        await fetch(
+          "/api/student-attempt/start",
+          {
+            method: "POST",
 
-      if (!response.ok || !result.success || !result.attemptId) {
-        setMessage(getPinResetMessage(result));
+            headers: {
+              "Content-Type":
+                "application/json",
+            },
+
+            cache: "no-store",
+
+            body: JSON.stringify({
+              quizId: quiz.id,
+              studentName,
+              studentEmail,
+              pin,
+            }),
+          }
+        );
+
+      const data =
+        await readApiResponse<StartResponse>(
+          response
+        );
+
+      if (!data) {
+        setError(
+          t(
+            "join.errors.generic"
+          )
+        );
+
+        return;
+      }
+
+      if (
+        !response.ok ||
+        !data.success
+      ) {
+        if (data.locked) {
+          const seconds =
+            Math.max(
+              0,
+              data.lockRemainingSeconds ??
+                0
+            );
+
+          const minutes =
+            Math.max(
+              1,
+              Math.ceil(
+                seconds / 60
+              )
+            );
+
+          const template =
+            t("join.pin.locked");
+
+          /*
+           * Supports both the old
+           * {minutes} translation
+           * and a possible {seconds}
+           * translation.
+           */
+          setError(
+            template
+              .replace(
+                "{minutes}",
+                String(minutes)
+              )
+              .replace(
+                "{seconds}",
+                String(seconds)
+              )
+          );
+
+          return;
+        }
 
         if (
-          result.messageKey === "attempts.pinReset.codeExpired" ||
-          result.messageKey === "attempts.pinReset.codeUnavailable" ||
-          result.messageKey === "attempts.pinReset.tooManyCodeAttempts"
+          data.status ===
+            "submitted" ||
+          data.status === "graded"
         ) {
-          setPinResetView("normal");
-          setPinResetAttemptId(null);
-          setResetCode("");
-          setNewPin("");
-          setNewPinConfirmation("");
+          if (data.attemptId) {
+            setCompletedAttemptId(
+              data.attemptId
+            );
+          }
+
+          setCompletedStatus(
+            data.status
+          );
+
+          setStep("completed");
+
+          return;
         }
+
+        setError(
+          getMessage(
+            data.messageKey,
+            data.message ||
+              t(
+                "join.pin.incorrect"
+              )
+          )
+        );
 
         return;
       }
 
-      router.push(`/quiz-session/${result.attemptId}`);
-    } catch (error) {
-      console.error("Unable to reset PIN:", error);
-      setMessage(t("joinQuiz.pinReset.error"));
+      if (!data.attemptId) {
+        setError(
+          t(
+            "join.errors.generic"
+          )
+        );
+
+        return;
+      }
+
+      router.push(
+        `/quiz-session/${data.attemptId}`
+      );
+    } catch (resumeError) {
+      console.error(
+        "Unable to resume attempt:",
+        resumeError
+      );
+
+      setError(
+        t(
+          "join.errors.generic"
+        )
+      );
     } finally {
-      setResettingPin(false);
+      setBusy(false);
     }
   }
 
-  function handleBackToPin() {
-    setPinResetView("normal");
-    setResetCode("");
+  /* =======================================================
+     Check PIN reset status
+     ======================================================= */
+
+  const checkResetStatus =
+    useCallback(async () => {
+      if (
+        !quiz ||
+        !studentEmail
+      ) {
+        return;
+      }
+
+      try {
+        const response =
+          await fetch(
+            "/api/student-attempt/pin-reset-status",
+            {
+              method: "POST",
+
+              headers: {
+                "Content-Type":
+                  "application/json",
+              },
+
+              cache: "no-store",
+
+              body: JSON.stringify({
+                quizId: quiz.id,
+                studentEmail,
+              }),
+            }
+          );
+
+        const data =
+          await readApiResponse<ResetStatusResponse>(
+            response
+          );
+
+        if (
+          !data ||
+          !response.ok ||
+          !data.success
+        ) {
+          return;
+        }
+
+        const nextStatus =
+          data.status ?? null;
+
+        setResetStatus(
+          nextStatus
+        );
+
+        if (
+          nextStatus ===
+          "approved"
+        ) {
+          stopResetPolling();
+        }
+      } catch (statusError) {
+        console.error(
+          "Unable to check PIN reset status:",
+          statusError
+        );
+      }
+    }, [
+      quiz,
+      studentEmail,
+      stopResetPolling,
+    ]);
+
+  /* =======================================================
+     Poll PIN reset status
+     ======================================================= */
+
+  useEffect(() => {
+    if (
+      step !== "reset" ||
+      resetStatus ===
+        "approved"
+    ) {
+      stopResetPolling();
+
+      return;
+    }
+
+    void checkResetStatus();
+
+    pollingRef.current =
+      setInterval(() => {
+        void checkResetStatus();
+      }, RESET_STATUS_POLL_MS);
+
+    return () => {
+      stopResetPolling();
+    };
+  }, [
+    step,
+    resetStatus,
+    checkResetStatus,
+    stopResetPolling,
+  ]);
+
+  /* =======================================================
+     Request PIN reset
+     ======================================================= */
+
+  async function handleRequestReset() {
+    if (!quiz || busy) {
+      return;
+    }
+
+    setError("");
+
+    try {
+      setBusy(true);
+
+      const response =
+        await fetch(
+          "/api/student-attempt/request-pin-reset",
+          {
+            method: "POST",
+
+            headers: {
+              "Content-Type":
+                "application/json",
+            },
+
+            cache: "no-store",
+
+            body: JSON.stringify({
+              quizId: quiz.id,
+              studentEmail,
+            }),
+          }
+        );
+
+      const data =
+        await readApiResponse<ResetRequestResponse>(
+          response
+        );
+
+      if (!data) {
+        setError(
+          t(
+            "join.errors.generic"
+          )
+        );
+
+        return;
+      }
+
+      if (
+        !response.ok ||
+        !data.success
+      ) {
+        setError(
+          getMessage(
+            data.messageKey,
+            data.message ||
+              t(
+                "join.errors.generic"
+              )
+          )
+        );
+
+        return;
+      }
+
+      setTemporaryCode("");
+      setNewPin("");
+      setConfirmNewPin("");
+
+      setResetStatus(
+        data.status ??
+          "pending"
+      );
+
+      setStep("reset");
+    } catch (resetError) {
+      console.error(
+        "Unable to request PIN reset:",
+        resetError
+      );
+
+      setError(
+        t(
+          "join.errors.generic"
+        )
+      );
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  /* =======================================================
+     Complete PIN reset
+     ======================================================= */
+
+  async function handleResetPin(
+    event: FormEvent<HTMLFormElement>
+  ) {
+    event.preventDefault();
+
+    if (!quiz || busy) {
+      return;
+    }
+
+    setError("");
+
+    if (
+      !isValidPin(
+        temporaryCode
+      )
+    ) {
+      setError(
+        t(
+          "join.reset.invalidTemporaryCode"
+        )
+      );
+
+      return;
+    }
+
+    if (
+      !isValidPin(newPin)
+    ) {
+      setError(
+        t("join.pin.invalid")
+      );
+
+      return;
+    }
+
+    if (
+      newPin !==
+      confirmNewPin
+    ) {
+      setError(
+        t("join.pin.mismatch")
+      );
+
+      return;
+    }
+
+    try {
+      setBusy(true);
+
+      const response =
+        await fetch(
+          "/api/student-attempt/reset-pin",
+          {
+            method: "POST",
+
+            headers: {
+              "Content-Type":
+                "application/json",
+            },
+
+            cache: "no-store",
+
+            body: JSON.stringify({
+              quizId: quiz.id,
+              studentEmail,
+
+              /*
+               * Keep this name aligned
+               * with the current API:
+               * reset-pin/route.ts
+               */
+              code:
+                temporaryCode,
+
+              newPin,
+            }),
+          }
+        );
+
+      const data =
+        await readApiResponse<ResetPinResponse>(
+          response
+        );
+
+      if (!data) {
+        setError(
+          t(
+            "join.errors.generic"
+          )
+        );
+
+        return;
+      }
+
+      if (
+        !response.ok ||
+        !data.success
+      ) {
+        setError(
+          getMessage(
+            data.messageKey,
+            data.message ||
+              t(
+                "join.reset.invalidTemporaryCode"
+              )
+          )
+        );
+
+        return;
+      }
+
+      stopResetPolling();
+
+      if (!data.attemptId) {
+        setError(
+          t(
+            "join.errors.generic"
+          )
+        );
+
+        return;
+      }
+
+      router.push(
+        `/quiz-session/${data.attemptId}`
+      );
+    } catch (resetError) {
+      console.error(
+        "Unable to reset PIN:",
+        resetError
+      );
+
+      setError(
+        t(
+          "join.errors.generic"
+        )
+      );
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  /* =======================================================
+     Return to identity
+     ======================================================= */
+
+  function returnToIdentity() {
+    stopResetPolling();
+
+    setStep("identity");
+
+    setPin("");
+    setConfirmPin("");
+
+    setShowPin(false);
+    setShowConfirmPin(false);
+
+    setError("");
+
+    setResetStatus(null);
+
+    setTemporaryCode("");
     setNewPin("");
-    setNewPinConfirmation("");
-    setMessage("");
+    setConfirmNewPin("");
+
+    setShowTemporaryCode(false);
+    setShowNewPin(false);
+    setShowConfirmNewPin(false);
+
+    setCompletedAttemptId("");
+    setCompletedStatus(null);
   }
 
-  if (loading) {
+  /* =======================================================
+     Loading
+     ======================================================= */
+
+  if (loadingQuiz) {
+    return <AppLoading />;
+  }
+
+  /* =======================================================
+     Quiz unavailable
+     ======================================================= */
+
+  if (
+    quizError ||
+    !quiz
+  ) {
     return (
-      <>
-        <AppLoading
-          title="ULearn"
-          subtitle={t("joinQuiz.loading")}
-        />
-        <HelpSupport context="anonymous" />
-      </>
+      <main className={styles.page}>
+        <section
+          className={styles.card}
+        >
+          <div
+            className={styles.error}
+            role="alert"
+          >
+            {quizError ||
+              t(
+                "join.errors.quizNotFound"
+              )}
+          </div>
+        </section>
+
+        <HelpSupport />
+      </main>
     );
   }
 
-  if (submitting || resettingPin) {
-    return (
-      <>
-        <AppLoading
-          title={
-            resettingPin
-              ? t("joinQuiz.pinReset.resettingTitle")
-              : t("joinQuiz.starting.title")
-          }
-          subtitle={
-            resettingPin
-              ? t("joinQuiz.pinReset.resettingSubtitle")
-              : t("joinQuiz.starting.subtitle")
-          }
-        />
-        <HelpSupport context="anonymous" />
-      </>
-    );
-  }
-
-  if (!quiz) {
-    return (
-      <>
-        <main className={styles.page}>
-          <section className={styles.errorCard}>
-            <span className={styles.badge}>ULearn</span>
-            <h1>{t("joinQuiz.notFound.title")}</h1>
-            <p>{t("joinQuiz.notFound.text")}</p>
-            <strong className={styles.accessCode}>
-              {accessCode}
-            </strong>
-          </section>
-        </main>
-        <HelpSupport context="anonymous" />
-      </>
-    );
-  }
-
-  const timeZone = quiz.timeZone || "America/Toronto";
+  /* =======================================================
+     Render
+     ======================================================= */
 
   return (
-    <>
-      <main className={styles.page}>
-        <section className={styles.card}>
-          <header className={styles.top}>
-            <div className={styles.brand}>
-              <span className={styles.brandIcon}>U</span>
-              <strong>ULearn</strong>
-            </div>
+    <main className={styles.page}>
+      <section
+        className={styles.card}
+      >
+        {/* ================================================
+            Header
+            ================================================ */}
 
-            <span className={styles.codeBadge}>
-              {accessCode}
-            </span>
-          </header>
+        <header
+          className={
+            styles.quizHeader
+          }
+        >
+          <div
+            className={
+              styles.iconCircle
+            }
+          >
+            <KeyRound
+              size={26}
+              aria-hidden="true"
+            />
+          </div>
 
-          <section className={styles.hero}>
-            <span className={styles.badge}>
-              {t("joinQuiz.badge")}
-            </span>
+          <div
+            className={
+              styles.quizHeaderContent
+            }
+          >
+            <p
+              className={
+                styles.eyebrow
+              }
+            >
+              {t("join.quizLabel")}
+            </p>
 
-            <h1>{quiz.title}</h1>
+            <h1
+              className={
+                styles.title
+              }
+            >
+              {quiz.title}
+            </h1>
 
             {quiz.createdByName && (
-              <div className={styles.createdBy}>
-                <span>
-                  {t("joinQuiz.teacher.createdBy")}
-                </span>
-                <strong>{quiz.createdByName}</strong>
-              </div>
-            )}
-
-            <p className={styles.description}>
-              {quiz.description ||
-                t("joinQuiz.noDescription")}
-            </p>
-          </section>
-
-          {availabilityState === "waiting" && (
-            <section className={styles.stateBox}>
-              <span>{t("joinQuiz.waiting.label")}</span>
-              <strong className={styles.countdown}>
-                {countdownLabel}
-              </strong>
-              <p>{t("joinQuiz.waiting.text")}</p>
-            </section>
-          )}
-
-          {availabilityState === "ended" && (
-            <section className={styles.stateBox}>
-              <strong>{t("joinQuiz.ended.title")}</strong>
-              <p>{t("joinQuiz.ended.text")}</p>
-            </section>
-          )}
-
-          {availabilityState === "unavailable" && (
-            <section className={styles.stateBox}>
-              <strong>
-                {t("joinQuiz.unavailable.title")}
-              </strong>
-              <p>{t("joinQuiz.unavailable.text")}</p>
-            </section>
-          )}
-
-          <section className={styles.summary}>
-            <article>
-              <span>
-                {t("joinQuiz.summary.questions")}
-              </span>
-              <strong>{quiz.targetQuestions}</strong>
-            </article>
-
-            <article>
-              <span>{t("joinQuiz.summary.points")}</span>
-              <strong>{quiz.totalPoints}</strong>
-            </article>
-
-            <article>
-              <span>
-                {quiz.availabilityMode === "open_window"
-                  ? t("joinQuiz.summary.timePerStudent")
-                  : t("joinQuiz.summary.sessionDuration")}
-              </span>
-              <strong>
-                {formatQuizDuration(
-                  quiz.timeLimitMinutes,
-                  language
+              <p
+                className={
+                  styles.teacher
+                }
+              >
+                {t(
+                  "join.createdBy"
+                ).replace(
+                  "{name}",
+                  quiz.createdByName
                 )}
-              </strong>
-            </article>
-
-            <article>
-              <span>{t("joinQuiz.summary.mode")}</span>
-              <strong>
-                {quiz.availabilityMode === "open_window"
-                  ? t("joinQuiz.modes.openWindow")
-                  : t("joinQuiz.modes.scheduledSession")}
-              </strong>
-            </article>
-
-            <article>
-              <span>{t("joinQuiz.summary.starts")}</span>
-              <strong>
-                {quiz.availableFrom
-                  ? formatInTimeZone(
-                      quiz.availableFrom,
-                      timeZone
-                    )
-                  : t("joinQuiz.summary.immediately")}
-              </strong>
-            </article>
-
-            <article>
-              <span>{t("joinQuiz.summary.ends")}</span>
-              <strong>
-                {quiz.availableUntil
-                  ? formatInTimeZone(
-                      quiz.availableUntil,
-                      timeZone
-                    )
-                  : t("joinQuiz.summary.notSet")}
-              </strong>
-            </article>
-
-            <article>
-              <span>{t("joinQuiz.summary.timeZone")}</span>
-              <strong>{timeZone}</strong>
-            </article>
-
-            {availabilityState === "available" && (
-              <article>
-                <span>
-                  {t("joinQuiz.summary.timeRemaining")}
-                </span>
-                <strong className={styles.countdown}>
-                  {countdownLabel}
-                </strong>
-              </article>
-            )}
-          </section>
-
-          <section className={styles.studentSection}>
-            <div className={styles.studentHeading}>
-              <span className={styles.badge}>
-                {t("joinQuiz.student.badge")}
-              </span>
-
-              <h2>
-                {pinResetView === "normal"
-                  ? t("joinQuiz.student.title")
-                  : t("joinQuiz.pinReset.title")}
-              </h2>
-
-              <p>
-                {pinResetView === "normal"
-                  ? t("joinQuiz.student.description")
-                  : pinResetView === "waiting"
-                    ? t(
-                        "joinQuiz.pinReset.waitingDescription"
-                      )
-                    : t(
-                        "joinQuiz.pinReset.approvedDescription"
-                      )}
               </p>
+            )}
+          </div>
+        </header>
+
+        {quiz.description && (
+          <p
+            className={
+              styles.description
+            }
+          >
+            {quiz.description}
+          </p>
+        )}
+
+        {/* ================================================
+            Quiz summary
+            ================================================ */}
+
+        <div
+          className={
+            styles.quizSummary
+          }
+        >
+          <div
+            className={
+              styles.summaryItem
+            }
+          >
+            <strong>
+              {quiz.totalQuestions}
+            </strong>
+
+            <span>
+              {t(
+                "join.summary.questions"
+              )}
+            </span>
+          </div>
+
+          <div
+            className={
+              styles.summaryDivider
+            }
+            aria-hidden="true"
+          />
+
+          <div
+            className={
+              styles.summaryItem
+            }
+          >
+            <strong>
+              {quiz.totalPoints}
+            </strong>
+
+            <span>
+              {t(
+                "join.summary.points"
+              )}
+            </span>
+          </div>
+
+          <div
+            className={
+              styles.summaryDivider
+            }
+            aria-hidden="true"
+          />
+
+          <div
+            className={
+              styles.summaryItem
+            }
+          >
+            <strong>
+              {formatDuration(
+                quiz.timeLimitMinutes
+              )}
+            </strong>
+
+            <span>
+              {t(
+                "join.summary.duration"
+              )}
+            </span>
+          </div>
+        </div>
+
+        {/* ================================================
+            Availability / countdown
+            ================================================ */}
+
+        <div
+          className={`${styles.availability} ${
+            quizHasEnded
+              ? styles.availabilityEnded
+              : !quizHasStarted
+                ? styles.availabilityWaiting
+                : styles.availabilityActive
+          }`}
+          role="status"
+          aria-live="polite"
+        >
+          <Clock3
+            size={18}
+            className={
+              styles.clockIcon
+            }
+            aria-hidden="true"
+          />
+
+          <div
+            className={
+              styles.availabilityContent
+            }
+          >
+            <span
+              className={
+                styles.availabilityLabel
+              }
+            >
+              {getAvailabilityLabel()}
+            </span>
+
+            {countdown &&
+              !quizHasEnded && (
+                <strong
+                  className={
+                    styles.countdown
+                  }
+                >
+                  {countdown}
+                </strong>
+              )}
+          </div>
+        </div>
+
+        {/* ================================================
+            Identity
+            ================================================ */}
+
+        {step === "identity" && (
+          <>
+            <div
+              className={
+                styles.infoBlock
+              }
+            >
+              <div
+                className={
+                  styles.infoIcon
+                }
+              >
+                <UserRound
+                  size={21}
+                  aria-hidden="true"
+                />
+              </div>
+
+              <div>
+                <h2
+                  className={
+                    styles.sectionTitle
+                  }
+                >
+                  {t(
+                    "join.identity.title"
+                  )}
+                </h2>
+
+                <p
+                  className={
+                    styles.sectionText
+                  }
+                >
+                  {t(
+                    "join.identity.description"
+                  )}
+                </p>
+              </div>
             </div>
 
-            {pinResetView === "normal" && (
-              <form
-                className={styles.form}
-                onSubmit={handleSubmit}
+            <form
+              className={
+                styles.form
+              }
+              onSubmit={
+                handleIdentitySubmit
+              }
+            >
+              <label
+                className={
+                  styles.field
+                }
               >
-                <label htmlFor="student-name">
-                  {t("joinQuiz.student.name")}
-                  <input
-                    id="student-name"
-                    name="studentName"
-                    type="text"
-                    value={studentName}
-                    maxLength={120}
-                    required
-                    autoComplete="name"
-                    placeholder={t(
-                      "joinQuiz.student.namePlaceholder"
-                    )}
-                    disabled={
-                      availabilityState !== "available" ||
-                      submitting
-                    }
-                    onChange={(event) => {
-                      setStudentName(event.target.value);
-                      setMessage("");
-                    }}
-                  />
-                </label>
-
-                <label htmlFor="student-email">
-                  {t("joinQuiz.student.email")}
-                  <input
-                    id="student-email"
-                    name="studentEmail"
-                    type="email"
-                    value={studentEmail}
-                    maxLength={200}
-                    required
-                    autoComplete="email"
-                    inputMode="email"
-                    placeholder={t(
-                      "joinQuiz.student.emailPlaceholder"
-                    )}
-                    disabled={
-                      availabilityState !== "available" ||
-                      submitting
-                    }
-                    onChange={(event) => {
-                      setStudentEmail(event.target.value);
-                      setMessage("");
-                    }}
-                  />
-                </label>
-
-                <label
-                  htmlFor="student-pin"
-                  className={`${styles.pinField} ${styles.pinBlock}`}
+                <span
+                  className={
+                    styles.label
+                  }
                 >
-                  {t("joinQuiz.pin.label")}
-                  <input
-                    id="student-pin"
-                    name="studentPin"
-                    type="password"
-                    value={studentPin}
-                    required
-                    minLength={STUDENT_PIN_LENGTH}
-                    maxLength={STUDENT_PIN_LENGTH}
-                    inputMode="numeric"
-                    autoComplete="off"
-                    pattern="[0-9]{6}"
-                    placeholder="••••••"
-                    disabled={
-                      availabilityState !== "available" ||
-                      submitting
+                  {t(
+                    "join.identity.name"
+                  )}
+                </span>
+
+                <div
+                  className={
+                    styles.inputWrapper
+                  }
+                >
+                  <UserRound
+                    className={
+                      styles.inputIcon
                     }
-                    onChange={(event) => {
-                      setStudentPin(
-                        onlyDigits(
-                          event.target.value,
-                          STUDENT_PIN_LENGTH
-                        )
-                      );
-                      setMessage("");
-                    }}
+                    size={18}
+                    aria-hidden="true"
                   />
-                  <small>{t("joinQuiz.pin.help")}</small>
-                </label>
 
-                <div className={styles.pinInfo}>
-                  <strong>
-                    {t("joinQuiz.pin.infoTitle")}
-                  </strong>
-                  <p>{t("joinQuiz.pin.infoText")}</p>
-                </div>
-
-                <div className={styles.pinActions}>
-                  <button
-                    type="button"
-                    className={styles.forgotPinButton}
-                    disabled={
-                      availabilityState !== "available" ||
-                      requestingReset
+                  <input
+                    className={
+                      styles.input
                     }
-                    onClick={() => {
-                      void handleRequestPinReset();
-                    }}
+                    type="text"
+                    value={
+                      studentName
+                    }
+                    onChange={(
+                      event
+                    ) =>
+                      setStudentName(
+                        event.target
+                          .value
+                      )
+                    }
+                    placeholder={t(
+                      "join.identity.namePlaceholder"
+                    )}
+                    autoComplete="name"
+                    disabled={
+                      busy ||
+                      !quizAvailable
+                    }
+                    required
+                  />
+                </div>
+              </label>
+
+              <label
+                className={
+                  styles.field
+                }
+              >
+                <span
+                  className={
+                    styles.label
+                  }
+                >
+                  {t(
+                    "join.identity.email"
+                  )}
+                </span>
+
+                <div
+                  className={
+                    styles.inputWrapper
+                  }
+                >
+                  <Mail
+                    className={
+                      styles.inputIcon
+                    }
+                    size={18}
+                    aria-hidden="true"
+                  />
+
+                  <input
+                    className={
+                      styles.input
+                    }
+                    type="email"
+                    value={
+                      studentEmail
+                    }
+                    onChange={(
+                      event
+                    ) =>
+                      setStudentEmail(
+                        event.target
+                          .value
+                      )
+                    }
+                    placeholder={t(
+                      "join.identity.emailPlaceholder"
+                    )}
+                    autoComplete="email"
+                    disabled={
+                      busy ||
+                      !quizAvailable
+                    }
+                    required
+                  />
+                </div>
+              </label>
+
+              {error && (
+                <div
+                  className={
+                    styles.error
+                  }
+                  role="alert"
+                >
+                  {error}
+                </div>
+              )}
+
+              {!quizAvailable &&
+                !quizHasEnded &&
+                !quizHasStarted && (
+                  <div
+                    className={
+                      styles.waitingNotice
+                    }
+                    role="status"
                   >
-                    {requestingReset
-                      ? t("joinQuiz.pinReset.requesting")
-                      : t("joinQuiz.pinReset.forgotPin")}
-                  </button>
+                    {t(
+                      "join.availability.notStarted"
+                    )}
+                  </div>
+                )}
+
+              {quizHasEnded && (
+                <div
+                  className={
+                    styles.endedNotice
+                  }
+                  role="status"
+                >
+                  {t(
+                    "join.availability.ended"
+                  )}
+                </div>
+              )}
+
+              <button
+                className={
+                  styles.primaryButton
+                }
+                type="submit"
+                disabled={
+                  busy ||
+                  !quizAvailable
+                }
+              >
+                {busy
+                  ? t(
+                      "join.actions.checking"
+                    )
+                  : t(
+                      "join.actions.continue"
+                    )}
+              </button>
+            </form>
+          </>
+        )}
+
+        {/* ================================================
+            New student
+            ================================================ */}
+
+        {step === "new" && (
+          <>
+            <div
+              className={
+                styles.infoBlock
+              }
+            >
+              <div
+                className={
+                  styles.infoIcon
+                }
+              >
+                <LockKeyhole
+                  size={21}
+                  aria-hidden="true"
+                />
+              </div>
+
+              <div>
+                <h2
+                  className={
+                    styles.sectionTitle
+                  }
+                >
+                  {t(
+                    "join.new.title"
+                  )}
+                </h2>
+
+                <p
+                  className={
+                    styles.sectionText
+                  }
+                >
+                  {t(
+                    "join.new.description"
+                  )}
+                </p>
+              </div>
+            </div>
+
+            <div
+              className={
+                styles.identitySummary
+              }
+            >
+              <strong>
+                {studentName}
+              </strong>
+
+              <span>
+                {studentEmail}
+              </span>
+            </div>
+
+            <form
+              className={
+                styles.form
+              }
+              onSubmit={
+                handleCreateAttempt
+              }
+            >
+              <PinField
+                label={t(
+                  "join.pin.newPin"
+                )}
+                value={pin}
+                setValue={setPin}
+                visible={showPin}
+                setVisible={
+                  setShowPin
+                }
+                styles={styles}
+                showLabel={t(
+                  "join.pin.show"
+                )}
+                hideLabel={t(
+                  "join.pin.hide"
+                )}
+                disabled={
+                  busy ||
+                  !quizAvailable
+                }
+              />
+
+              <PinField
+                label={t(
+                  "join.pin.confirmPin"
+                )}
+                value={
+                  confirmPin
+                }
+                setValue={
+                  setConfirmPin
+                }
+                visible={
+                  showConfirmPin
+                }
+                setVisible={
+                  setShowConfirmPin
+                }
+                styles={styles}
+                showLabel={t(
+                  "join.pin.show"
+                )}
+                hideLabel={t(
+                  "join.pin.hide"
+                )}
+                disabled={
+                  busy ||
+                  !quizAvailable
+                }
+              />
+
+              {error && (
+                <div
+                  className={
+                    styles.error
+                  }
+                  role="alert"
+                >
+                  {error}
+                </div>
+              )}
+
+              <button
+                className={
+                  styles.primaryButton
+                }
+                type="submit"
+                disabled={
+                  busy ||
+                  !quizAvailable
+                }
+              >
+                {busy
+                  ? t(
+                      "join.actions.starting"
+                    )
+                  : t(
+                      "join.actions.start"
+                    )}
+              </button>
+
+              <button
+                className={
+                  styles.secondaryButton
+                }
+                type="button"
+                onClick={
+                  returnToIdentity
+                }
+                disabled={busy}
+              >
+                {t(
+                  "join.actions.back"
+                )}
+              </button>
+            </form>
+          </>
+        )}
+
+        {/* ================================================
+            Existing student
+            ================================================ */}
+
+        {step === "existing" && (
+          <>
+            <div
+              className={
+                styles.infoBlock
+              }
+            >
+              <div
+                className={
+                  styles.infoIcon
+                }
+              >
+                <KeyRound
+                  size={21}
+                  aria-hidden="true"
+                />
+              </div>
+
+              <div>
+                <h2
+                  className={
+                    styles.sectionTitle
+                  }
+                >
+                  {t(
+                    "join.existing.title"
+                  )}
+                </h2>
+
+                <p
+                  className={
+                    styles.sectionText
+                  }
+                >
+                  {t(
+                    "join.existing.description"
+                  )}
+                </p>
+              </div>
+            </div>
+
+            <div
+              className={
+                styles.identitySummary
+              }
+            >
+              <strong>
+                {studentName}
+              </strong>
+
+              <span>
+                {studentEmail}
+              </span>
+            </div>
+
+            <form
+              className={
+                styles.form
+              }
+              onSubmit={
+                handleResumeAttempt
+              }
+            >
+              <PinField
+                label={t(
+                  "join.pin.pin"
+                )}
+                value={pin}
+                setValue={setPin}
+                visible={showPin}
+                setVisible={
+                  setShowPin
+                }
+                styles={styles}
+                showLabel={t(
+                  "join.pin.show"
+                )}
+                hideLabel={t(
+                  "join.pin.hide"
+                )}
+                disabled={busy}
+              />
+
+              {error && (
+                <div
+                  className={
+                    styles.error
+                  }
+                  role="alert"
+                >
+                  {error}
+                </div>
+              )}
+
+              <button
+                className={
+                  styles.primaryButton
+                }
+                type="submit"
+                disabled={busy}
+              >
+                {busy
+                  ? t(
+                      "join.actions.resuming"
+                    )
+                  : t(
+                      "join.actions.resume"
+                    )}
+              </button>
+
+              <button
+                className={
+                  styles.resetButton
+                }
+                type="button"
+                onClick={() =>
+                  void handleRequestReset()
+                }
+                disabled={busy}
+              >
+                <RotateCcwKey
+                  size={18}
+                  aria-hidden="true"
+                />
+
+                {t(
+                  "join.actions.forgotPin"
+                )}
+              </button>
+
+              <button
+                className={
+                  styles.secondaryButton
+                }
+                type="button"
+                onClick={
+                  returnToIdentity
+                }
+                disabled={busy}
+              >
+                {t(
+                  "join.actions.back"
+                )}
+              </button>
+            </form>
+          </>
+        )}
+
+        {/* ================================================
+            PIN reset
+            ================================================ */}
+
+        {step === "reset" && (
+          <>
+            {resetStatus !==
+            "approved" ? (
+              <div
+                className={
+                  styles.resetWaiting
+                }
+              >
+                <div
+                  className={
+                    styles.waitingSpinner
+                  }
+                  aria-hidden="true"
+                />
+
+                <h2
+                  className={
+                    styles.sectionTitle
+                  }
+                >
+                  {t(
+                    "join.reset.waitingTitle"
+                  )}
+                </h2>
+
+                <p
+                  className={
+                    styles.sectionText
+                  }
+                >
+                  {t(
+                    "join.reset.waitingDescription"
+                  )}
+                </p>
+
+                <div
+                  className={
+                    styles.identitySummary
+                  }
+                >
+                  <strong>
+                    {studentName}
+                  </strong>
+
+                  <span>
+                    {studentEmail}
+                  </span>
                 </div>
 
-                {message && (
-                  <p
-                    className={styles.message}
+                {error && (
+                  <div
+                    className={
+                      styles.error
+                    }
                     role="alert"
                   >
-                    {message}
-                  </p>
+                    {error}
+                  </div>
                 )}
 
                 <button
-                  type="submit"
-                  className="app-button app-button-action"
-                  disabled={
-                    availabilityState !== "available" ||
-                    submitting ||
-                    requestingReset
+                  className={
+                    styles.secondaryButton
+                  }
+                  type="button"
+                  onClick={
+                    returnToIdentity
                   }
                 >
-                  {t("joinQuiz.student.start")}
+                  {t(
+                    "join.actions.back"
+                  )}
                 </button>
-              </form>
-            )}
-
-            {pinResetView === "waiting" && (
-              <div className={styles.resetPanel}>
+              </div>
+            ) : (
+              <>
                 <div
-                  className={styles.waitingIcon}
-                  aria-hidden="true"
+                  className={
+                    styles.infoBlock
+                  }
                 >
-                  …
-                </div>
-
-                <div className={styles.resetPanelContent}>
-                  <strong>
-                    {t("joinQuiz.pinReset.waitingTitle")}
-                  </strong>
-
-                  <p>
-                    {t("joinQuiz.pinReset.waitingMessage")}
-                  </p>
-
-                  <div className={styles.resetIdentity}>
-                    <span>
-                      {t("joinQuiz.student.email")}
-                    </span>
-                    <strong>
-                      {studentEmail.trim().toLowerCase()}
-                    </strong>
+                  <div
+                    className={
+                      styles.infoIcon
+                    }
+                  >
+                    <RotateCcwKey
+                      size={21}
+                      aria-hidden="true"
+                    />
                   </div>
 
-                  {pinResetAttemptId && (
-                    <p className={styles.resetStatus}>
-                      {checkingResetStatus
-                        ? t("joinQuiz.pinReset.checking")
-                        : t(
-                            "joinQuiz.pinReset.waitingStatus"
-                          )}
+                  <div>
+                    <h2
+                      className={
+                        styles.sectionTitle
+                      }
+                    >
+                      {t(
+                        "join.reset.approvedTitle"
+                      )}
+                    </h2>
+
+                    <p
+                      className={
+                        styles.sectionText
+                      }
+                    >
+                      {t(
+                        "join.reset.approvedDescription"
+                      )}
                     </p>
-                  )}
+                  </div>
                 </div>
 
-                {message && (
-                  <p
-                    className={styles.message}
-                    role="status"
-                  >
-                    {message}
-                  </p>
-                )}
-
-                <div className={styles.resetActions}>
-                  <button
-                    type="button"
-                    className="app-button app-button-action"
-                    disabled={checkingResetStatus}
-                    onClick={() => {
-                      void checkPinResetStatus();
-                    }}
-                  >
-                    {t("joinQuiz.pinReset.checkNow")}
-                  </button>
-
-                  <button
-                    type="button"
-                    className={styles.secondaryButton}
-                    onClick={handleBackToPin}
-                  >
-                    {t("joinQuiz.pinReset.back")}
-                  </button>
-                </div>
-              </div>
-            )}
-
-            {pinResetView === "approved" && (
-              <form
-                className={styles.resetForm}
-                onSubmit={handleResetPin}
-              >
-                <div className={styles.approvedBox}>
+                <div
+                  className={
+                    styles.identitySummary
+                  }
+                >
                   <strong>
-                    {t("joinQuiz.pinReset.approvedTitle")}
+                    {studentName}
                   </strong>
-                  <p>
-                    {t("joinQuiz.pinReset.approvedMessage")}
-                  </p>
+
+                  <span>
+                    {studentEmail}
+                  </span>
                 </div>
 
-                <label htmlFor="reset-code">
-                  {t("joinQuiz.pinReset.codeLabel")}
-                  <input
-                    id="reset-code"
-                    name="resetCode"
-                    type="text"
-                    value={resetCode}
-                    required
-                    minLength={RESET_CODE_LENGTH}
-                    maxLength={RESET_CODE_LENGTH}
-                    inputMode="numeric"
-                    autoComplete="one-time-code"
-                    pattern="[0-9]{6}"
-                    placeholder="000000"
-                    onChange={(event) => {
-                      setResetCode(
-                        onlyDigits(
-                          event.target.value,
-                          RESET_CODE_LENGTH
-                        )
-                      );
-                      setMessage("");
-                    }}
+                <form
+                  className={
+                    styles.form
+                  }
+                  onSubmit={
+                    handleResetPin
+                  }
+                >
+                  <PinField
+                    label={t(
+                      "join.reset.temporaryCode"
+                    )}
+                    value={
+                      temporaryCode
+                    }
+                    setValue={
+                      setTemporaryCode
+                    }
+                    visible={
+                      showTemporaryCode
+                    }
+                    setVisible={
+                      setShowTemporaryCode
+                    }
+                    styles={styles}
+                    showLabel={t(
+                      "join.pin.show"
+                    )}
+                    hideLabel={t(
+                      "join.pin.hide"
+                    )}
+                    disabled={busy}
                   />
-                  <small>
-                    {t("joinQuiz.pinReset.codeHelp")}
-                  </small>
-                </label>
 
-                <label htmlFor="new-pin">
-                  {t("joinQuiz.pinReset.newPinLabel")}
-                  <input
-                    id="new-pin"
-                    name="newPin"
-                    type="password"
+                  <PinField
+                    label={t(
+                      "join.reset.newPin"
+                    )}
                     value={newPin}
-                    required
-                    minLength={STUDENT_PIN_LENGTH}
-                    maxLength={STUDENT_PIN_LENGTH}
-                    inputMode="numeric"
-                    autoComplete="new-password"
-                    pattern="[0-9]{6}"
-                    placeholder="••••••"
-                    onChange={(event) => {
-                      setNewPin(
-                        onlyDigits(
-                          event.target.value,
-                          STUDENT_PIN_LENGTH
-                        )
-                      );
-                      setMessage("");
-                    }}
+                    setValue={
+                      setNewPin
+                    }
+                    visible={
+                      showNewPin
+                    }
+                    setVisible={
+                      setShowNewPin
+                    }
+                    styles={styles}
+                    showLabel={t(
+                      "join.pin.show"
+                    )}
+                    hideLabel={t(
+                      "join.pin.hide"
+                    )}
+                    disabled={busy}
                   />
-                </label>
 
-                <label htmlFor="new-pin-confirmation">
-                  {t("joinQuiz.pinReset.confirmPinLabel")}
-                  <input
-                    id="new-pin-confirmation"
-                    name="newPinConfirmation"
-                    type="password"
-                    value={newPinConfirmation}
-                    required
-                    minLength={STUDENT_PIN_LENGTH}
-                    maxLength={STUDENT_PIN_LENGTH}
-                    inputMode="numeric"
-                    autoComplete="new-password"
-                    pattern="[0-9]{6}"
-                    placeholder="••••••"
-                    onChange={(event) => {
-                      setNewPinConfirmation(
-                        onlyDigits(
-                          event.target.value,
-                          STUDENT_PIN_LENGTH
-                        )
-                      );
-                      setMessage("");
-                    }}
+                  <PinField
+                    label={t(
+                      "join.reset.confirmNewPin"
+                    )}
+                    value={
+                      confirmNewPin
+                    }
+                    setValue={
+                      setConfirmNewPin
+                    }
+                    visible={
+                      showConfirmNewPin
+                    }
+                    setVisible={
+                      setShowConfirmNewPin
+                    }
+                    styles={styles}
+                    showLabel={t(
+                      "join.pin.show"
+                    )}
+                    hideLabel={t(
+                      "join.pin.hide"
+                    )}
+                    disabled={busy}
                   />
-                </label>
 
-                {message && (
-                  <p
-                    className={styles.message}
-                    role="alert"
-                  >
-                    {message}
-                  </p>
-                )}
+                  {error && (
+                    <div
+                      className={
+                        styles.error
+                      }
+                      role="alert"
+                    >
+                      {error}
+                    </div>
+                  )}
 
-                <div className={styles.resetActions}>
                   <button
+                    className={
+                      styles.primaryButton
+                    }
                     type="submit"
-                    className="app-button app-button-action"
-                    disabled={resettingPin}
+                    disabled={busy}
                   >
-                    {t("joinQuiz.pinReset.resetButton")}
+                    {busy
+                      ? t(
+                          "join.reset.resetting"
+                        )
+                      : t(
+                          "join.reset.confirm"
+                        )}
                   </button>
 
                   <button
+                    className={
+                      styles.secondaryButton
+                    }
                     type="button"
-                    className={styles.secondaryButton}
-                    disabled={resettingPin}
-                    onClick={handleBackToPin}
+                    onClick={
+                      returnToIdentity
+                    }
+                    disabled={busy}
                   >
-                    {t("joinQuiz.pinReset.back")}
+                    {t(
+                      "join.actions.back"
+                    )}
                   </button>
-                </div>
-              </form>
+                </form>
+              </>
             )}
-          </section>
-        </section>
-      </main>
+          </>
+        )}
 
-      <HelpSupport context="anonymous" />
-    </>
+        {/* ================================================
+            Completed
+            ================================================ */}
+
+        {step === "completed" && (
+          <div
+            className={
+              styles.completedBlock
+            }
+          >
+            <div
+              className={
+                styles.iconCircle
+              }
+            >
+              <LockKeyhole
+                size={28}
+                aria-hidden="true"
+              />
+            </div>
+
+            <h2
+              className={
+                styles.sectionTitle
+              }
+            >
+              {t(
+                "join.completed.title"
+              )}
+            </h2>
+
+            <p
+              className={
+                styles.sectionText
+              }
+            >
+              {completedStatus ===
+              "graded"
+                ? t(
+                    "join.completed.graded"
+                  )
+                : t(
+                    "join.completed.submitted"
+                  )}
+            </p>
+
+            {completedAttemptId && (
+              <button
+                type="button"
+                className={
+                  styles.primaryButton
+                }
+                onClick={() =>
+                  router.push(
+                    `/quiz-session/${completedAttemptId}`
+                  )
+                }
+              >
+                {t(
+                  "join.completed.view"
+                )}
+              </button>
+            )}
+
+            <button
+              type="button"
+              className={
+                styles.secondaryButton
+              }
+              onClick={
+                returnToIdentity
+              }
+            >
+              {t(
+                "join.actions.back"
+              )}
+            </button>
+          </div>
+        )}
+      </section>
+
+      <HelpSupport />
+    </main>
+  );
+}
+
+/* =========================================================
+   PIN field
+   ========================================================= */
+
+function PinField({
+  label,
+  value,
+  setValue,
+  visible,
+  setVisible,
+  styles,
+  showLabel,
+  hideLabel,
+  disabled = false,
+}: PinFieldProps) {
+  const visibilityLabel =
+    visible
+      ? hideLabel
+      : showLabel;
+
+  return (
+    <label
+      className={styles.field}
+    >
+      <span
+        className={styles.label}
+      >
+        {label}
+      </span>
+
+      <div
+        className={
+          styles.inputWrapper
+        }
+      >
+        <LockKeyhole
+          className={
+            styles.inputIcon
+          }
+          size={18}
+          aria-hidden="true"
+        />
+
+        <input
+          className={
+            styles.pinInput
+          }
+          type={
+            visible
+              ? "text"
+              : "password"
+          }
+          inputMode="numeric"
+          autoComplete="off"
+          value={value}
+          onChange={(event) => {
+            const nextValue =
+              onlyDigits(
+                event.target.value
+              ).slice(
+                0,
+                PIN_LENGTH
+              );
+
+            setValue(
+              nextValue
+            );
+          }}
+          maxLength={PIN_LENGTH}
+          disabled={disabled}
+          required
+        />
+
+        <button
+          type="button"
+          className={
+            styles.eyeButton
+          }
+          onClick={() =>
+            setVisible(
+              !visible
+            )
+          }
+          aria-label={
+            visibilityLabel
+          }
+          title={
+            visibilityLabel
+          }
+          disabled={disabled}
+        >
+          {visible ? (
+            <EyeOff
+              size={18}
+              aria-hidden="true"
+            />
+          ) : (
+            <Eye
+              size={18}
+              aria-hidden="true"
+            />
+          )}
+        </button>
+      </div>
+    </label>
   );
 }

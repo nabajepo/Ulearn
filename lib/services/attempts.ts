@@ -1048,7 +1048,7 @@ export async function getQuizAttempts(
       attemptsQuery
     );
 
-  const attempts =
+  let attempts =
     snapshot.docs.map(
       (
         attemptDocument
@@ -1058,6 +1058,67 @@ export async function getQuizAttempts(
           attemptDocument.data()
         )
     );
+
+  /*
+   * Reconcile expired attempts.
+   *
+   * The student's browser cannot be trusted to remain open until
+   * the timer reaches zero. Therefore, whenever the teacher loads
+   * the participants, expired in-progress attempts are finalized.
+   */
+  const nowMs = Date.now();
+
+  const expiredAttempts =
+    attempts.filter(
+      (attempt) => {
+        if (
+          attempt.status !==
+          "in_progress"
+        ) {
+          return false;
+        }
+
+        const expirationMs =
+          safeDateMs(
+            attempt.expiresAt
+          );
+
+        return (
+          expirationMs > 0 &&
+          expirationMs <= nowMs
+        );
+      }
+    );
+
+  if (
+    expiredAttempts.length >
+    0
+  ) {
+    await Promise.allSettled(
+      expiredAttempts.map(
+        (attempt) =>
+          submitAttempt(
+            attempt.id
+          )
+      )
+    );
+
+    const refreshedSnapshot =
+      await getDocs(
+        attemptsQuery
+      );
+
+    attempts =
+      refreshedSnapshot.docs.map(
+        (
+          attemptDocument
+        ) =>
+          mapAttempt(
+            attemptDocument.id,
+            attemptDocument.data()
+          )
+      );
+  }
 
   /*
    * Latest participant first.

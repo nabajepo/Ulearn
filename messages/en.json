@@ -1168,6 +1168,31 @@
       "unauthorized": "You are not authorized to grade this attempt."
     }
   },
+  "pin": {
+    "incorrect": "The PIN is incorrect.",
+    "invalidFormat": "The PIN must contain exactly 6 digits.",
+    "locked": "Too many incorrect attempts. Please try again later.",
+    "resetRequired": "Your PIN must be reset.",
+    "credentialError": "Unable to verify your PIN."
+  },
+  "start": {
+    "invalidRequest": "The request is invalid.",
+    "quizRequired": "The quiz is required.",
+    "invalidName": "Please enter a valid name.",
+    "nameTooLong": "The name entered is too long.",
+    "emailRequired": "The email address is required.",
+    "invalidEmail": "Please enter a valid email address.",
+    "emailTooLong": "The email address is too long.",
+    "notFound": "This attempt could not be found.",
+    "alreadySubmitted": "This attempt has already been submitted.",
+    "alreadyGraded": "This attempt has already been graded.",
+    "invalidStatus": "This attempt cannot be resumed.",
+    "expired": "This attempt has expired.",
+    "authenticationRequired": "Enter your PIN to resume this attempt.",
+    "serverError": "Something went wrong. Please try again.",
+    "created": "Your attempt has been created.",
+    "resumed": "Your attempt has been resumed."
+  },
   "attemptGrading": {
   "loading": {
     "title": "Opening student attempt",
@@ -1347,6 +1372,99 @@
       "backResult": "Back ",
       "feedback": "Give feedback"
     }
+  },
+  "join": {
+  "quizLabel": "Quiz",
+  "createdBy": "Created by {name}",
+
+  "summary": {
+    "questions": "Questions",
+    "points": "Points",
+    "duration": "Duration"
+  },
+
+  "availability": {
+    "available": "The quiz is available now.",
+    "remainingDays": "Available for another {days}d {hours}h",
+    "remainingHours": "Available for another {hours}h {minutes}min",
+    "remainingMinutes": "Available for another {minutes}min",
+    "startsInDays": "The quiz starts in {days}d {hours}h",
+    "startsInHours": "The quiz starts in {hours}h {minutes}min",
+    "startsInMinutes": "The quiz starts in {minutes}min",
+    "ended": "This quiz has ended.",
+    "startsIn": "Quiz starts in",
+  "remaining": "Time remaining",
+  "notStarted": "This quiz is not available yet. You will be able to start when the countdown ends."
+  },
+
+  "identity": {
+    "title": "Identify yourself",
+    "description": "Enter your full name and email address to start or resume your quiz.",
+    "name": "Full name",
+    "namePlaceholder": "Your full name",
+    "email": "Email address",
+    "emailPlaceholder": "you@example.com"
+  },
+
+  "new": {
+    "title": "Create your PIN",
+    "description": "Choose a 6-digit PIN. It protects your attempt and allows you to resume exactly where you left off."
+  },
+
+  "existing": {
+    "title": "Resume your quiz",
+    "description": "An attempt is already in progress with this email address. Enter your PIN to resume exactly where you left off."
+  },
+
+  "pin": {
+    "label": "6-digit PIN",
+    "confirm": "Confirm PIN",
+    "forgot": "I forgot my PIN",
+    "invalid": "The PIN must contain exactly 6 digits.",
+    "mismatch": "The two PINs do not match.",
+    "incorrect": "The PIN is incorrect.",
+    "locked": "Too many incorrect attempts. Try again in {seconds} seconds.",
+    "show": "Show PIN",
+"hide": "Hide PIN"
+  },
+
+  "reset": {
+    "waitingTitle": "Request sent",
+    "waitingText": "Your reset request has been sent to the teacher. This page will automatically check when the request is approved.",
+    "approvedTitle": "Reset approved",
+    "approvedText": "Ask the teacher for the temporary 6-digit code, then choose a new PIN.",
+    "temporaryCode": "Temporary code",
+    "newPin": "New PIN",
+    "confirmNewPin": "Confirm new PIN",
+    "invalidCode": "The temporary code must contain exactly 6 digits.",
+    "resetting": "Resetting...",
+    "confirm": "Set new PIN"
+  },
+
+  "completed": {
+    "title": "Attempt already completed",
+    "submitted": "This attempt has already been submitted. You cannot create a second attempt with this email address.",
+    "graded": "This attempt has already been graded.",
+    "view": "View my attempt"
+  },
+
+  "actions": {
+    "continue": "Continue",
+    "checking": "Checking...",
+    "start": "Start quiz",
+    "starting": "Starting...",
+    "resume": "Resume quiz",
+    "resuming": "Connecting...",
+    "back": "Back"
+  },
+
+  "errors": {
+    "invalidQuiz": "The quiz link is invalid.",
+    "quizNotFound": "This quiz could not be found.",
+    "invalidName": "Please enter your full name.",
+    "invalidEmail": "Please enter a valid email address.",
+    "generic": "Something went wrong. Please try again."
   }
+}
 
 }

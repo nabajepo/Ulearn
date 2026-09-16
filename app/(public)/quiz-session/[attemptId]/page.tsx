@@ -664,7 +664,7 @@ export default function QuizSessionPage() {
     );
 
   const showFiveMinuteWarning =
-    attempt.status ===
+    attempt?.status ===
       "in_progress" &&
     remainingMs > 0 &&
     remainingMs <=
@@ -1534,13 +1534,16 @@ export default function QuizSessionPage() {
           )
         );
 
+        autoSubmittedRef.current =
+          false;
+
         setSubmissionState(
           ""
         );
       }
     }
 
-    autoSubmit();
+    void autoSubmit();
   }, [
     attempt,
     remainingMs,
@@ -2609,6 +2612,10 @@ export default function QuizSessionPage() {
                               originalIndex
                             }
                             type="button"
+                            disabled={
+                              remainingMs <= 0 ||
+                              submissionState === "submitting"
+                            }
                             className={`${styles.choiceButton} ${
                               selected
                                 ? styles.choiceButtonSelected
@@ -3071,6 +3078,10 @@ export default function QuizSessionPage() {
                     maxLength={
                       5000
                     }
+                    disabled={
+                      remainingMs <= 0 ||
+                      submissionState === "submitting"
+                    }
                     placeholder={t(
                       "quizSession.question.developmentPlaceholder"
                     )}
@@ -3128,10 +3139,10 @@ export default function QuizSessionPage() {
                   type="button"
                   className="app-button app-button-secondary"
                   disabled={
-                    !attempt
-                      .allowBackNavigation ||
-                    currentIndex ===
-                      0
+                    remainingMs <= 0 ||
+                    submissionState === "submitting" ||
+                    !attempt.allowBackNavigation ||
+                    currentIndex === 0
                   }
                   onClick={
                     goPrevious
@@ -3149,6 +3160,10 @@ export default function QuizSessionPage() {
                   <button
                     type="button"
                     className="app-button"
+                    disabled={
+                      remainingMs <= 0 ||
+                      submissionState === "submitting"
+                    }
                     onClick={
                       goNext
                     }
@@ -3162,6 +3177,10 @@ export default function QuizSessionPage() {
                   <button
                     type="button"
                     className="app-button"
+                    disabled={
+                      remainingMs <= 0 ||
+                      submissionState === "submitting"
+                    }
                     onClick={
                       openSubmitModal
                     }

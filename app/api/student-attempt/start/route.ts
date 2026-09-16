@@ -10,6 +10,7 @@ import { adminDb } from "@/lib/firebaseAdmin";
 import {
   createStudentPinLockUntil,
   getStudentPinLockRemainingSeconds,
+  hashStudentPin,
   isStudentPinLocked,
   isValidStudentPin,
   MAX_STUDENT_PIN_ATTEMPTS,
@@ -17,9 +18,7 @@ import {
   verifyStudentPin,
 } from "@/lib/studentPin";
 
-import {
-  startAttempt,
-} from "@/lib/services/attempts";
+import { startAttempt } from "@/lib/services/attempts";
 
 /* =========================================================
    Configuration
@@ -27,17 +26,14 @@ import {
 
 export const runtime = "nodejs";
 
-const ATTEMPTS_COLLECTION =
-  "attempts";
+const ATTEMPTS_COLLECTION = "attempts";
 
 const CREDENTIALS_COLLECTION =
   "studentAttemptCredentials";
 
-const MAX_STUDENT_NAME_LENGTH =
-  120;
+const MAX_STUDENT_NAME_LENGTH = 120;
 
-const MAX_STUDENT_EMAIL_LENGTH =
-  200;
+const MAX_STUDENT_EMAIL_LENGTH = 200;
 
 /* =========================================================
    Request
@@ -99,23 +95,15 @@ function successResponse({
    Normalization
    ========================================================= */
 
-function normalizeEmail(
-  value: string
-) {
-  return value
-    .trim()
-    .toLowerCase();
+function normalizeEmail(value: string) {
+  return value.trim().toLowerCase();
 }
 
-function normalizeName(
-  value: string
-) {
+function normalizeName(value: string) {
   return value.trim();
 }
 
-function isValidEmail(
-  email: string
-) {
+function isValidEmail(email: string) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(
     email
   );
@@ -145,16 +133,17 @@ function getStudentVerificationSecret() {
 }
 
 /* =========================================================
-   Deterministic student identity
-
-   We do NOT use the student's email directly as a
-   Firestore document ID.
+   Deterministic credential ID
 
    Same quiz + same normalized email always produces
-   the same credential document ID.
+   the same private credential document ID.
+
+   IMPORTANT:
+   All PIN/reset routes must use the same domain:
+   ulearn-student-attempt-credential-v1
    ========================================================= */
 
-function createStudentIdentityId({
+function createStudentCredentialId({
   quizId,
   studentEmail,
 }: {
@@ -165,23 +154,18 @@ function createStudentIdentityId({
     getStudentVerificationSecret();
 
   const value = [
-    "ulearn-student-attempt-identity-v1",
+    "ulearn-student-attempt-credential-v1",
     quizId,
     normalizeEmail(studentEmail),
   ].join(":");
 
-  return createHmac(
-    "sha256",
-    secret
-  )
+  return createHmac("sha256", secret)
     .update(value)
     .digest("hex");
 }
 
 /* =========================================================
-   Credential type
-
-   This document is SERVER ONLY.
+   Credential
    ========================================================= */
 
 type StudentAttemptCredential = {
@@ -222,31 +206,24 @@ function mapCredential(
   }
 
   return {
-    attemptId:
-      data.attemptId,
+    attemptId: data.attemptId,
 
-    quizId:
-      data.quizId,
+    quizId: data.quizId,
 
     studentEmailNormalized:
       data.studentEmailNormalized,
 
-    pinHash:
-      data.pinHash,
+    pinHash: data.pinHash,
 
     failedAttempts:
-      typeof data.failedAttempts ===
-        "number" &&
-      Number.isInteger(
-        data.failedAttempts
-      ) &&
+      typeof data.failedAttempts === "number" &&
+      Number.isInteger(data.failedAttempts) &&
       data.failedAttempts >= 0
         ? data.failedAttempts
         : 0,
 
     lockedUntil:
-      typeof data.lockedUntil ===
-      "string"
+      typeof data.lockedUntil === "string"
         ? data.lockedUntil
         : null,
 
@@ -254,14 +231,12 @@ function mapCredential(
       data.pinResetRequired === true,
 
     createdAt:
-      typeof data.createdAt ===
-      "string"
+      typeof data.createdAt === "string"
         ? data.createdAt
         : "",
 
     updatedAt:
-      typeof data.updatedAt ===
-      "string"
+      typeof data.updatedAt === "string"
         ? data.updatedAt
         : "",
   };
@@ -318,15 +293,11 @@ function validateExistingAttempt(
       : "";
 
   const expiration =
-    new Date(
-      expiresAt
-    ).getTime();
+    new Date(expiresAt).getTime();
 
   if (
     !expiresAt ||
-    Number.isNaN(
-      expiration
-    ) ||
+    Number.isNaN(expiration) ||
     expiration <= Date.now()
   ) {
     return {
@@ -356,8 +327,7 @@ export async function POST(
        Parse body
        ===================================================== */
 
-    let body:
-      StartStudentAttemptRequest;
+    let body: StartStudentAttemptRequest;
 
     try {
       body =
@@ -376,14 +346,10 @@ export async function POST(
        ===================================================== */
 
     if (
-      typeof body.quizId !==
-        "string" ||
-      typeof body.studentName !==
-        "string" ||
-      typeof body.studentEmail !==
-        "string" ||
-      typeof body.pin !==
-        "string"
+      typeof body.quizId !== "string" ||
+      typeof body.studentName !== "string" ||
+      typeof body.studentEmail !== "string" ||
+      typeof body.pin !== "string"
     ) {
       return errorResponse(
         "attempts.start.invalidRequest",
@@ -396,19 +362,13 @@ export async function POST(
       body.quizId.trim();
 
     const studentName =
-      normalizeName(
-        body.studentName
-      );
+      normalizeName(body.studentName);
 
     const studentEmail =
-      normalizeEmail(
-        body.studentEmail
-      );
+      normalizeEmail(body.studentEmail);
 
     const pin =
-      normalizeStudentPin(
-        body.pin
-      );
+      normalizeStudentPin(body.pin);
 
     /* =====================================================
        Validate quiz ID
@@ -460,11 +420,7 @@ export async function POST(
       );
     }
 
-    if (
-      !isValidEmail(
-        studentEmail
-      )
-    ) {
+    if (!isValidEmail(studentEmail)) {
       return errorResponse(
         "attempts.start.invalidEmail",
         "Please enter a valid email address.",
@@ -487,11 +443,7 @@ export async function POST(
        Validate PIN
        ===================================================== */
 
-    if (
-      !isValidStudentPin(
-        pin
-      )
-    ) {
+    if (!isValidStudentPin(pin)) {
       return errorResponse(
         "attempts.pin.invalidFormat",
         "PIN must contain exactly 6 digits.",
@@ -500,11 +452,11 @@ export async function POST(
     }
 
     /* =====================================================
-       Deterministic identity
+       Deterministic credential identity
        ===================================================== */
 
-    const identityId =
-      createStudentIdentityId({
+    const credentialId =
+      createStudentCredentialId({
         quizId,
         studentEmail,
       });
@@ -514,37 +466,25 @@ export async function POST(
         .collection(
           CREDENTIALS_COLLECTION
         )
-        .doc(
-          identityId
-        );
-
-    /* =====================================================
-       Look for an existing credential
-       ===================================================== */
+        .doc(credentialId);
 
     const credentialSnapshot =
       await credentialRef.get();
 
     /* =====================================================
        EXISTING STUDENT
-
-       If the credential exists, this is a resume attempt.
-       The student MUST prove knowledge of the PIN.
        ===================================================== */
 
-    if (
-      credentialSnapshot.exists
-    ) {
+    if (credentialSnapshot.exists) {
       const credential =
         mapCredential(
-          credentialSnapshot.data() ??
-            {}
+          credentialSnapshot.data() ?? {}
         );
 
       if (!credential) {
         console.error(
           "Invalid student credential document:",
-          identityId
+          credentialId
         );
 
         return errorResponse(
@@ -559,14 +499,13 @@ export async function POST(
          =================================================== */
 
       if (
-        credential.quizId !==
-          quizId ||
+        credential.quizId !== quizId ||
         credential.studentEmailNormalized !==
           studentEmail
       ) {
         console.error(
           "Student credential identity mismatch:",
-          identityId
+          credentialId
         );
 
         return errorResponse(
@@ -577,16 +516,10 @@ export async function POST(
       }
 
       /* ===================================================
-         PIN reset requested by teacher
-
-         Later, the dedicated reset flow will handle this.
-         We DO NOT allow normal PIN verification while
-         resetRequired is true.
+         PIN reset currently active
          =================================================== */
 
-      if (
-        credential.pinResetRequired
-      ) {
+      if (credential.pinResetRequired) {
         return errorResponse(
           "attempts.pin.resetRequired",
           "Your PIN must be reset before you can resume this quiz.",
@@ -603,7 +536,7 @@ export async function POST(
           credential.lockedUntil
         )
       ) {
-        const remainingSeconds =
+        const lockRemainingSeconds =
           getStudentPinLockRemainingSeconds(
             credential.lockedUntil
           );
@@ -613,10 +546,11 @@ export async function POST(
           "Too many incorrect PIN attempts. Please try again later.",
           429,
           {
+            locked: true,
             lockedUntil:
               credential.lockedUntil,
-
-            remainingSeconds,
+            lockRemainingSeconds,
+            attemptsRemaining: 0,
           }
         );
       }
@@ -637,9 +571,7 @@ export async function POST(
       const attemptSnapshot =
         await attemptRef.get();
 
-      if (
-        !attemptSnapshot.exists
-      ) {
+      if (!attemptSnapshot.exists) {
         console.error(
           "Credential references a missing attempt:",
           credential.attemptId
@@ -653,16 +585,13 @@ export async function POST(
       }
 
       const attemptData =
-        attemptSnapshot.data() ??
-        {};
+        attemptSnapshot.data() ?? {};
 
       /* ===================================================
-         Make sure credential and attempt match
+         Verify attempt identity
          =================================================== */
 
-      if (
-        attemptData.quizId !==
-          quizId ||
+      const attemptEmail =
         normalizeEmail(
           typeof attemptData.studentEmailNormalized ===
             "string"
@@ -671,7 +600,11 @@ export async function POST(
                 "string"
               ? attemptData.studentEmail
               : ""
-        ) !== studentEmail
+        );
+
+      if (
+        attemptData.quizId !== quizId ||
+        attemptEmail !== studentEmail
       ) {
         console.error(
           "Attempt identity mismatch:",
@@ -723,15 +656,13 @@ export async function POST(
 
       if (!pinIsCorrect) {
         const now =
-          new Date()
-            .toISOString();
+          new Date().toISOString();
 
         const nextFailedAttempts =
-          credential.failedAttempts +
-          1;
+          credential.failedAttempts + 1;
 
         /* =================================================
-           Fifth failure -> 15-minute lock
+           Fifth failure -> temporary lock
            ================================================= */
 
         if (
@@ -740,6 +671,11 @@ export async function POST(
         ) {
           const lockedUntil =
             createStudentPinLockUntil();
+
+          const lockRemainingSeconds =
+            getStudentPinLockRemainingSeconds(
+              lockedUntil
+            );
 
           await credentialRef.update({
             failedAttempts: 0,
@@ -752,31 +688,23 @@ export async function POST(
             "Too many incorrect PIN attempts. Your access has been temporarily locked.",
             429,
             {
+              locked: true,
               lockedUntil,
-
-              remainingSeconds:
-                getStudentPinLockRemainingSeconds(
-                  lockedUntil
-                ),
-
+              lockRemainingSeconds,
               attemptsRemaining: 0,
             }
           );
         }
 
         /* =================================================
-           Failure but not locked yet
+           Wrong PIN but not locked yet
            ================================================= */
 
         await credentialRef.update({
           failedAttempts:
             nextFailedAttempts,
-
-          lockedUntil:
-            null,
-
-          updatedAt:
-            now,
+          lockedUntil: null,
+          updatedAt: now,
         });
 
         return errorResponse(
@@ -784,6 +712,8 @@ export async function POST(
           "Incorrect PIN.",
           401,
           {
+            locked: false,
+
             attemptsRemaining:
               Math.max(
                 0,
@@ -797,23 +727,21 @@ export async function POST(
       /* ===================================================
          CORRECT PIN
 
-         Reset failure counter and lock.
+         Reset failed-attempt counter.
          =================================================== */
 
       await credentialRef.update({
         failedAttempts: 0,
         lockedUntil: null,
         updatedAt:
-          new Date()
-            .toISOString(),
+          new Date().toISOString(),
       });
 
       return successResponse({
         attemptId:
           credential.attemptId,
 
-        resumed:
-          true,
+        resumed: true,
 
         messageKey:
           "attempts.start.resumed",
@@ -825,13 +753,6 @@ export async function POST(
 
     /* =====================================================
        NEW STUDENT
-
-       There is no credential for this quiz + email.
-
-       startAttempt() creates the normal attempt.
-
-       Our modified attempts.ts must NOT automatically
-       resume another attempt here.
        ===================================================== */
 
     const startResult =
@@ -840,6 +761,30 @@ export async function POST(
         studentName,
         studentEmail,
       });
+
+    /* =====================================================
+       startAttempt found an existing attempt.
+
+       This can happen if another request created the
+       attempt between /lookup and /start.
+
+       Do NOT create another attempt.
+       ===================================================== */
+
+    if (
+      startResult.success &&
+      startResult.attempt &&
+      startResult.resumed
+    ) {
+      return errorResponse(
+        "attempts.start.authenticationRequired",
+        "An existing quiz attempt was found. Please enter your PIN to resume it.",
+        409,
+        {
+          authenticationRequired: true,
+        }
+      );
+    }
 
     if (
       !startResult.success ||
@@ -856,43 +801,29 @@ export async function POST(
       startResult.attempt;
 
     /* =====================================================
-       Important safety check
-
-       This route creates NEW attempts only in this branch.
+       Extra safety check
        ===================================================== */
 
-    if (
-      startResult.resumed
-    ) {
+    if (startResult.resumed) {
       console.error(
         "startAttempt unexpectedly resumed an attempt."
       );
 
       return errorResponse(
-        "attempts.pin.credentialError",
-        "Unable to create the student PIN.",
-        500
+        "attempts.start.authenticationRequired",
+        "An existing quiz attempt was found. Please enter your PIN to resume it.",
+        409,
+        {
+          authenticationRequired: true,
+        }
       );
     }
 
     /* =====================================================
-       PIN hash
+       Hash PIN
 
-       studentPin.ts uses:
-       - HMAC-SHA256
-       - STUDENT_VERIFICATION_SECRET
-       - quizId
-       - normalized email
-       - PIN
-
-       Plain PIN is NEVER stored.
+       Plain PIN is never stored.
        ===================================================== */
-
-    const {
-      hashStudentPin,
-    } = await import(
-      "@/lib/studentPin"
-    );
 
     const pinHash =
       hashStudentPin({
@@ -902,11 +833,10 @@ export async function POST(
       });
 
     const now =
-      new Date()
-        .toISOString();
+      new Date().toISOString();
 
     /* =====================================================
-       Credential data
+       Credential
        ===================================================== */
 
     const credentialData:
@@ -921,28 +851,22 @@ export async function POST(
 
       pinHash,
 
-      failedAttempts:
-        0,
+      failedAttempts: 0,
 
-      lockedUntil:
-        null,
+      lockedUntil: null,
 
-      pinResetRequired:
-        false,
+      pinResetRequired: false,
 
-      createdAt:
-        now,
+      createdAt: now,
 
-      updatedAt:
-        now,
+      updatedAt: now,
     };
 
     /* =====================================================
-       Create private credential
+       Create credential
 
-       create() is intentionally used instead of set():
-       it FAILS if another request already created the same
-       deterministic identity document.
+       create() fails if the deterministic credential
+       already exists.
        ===================================================== */
 
     try {
@@ -950,37 +874,23 @@ export async function POST(
         credentialData
       );
     } catch (error) {
-      /*
-       * A concurrent request may have created the credential
-       * after our initial credentialRef.get().
-       *
-       * We must NOT return the newly-created attempt because
-       * that could create two usable attempts for one email.
-       */
-
       console.error(
         "Unable to create student credential:",
         error
       );
 
-      /*
-       * Remove the orphan attempt that THIS request created.
-       *
-       * The winning request keeps its own attempt.
-       */
+      /* ===================================================
+         Remove orphan attempt created by this request.
+         =================================================== */
 
       try {
         await adminDb
           .collection(
             ATTEMPTS_COLLECTION
           )
-          .doc(
-            attempt.id
-          )
+          .doc(attempt.id)
           .delete();
-      } catch (
-        cleanupError
-      ) {
+      } catch (cleanupError) {
         console.error(
           "Unable to clean up orphan attempt:",
           attempt.id,
@@ -988,37 +898,84 @@ export async function POST(
         );
       }
 
+      /*
+       * Another request won the race.
+       * The UI should now switch to the existing-attempt
+       * PIN form.
+       */
+
       return errorResponse(
-        "attempts.start.concurrentRequest",
-        "Another request is already creating or resuming this quiz attempt. Please try again.",
-        409
+        "attempts.start.authenticationRequired",
+        "An existing quiz attempt was created at the same time. Please enter your PIN to resume it.",
+        409,
+        {
+          authenticationRequired: true,
+        }
       );
     }
 
     /* =====================================================
        Ensure normalized email exists on attempt
-
-       This keeps new documents consistent even if an older
-       attempts.ts implementation did not include the field.
        ===================================================== */
 
-    await adminDb
-      .collection(
-        ATTEMPTS_COLLECTION
-      )
-      .doc(
-        attempt.id
-      )
-      .update({
-        studentEmail:
+    try {
+      await adminDb
+        .collection(
+          ATTEMPTS_COLLECTION
+        )
+        .doc(attempt.id)
+        .update({
           studentEmail,
+          studentEmailNormalized:
+            studentEmail,
+          updatedAt: now,
+        });
+    } catch (updateError) {
+      console.error(
+        "Unable to normalize attempt email:",
+        attempt.id,
+        updateError
+      );
 
-        studentEmailNormalized:
-          studentEmail,
+      /*
+       * At this point both the attempt and its credential
+       * exist. Do not silently return success with a
+       * partially initialized identity.
+       *
+       * Remove both documents created by this request.
+       */
 
-        updatedAt:
-          now,
-      });
+      try {
+        await credentialRef.delete();
+      } catch (credentialCleanupError) {
+        console.error(
+          "Unable to clean up credential:",
+          credentialId,
+          credentialCleanupError
+        );
+      }
+
+      try {
+        await adminDb
+          .collection(
+            ATTEMPTS_COLLECTION
+          )
+          .doc(attempt.id)
+          .delete();
+      } catch (attemptCleanupError) {
+        console.error(
+          "Unable to clean up attempt:",
+          attempt.id,
+          attemptCleanupError
+        );
+      }
+
+      return errorResponse(
+        "attempts.start.serverError",
+        "Unable to start the quiz right now.",
+        500
+      );
+    }
 
     /* =====================================================
        Success
@@ -1028,8 +985,7 @@ export async function POST(
       attemptId:
         attempt.id,
 
-      resumed:
-        false,
+      resumed: false,
 
       messageKey:
         "attempts.start.created",

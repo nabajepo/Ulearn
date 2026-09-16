@@ -1167,6 +1167,31 @@
       "unauthorized": "Vous n’êtes pas autorisé à corriger cette tentative."
     }
   },
+  "pin": {
+    "incorrect": "Le NIP est incorrect.",
+    "invalidFormat": "Le NIP doit contenir exactement 6 chiffres.",
+    "locked": "Trop de tentatives incorrectes. Veuillez réessayer plus tard.",
+    "resetRequired": "Votre NIP doit être réinitialisé.",
+    "credentialError": "Impossible de vérifier votre NIP."
+  },
+  "start": {
+    "invalidRequest": "La demande est invalide.",
+    "quizRequired": "Le quiz est requis.",
+    "invalidName": "Veuillez entrer un nom valide.",
+    "nameTooLong": "Le nom entré est trop long.",
+    "emailRequired": "L’adresse courriel est requise.",
+    "invalidEmail": "Veuillez entrer une adresse courriel valide.",
+    "emailTooLong": "L’adresse courriel est trop longue.",
+    "notFound": "Cette tentative est introuvable.",
+    "alreadySubmitted": "Cette tentative a déjà été remise.",
+    "alreadyGraded": "Cette tentative a déjà été corrigée.",
+    "invalidStatus": "Cette tentative ne peut pas être reprise.",
+    "expired": "Cette tentative a expiré.",
+    "authenticationRequired": "Entrez votre NIP pour reprendre cette tentative.",
+    "serverError": "Une erreur est survenue. Veuillez réessayer.",
+    "created": "Votre tentative a été créée.",
+    "resumed": "Votre tentative a été reprise."
+  },
   "attemptGrading": {
   "loading": {
     "title": "Ouverture de la tentative",
@@ -1346,5 +1371,98 @@
       "backResult": "Retour ",
       "feedback": "Donner un avis"
     }
+  },
+  "join": {
+  "quizLabel": "Quiz",
+  "createdBy": "Créé par {name}",
+
+  "summary": {
+    "questions": "Questions",
+    "points": "Points",
+    "duration": "Durée"
+  },
+
+  "availability": {
+    "available": "Le quiz est disponible maintenant.",
+    "remainingDays": "Disponible pendant encore {days} j {hours} h",
+    "remainingHours": "Disponible pendant encore {hours} h {minutes} min",
+    "remainingMinutes": "Disponible pendant encore {minutes} min",
+    "startsInDays": "Le quiz commence dans {days} j {hours} h",
+    "startsInHours": "Le quiz commence dans {hours} h {minutes} min",
+    "startsInMinutes": "Le quiz commence dans {minutes} min",
+    "ended": "Ce quiz est terminé.",
+    "startsIn": "Le quiz commence dans",
+  "remaining": "Temps restant",
+  "notStarted": "Ce quiz n'est pas encore disponible. Vous pourrez commencer lorsque le compte à rebours sera terminé."
+  },
+
+  "identity": {
+    "title": "Identifiez-vous",
+    "description": "Entrez votre nom complet et votre adresse courriel pour commencer ou reprendre votre quiz.",
+    "name": "Nom complet",
+    "namePlaceholder": "Votre nom complet",
+    "email": "Adresse courriel",
+    "emailPlaceholder": "vous@exemple.com"
+  },
+
+  "new": {
+    "title": "Créez votre NIP",
+    "description": "Choisissez un NIP à 6 chiffres. Il protège votre tentative et vous permettra de reprendre exactement là où vous vous êtes arrêté."
+  },
+
+  "existing": {
+    "title": "Reprendre votre quiz",
+    "description": "Une tentative est déjà en cours avec cette adresse courriel. Entrez votre NIP pour reprendre exactement là où vous vous êtes arrêté."
+  },
+
+  "pin": {
+    "label": "NIP à 6 chiffres",
+    "confirm": "Confirmer le NIP",
+    "forgot": "J’ai oublié mon NIP",
+    "invalid": "Le NIP doit contenir exactement 6 chiffres.",
+    "mismatch": "Les deux NIP ne correspondent pas.",
+    "incorrect": "Le NIP est incorrect.",
+    "locked": "Trop de tentatives incorrectes. Réessayez dans {seconds} secondes.",
+    "show": "Afficher le NIP",
+"hide": "Masquer le NIP"
+  },
+
+  "reset": {
+    "waitingTitle": "Demande envoyée",
+    "waitingText": "Votre demande de réinitialisation a été envoyée au professeur. Cette page vérifiera automatiquement lorsque la demande sera approuvée.",
+    "approvedTitle": "Réinitialisation approuvée",
+    "approvedText": "Demandez au professeur le code temporaire à 6 chiffres, puis choisissez un nouveau NIP.",
+    "temporaryCode": "Code temporaire",
+    "newPin": "Nouveau NIP",
+    "confirmNewPin": "Confirmer le nouveau NIP",
+    "invalidCode": "Le code temporaire doit contenir exactement 6 chiffres.",
+    "resetting": "Réinitialisation...",
+    "confirm": "Définir le nouveau NIP"
+  },
+
+  "completed": {
+    "title": "Tentative déjà terminée",
+    "submitted": "Cette tentative a déjà été remise. Vous ne pouvez pas créer une deuxième tentative avec cette adresse courriel.",
+    "graded": "Cette tentative a déjà été corrigée.",
+    "view": "Voir ma tentative"
+  },
+
+  "actions": {
+    "continue": "Continuer",
+    "checking": "Vérification...",
+    "start": "Commencer le quiz",
+    "starting": "Démarrage...",
+    "resume": "Reprendre le quiz",
+    "resuming": "Connexion...",
+    "back": "Retour"
+  },
+
+  "errors": {
+    "invalidQuiz": "Le lien du quiz est invalide.",
+    "quizNotFound": "Ce quiz est introuvable.",
+    "invalidName": "Veuillez entrer votre nom complet.",
+    "invalidEmail": "Veuillez entrer une adresse courriel valide.",
+    "generic": "Une erreur est survenue. Veuillez réessayer."
   }
+}
 }

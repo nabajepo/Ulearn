@@ -310,6 +310,12 @@ const QUIZZES_COLLECTION =
 const QUESTIONS_COLLECTION =
   "questions";
 
+const ATTEMPTS_COLLECTION =
+  "attempts";
+
+const STUDENT_ATTEMPT_CREDENTIALS_COLLECTION =
+  "studentAttemptCredentials";
+
 /*
  * The current application limits mean:
  *
@@ -2956,9 +2962,12 @@ export async function closeQuiz(
    Delete quiz
    ========================================================= */
 
+/* =========================================================
+   Delete quiz
+   ========================================================= */
+
 export async function deleteQuiz(
-  quizId:
-    string
+  quizId: string
 ) {
   const quiz =
     await getQuiz(
@@ -2988,9 +2997,9 @@ export async function deleteQuiz(
   /*
    * Deletion rules:
    *
-   * draft   -> allowed
+   * draft    -> allowed
    * launched -> forbidden
-   * closed  -> allowed
+   * closed   -> allowed
    *
    * A launched quiz may currently have students
    * completing their attempts, so it must not be
@@ -3041,7 +3050,7 @@ export async function deleteQuiz(
     query(
       collection(
         db,
-        "attempts"
+        ATTEMPTS_COLLECTION
       ),
 
       where(
@@ -3057,7 +3066,30 @@ export async function deleteQuiz(
     );
 
   /* =====================================================
-     Delete questions + attempts + quiz
+     Load linked student attempt credentials
+     ===================================================== */
+
+  const credentialsQuery =
+    query(
+      collection(
+        db,
+        STUDENT_ATTEMPT_CREDENTIALS_COLLECTION
+      ),
+
+      where(
+        "quizId",
+        "==",
+        quizId
+      )
+    );
+
+  const credentialsSnapshot =
+    await getDocs(
+      credentialsQuery
+    );
+
+  /* =====================================================
+     Delete linked data + quiz
      ===================================================== */
 
   const batch =
@@ -3089,6 +3121,20 @@ export async function deleteQuiz(
     ) => {
       batch.delete(
         attemptDocument.ref
+      );
+    }
+  );
+
+  /* -----------------------------------------------------
+     Student attempt credentials
+     ----------------------------------------------------- */
+
+  credentialsSnapshot.docs.forEach(
+    (
+      credentialDocument
+    ) => {
+      batch.delete(
+        credentialDocument.ref
       );
     }
   );

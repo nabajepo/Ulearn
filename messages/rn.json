@@ -1168,6 +1168,31 @@
       "unauthorized": "Ntimwemerewe gukosora iki kigeragezo."
     }
   },
+  "pin": {
+    "incorrect": "NIP wanditse si yo.",
+    "invalidFormat": "NIP itegerezwa kuba igizwe n’imibare 6.",
+    "locked": "Wagerageje kenshi NIP itari yo. Subira ugerageze mu nyuma.",
+    "resetRequired": "NIP yawe itegerezwa guhindurwa.",
+    "credentialError": "Ntivyashobotse kugenzura NIP yawe."
+  },
+  "start": {
+    "invalidRequest": "Icisabisho ntigikora.",
+    "quizRequired": "Ikibazo kirakenewe.",
+    "invalidName": "Andika amazina akora.",
+    "nameTooLong": "Amazina wanditse ni maremare cane.",
+    "emailRequired": "Aderesi ya imeyili irakenewe.",
+    "invalidEmail": "Andika aderesi ya imeyili ikora.",
+    "emailTooLong": "Aderesi ya imeyili ni ndende cane.",
+    "notFound": "Iki gikorwa nticabonetse.",
+    "alreadySubmitted": "Iki gikorwa caramaze gutangwa.",
+    "alreadyGraded": "Iki gikorwa caramaze gukosorwa.",
+    "invalidStatus": "Iki gikorwa ntigishobora gusubirwamwo.",
+    "expired": "Igihe c’iki gikorwa cararangiye.",
+    "authenticationRequired": "Andika NIP yawe kugira usubire muri iki gikorwa.",
+    "serverError": "Habaye ikibazo. Subira ugerageze.",
+    "created": "Igikorwa cawe carakozwe.",
+    "resumed": "Wasubiye mu gikorwa cawe."
+  },
   "attemptGrading": {
   "loading": {
     "title": "Gufungura inyishu z'umunyeshure",
@@ -1346,5 +1371,98 @@
       "backResult": "Subira Inyuma",
       "feedback": "Tanga iciyumviro"
     }
+  },
+  "join": {
+  "quizLabel": "Ikibazo",
+  "createdBy": "Yateguwe na {name}",
+
+  "summary": {
+    "questions": "Ibibazo",
+    "points": "Amanota",
+    "duration": "Igihe"
+  },
+
+  "availability": {
+    "available": "Ikibazo kiraboneka ubu.",
+    "remainingDays": "Hasigaye imisi {days} n’amasaha {hours}",
+    "remainingHours": "Hasigaye amasaha {hours} n’iminota {minutes}",
+    "remainingMinutes": "Hasigaye iminota {minutes}",
+    "startsInDays": "Ikibazo gitangura mu misi {days} n’amasaha {hours}",
+    "startsInHours": "Ikibazo gitangura mu masaha {hours} n’iminota {minutes}",
+    "startsInMinutes": "Ikibazo gitangura mu minota {minutes}",
+    "ended": "Iki kibazo cararangiye.",
+    "startsIn": "Ikibazo gitangura mu",
+  "remaining": "Igihe gisigaye",
+  "notStarted": "Iki kibazo ntikiratangura. Uzoshobora gutangura igihe igiharuro c'igihe kizoba kirangiye."
+  },
+
+  "identity": {
+    "title": "Iyandikishe",
+    "description": "Andika amazina yawe yose n’aderesi ya imeyili kugira utangure canke usubire mu kibazo cawe.",
+    "name": "Amazina yose",
+    "namePlaceholder": "Amazina yawe yose",
+    "email": "Aderesi ya imeyili",
+    "emailPlaceholder": "wewe@akarorero.com"
+  },
+
+  "new": {
+    "title": "Shiraho NIP yawe",
+    "description": "Hitamwo NIP igizwe n’imibare 6. Irakingira igikorwa cawe kandi izogufasha gusubira aho wari ugeze."
+  },
+
+  "existing": {
+    "title": "Subira mu kibazo cawe",
+    "description": "Hari igikorwa camaze gutangurwa n’iyi aderesi ya imeyili. Andika NIP yawe kugira usubire neza aho wari ugeze."
+  },
+
+  "pin": {
+    "label": "NIP y’imibare 6",
+    "confirm": "Subiramwo NIP",
+    "forgot": "Nibagiye NIP yanje",
+    "invalid": "NIP itegerezwa kuba igizwe n’imibare 6.",
+    "mismatch": "NIP zombi ntizihuye.",
+    "incorrect": "NIP wanditse si yo.",
+    "locked": "Wagerageje kenshi NIP itari yo. Subira ugerageze mu masegonda {seconds}.",
+    "show": "Erekana NIP",
+"hide": "Hisha NIP"
+  },
+
+  "reset": {
+    "waitingTitle": "Icisabisho carungitswe",
+    "waitingText": "Icisabisho co guhindura NIP carungikiwe umwigisha. Uru rupapuro ruzokwigenzura igihe icisabisho cemewe.",
+    "approvedTitle": "Guhindura NIP vyemewe",
+    "approvedText": "Saba umwigisha kode y’imibare 6 y’igihe gito, hanyuma uhitemwo NIP nshasha.",
+    "temporaryCode": "Kode y’igihe gito",
+    "newPin": "NIP nshasha",
+    "confirmNewPin": "Subiramwo NIP nshasha",
+    "invalidCode": "Kode y’igihe gito itegerezwa kuba igizwe n’imibare 6.",
+    "resetting": "NIP iriko irahindurwa...",
+    "confirm": "Shiraho NIP nshasha"
+  },
+
+  "completed": {
+    "title": "Igikorwa caramaze kurangira",
+    "submitted": "Iki gikorwa caramaze gutangwa. Ntushobora gukora ikindi gikorwa ukoresheje iyi aderesi ya imeyili.",
+    "graded": "Iki gikorwa caramaze gukosorwa.",
+    "view": "Raba igikorwa canje"
+  },
+
+  "actions": {
+    "continue": "Bandanya",
+    "checking": "Biriko birasuzumwa...",
+    "start": "Tangura ikibazo",
+    "starting": "Biriko biratangura...",
+    "resume": "Subira mu kibazo",
+    "resuming": "Biriko birafungurwa...",
+    "back": "Subira inyuma"
+  },
+
+  "errors": {
+    "invalidQuiz": "Ihuza ry’iki kibazo ntirikora.",
+    "quizNotFound": "Iki kibazo nticabonetse.",
+    "invalidName": "Andika amazina yawe yose.",
+    "invalidEmail": "Andika aderesi ya imeyili ikora.",
+    "generic": "Habaye ikibazo. Subira ugerageze."
   }
+}
 }
