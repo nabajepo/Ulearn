@@ -44,14 +44,19 @@ type HelpSupportProps = {
    * Default remains teacher so existing
    * authenticated teacher pages keep working.
    */
-  context?:
-    HelpSupportContext;
+  context?: HelpSupportContext;
 
   /*
    * Used only in student context.
    */
   studentIdentity?:
     HelpSupportStudentIdentity | null;
+};
+
+type SupportApiResponse = {
+  success: boolean;
+  emailId?: string | null;
+  message?: string;
 };
 
 /* =========================================================
@@ -84,6 +89,54 @@ function isValidEmail(
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(
     value
   );
+}
+
+/* =========================================================
+   API response helper
+   ========================================================= */
+
+async function readApiResponse(
+  response: Response
+): Promise<SupportApiResponse | null> {
+  try {
+    const contentType =
+      response.headers.get(
+        "content-type"
+      ) ?? "";
+
+    if (
+      !contentType.includes(
+        "application/json"
+      )
+    ) {
+      const text =
+        await response.text();
+
+      console.error(
+        "Support API returned a non-JSON response:",
+        response.status,
+        text.slice(
+          0,
+          500
+        )
+      );
+
+      return null;
+    }
+
+    return (
+      await response.json()
+    ) as SupportApiResponse;
+  } catch (
+    error
+  ) {
+    console.error(
+      "Unable to parse support API response:",
+      error
+    );
+
+    return null;
+  }
 }
 
 /* =========================================================
@@ -168,6 +221,7 @@ export default function HelpSupport({
        * Clerk is intentionally ignored outside
        * the teacher context.
        */
+
       if (
         !isTeacherContext ||
         !isLoaded ||
@@ -179,7 +233,8 @@ export default function HelpSupport({
       return (
         user.primaryEmailAddress
           ?.emailAddress
-          ?.trim() ??
+          ?.trim()
+          .toLowerCase() ??
         ""
       );
     }, [
@@ -225,7 +280,7 @@ export default function HelpSupport({
         studentIdentity
           ?.email
           ?.trim()
-          ?.toLowerCase() ??
+          .toLowerCase() ??
         ""
       );
     }, [
@@ -447,10 +502,11 @@ export default function HelpSupport({
      *
      * We do NOT preserve an email from an old context.
      *
-     * anonymous  -> ""
-     * student    -> student email
-     * teacher    -> Clerk email
+     * anonymous -> ""
+     * student   -> student email
+     * teacher   -> Clerk email
      */
+
     setForm(
       createInitialModalForm()
     );
@@ -668,7 +724,7 @@ export default function HelpSupport({
         .toLowerCase();
 
     /* =====================================================
-       Validation
+       Client validation
        ===================================================== */
 
     if (
@@ -732,6 +788,10 @@ export default function HelpSupport({
     );
 
     try {
+      /* ===================================================
+         Build support report
+         =================================================== */
+
       const supportReport = {
         action:
           cleanAction,
@@ -802,36 +862,74 @@ export default function HelpSupport({
 
         signedInAccount:
           supportAccount,
-
-        createdAt:
-          new Date()
-            .toISOString(),
       };
 
-      /*
-       * Temporary development output.
-       *
-       * Later this can be connected to Firestore,
-       * an API route or email delivery.
-       */
-      console.log(
-        "ULearn support report:",
-        supportReport
-      );
+      /* ===================================================
+         Send to server
+         =================================================== */
 
-      await new Promise<void>(
-        (
-          resolve
-        ) => {
-          window.setTimeout(
-            resolve,
-            700
-          );
-        }
-      );
+      const response =
+        await fetch(
+          "/api/support",
+          {
+            method:
+              "POST",
+
+            headers: {
+              "Content-Type":
+                "application/json",
+            },
+
+            body:
+              JSON.stringify(
+                supportReport
+              ),
+          }
+        );
+
+      const data =
+        await readApiResponse(
+          response
+        );
+
+      /* ===================================================
+         Server/API failure
+         =================================================== */
+
+      if (
+        !response.ok ||
+        !data?.success
+      ) {
+        console.error(
+          "Support request failed:",
+          {
+            status:
+              response.status,
+
+            response:
+              data,
+          }
+        );
+
+        setMessage(
+          t(
+            "help.validation.submitError"
+          )
+        );
+
+        return;
+      }
+
+      /* ===================================================
+         Email successfully sent
+         =================================================== */
 
       setSubmitted(
         true
+      );
+
+      setMessage(
+        ""
       );
 
       setForm(
@@ -841,7 +939,7 @@ export default function HelpSupport({
       error
     ) {
       console.error(
-        "Unable to prepare the support report:",
+        "Unable to send support request:",
         error
       );
 
@@ -965,12 +1063,6 @@ export default function HelpSupport({
                   )}
                 </p>
 
-                <p className="help-support-temporary-notice">
-                  {t(
-                    "help.success.temporaryNotice"
-                  )}
-                </p>
-
                 <button
                   type="button"
                   className="app-button app-button-action"
@@ -1017,6 +1109,9 @@ export default function HelpSupport({
                         event.target.value
                       )
                     }
+                    disabled={
+                      submitting
+                    }
                   />
 
                   <small>
@@ -1057,6 +1152,9 @@ export default function HelpSupport({
                         "description",
                         event.target.value
                       )
+                    }
+                    disabled={
+                      submitting
                     }
                   />
 
@@ -1107,6 +1205,9 @@ export default function HelpSupport({
                         "email",
                         event.target.value
                       )
+                    }
+                    disabled={
+                      submitting
                     }
                   />
 

@@ -1425,7 +1425,10 @@
     "incorrect": "The PIN is incorrect.",
     "locked": "Too many incorrect attempts. Try again in {seconds} seconds.",
     "show": "Show PIN",
-"hide": "Hide PIN"
+"hide": "Hide PIN",
+"newPin": "New PIN",
+"confirmPin": "Confirm PIN",
+"pin": "6-digit PIN"
   },
 
   "reset": {
@@ -1455,7 +1458,8 @@
     "starting": "Starting...",
     "resume": "Resume quiz",
     "resuming": "Connecting...",
-    "back": "Back"
+    "back": "Back",
+    "forgotPin": "I forgot my PIN"
   },
 
   "errors": {

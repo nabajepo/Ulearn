@@ -1424,7 +1424,10 @@
     "incorrect": "NIP wanditse si yo.",
     "locked": "Wagerageje kenshi NIP itari yo. Subira ugerageze mu masegonda {seconds}.",
     "show": "Erekana NIP",
-"hide": "Hisha NIP"
+"hide": "Hisha NIP",
+"newPin": "NIP nshasha",
+"confirmPin": "Subiramwo NIP",
+"pin": "NIP y’imibare 6"
   },
 
   "reset": {
@@ -1454,7 +1457,8 @@
     "starting": "Biriko biratangura...",
     "resume": "Subira mu kibazo",
     "resuming": "Biriko birafungurwa...",
-    "back": "Subira inyuma"
+    "back": "Subira inyuma",
+    "forgotPin": "Nibagiye NIP yanje"
   },
 
   "errors": {
