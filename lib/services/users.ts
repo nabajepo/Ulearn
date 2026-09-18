@@ -29,9 +29,10 @@ import {
  * • Create and retrieve teacher profiles.
  * • Enforce the maximum number of active teacher accounts.
  * • Calculate the temporary teacher account lifetime.
- * • Detect and clean up expired teacher accounts.
+ * • Detect expired teacher accounts.
  * • Maintain the quiz linked to each teacher.
  * • Track whether the teacher welcome email has been sent.
+ * • Track whether the teacher expiration warning has been sent.
  *
  * Important date rule
  * -------------------
@@ -100,6 +101,15 @@ export type Teacher = {
    * been successfully sent.
    */
   welcomeEmailSentAt: string | null;
+
+  /**
+   * UTC ISO timestamp representing when the expiration
+   * warning email was successfully sent.
+   *
+   * null means that the expiration warning has not yet
+   * been successfully sent.
+   */
+  expirationWarningSentAt: string | null;
 };
 
 /**
@@ -310,6 +320,20 @@ export async function getTeacher(
       typeof data.welcomeEmailSentAt === "string"
         ? data.welcomeEmailSentAt
         : null,
+
+    /*
+     * Backward-compatible:
+     *
+     * Existing teacher documents created before the
+     * expiration-warning system do not contain this field.
+     *
+     * They are therefore treated as not having received
+     * the expiration warning yet.
+     */
+    expirationWarningSentAt:
+      typeof data.expirationWarningSentAt === "string"
+        ? data.expirationWarningSentAt
+        : null,
   };
 }
 
@@ -335,12 +359,13 @@ export async function teacherExists(
  * • createdAt and expiresAt are based on the same timestamp.
  * • expiresAt is exactly ACCOUNT_DURATION_DAYS × 24 hours later.
  * • New teachers begin with welcomeEmailSentAt = null.
+ * • New teachers begin with expirationWarningSentAt = null.
  *
  * Important:
  * ----------
- * This function does NOT send the welcome email itself.
+ * This function does NOT send emails itself.
  *
- * Email sending must be handled by a secure server-side route
+ * Email sending must be handled by secure server-side routes
  * because the Resend API key must never be exposed to the browser.
  */
 export async function createTeacher(
@@ -414,6 +439,13 @@ export async function createTeacher(
      * that the email was accepted.
      */
     welcomeEmailSentAt: null,
+
+    /*
+     * The automatic expiration-warning service will replace
+     * this with the UTC ISO timestamp after the warning email
+     * has been successfully accepted by the email provider.
+     */
+    expirationWarningSentAt: null,
   };
 
   /*
@@ -477,6 +509,31 @@ export async function markTeacherWelcomeEmailAsSent(
 }
 
 /**
+ * Marks the teacher expiration warning email as successfully sent.
+ *
+ * This must only be called after the warning email has been
+ * successfully accepted by the email provider.
+ *
+ * Storing this timestamp prevents the automatic cleanup job
+ * from sending the same warning again on every execution.
+ */
+export async function markTeacherExpirationWarningAsSent(
+  teacherId: string
+) {
+  const sentAt =
+    new Date().toISOString();
+
+  await updateDoc(
+    teacherRef(teacherId),
+    {
+      expirationWarningSentAt: sentAt,
+    }
+  );
+
+  return sentAt;
+}
+
+/**
  * Updates the quiz associated with the teacher.
  *
  * In ULearn V1:
@@ -515,10 +572,10 @@ export async function markTeacherAsExpired(
  *
  * Important:
  * ----------
- * This currently removes the Firestore profile only.
+ * This removes the Firestore profile only.
  *
- * Clerk account deletion can later be handled using
- * a secure server-side route.
+ * Clerk account deletion is handled separately by the
+ * secure server-side expiration cleanup process.
  */
 export async function deleteTeacher(
   teacherId: string
@@ -553,27 +610,24 @@ export async function deleteTeacher(
 /**
  * Checks whether the teacher account has expired.
  *
- * Current behaviour:
- * ------------------
- * If expired:
- * 1. mark the profile as expired;
- * 2. delete the Firestore profile;
- * 3. decrease the active teacher statistic.
+ * IMPORTANT:
+ * ----------
+ * This function deliberately does NOT delete anything.
  *
- * IMPORTANT - Future email cleanup:
- * ---------------------------------
- * We will later change this process.
+ * Expired-account deletion must be performed only by the
+ * secure server-side expiration process.
  *
- * Before deleting an expired teacher, ULearn will need to:
+ * That process will:
  *
- * 1. generate the final corrected-copy archive;
- * 2. send that archive to the teacher;
- * 3. confirm that the email/archive operation succeeded;
- * 4. only then delete the teacher data.
+ * 1. finalize the state that must be archived;
+ * 2. generate the correction ZIP;
+ * 3. send the ZIP to the teacher;
+ * 4. confirm that the email operation succeeded;
+ * 5. delete the related ULearn data;
+ * 6. delete the Clerk account.
  *
- * For now, the existing cleanup behaviour is preserved
- * so we do not change unrelated application behaviour
- * while implementing the welcome email.
+ * If archive/email delivery fails, this function must never
+ * cause the teacher data to be deleted.
  */
 export async function cleanupExpiredTeacher(
   teacherId: string
@@ -603,23 +657,29 @@ export async function cleanupExpiredTeacher(
   }
 
   /*
-   * Mark first, then delete.
-   *
-   * This keeps the account state explicit if the deletion
-   * operation fails after the status update.
+   * Marking the profile as expired blocks the account state,
+   * but deletion is intentionally left to the secure
+   * expiration service after successful archive delivery.
    */
-  await markTeacherAsExpired(
-    teacherId
-  );
+  if (
+    teacher.status !==
+    "expired"
+  ) {
+    await markTeacherAsExpired(
+      teacherId
+    );
+  }
 
-  await deleteTeacher(
-    teacherId
-  );
+  const expiredTeacher: Teacher = {
+    ...teacher,
+    status: "expired",
+  };
 
   return {
-    deleted: true,
-    teacher: null,
+    deleted: false,
+    teacher:
+      expiredTeacher,
     message:
-      "Expired teacher account deleted.",
+      "Teacher account expired. Secure archive cleanup is required.",
   };
 }

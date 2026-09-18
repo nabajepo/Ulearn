@@ -38,6 +38,22 @@ type AttemptCorrectionPdfProps = {
 
   language?:
     PdfLanguage;
+
+  /**
+   * Special mode used only by the automatic expiration archive.
+   *
+   * Normal/manual PDF generation:
+   * expirationArchive = false
+   *
+   * Automatic account-expiration archive:
+   * expirationArchive = true
+   *
+   * In expiration mode, an attempt that was not completely
+   * graded by the teacher must never receive an invented
+   * development score or final score.
+   */
+  expirationArchive?:
+    boolean;
 };
 
 /* =========================================================
@@ -147,6 +163,12 @@ const translations = {
 
     inProgress:
       "In progress",
+
+    notGraded:
+      "Not graded",
+
+    notAvailable:
+      "Not available",
   },
 
   fr: {
@@ -251,6 +273,12 @@ const translations = {
 
     inProgress:
       "En cours",
+
+    notGraded:
+      "Non corrigé",
+
+    notAvailable:
+      "Non disponible",
   },
 
   rn: {
@@ -355,6 +383,12 @@ const translations = {
 
     inProgress:
       "Iriko irakorwa",
+
+    notGraded:
+      "Ntikirakosorwa",
+
+    notAvailable:
+      "Ntiboneka",
   },
 } as const;
 
@@ -1431,6 +1465,7 @@ export default function AttemptCorrectionPdf({
   attempt,
   questions,
   language = "en",
+  expirationArchive = false,
 }: AttemptCorrectionPdfProps) {
   const safeLanguage:
     PdfLanguage =
@@ -1443,6 +1478,18 @@ export default function AttemptCorrectionPdf({
     translations[
       safeLanguage
     ];
+
+  /*
+   * This special behaviour is allowed only for the
+   * automatic archive generated after account expiration.
+   *
+   * A graded attempt always keeps its normal correction,
+   * even when it is included in the expiration archive.
+   */
+  const isIncompleteExpirationCorrection =
+    expirationArchive &&
+    attempt.status !==
+      "graded";
 
   /* =====================================================
      Restore frozen question order
@@ -1501,6 +1548,13 @@ export default function AttemptCorrectionPdf({
       )
     );
 
+  /*
+   * This numeric value remains useful for fully graded
+   * attempts.
+   *
+   * For an incomplete expiration archive we deliberately
+   * do NOT use it to manufacture a final score.
+   */
   const manualScore =
     roundScore(
       orderedQuestions.reduce(
@@ -1530,16 +1584,25 @@ export default function AttemptCorrectionPdf({
       )
     );
 
+  /*
+   * Normal/manual PDFs preserve the previous behaviour.
+   *
+   * In an expiration archive, however, an ungraded copy
+   * has no legitimate final score because development
+   * questions may still require teacher grading.
+   */
   const finalScore =
-    attempt.finalScore ??
-    roundScore(
-      automaticScore +
-        manualScore
-    );
+    isIncompleteExpirationCorrection
+      ? null
+      : attempt.finalScore ??
+        roundScore(
+          automaticScore +
+            manualScore
+        );
 
   const percentage =
-    quiz.totalPoints >
-    0
+    finalScore !== null &&
+    quiz.totalPoints > 0
       ? Math.round(
           (
             finalScore /
@@ -1547,7 +1610,7 @@ export default function AttemptCorrectionPdf({
           ) *
             100
         )
-      : 0;
+      : null;
 
   /* =====================================================
      PDF
@@ -1852,9 +1915,9 @@ export default function AttemptCorrectionPdf({
                   styles.scoreValue
                 }
               >
-                {
-                  manualScore
-                }
+                {isIncompleteExpirationCorrection
+                  ? labels.notGraded
+                  : manualScore}
               </Text>
             </View>
 
@@ -1878,8 +1941,10 @@ export default function AttemptCorrectionPdf({
                   styles.finalScoreValue
                 }
               >
-                {finalScore} /{" "}
-                {quiz.totalPoints}
+                {finalScore ===
+                null
+                  ? labels.notAvailable
+                  : `${finalScore} / ${quiz.totalPoints}`}
               </Text>
             </View>
 
@@ -1903,7 +1968,10 @@ export default function AttemptCorrectionPdf({
                   styles.scoreValue
                 }
               >
-                {percentage}%
+                {percentage ===
+                null
+                  ? labels.notAvailable
+                  : `${percentage}%`}
               </Text>
             </View>
           </View>
@@ -1948,12 +2016,42 @@ export default function AttemptCorrectionPdf({
                     ?.trim() ||
                   "";
 
-                const score =
+                /*
+                 * We distinguish a real teacher score from
+                 * an absent score.
+                 *
+                 * A real score of 0 remains 0.
+                 * Missing is NOT converted to 0 in the
+                 * expiration archive.
+                 */
+                const storedScore =
                   attempt
                     .developmentScores[
                     question.id
-                  ] ??
-                  0;
+                  ];
+
+                const hasTeacherScore =
+                  typeof storedScore ===
+                    "number" &&
+                  Number.isFinite(
+                    storedScore
+                  );
+
+                const score =
+                  hasTeacherScore
+                    ? storedScore
+                    : 0;
+
+                /*
+                 * For a non-graded expiration copy, teacher
+                 * grading is considered unfinished.
+                 *
+                 * We therefore display "Not graded" instead
+                 * of interpreting a missing score as zero.
+                 */
+                const showDevelopmentAsNotGraded =
+                  isIncompleteExpirationCorrection &&
+                  !hasTeacherScore;
 
                 return (
                   <View
@@ -2005,10 +2103,9 @@ export default function AttemptCorrectionPdf({
                           styles.pointsBadge
                         }
                       >
-                        {score} /{" "}
-                        {
-                          question.points
-                        }
+                        {showDevelopmentAsNotGraded
+                          ? `${labels.notGraded} / ${question.points}`
+                          : `${score} / ${question.points}`}
                       </Text>
                     </View>
 
@@ -2074,10 +2171,9 @@ export default function AttemptCorrectionPdf({
                           styles.gradeValue
                         }
                       >
-                        {score} /{" "}
-                        {
-                          question.points
-                        }
+                        {showDevelopmentAsNotGraded
+                          ? `${labels.notGraded} / ${question.points}`
+                          : `${score} / ${question.points}`}
                       </Text>
                     </View>
                   </View>
@@ -2187,8 +2283,8 @@ export default function AttemptCorrectionPdf({
                         {
                           question.text
                         }
-                      </Text>
-                    </View>
+                        </Text>
+                      </View>
 
                     <Text
                       style={

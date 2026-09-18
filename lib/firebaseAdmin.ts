@@ -12,6 +12,13 @@ import {
   getFirestore,
 } from "firebase-admin/firestore";
 
+/**
+ * Returns the Firebase Admin application.
+ *
+ * Next.js may evaluate server modules more than once during
+ * development, so we reuse the existing Firebase Admin app
+ * instead of initializing another one.
+ */
 function getFirebaseAdminApp(): App {
   if (getApps().length > 0) {
     return getApp();
@@ -49,5 +56,12 @@ function getFirebaseAdminApp(): App {
   });
 }
 
+/**
+ * Server-only Firestore Admin instance.
+ *
+ * This instance must never be imported into client components.
+ */
 export const adminDb =
-  getFirestore(getFirebaseAdminApp());
+  getFirestore(
+    getFirebaseAdminApp()
+  );

@@ -2752,7 +2752,7 @@ function calculateMultipleChoiceScore(
    Automatic grading
    ========================================================= */
 
-function calculateAutomaticScore(
+export function calculateAutomaticScore(
   attempt: Attempt,
 
   questions:
