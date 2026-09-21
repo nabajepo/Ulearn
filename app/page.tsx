@@ -5,6 +5,7 @@ import Link from "next/link";
 import Reveal from "@/components/Reveal";
 import SectionBox from "@/components/SectionBox";
 import HelpSupport from "@/components/HelpSupport";
+import JoinQuizBox from "@/components/JoinQuizBox";
 import ShowFeedbacks from "@/components/ShowFeedbacks";
 import PlatformStats from "@/components/PlatformStats";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
@@ -229,6 +230,17 @@ export default function Home() {
             </div>
           </section>
         </Reveal>
+
+       {/* =================================================
+            Student quiz access
+            ================================================= */}
+
+        <Reveal>
+            <section id="findAQuiz">
+              <JoinQuizBox />
+            </section>
+        </Reveal>
+
 
         {/* =================================================
             Process

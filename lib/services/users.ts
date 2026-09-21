@@ -110,6 +110,16 @@ export type Teacher = {
    * been successfully sent.
    */
   expirationWarningSentAt: string | null;
+
+  /**
+ * UTC ISO timestamp representing when the final
+ * expiration email/archive was successfully sent.
+ *
+ * null means that final expiration delivery has
+ * not yet been successfully completed.
+ */
+ expirationArchiveSentAt:
+  string | null;
 };
 
 /**
@@ -334,6 +344,11 @@ export async function getTeacher(
       typeof data.expirationWarningSentAt === "string"
         ? data.expirationWarningSentAt
         : null,
+    expirationArchiveSentAt:
+      typeof data.expirationArchiveSentAt ===
+      "string"
+      ? data.expirationArchiveSentAt
+      : null,    
   };
 }
 
@@ -446,6 +461,12 @@ export async function createTeacher(
      * has been successfully accepted by the email provider.
      */
     expirationWarningSentAt: null,
+    /*
+ * Set only after the final expiration
+ * email/archive has been accepted by
+ * the email provider.
+ */
+    expirationArchiveSentAt: null,
   };
 
   /*

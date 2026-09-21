@@ -333,6 +333,12 @@ export default function QuizSessionPage() {
     useState(false);
 
   const [
+    fiveMinuteWarningAcknowledged,
+    setFiveMinuteWarningAcknowledged,
+  ] =
+    useState(false);
+
+  const [
     developmentDrafts,
     setDevelopmentDrafts,
   ] =
@@ -668,7 +674,8 @@ export default function QuizSessionPage() {
       "in_progress" &&
     remainingMs > 0 &&
     remainingMs <=
-      FIVE_MINUTES_MS;
+      FIVE_MINUTES_MS &&
+    !fiveMinuteWarningAcknowledged;
 
   /* =========================================================
      Answered count
@@ -2245,53 +2252,6 @@ export default function QuizSessionPage() {
             </div>
           </header>
 
-          {showFiveMinuteWarning && (
-            <section
-              className={
-                styles.timeWarning
-              }
-              role="status"
-              aria-live="polite"
-            >
-              <div
-                className={
-                  styles.timeWarningIcon
-                }
-                aria-hidden="true"
-              >
-                !
-              </div>
-
-              <div
-                className={
-                  styles.timeWarningContent
-                }
-              >
-                <strong>
-                  {t(
-                    "quizSession.timeWarning.title"
-                  )}
-                </strong>
-
-                <p>
-                  {t(
-                    "quizSession.timeWarning.text"
-                  )}
-                </p>
-              </div>
-
-              <span
-                className={
-                  styles.timeWarningTimer
-                }
-              >
-                {
-                  remainingLabel
-                }
-              </span>
-            </section>
-          )}
-
           {/* =================================================
               Main layout
               ================================================= */}
@@ -3212,6 +3172,79 @@ export default function QuizSessionPage() {
             attempt.quizId,
         }}
       />
+
+      {/* =====================================================
+          Five-minute warning modal
+          ===================================================== */}
+
+      {showFiveMinuteWarning && (
+        <div
+          className={
+            styles.timeWarningOverlay
+          }
+        >
+          <section
+            className={
+              styles.timeWarningModal
+            }
+            role="alertdialog"
+            aria-modal="true"
+            aria-labelledby="five-minute-warning-title"
+            aria-describedby="five-minute-warning-text"
+          >
+            <div
+              className={
+                styles.timeWarningIcon
+              }
+              aria-hidden="true"
+            >
+              !
+            </div>
+
+            <h2
+              id="five-minute-warning-title"
+            >
+              {t(
+                "quizSession.timeWarning.title"
+              )}
+            </h2>
+
+            <p
+              id="five-minute-warning-text"
+            >
+              {t(
+                "quizSession.timeWarning.text"
+              )}
+            </p>
+
+            <div
+              className={
+                styles.timeWarningTimer
+              }
+              aria-live="polite"
+            >
+              {
+                remainingLabel
+              }
+            </div>
+
+            <button
+              type="button"
+              className={
+                styles.timeWarningButton
+              }
+              onClick={() => {
+                setFiveMinuteWarningAcknowledged(
+                  true
+                );
+              }}
+              autoFocus
+            >
+              OK
+            </button>
+          </section>
+        </div>
+      )}
 
       {/* =====================================================
           Submit modal

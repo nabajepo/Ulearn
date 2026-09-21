@@ -69,6 +69,19 @@ export default function SectionBox() {
               "navigation.home"
             )}
           </Link>
+          <Link
+            href="#findAQuiz"
+            onClick={() =>
+              scrollToSection(
+                "findAQuiz"
+              )
+            }
+            className="navLink"
+          >
+            {t(
+              "navigation.findAQuiz"
+            )}
+          </Link>
 
           <Link
             href="#howItWorks"

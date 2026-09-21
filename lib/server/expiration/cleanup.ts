@@ -19,11 +19,15 @@ import {
 
 import {
   generateExpirationArchive,
+  type ExpirationArchiveLanguage,
 } from "@/lib/server/expiration/archive";
 
 import {
   calculateAutomaticScore,
-  type Attempt,
+} from "@/lib/scoring/attemptScoring";
+
+import type {
+  Attempt,
 } from "@/lib/services/attempts";
 
 import type {
@@ -57,8 +61,11 @@ const STUDENT_ATTEMPT_CREDENTIALS_COLLECTION =
   "studentAttemptCredentials";
 
 /* =========================================================
-   Internal teacher representation
+   Types
    ========================================================= */
+
+type TeacherLanguage =
+  ExpirationArchiveLanguage;
 
 type ExpirationTeacher = {
   id: string;
@@ -76,11 +83,10 @@ type ExpirationTeacher = {
 
   expirationWarningSentAt:
     string | null;
-};
 
-/* =========================================================
-   Cleanup result
-   ========================================================= */
+  expirationArchiveSentAt:
+    string | null;
+};
 
 export type ExpirationCleanupResult = {
   checkedTeachers: number;
@@ -99,8 +105,36 @@ export type ExpirationCleanupResult = {
   }>;
 };
 
+type ExpirationEmailCopy = {
+  professor: string;
+
+  warningSubject: string;
+  warningTitle: string;
+  warningIntro: string;
+  warningExpirationLabel: string;
+  warningAction: string;
+  warningArchive: string;
+
+  finalSubjectNoQuiz: string;
+  finalSubjectWithQuiz: (
+    quizTitle: string
+  ) => string;
+
+  finalTitle: string;
+  finalIntro: string;
+  finalArchive: (
+    quizTitle: string
+  ) => string;
+
+  finalNoQuiz: string;
+
+  copiesLabel: string;
+
+  footer: string;
+};
+
 /* =========================================================
-   Helpers
+   Generic helpers
    ========================================================= */
 
 function getString(
@@ -160,6 +194,11 @@ function mapTeacher(
       getNullableString(
         data.expirationWarningSentAt
       ),
+
+    expirationArchiveSentAt:
+      getNullableString(
+        data.expirationArchiveSentAt
+      ),
   };
 }
 
@@ -184,7 +223,7 @@ function getErrorMessage(
 }
 
 /* =========================================================
-   HTML escaping
+   HTML helpers
    ========================================================= */
 
 function escapeHtml(
@@ -213,6 +252,351 @@ function escapeHtml(
     );
 }
 
+function getEmailCopy(
+  language: TeacherLanguage
+): ExpirationEmailCopy {
+  if (
+    language === "fr"
+  ) {
+    return {
+      professor:
+        "Professeur",
+
+      warningSubject:
+        "Rappel d’expiration de votre compte ULearn",
+
+      warningTitle:
+        "Votre compte expire bientôt",
+
+      warningIntro:
+        "Votre compte professeur temporaire ULearn arrivera bientôt à expiration.",
+
+      warningExpirationLabel:
+        "Expiration",
+
+      warningAction:
+        "Veuillez terminer les corrections restantes avant l’expiration de votre compte.",
+
+      warningArchive:
+        "À l’expiration, ULearn préparera automatiquement votre archive finale de corrections et vous l’enverra par courriel.",
+
+      finalSubjectNoQuiz:
+        "Expiration de votre compte ULearn",
+
+      finalSubjectWithQuiz:
+        (
+          quizTitle: string
+        ) =>
+          `Corrections finales ULearn - ${quizTitle}`,
+
+      finalTitle:
+        "Votre compte ULearn a expiré",
+
+      finalIntro:
+        "Votre compte professeur ULearn a atteint sa date d’expiration.",
+
+      finalArchive:
+        (
+          quizTitle: string
+        ) =>
+          `Vous trouverez en pièce jointe l’archive finale contenant les PDF de correction des étudiants pour « ${quizTitle} ».`,
+
+      finalNoQuiz:
+        "Aucun quiz n’était associé à votre compte au moment de son expiration. Il n’y a donc aucune archive de corrections à joindre.",
+
+      copiesLabel:
+        "Nombre de copies",
+
+      footer:
+        "ULearn — Plateforme intelligente de quiz",
+    };
+  }
+
+  if (
+    language === "rn"
+  ) {
+    return {
+      professor:
+        "Mwigisha",
+
+      warningSubject:
+        "ULearn: konti yawe igiye kurangira",
+
+      warningTitle:
+        "Konti yawe igiye kurangira",
+
+      warningIntro:
+        "Konti yawe y’umwigisha ya ULearn y’igihe gito igiye kurangira.",
+
+      warningExpirationLabel:
+        "Igihe izorangirira",
+
+      warningAction:
+        "Turagusavye urangize gukosora ibisigaye imbere y’uko konti yawe irangira.",
+
+      warningArchive:
+        "Konti niyarangira, ULearn izotegura ubwayo archive ya nyuma y’amakosorwa hanyuma iyikurungikire kuri email.",
+
+      finalSubjectNoQuiz:
+        "Konti yawe ya ULearn yarangiye",
+
+      finalSubjectWithQuiz:
+        (
+          quizTitle: string
+        ) =>
+          `ULearn - Amakosorwa ya nyuma - ${quizTitle}`,
+
+      finalTitle:
+        "Konti yawe ya ULearn yarangiye",
+
+      finalIntro:
+        "Konti yawe y’umwigisha ya ULearn yashitse ku gihe co kurangira.",
+
+      finalArchive:
+        (
+          quizTitle: string
+        ) =>
+          `Archive ya nyuma irimwo PDF z’amakosorwa y’abanyeshure kuri « ${quizTitle} » iri kumwe n’iyi email.`,
+
+      finalNoQuiz:
+        "Nta quiz yari ifatanye na konti yawe igihe yarangira, rero nta archive y’amakosorwa iri kumwe n’iyi email.",
+
+      copiesLabel:
+        "Igitigiri c’amakopi",
+
+      footer:
+        "ULearn — Urubuga rw’ibibazo rw’ubwenge",
+    };
+  }
+
+  return {
+    professor:
+      "Professor",
+
+    warningSubject:
+      "ULearn account expiration reminder",
+
+    warningTitle:
+      "Your account expires soon",
+
+    warningIntro:
+      "Your temporary ULearn teacher account will expire soon.",
+
+    warningExpirationLabel:
+      "Expiration",
+
+    warningAction:
+      "Please complete any remaining grading before the account expires.",
+
+    warningArchive:
+      "When the account expires, ULearn will automatically prepare and email your final correction archive.",
+
+    finalSubjectNoQuiz:
+      "Your ULearn account has expired",
+
+    finalSubjectWithQuiz:
+      (
+        quizTitle: string
+      ) =>
+        `ULearn final corrections - ${quizTitle}`,
+
+    finalTitle:
+      "Your ULearn account has expired",
+
+    finalIntro:
+      "Your ULearn teacher account has reached its expiration date.",
+
+    finalArchive:
+      (
+        quizTitle: string
+      ) =>
+        `Attached is the final archive containing the student correction PDFs for "${quizTitle}".`,
+
+    finalNoQuiz:
+      "No quiz was associated with your account when it expired, so there is no correction archive to attach.",
+
+    copiesLabel:
+      "Number of copies",
+
+    footer:
+      "ULearn — Smart quiz platform",
+  };
+}
+
+function getLocale(
+  language: TeacherLanguage
+) {
+  if (
+    language === "fr"
+  ) {
+    return "fr-CA";
+  }
+
+  if (
+    language === "rn"
+  ) {
+    return "rn";
+  }
+
+  return "en-CA";
+}
+
+function formatExpirationDate(
+  teacher: ExpirationTeacher,
+  language: TeacherLanguage
+) {
+  const expiresAt =
+    new Date(
+      teacher.expiresAt
+    );
+
+  if (
+    Number.isNaN(
+      expiresAt.getTime()
+    )
+  ) {
+    return teacher.expiresAt;
+  }
+
+  return expiresAt.toLocaleString(
+    getLocale(
+      language
+    ),
+    {
+      timeZone:
+        "UTC",
+
+      dateStyle:
+        "medium",
+
+      timeStyle:
+        "short",
+    }
+  ) + " UTC";
+}
+
+type MultilingualEmailSection = {
+  languageLabel: string;
+  title: string;
+  greeting: string;
+  paragraphs: string[];
+  highlightLabel?: string;
+  highlightValue?: string;
+};
+
+function buildMultilingualEmailTemplate(
+  sections: MultilingualEmailSection[]
+) {
+  const sectionsHtml =
+    sections
+      .map(
+        (
+          section,
+          index
+        ) => {
+          const paragraphsHtml =
+            section.paragraphs
+              .map(
+                (
+                  paragraph
+                ) =>
+                  `<p style="margin:0 0 16px;color:#3f3f46;font-size:16px;line-height:1.7;">${escapeHtml(
+                    paragraph
+                  )}</p>`
+              )
+              .join("");
+
+          const highlightHtml =
+            section.highlightLabel &&
+            section.highlightValue
+              ? `
+                <div style="margin:24px 0;padding:18px 20px;border-radius:14px;background:#f4effc;border:1px solid #e4d7f8;">
+                  <div style="margin-bottom:6px;color:#6b7280;font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;">
+                    ${escapeHtml(
+                      section.highlightLabel
+                    )}
+                  </div>
+                  <div style="color:#2a0369;font-size:18px;font-weight:800;line-height:1.4;">
+                    ${escapeHtml(
+                      section.highlightValue
+                    )}
+                  </div>
+                </div>
+              `
+              : "";
+
+          const divider =
+            index === 0
+              ? ""
+              : `<div style="height:1px;background:#ebe6f3;margin:30px 0;"></div>`;
+
+          return `
+            ${divider}
+
+            <section>
+              <div style="margin-bottom:10px;color:#7c3aed;font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;">
+                ${escapeHtml(
+                  section.languageLabel
+                )}
+              </div>
+
+              <h2 style="margin:0 0 18px;color:#2a0369;font-size:22px;line-height:1.3;">
+                ${escapeHtml(
+                  section.title
+                )}
+              </h2>
+
+              <p style="margin:0 0 16px;color:#3f3f46;font-size:16px;line-height:1.7;">
+                ${escapeHtml(
+                  section.greeting
+                )}
+              </p>
+
+              ${highlightHtml}
+
+              ${paragraphsHtml}
+            </section>
+          `;
+        }
+      )
+      .join("");
+
+  return `
+<!doctype html>
+<html>
+  <body style="margin:0;padding:0;background:#f5f5f7;font-family:Arial,Helvetica,sans-serif;">
+    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="background:#f5f5f7;padding:32px 12px;">
+      <tr>
+        <td align="center">
+          <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="max-width:680px;background:#ffffff;border-radius:18px;overflow:hidden;border:1px solid #ececf0;">
+            <tr>
+              <td style="background:#2a0369;padding:24px 30px;">
+                <div style="color:#ffffff;font-size:28px;font-weight:800;letter-spacing:-.5px;">
+                  ULearn
+                </div>
+              </td>
+            </tr>
+
+            <tr>
+              <td style="padding:32px 30px 28px;">
+                ${sectionsHtml}
+              </td>
+            </tr>
+
+            <tr>
+              <td style="padding:20px 30px;background:#fafafa;border-top:1px solid #eeeeef;color:#71717a;font-size:13px;line-height:1.6;">
+                ULearn — Smart quiz platform
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>
+  `.trim();
+}
+
 /* =========================================================
    Warning email
    ========================================================= */
@@ -220,75 +604,195 @@ function escapeHtml(
 async function sendExpirationWarning(
   teacher: ExpirationTeacher
 ) {
-  if (!teacher.email) {
+  if (
+    !teacher.email
+  ) {
     throw new Error(
       "Teacher email is missing."
     );
   }
 
-  const expiresAt =
-    new Date(
-      teacher.expiresAt
+  const english =
+    getEmailCopy(
+      "en"
     );
 
-  const expirationText =
-    Number.isNaN(
-      expiresAt.getTime()
-    )
-      ? teacher.expiresAt
-      : expiresAt.toLocaleString(
-          "en-CA",
-          {
-            timeZone:
-              "America/Toronto",
+  const french =
+    getEmailCopy(
+      "fr"
+    );
 
-            dateStyle:
-              "medium",
+  const kirundi =
+    getEmailCopy(
+      "rn"
+    );
 
-            timeStyle:
-              "short",
-          }
-        );
+  const englishExpiration =
+    formatExpirationDate(
+      teacher,
+      "en"
+    );
 
-  /*
-   * Stable idempotency key:
-   * if the cleanup is retried, Resend should treat this
-   * as the same warning email.
-   */
+  const frenchExpiration =
+    formatExpirationDate(
+      teacher,
+      "fr"
+    );
+
+  const kirundiExpiration =
+    formatExpirationDate(
+      teacher,
+      "rn"
+    );
+
+  const teacherName =
+    teacher.name ||
+    english.professor;
+
   await sendEmail({
     to:
       teacher.email,
 
     subject:
-      "ULearn account expiration reminder",
+      "ULearn — Account expiration reminder / Rappel d’expiration / Konti igiye kurangira",
 
     text:
-      `Hello ${teacher.name || "Professor"},\n\n` +
-      `Your temporary ULearn teacher account will expire soon.\n\n` +
-      `Expiration: ${expirationText}\n\n` +
-      `Please complete any remaining grading before the account expires.\n\n` +
-      `When the account expires, ULearn will automatically prepare and email your final correction archive.\n\n` +
+      `ENGLISH
+
+` +
+      `Hello ${teacherName},
+
+` +
+      `${english.warningIntro}
+
+` +
+      `${english.warningExpirationLabel}: ${englishExpiration}
+
+` +
+      `${english.warningAction}
+
+` +
+      `${english.warningArchive}
+
+` +
+      `------------------------------
+
+` +
+      `FRANÇAIS
+
+` +
+      `Bonjour ${teacher.name || french.professor},
+
+` +
+      `${french.warningIntro}
+
+` +
+      `${french.warningExpirationLabel} : ${frenchExpiration}
+
+` +
+      `${french.warningAction}
+
+` +
+      `${french.warningArchive}
+
+` +
+      `------------------------------
+
+` +
+      `KIRUNDI
+
+` +
+      `Bwakeye ${teacher.name || kirundi.professor},
+
+` +
+      `${kirundi.warningIntro}
+
+` +
+      `${kirundi.warningExpirationLabel}: ${kirundiExpiration}
+
+` +
+      `${kirundi.warningAction}
+
+` +
+      `${kirundi.warningArchive}
+
+` +
       `ULearn`,
 
     html:
-      `<p>Hello ${escapeHtml(
-        teacher.name || "Professor"
-      )},</p>` +
-      `<p>Your temporary ULearn teacher account will expire soon.</p>` +
-      `<p><strong>Expiration:</strong> ${escapeHtml(
-        expirationText
-      )}</p>` +
-      `<p>Please complete any remaining grading before the account expires.</p>` +
-      `<p>When the account expires, ULearn will automatically prepare and email your final correction archive.</p>` +
-      `<p>ULearn</p>`,
+      buildMultilingualEmailTemplate([
+        {
+          languageLabel:
+            "English",
+
+          title:
+            english.warningTitle,
+
+          greeting:
+            `Hello ${teacherName},`,
+
+          paragraphs: [
+            english.warningIntro,
+            english.warningAction,
+            english.warningArchive,
+          ],
+
+          highlightLabel:
+            english.warningExpirationLabel,
+
+          highlightValue:
+            englishExpiration,
+        },
+        {
+          languageLabel:
+            "Français",
+
+          title:
+            french.warningTitle,
+
+          greeting:
+            `Bonjour ${teacher.name || french.professor},`,
+
+          paragraphs: [
+            french.warningIntro,
+            french.warningAction,
+            french.warningArchive,
+          ],
+
+          highlightLabel:
+            french.warningExpirationLabel,
+
+          highlightValue:
+            frenchExpiration,
+        },
+        {
+          languageLabel:
+            "Kirundi",
+
+          title:
+            kirundi.warningTitle,
+
+          greeting:
+            `Bwakeye ${teacher.name || kirundi.professor},`,
+
+          paragraphs: [
+            kirundi.warningIntro,
+            kirundi.warningAction,
+            kirundi.warningArchive,
+          ],
+
+          highlightLabel:
+            kirundi.warningExpirationLabel,
+
+          highlightValue:
+            kirundiExpiration,
+        },
+      ]),
 
     idempotencyKey:
       `teacher-expiration-warning-${teacher.id}`,
   });
 
-  /*
-   * Mark the warning only AFTER the email succeeds.
-   */
   await adminDb
     .collection(
       USERS_COLLECTION
@@ -310,11 +814,9 @@ async function sendExpirationWarning(
 async function getQuizForTeacher(
   teacher: ExpirationTeacher
 ): Promise<Quiz | null> {
-  /*
-   * Normal case:
-   * the teacher document already contains quizId.
-   */
-  if (teacher.quizId) {
+  if (
+    teacher.quizId
+  ) {
     const snapshot =
       await adminDb
         .collection(
@@ -337,9 +839,6 @@ async function getQuizForTeacher(
     }
   }
 
-  /*
-   * Fallback for an older/inconsistent teacher document.
-   */
   const snapshot =
     await adminDb
       .collection(
@@ -434,19 +933,17 @@ async function getAttempts(
 }
 
 /* =========================================================
-   Expired in-progress attempts
+   Finalize in-progress attempts
    ========================================================= */
 
 /**
- * Finalizes expired student attempts before creating
- * the final teacher archive.
+ * At TEACHER expiration, every still in-progress attempt belonging
+ * to that teacher quiz is frozen immediately.
  *
- * The same calculateAutomaticScore() function used by the
- * normal attempt submission flow is reused here.
- *
- * We never invent development grades.
+ * We deliberately DO NOT compare attempt.expiresAt here.
+ * The teacher account expiration is the final archive boundary.
  */
-async function finalizeExpiredInProgressAttempts(
+async function finalizeInProgressAttemptsAtTeacherExpiration(
   quizId: string,
   questions: Question[]
 ) {
@@ -477,53 +974,24 @@ async function finalizeExpiredInProgressAttempts(
     new Date()
       .toISOString();
 
-  const nowMs =
-    Date.now();
-
+  /*
+   * A teacher can have at most 60 students in ULearn V1,
+   * so this remains safely below Firestore's batch write limit.
+   */
   const batch =
     adminDb.batch();
-
-  let hasUpdates =
-    false;
 
   for (
     const document of
     snapshot.docs
   ) {
-    const data =
-      document.data();
+    const attempt = {
+      id:
+        document.id,
 
-    const attempt =
-      {
-        id:
-          document.id,
+      ...document.data(),
+    } as Attempt;
 
-        ...data,
-      } as Attempt;
-
-    const expiresAt =
-      new Date(
-        attempt.expiresAt
-      ).getTime();
-
-    /*
-     * Ignore invalid expiration dates and attempts whose
-     * personal quiz timer has not expired yet.
-     */
-    if (
-      Number.isNaN(
-        expiresAt
-      ) ||
-      expiresAt >
-        nowMs
-    ) {
-      continue;
-    }
-
-    /*
-     * Exact same automatic scoring algorithm used by
-     * the normal submitAttempt() flow.
-     */
     const grading =
       calculateAutomaticScore(
         attempt,
@@ -536,10 +1004,6 @@ async function finalizeExpiredInProgressAttempts(
     const requiresManualGrading =
       grading.developmentQuestions >
       0;
-
-    /* =====================================================
-       Quiz containing only automatically graded questions
-       ===================================================== */
 
     if (
       !requiresManualGrading
@@ -573,16 +1037,14 @@ async function finalizeExpiredInProgressAttempts(
         }
       );
 
-      hasUpdates =
-        true;
-
       continue;
     }
 
-    /* =====================================================
-       Quiz containing development questions
-       ===================================================== */
-
+    /*
+     * Development grades are never invented.
+     * The expiration PDF will display them as not graded and
+     * the final score as unavailable.
+     */
     batch.update(
       document.ref,
       {
@@ -591,13 +1053,6 @@ async function finalizeExpiredInProgressAttempts(
 
         automaticScore,
 
-        /*
-         * No teacher grade is invented.
-         *
-         * AttemptCorrectionPdf in expirationArchive mode
-         * will display the development part as not graded
-         * and the final score as unavailable.
-         */
         manualScore:
           0,
 
@@ -618,24 +1073,171 @@ async function finalizeExpiredInProgressAttempts(
           now,
       }
     );
-
-    hasUpdates =
-      true;
   }
 
-  /*
-   * Avoid committing an empty batch.
-   */
-  if (
-    hasUpdates
-  ) {
-    await batch.commit();
-  }
+  await batch.commit();
 }
 
 /* =========================================================
-   Archive email
+   Final expiration delivery
    ========================================================= */
+
+async function markFinalExpirationDeliveryAsSent(
+  teacherId: string
+) {
+  const sentAt =
+    new Date()
+      .toISOString();
+
+  await adminDb
+    .collection(
+      USERS_COLLECTION
+    )
+    .doc(
+      teacherId
+    )
+    .update({
+      expirationArchiveSentAt:
+        sentAt,
+
+      updatedAt:
+        sentAt,
+    });
+
+  return sentAt;
+}
+
+async function sendFinalExpirationEmailWithoutQuiz(
+  teacher: ExpirationTeacher
+) {
+  if (
+    !teacher.email
+  ) {
+    throw new Error(
+      "Teacher email is missing."
+    );
+  }
+
+  const english =
+    getEmailCopy(
+      "en"
+    );
+
+  const french =
+    getEmailCopy(
+      "fr"
+    );
+
+  const kirundi =
+    getEmailCopy(
+      "rn"
+    );
+
+  await sendEmail({
+    to:
+      teacher.email,
+
+    subject:
+      "ULearn — Account expired / Compte expiré / Konti yarangiye",
+
+    text:
+      `ENGLISH
+
+` +
+      `Hello ${teacher.name || english.professor},
+
+` +
+      `${english.finalIntro}
+
+` +
+      `${english.finalNoQuiz}
+
+` +
+      `------------------------------
+
+` +
+      `FRANÇAIS
+
+` +
+      `Bonjour ${teacher.name || french.professor},
+
+` +
+      `${french.finalIntro}
+
+` +
+      `${french.finalNoQuiz}
+
+` +
+      `------------------------------
+
+` +
+      `KIRUNDI
+
+` +
+      `Bwakeye ${teacher.name || kirundi.professor},
+
+` +
+      `${kirundi.finalIntro}
+
+` +
+      `${kirundi.finalNoQuiz}
+
+` +
+      `ULearn`,
+
+    html:
+      buildMultilingualEmailTemplate([
+        {
+          languageLabel:
+            "English",
+
+          title:
+            english.finalTitle,
+
+          greeting:
+            `Hello ${teacher.name || english.professor},`,
+
+          paragraphs: [
+            english.finalIntro,
+            english.finalNoQuiz,
+          ],
+        },
+        {
+          languageLabel:
+            "Français",
+
+          title:
+            french.finalTitle,
+
+          greeting:
+            `Bonjour ${teacher.name || french.professor},`,
+
+          paragraphs: [
+            french.finalIntro,
+            french.finalNoQuiz,
+          ],
+        },
+        {
+          languageLabel:
+            "Kirundi",
+
+          title:
+            kirundi.finalTitle,
+
+          greeting:
+            `Bwakeye ${teacher.name || kirundi.professor},`,
+
+          paragraphs: [
+            kirundi.finalIntro,
+            kirundi.finalNoQuiz,
+          ],
+        },
+      ]),
+
+    idempotencyKey:
+      `teacher-expiration-final-${teacher.id}`,
+  });
+}
 
 async function sendExpirationArchive(
   teacher: ExpirationTeacher,
@@ -643,51 +1245,178 @@ async function sendExpirationArchive(
   attempts: Attempt[],
   questions: Question[]
 ) {
-  if (!teacher.email) {
+  if (
+    !teacher.email
+  ) {
     throw new Error(
       "Teacher email is missing."
     );
   }
 
+  /*
+   * The automatic expiration archive is intentionally standardized
+   * in English. Only one ZIP is generated.
+   */
   const archive =
     await generateExpirationArchive({
       quiz,
       attempts,
       questions,
-
-      /*
-       * Teacher language is not currently stored in the
-       * teacher document, so the automatic archive defaults
-       * to English for now.
-       */
       language:
         "en",
     });
+
+  const english =
+    getEmailCopy(
+      "en"
+    );
+
+  const french =
+    getEmailCopy(
+      "fr"
+    );
+
+  const kirundi =
+    getEmailCopy(
+      "rn"
+    );
+
+  const englishArchiveMessage =
+    english.finalArchive(
+      quiz.title
+    );
+
+  const frenchArchiveMessage =
+    french.finalArchive(
+      quiz.title
+    );
+
+  const kirundiArchiveMessage =
+    kirundi.finalArchive(
+      quiz.title
+    );
+
+  const englishCopies =
+    `${english.copiesLabel}: ${archive.pdfCount}`;
+
+  const frenchCopies =
+    `${french.copiesLabel} : ${archive.pdfCount}`;
+
+  const kirundiCopies =
+    `${kirundi.copiesLabel}: ${archive.pdfCount}`;
 
   await sendEmail({
     to:
       teacher.email,
 
     subject:
-      `ULearn final corrections - ${quiz.title}`,
+      `ULearn — Final corrections / Corrections finales / Amakosorwa ya nyuma — ${quiz.title}`,
 
     text:
-      `Hello ${teacher.name || "Professor"},\n\n` +
-      `Your ULearn teacher account has reached its expiration date.\n\n` +
-      `Attached is the final archive containing the student correction PDFs for "${quiz.title}".\n\n` +
-      `Number of copies: ${archive.pdfCount}\n\n` +
+      `ENGLISH
+
+` +
+      `Hello ${teacher.name || english.professor},
+
+` +
+      `${english.finalIntro}
+
+` +
+      `${englishArchiveMessage}
+
+` +
+      `${englishCopies}
+
+` +
+      `------------------------------
+
+` +
+      `FRANÇAIS
+
+` +
+      `Bonjour ${teacher.name || french.professor},
+
+` +
+      `${french.finalIntro}
+
+` +
+      `${frenchArchiveMessage}
+
+` +
+      `${frenchCopies}
+
+` +
+      `------------------------------
+
+` +
+      `KIRUNDI
+
+` +
+      `Bwakeye ${teacher.name || kirundi.professor},
+
+` +
+      `${kirundi.finalIntro}
+
+` +
+      `${kirundiArchiveMessage}
+
+` +
+      `${kirundiCopies}
+
+` +
       `ULearn`,
 
     html:
-      `<p>Hello ${escapeHtml(
-        teacher.name || "Professor"
-      )},</p>` +
-      `<p>Your ULearn teacher account has reached its expiration date.</p>` +
-      `<p>Attached is the final archive containing the student correction PDFs for <strong>${escapeHtml(
-        quiz.title
-      )}</strong>.</p>` +
-      `<p><strong>Number of copies:</strong> ${archive.pdfCount}</p>` +
-      `<p>ULearn</p>`,
+      buildMultilingualEmailTemplate([
+        {
+          languageLabel:
+            "English",
+
+          title:
+            english.finalTitle,
+
+          greeting:
+            `Hello ${teacher.name || english.professor},`,
+
+          paragraphs: [
+            english.finalIntro,
+            englishArchiveMessage,
+            englishCopies,
+          ],
+        },
+        {
+          languageLabel:
+            "Français",
+
+          title:
+            french.finalTitle,
+
+          greeting:
+            `Bonjour ${teacher.name || french.professor},`,
+
+          paragraphs: [
+            french.finalIntro,
+            frenchArchiveMessage,
+            frenchCopies,
+          ],
+        },
+        {
+          languageLabel:
+            "Kirundi",
+
+          title:
+            kirundi.finalTitle,
+
+          greeting:
+            `Bwakeye ${teacher.name || kirundi.professor},`,
+
+          paragraphs: [
+            kirundi.finalIntro,
+            kirundiArchiveMessage,
+            kirundiCopies,
+          ],
+        },
+      ]),
 
     attachments: [
       {
@@ -703,21 +1432,19 @@ async function sendExpirationArchive(
     ],
 
     /*
-     * Stable idempotency key.
-     *
-     * If Resend accepted the email but cleanup failed
-     * afterwards, the next cleanup execution uses the same
-     * logical email key.
+     * Stable across retries.
+     * If Resend accepted the first request but the Firestore marker
+     * write failed, retrying uses the same logical message.
      */
     idempotencyKey:
-      `teacher-expiration-archive-${teacher.id}`,
+      `teacher-expiration-final-${teacher.id}`,
   });
 
   return archive;
 }
 
 /* =========================================================
-   Firestore deletion helper
+   Firestore deletion helpers
    ========================================================= */
 
 async function deleteQueryInBatches(
@@ -728,7 +1455,9 @@ async function deleteQueryInBatches(
   const BATCH_SIZE =
     400;
 
-  while (true) {
+  while (
+    true
+  ) {
     const snapshot =
       await adminDb
         .collection(
@@ -774,16 +1503,9 @@ async function deleteQueryInBatches(
   }
 }
 
-/* =========================================================
-   Delete quiz-related Firestore data
-   ========================================================= */
-
 async function deleteQuizData(
   quiz: Quiz
 ) {
-  /*
-   * Delete child documents first.
-   */
   await deleteQueryInBatches(
     QUESTIONS_COLLECTION,
     "quizId",
@@ -802,9 +1524,6 @@ async function deleteQuizData(
     quiz.id
   );
 
-  /*
-   * Delete the quiz itself.
-   */
   await adminDb
     .collection(
       QUIZZES_COLLECTION
@@ -819,19 +1538,59 @@ async function deleteQuizData(
    Clerk deletion
    ========================================================= */
 
+function isNotFoundError(
+  error: unknown
+) {
+  if (
+    typeof error !== "object" ||
+    error === null
+  ) {
+    return false;
+  }
+
+  const candidate =
+    error as {
+      status?: unknown;
+      statusCode?: unknown;
+    };
+
+  return (
+    candidate.status === 404 ||
+    candidate.statusCode === 404
+  );
+}
+
 async function deleteClerkTeacher(
   teacherId: string
 ) {
   const client =
     await clerkClient();
 
-  await client.users.deleteUser(
-    teacherId
-  );
+  try {
+    await client.users.deleteUser(
+      teacherId
+    );
+  } catch (
+    error
+  ) {
+    /*
+     * Makes retries safe when Clerk was already deleted during
+     * a previous cleanup run but the final Firestore deletion failed.
+     */
+    if (
+      isNotFoundError(
+        error
+      )
+    ) {
+      return;
+    }
+
+    throw error;
+  }
 }
 
 /* =========================================================
-   Delete teacher Firestore profile
+   Teacher Firestore profile deletion
    ========================================================= */
 
 async function deleteTeacherProfile(
@@ -852,51 +1611,43 @@ async function deleteTeacherProfile(
    ========================================================= */
 
 /**
- * The teacher Firestore document is deliberately deleted LAST.
+ * IMPORTANT:
+ * This function may only be called AFTER expirationArchiveSentAt
+ * exists in Firestore.
  *
- * Why?
- *
- * If Clerk deletion fails after quiz data was removed,
- * the teacher document remains available so the next cleanup
- * can find the expired teacher and retry Clerk deletion.
+ * Teacher Firestore profile is deleted LAST so a failed Clerk
+ * deletion can be retried by the next cleanup execution.
  */
 async function deleteExpiredTeacher(
   teacher: ExpirationTeacher,
   quiz: Quiz | null
 ) {
-  if (quiz) {
+  if (
+    quiz
+  ) {
     await deleteQuizData(
       quiz
     );
   }
 
-  /*
-   * Remove authentication account before removing the final
-   * Firestore teacher record.
-   */
   await deleteClerkTeacher(
     teacher.id
   );
 
-  /*
-   * Delete the teacher document only after Clerk succeeds.
-   */
   await deleteTeacherProfile(
     teacher.id
   );
 }
 
 /* =========================================================
-   Process expired teacher
+   Process one expired teacher
    ========================================================= */
 
 async function processExpiredTeacher(
   teacher: ExpirationTeacher
 ) {
   /*
-   * Mark the account expired immediately.
-   *
-   * This does NOT delete teacher data.
+   * Mark expired immediately, without deleting anything.
    */
   if (
     teacher.status !==
@@ -919,117 +1670,141 @@ async function processExpiredTeacher(
       });
   }
 
+  /*
+   * Load the quiz before deciding whether a final email is needed.
+   *
+   * On a retry after partial deletion, the quiz may already be gone.
+   * expirationArchiveSentAt tells us whether final delivery already
+   * succeeded, so we must not send another email in that case.
+   */
   const quiz =
     await getQuizForTeacher(
       teacher
     );
 
-  /* =======================================================
-     No quiz
-     ======================================================= */
+  let finalDeliverySentNow =
+    false;
 
-  if (!quiz) {
-    /*
-     * There are no correction PDFs to archive.
-     */
-    await deleteExpiredTeacher(
-      teacher,
-      null
-    );
+  /*
+   * =======================================================
+   * FINAL DELIVERY PHASE
+   * =======================================================
+   *
+   * No deletion is allowed until the final email has succeeded
+   * AND expirationArchiveSentAt has been persisted.
+   */
+  if (
+    !teacher.expirationArchiveSentAt
+  ) {
+    if (
+      !quiz
+    ) {
+      /*
+       * Even a teacher with no quiz receives a final expiration email.
+       */
+      await sendFinalExpirationEmailWithoutQuiz(
+        teacher
+      );
 
-    return {
-      archiveSent:
-        false,
+      await markFinalExpirationDeliveryAsSent(
+        teacher.id
+      );
 
-      deleted:
-        true,
-    };
+      finalDeliverySentNow =
+        true;
+    } else {
+      const questions =
+        await getQuestions(
+          quiz.id
+        );
+
+      /*
+       * Freeze ALL still in-progress attempts at teacher expiration.
+       * Their individual student timers no longer matter here.
+       */
+      await finalizeInProgressAttemptsAtTeacherExpiration(
+        quiz.id,
+        questions
+      );
+
+      /*
+       * Reload after finalization so generated PDFs use the final state.
+       */
+      const attempts =
+        await getAttempts(
+          quiz.id
+        );
+
+      /*
+       * A ZIP is generated even when attempts.length === 0.
+       * This keeps the final delivery rule uniform for every teacher
+       * who owns a quiz.
+       */
+      await sendExpirationArchive(
+        teacher,
+        quiz,
+        attempts,
+        questions
+      );
+
+      /*
+       * CRITICAL:
+       * persist successful delivery BEFORE any deletion begins.
+       */
+      await markFinalExpirationDeliveryAsSent(
+        teacher.id
+      );
+
+      finalDeliverySentNow =
+        true;
+    }
   }
 
-  /* =======================================================
-     Load questions FIRST
-     ======================================================= */
-
-  const questions =
-    await getQuestions(
-      quiz.id
-    );
-
   /*
-   * Finalize expired in-progress attempts using exactly
-   * the same automatic scoring algorithm as submitAttempt().
+   * =======================================================
+   * DELETION PHASE
+   * =======================================================
+   *
+   * Either:
+   * - the marker already existed when this cleanup started, or
+   * - final delivery succeeded above and the marker was persisted.
    */
-  await finalizeExpiredInProgressAttempts(
-    quiz.id,
-    questions
-  );
-
-  /*
-   * Reload attempts AFTER finalization so the archive gets
-   * the updated automatic scores and statuses.
-   */
-  const attempts =
-    await getAttempts(
-      quiz.id
-    );
-
-  /* =======================================================
-     No students
-     ======================================================= */
+  const deliveryConfirmed =
+    Boolean(
+      teacher.expirationArchiveSentAt
+    ) ||
+    finalDeliverySentNow;
 
   if (
-    attempts.length ===
-    0
+    !deliveryConfirmed
   ) {
     /*
-     * Nothing exists to archive.
+     * Defensive guard. This path should never be reached.
      */
-    await deleteExpiredTeacher(
-      teacher,
-      quiz
-    );
-
     return {
       archiveSent:
         false,
 
       deleted:
-        true,
+        false,
     };
   }
 
-  /* =======================================================
-     Final archive
-     ======================================================= */
-
-  /*
-   * CRITICAL RULE:
-   *
-   * From this point onward, teacher data must NOT be deleted
-   * unless the archive email succeeds.
-   */
-  await sendExpirationArchive(
-    teacher,
-    quiz,
-    attempts,
-    questions
-  );
-
-  /*
-   * sendExpirationArchive() returned successfully.
-   *
-   * Resend therefore accepted the archive email.
-   *
-   * Only now can deletion begin.
-   */
   await deleteExpiredTeacher(
     teacher,
     quiz
   );
 
   return {
+    /*
+     * In this result, archiveSent means the final expiration
+     * delivery was successfully completed during THIS execution.
+     *
+     * For a teacher without a quiz, the delivery is the required
+     * final email without an attachment.
+     */
     archiveSent:
-      true,
+      finalDeliverySentNow,
 
     deleted:
       true,
@@ -1043,33 +1818,38 @@ async function processExpiredTeacher(
 /**
  * Runs one complete teacher expiration scan.
  *
- * Later:
+ * Security contract:
+ * - warning is sent once;
+ * - expired teacher is marked expired;
+ * - all in-progress attempts are frozen;
+ * - final email/ZIP is delivered;
+ * - expirationArchiveSentAt is persisted;
+ * - ONLY THEN may data and Clerk be deleted.
  *
- * app/api/cleanup/route.ts
- *
- * will call this function after validating CLEANUP_SECRET.
+ * If final delivery fails, the catch below records the error and
+ * no deletion is performed for that teacher.
  */
 export async function runExpirationCleanup(): Promise<ExpirationCleanupResult> {
   const result:
     ExpirationCleanupResult = {
-    checkedTeachers:
-      0,
+      checkedTeachers:
+        0,
 
-    warningsSent:
-      0,
+      warningsSent:
+        0,
 
-    expiredTeachers:
-      0,
+      expiredTeachers:
+        0,
 
-    archivesSent:
-      0,
+      archivesSent:
+        0,
 
-    deletedTeachers:
-      0,
+      deletedTeachers:
+        0,
 
-    errors:
-      [],
-  };
+      errors:
+        [],
+    };
 
   const teachersSnapshot =
     await adminDb
@@ -1087,10 +1867,8 @@ export async function runExpirationCleanup(): Promise<ExpirationCleanupResult> {
     teachers.length;
 
   /*
-   * Process sequentially.
-   *
-   * ULearn has a very small teacher limit, so this keeps
-   * PDF generation and email sending predictable.
+   * Sequential processing is intentional.
+   * ULearn has a small teacher limit and PDF generation can be heavy.
    */
   for (
     const teacher of
@@ -1119,10 +1897,11 @@ export async function runExpirationCleanup(): Promise<ExpirationCleanupResult> {
         expirationTime -
         now;
 
-      /* ===================================================
-         Account expired
-         =================================================== */
-
+      /*
+       * ===================================================
+       * Account expired
+       * ===================================================
+       */
       if (
         remainingTime <=
         0
@@ -1152,10 +1931,11 @@ export async function runExpirationCleanup(): Promise<ExpirationCleanupResult> {
         continue;
       }
 
-      /* ===================================================
-         Three-hour warning window
-         =================================================== */
-
+      /*
+       * ===================================================
+       * Three-hour warning window
+       * ===================================================
+       */
       if (
         remainingTime <=
           WARNING_BEFORE_EXPIRATION_MS &&
@@ -1172,8 +1952,7 @@ export async function runExpirationCleanup(): Promise<ExpirationCleanupResult> {
       error
     ) {
       /*
-       * Failure for one teacher must not prevent other
-       * teacher accounts from being processed.
+       * One teacher failure must not block the others.
        */
       console.error(
         `Expiration cleanup failed for teacher ${teacher.id}:`,

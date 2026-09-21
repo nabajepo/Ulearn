@@ -12,6 +12,22 @@
       "subtitle": "Transforming Quizzes into Real Learning Experiences",
       "description": "ULearn helps teachers create quizzes, assign them to students, correct multiple-choice questions automatically, and track class progress. The first version focuses on a simple and useful quiz workflow for teachers and students."
     },
+    "joinQuiz": {
+  "badge": "Student",
+  "title": "Join a quiz",
+  "description":"Enter the quiz code provided by your teacher.",
+  "label": "Quiz code",
+  "placeholder": "Example: AB7K92",
+  "button": "Join quiz",
+  "loading": "Searching...",
+  "errors": {
+    "emptyCode":"Please enter the quiz code.",
+    "invalidCode":"Please enter a valid 6-character quiz code.",
+    "notFound":"No quiz was found with this code. Check the code and try again.",
+    "notAvailable":"This quiz is no longer available.",
+    "serverError":"An error occurred. Please try again."
+  }
+},
 
     "preview": {
       "label": "Quiz Preview",
@@ -112,6 +128,7 @@
   "navigation": {
     "menu": "Menu",
     "home": "Home",
+    "findAQuiz": "Join A Quiz",
     "howItWorks": "How it Works?",
     "stats": "Stats",
     "feedback": "Feedbacks",
@@ -835,6 +852,11 @@
 
   "badge": "Student quiz",
   "noDescription": "No description provided.",
+  "title": "Join a quiz",
+  "description":"Enter the quiz code provided by your teacher.",
+  "label": "Quiz code",
+  "placeholder": "Example: AB7K92",
+  "button": "Join quiz",
   
   "teacher": {
   "createdBy": "Created by : "

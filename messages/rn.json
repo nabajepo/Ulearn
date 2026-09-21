@@ -12,6 +12,22 @@
       "subtitle": "Guhindura ibibazo bikaba uburyo nyabwo bwo kwiga",
       "description": "ULearn ifasha abarimu gukora ibibazo, kubiha abanyeshure, gukosora ubwavyo ibibazo vy’amahitamo no gukurikirana intambwe y’ishure. Verisiyo ya mbere yibanda ku buryo bworoshe kandi ngirakamaro ku barimu no ku banyeshure."
     },
+    "joinQuiz": {
+  "badge": "Umunyeshure",
+  "title": "Kwinjira mu kibazo",
+  "description":"Andika kode y'ikibazo wahawe n'umwigisha.",
+  "label": "Kode y'ikibazo",
+  "placeholder": "Akarorero: AB7K92",
+  "button": "Kwinjira",
+  "loading": "Turiko turarondera...",
+  "errors": {
+    "emptyCode":"Andika kode y'ikibazo.",
+    "invalidCode":"Andika kode yemewe igizwe n'inyuguti 6.",
+    "notFound":"Nta kibazo cabonetse gifise iyo kode. Suzuma kode wongere ugerageze.",
+    "notAvailable": "Iki kibazo ntikikiboneka.",
+    "serverError":"Habaye ikibazo. Ongera ugerageze."
+  }
+},
 
     "preview": {
       "label": "Akarorero k’ikibazo",
@@ -112,6 +128,7 @@
   "navigation": {
     "menu": "Menu",
     "home": "Ahabanza",
+    "findAQuiz": "Kwinjira mu kibazo",
     "howItWorks": "Ikora gute?",
     "stats": "Imibare",
     "feedback": "Ivyiyumviro",

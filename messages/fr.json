@@ -12,6 +12,22 @@
       "subtitle": "Transformez les quiz en véritables expériences d’apprentissage",
       "description": "ULearn aide les enseignants à créer des quiz, à les proposer aux étudiants, à corriger automatiquement les questions à choix multiples et à suivre la progression de la classe. La première version se concentre sur un processus de quiz simple et utile pour les enseignants et les étudiants."
     },
+   "joinQuiz": {
+  "badge": "Étudiant",
+  "title": "Rejoindre un quiz",
+  "description": "Entrez le code du quiz fourni par votre professeur.",
+  "label": "Code du quiz",
+  "placeholder": "Exemple : AB7K92",
+  "button": "Rejoindre le quiz",
+  "loading": "Recherche...",
+  "errors": {
+    "emptyCode":"Veuillez entrer le code du quiz.",
+    "invalidCode":"Veuillez entrer un code de quiz valide de 6 caractères.",
+    "notFound":"Aucun quiz n'a été trouvé avec ce code. Vérifiez le code et réessayez.",
+    "notAvailable":"Ce quiz n'est plus disponible.",
+    "serverError": "Une erreur est survenue. Veuillez réessayer."
+  }
+},
 
     "preview": {
       "label": "Aperçu du quiz",
@@ -112,6 +128,7 @@
   "navigation": {
     "menu": "Menu",
     "home": "Accueil",
+    "findAQuiz": "Rejoindre un Quiz",
     "howItWorks": "Comment ça fonctionne ?",
     "stats": "Statistiques",
     "feedback": "Commentaires",
@@ -832,7 +849,6 @@
 },
 "joinQuiz": {
   "loading": "Chargement de l’accès au quiz...",
-
   "badge": "Quiz étudiant",
   "noDescription": "Aucune description fournie.",
    "teacher": {
