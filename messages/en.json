@@ -901,7 +901,7 @@
   "infoTitle": "Keep your PIN private",
   "infoText": "Your PIN protects your quiz attempt. Do not share it with other students.",
   "invalid": "Your PIN must contain exactly 6 digits.",
-  "incorrect": "Incorrect PIN.",
+  "incorrectPin": "Incorrect PIN.",
   "attemptsRemaining": "Attempts remaining",
   "locked": "Too many incorrect PIN attempts. Please try again in 15 minutes.",
   "resetRequired": "Your PIN must be reset before you can resume this quiz."
@@ -984,9 +984,11 @@
     "text": "This quiz session is unavailable or could not be loaded.",
     "notFound": "This quiz attempt could not be found.",
     "loadError": "Unable to load your quiz session."
-  },"timeWarning": {
+  },
+  "timeWarning": {
     "title": "5 minutes remaining",
-    "text": "Your quiz will be submitted automatically when the timer reaches zero. Make sure your answers are complete."
+    "text": "Your quiz will be submitted automatically when the timer reaches zero. Make sure your answers are complete.",
+    "acknowledge": "Okay" 
   },
   "result": {
   "completedTitle": "Quiz completed",
@@ -1463,7 +1465,8 @@
     "confirmNewPin": "Confirm new PIN",
     "invalidCode": "The temporary code must contain exactly 6 digits.",
     "resetting": "Resetting...",
-    "confirm": "Set new PIN"
+    "confirm": "Set new PIN",
+"approvedDescription": "Enter the temporary code you received, then choose a new PIN."
   },
 
   "completed": {

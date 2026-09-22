@@ -893,7 +893,7 @@
   "infoTitle": "Gardez votre NIP confidentiel",
   "infoText": "Votre NIP protège votre tentative de quiz. Ne le partagez pas avec d'autres étudiants.",
   "invalid": "Votre NIP doit contenir exactement 6 chiffres.",
-  "incorrect": "NIP incorrect.",
+  "incorrectPin": "NIP incorrect.",
   "attemptsRemaining": "Tentatives restantes",
   "locked": "Trop de tentatives incorrectes. Veuillez réessayer dans 15 minutes.",
   "resetRequired": "Votre NIP doit être réinitialisé avant que vous puissiez reprendre ce quiz."
@@ -979,7 +979,8 @@
   },
   "timeWarning": {
     "title": "Il reste 5 minutes",
-    "text": "Votre quiz sera remis automatiquement lorsque le compteur atteindra zéro. Assurez-vous que vos réponses sont complètes."
+    "text": "Votre quiz sera remis automatiquement lorsque le compteur atteindra zéro. Assurez-vous que vos réponses sont complètes.",
+    "acknowledge": "OK"
   },
   "result": {
   "completedTitle": "Quiz terminé",
@@ -1437,7 +1438,7 @@
     "forgot": "J’ai oublié mon NIP",
     "invalid": "Le NIP doit contenir exactement 6 chiffres.",
     "mismatch": "Les deux NIP ne correspondent pas.",
-    "incorrect": "Le NIP est incorrect.",
+    "incorrectPin": "Le NIP est incorrect.",
     "locked": "Trop de tentatives incorrectes. Réessayez dans {seconds} secondes.",
     "show": "Afficher le NIP",
 "hide": "Masquer le NIP",
@@ -1456,7 +1457,8 @@
     "confirmNewPin": "Confirmer le nouveau NIP",
     "invalidCode": "Le code temporaire doit contenir exactement 6 chiffres.",
     "resetting": "Réinitialisation...",
-    "confirm": "Définir le nouveau NIP"
+    "confirm": "Définir le nouveau NIP",
+    "approvedDescription": "Entrez le code temporaire reçu, puis choisissez un nouveau NIP."
   },
 
   "completed": {

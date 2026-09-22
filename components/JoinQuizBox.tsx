@@ -16,16 +16,7 @@ import {
 type ErrorReason =
   | "empty_code"
   | "invalid_code"
-  | "not_found"
-  | "not_available"
-  | "server_error"
   | null;
-
-type ResolveQuizResponse = {
-  success: boolean;
-  quizId?: string;
-  reason?: ErrorReason;
-};
 
 export default function JoinQuizBox() {
   const router = useRouter();
@@ -46,10 +37,9 @@ export default function JoinQuizBox() {
     null
   );
 
-  const [
-    isLoading,
-    setIsLoading,
-  ] = useState(false);
+  /* =========================================================
+     Error message
+     ========================================================= */
 
   function getErrorMessage() {
     switch (error) {
@@ -63,25 +53,14 @@ export default function JoinQuizBox() {
           "home.joinQuiz.errors.invalidCode"
         );
 
-      case "not_found":
-        return t(
-          "home.joinQuiz.errors.notFound"
-        );
-
-      case "not_available":
-        return t(
-          "home.joinQuiz.errors.notAvailable"
-        );
-
-      case "server_error":
-        return t(
-          "home.joinQuiz.errors.serverError"
-        );
-
       default:
         return "";
     }
   }
+
+  /* =========================================================
+     Access code
+     ========================================================= */
 
   function handleCodeChange(
     value: string
@@ -103,14 +82,14 @@ export default function JoinQuizBox() {
     }
   }
 
-  async function handleSubmit(
+  /* =========================================================
+     Join quiz
+     ========================================================= */
+
+  function handleSubmit(
     event: FormEvent<HTMLFormElement>
   ) {
     event.preventDefault();
-
-    if (isLoading) {
-      return;
-    }
 
     const cleanCode = code
       .trim()
@@ -118,6 +97,13 @@ export default function JoinQuizBox() {
 
     setError(null);
 
+    /*
+     * The home page only validates the
+     * basic format of the access code.
+     *
+     * The quiz itself will be resolved
+     * on /join/[code].
+     */
     if (!cleanCode) {
       setError("empty_code");
       return;
@@ -128,68 +114,30 @@ export default function JoinQuizBox() {
       return;
     }
 
-    try {
-      setIsLoading(true);
-
-      const response =
-        await fetch(
-          "/api/quiz/resolve-code",
-          {
-            method: "POST",
-
-            headers: {
-              "Content-Type":
-                "application/json",
-            },
-
-            body: JSON.stringify({
-              code: cleanCode,
-            }),
-          }
-        );
-
-      const data =
-        (await response.json()) as
-          ResolveQuizResponse;
-
-      if (
-        response.ok &&
-        data.success &&
-        typeof data.quizId ===
-          "string" &&
-        data.quizId
-      ) {
-        router.push(
-          `/join/${data.quizId}`
-        );
-
-        return;
-      }
-
-      switch (data.reason) {
-        case "empty_code":
-        case "invalid_code":
-        case "not_found":
-        case "not_available":
-        case "server_error":
-          setError(data.reason);
-          break;
-
-        default:
-          setError("server_error");
-          break;
-      }
-    } catch (error) {
-      console.error(
-        "Unable to resolve quiz code:",
-        error
-      );
-
-      setError("server_error");
-    } finally {
-      setIsLoading(false);
-    }
+    /*
+     * No Firestore/API request is needed
+     * here.
+     *
+     * Example:
+     *
+     * ZPFUT2
+     *   ↓
+     * /join/ZPFUT2
+     *
+     * app/join/[code]/page.tsx will then
+     * load and validate the corresponding
+     * quiz.
+     */
+    router.push(
+      `/join/${encodeURIComponent(
+        cleanCode
+      )}`
+    );
   }
+
+  /* =========================================================
+     Render
+     ========================================================= */
 
   return (
     <section
@@ -248,7 +196,6 @@ export default function JoinQuizBox() {
               autoCapitalize="characters"
               spellCheck={false}
               maxLength={6}
-              disabled={isLoading}
               aria-invalid={
                 error
                   ? true
@@ -263,15 +210,10 @@ export default function JoinQuizBox() {
 
             <button
               type="submit"
-              disabled={isLoading}
             >
-              {isLoading
-                ? t(
-                    "home.joinQuiz.loading"
-                  )
-                : t(
-                    "home.joinQuiz.button"
-                  )}
+              {t(
+                "home.joinQuiz.button"
+              )}
             </button>
           </div>
 

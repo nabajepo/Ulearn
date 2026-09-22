@@ -2393,18 +2393,6 @@ export default function QuizDetailsPage() {
             >
               <button
                 type="button"
-                className="app-button app-button-secondary"
-                onClick={
-                  closeLaunchModal
-                }
-              >
-                {t(
-                  "quizDetails.launchConfirmation.cancel"
-                )}
-              </button>
-
-              <button
-                type="button"
                 className="app-button"
                 onClick={
                   handleLaunch
@@ -2412,6 +2400,18 @@ export default function QuizDetailsPage() {
               >
                 {t(
                   "quizDetails.launchConfirmation.confirm"
+                )}
+              </button>
+
+                    <button
+                type="button"
+                className="app-button app-button-secondary"
+                onClick={
+                  closeLaunchModal
+                }
+              >
+                {t(
+                  "quizDetails.launchConfirmation.cancel"
                 )}
               </button>
             </div>

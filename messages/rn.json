@@ -981,7 +981,8 @@
   },
   "timeWarning": {
     "title": "Hasigaye iminota 5",
-    "text": "Ikibazo cawe kizorungikwa ubwaco igihe isaha izoshika kuri zero. Raba neza ko wishuye ibibazo vyawe."
+    "text": "Ikibazo cawe kizorungikwa ubwaco igihe isaha izoshika kuri zero. Raba neza ko wishuye ibibazo vyawe.",
+    "acknowledge": "Sawa"
   },
 
   "header": {
@@ -1438,7 +1439,7 @@
     "forgot": "Nibagiye NIP yanje",
     "invalid": "NIP itegerezwa kuba igizwe n’imibare 6.",
     "mismatch": "NIP zombi ntizihuye.",
-    "incorrect": "NIP wanditse si yo.",
+    "incorrectPin": "NIP wanditse si yo.",
     "locked": "Wagerageje kenshi NIP itari yo. Subira ugerageze mu masegonda {seconds}.",
     "show": "Erekana NIP",
 "hide": "Hisha NIP",
@@ -1457,7 +1458,8 @@
     "confirmNewPin": "Subiramwo NIP nshasha",
     "invalidCode": "Kode y’igihe gito itegerezwa kuba igizwe n’imibare 6.",
     "resetting": "NIP iriko irahindurwa...",
-    "confirm": "Shiraho NIP nshasha"
+    "confirm": "Shiraho NIP nshasha",
+    "approvedDescription": "Injiza kode y'agateganyo waronse, hanyuma uhitemwo NIP nshasha."
   },
 
   "completed": {

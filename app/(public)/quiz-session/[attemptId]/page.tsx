@@ -3240,7 +3240,9 @@ export default function QuizSessionPage() {
               }}
               autoFocus
             >
-              OK
+              {t(
+                      "quizSession.timeWarning.acknowledge"
+              )}
             </button>
           </section>
         </div>

@@ -1,4614 +1,9227 @@
 .page {
 
-  min-height: 100vh;
-
-  min-height: 100dvh;
 
 
-
-  padding: 1.1rem 1.2%;
+  min-height: 100vh;
 
 
 
-  background: var(--page-gradient);
+  min-height: 100dvh;
+
+
+
+
+
+
+
+  padding: 1.1rem 1.2%;
+
+
+
+
+
+
+
+  background: var(--page-gradient);
+
+
 
 }
+
+
+
+
 
 
 
 .card {
 
-  width: min(1740px, 98vw);
+
+
+  width: min(1740px, 98vw);
 
 
 
-  margin: 0 auto;
-
-  padding: 1.6rem;
 
 
 
-  border: 1px solid var(--border-color);
 
-  border-radius: 28px;
-
-
-
-  background: #ffffff;
+  margin: 0 auto;
 
 
 
-  box-shadow: var(--shadow);
+  padding: 1.6rem;
+
+
+
+
+
+
+
+  border: 1px solid var(--border-color);
+
+
+
+  border-radius: 28px;
+
+
+
+
+
+
+
+  background: #ffffff;
+
+
+
+
+
+
+
+  box-shadow: var(--shadow);
+
+
 
 }
 
 
 
-/\* =========================================================
 
-   Header
 
-   ========================================================= \*/
+
+
+/* =========================================================
+
+
+
+   Header
+
+
+
+   ========================================================= */
+
+
+
+
 
 
 
 .header {
 
-  display: grid;
+
+
+  display: grid;
 
 
 
-  grid-template-columns:
-
-    auto
-
-    minmax(240px, 1fr)
-
-    auto;
 
 
 
-  align-items: center;
+
+  grid-template-columns:
 
 
 
-  gap: 1.4rem;
+    auto
 
 
 
-  margin-bottom: 1.3rem;
-
-  padding-bottom: 1.2rem;
+    minmax(240px, 1fr)
 
 
 
-  border-bottom:
+    auto;
 
-    1px solid
 
-    var(--border-color);
+
+
+
+
+
+  align-items: center;
+
+
+
+
+
+
+
+  gap: 1.4rem;
+
+
+
+
+
+
+
+  margin-bottom: 1.3rem;
+
+
+
+  padding-bottom: 1.2rem;
+
+
+
+
+
+
+
+  border-bottom:
+
+
+
+    1px solid
+
+
+
+    var(--border-color);
+
+
 
 }
+
+
+
+
 
 
 
 .brandBlock {
 
-  display: flex;
-
-  align-items: center;
 
 
+  display: flex;
 
-  gap: 0.8rem;
+
+
+  align-items: center;
+
+
+
+
+
+
+
+  gap: 0.8rem;
+
+
 
 }
+
+
+
+
 
 
 
 .brandIcon {
 
-  width: 44px;
-
-  height: 44px;
 
 
-
-  display: inline-flex;
-
-  align-items: center;
-
-  justify-content: center;
+  width: 44px;
 
 
 
-  flex-shrink: 0;
+  height: 44px;
 
 
 
-  border-radius: 12px;
 
 
 
-  background: var(--main-color);
+
+  display: inline-flex;
 
 
 
-  color: #ffffff;
+  align-items: center;
 
 
 
-  font-weight: 900;
+  justify-content: center;
+
+
+
+
+
+
+
+  flex-shrink: 0;
+
+
+
+
+
+
+
+  border-radius: 12px;
+
+
+
+
+
+
+
+  background: var(--main-color);
+
+
+
+
+
+
+
+  color: #ffffff;
+
+
+
+
+
+
+
+  font-weight: 900;
+
+
 
 }
+
+
+
+
 
 
 
 .brandBlock strong {
 
-  display: block;
+
+
+  display: block;
 
 
 
-  color: var(--main-color);
 
 
 
-  font-size: 1rem;
 
-  font-weight: 900;
+  color: var(--main-color);
+
+
+
+
+
+
+
+  font-size: 1rem;
+
+
+
+  font-weight: 900;
+
+
 
 }
+
+
+
+
 
 
 
 .brandBlock small {
 
-  display: block;
+
+
+  display: block;
 
 
 
-  margin-top: 0.2rem;
 
 
 
-  color:
 
-    rgba(
-
-      23,
-
-      23,
-
-      23,
-
-      0.55
-
-    );
+  margin-top: 0.2rem;
 
 
 
-  font-size: 0.72rem;
 
-  font-weight: 700;
+
+
+
+  color:
+
+
+
+    rgba(
+
+
+
+      23,
+
+
+
+      23,
+
+
+
+      23,
+
+
+
+      0.55
+
+
+
+    );
+
+
+
+
+
+
+
+  font-size: 0.72rem;
+
+
+
+  font-weight: 700;
+
+
 
 }
 
 
 
-/\* =========================================================
 
-   Student identity
 
-   ========================================================= \*/
+
+
+/* =========================================================
+
+
+
+   Student identity
+
+
+
+   ========================================================= */
+
+
+
+
 
 
 
 .studentIdentity {
 
-  justify-self: center;
+
+
+  justify-self: center;
 
 
 
-  display: flex;
-
-  align-items: center;
 
 
 
-  gap: 0.75rem;
+
+  display: flex;
 
 
 
-  min-width: 0;
-
-  max-width: 100%;
+  align-items: center;
 
 
 
-  padding:
-
-    0.55rem
-
-    0.85rem;
 
 
 
-  border:
 
-    1px solid
-
-    var(--border-color);
+  gap: 0.75rem;
 
 
 
-  border-radius: 13px;
 
 
 
-  background:
 
-    rgba(
+  min-width: 0;
 
-      42,
 
-      3,
 
-      105,
+  max-width: 100%;
 
-      0.025
 
-    );
+
+
+
+
+
+  padding:
+
+
+
+    0.55rem
+
+
+
+    0.85rem;
+
+
+
+
+
+
+
+  border:
+
+
+
+    1px solid
+
+
+
+    var(--border-color);
+
+
+
+
+
+
+
+  border-radius: 13px;
+
+
+
+
+
+
+
+  background:
+
+
+
+    rgba(
+
+
+
+      42,
+
+
+
+      3,
+
+
+
+      105,
+
+
+
+      0.025
+
+
+
+    );
+
+
 
 }
+
+
+
+
 
 
 
 .studentAvatar {
 
-  width: 38px;
-
-  height: 38px;
 
 
-
-  display: inline-flex;
-
-  align-items: center;
-
-  justify-content: center;
+  width: 38px;
 
 
 
-  flex-shrink: 0;
+  height: 38px;
 
 
 
-  border-radius: 50%;
 
 
 
-  background: var(--main-color);
+
+  display: inline-flex;
 
 
 
-  color: #ffffff;
+  align-items: center;
 
 
 
-  font-size: 0.82rem;
+  justify-content: center;
 
-  font-weight: 900;
+
+
+
+
+
+
+  flex-shrink: 0;
+
+
+
+
+
+
+
+  border-radius: 50%;
+
+
+
+
+
+
+
+  background: var(--main-color);
+
+
+
+
+
+
+
+  color: #ffffff;
+
+
+
+
+
+
+
+  font-size: 0.82rem;
+
+
+
+  font-weight: 900;
+
+
 
 }
+
+
+
+
 
 
 
 .studentIdentityText {
 
-  min-width: 0;
+
+
+  min-width: 0;
+
+
 
 }
+
+
+
+
 
 
 
 .studentIdentityText span {
 
-  display: block;
+
+
+  display: block;
 
 
 
-  color: var(--main-color);
 
 
 
-  font-size: 0.82rem;
 
-  font-weight: 900;
-
+  color: var(--main-color);
 
 
-  overflow-wrap: anywhere;
+
+
+
+
+
+  font-size: 0.82rem;
+
+
+
+  font-weight: 900;
+
+
+
+
+
+
+
+  overflow-wrap: anywhere;
+
+
 
 }
+
+
+
+
 
 
 
 .studentIdentityText small {
 
-  display: block;
+
+
+  display: block;
 
 
 
-  margin-top: 0.15rem;
 
 
 
-  color:
 
-    rgba(
-
-      23,
-
-      23,
-
-      23,
-
-      0.55
-
-    );
+  margin-top: 0.15rem;
 
 
 
-  font-size: 0.65rem;
-
-  font-weight: 600;
 
 
 
-  overflow-wrap: anywhere;
+
+  color:
+
+
+
+    rgba(
+
+
+
+      23,
+
+
+
+      23,
+
+
+
+      23,
+
+
+
+      0.55
+
+
+
+    );
+
+
+
+
+
+
+
+  font-size: 0.65rem;
+
+
+
+  font-weight: 600;
+
+
+
+
+
+
+
+  overflow-wrap: anywhere;
+
+
 
 }
 
 
 
-/\* =========================================================
 
-   Header stats
 
-   ========================================================= \*/
+
+
+/* =========================================================
+
+
+
+   Header stats
+
+
+
+   ========================================================= */
+
+
+
+
 
 
 
 .headerStats {
 
-  display: flex;
+
+
+  display: flex;
 
 
 
-  gap: 0.7rem;
+
+
+
+
+  gap: 0.7rem;
+
+
 
 }
+
+
+
+
 
 
 
 .timerBox,
 
+
+
 .progressBox {
 
-  min-width: 145px;
+
+
+  min-width: 145px;
 
 
 
-  padding:
-
-    0.7rem
-
-    0.9rem;
 
 
 
-  border:
 
-    1px solid
-
-    var(--border-color);
+  padding:
 
 
 
-  border-radius: 13px;
+    0.7rem
 
 
 
-  background: var(--soft-purple);
+    0.9rem;
+
+
+
+
+
+
+
+  border:
+
+
+
+    1px solid
+
+
+
+    var(--border-color);
+
+
+
+
+
+
+
+  border-radius: 13px;
+
+
+
+
+
+
+
+  background: var(--soft-purple);
+
+
 
 }
+
+
+
+
 
 
 
 .timerBox span,
 
+
+
 .progressBox span {
 
-  display: block;
+
+
+  display: block;
 
 
 
-  margin-bottom: 0.25rem;
 
 
 
-  color:
 
-    rgba(
-
-      23,
-
-      23,
-
-      23,
-
-      0.55
-
-    );
+  margin-bottom: 0.25rem;
 
 
 
-  font-size: 0.66rem;
 
-  font-weight: 800;
+
+
+
+  color:
+
+
+
+    rgba(
+
+
+
+      23,
+
+
+
+      23,
+
+
+
+      23,
+
+
+
+      0.55
+
+
+
+    );
+
+
+
+
+
+
+
+  font-size: 0.66rem;
+
+
+
+  font-weight: 800;
+
+
 
 }
+
+
+
+
 
 
 
 .timerBox strong,
 
+
+
 .progressBox strong {
 
-  color: var(--main-color);
+
+
+  color: var(--main-color);
 
 
 
-  font-size: 0.95rem;
-
-  font-weight: 900;
 
 
 
-  font-variant-numeric:
 
-    tabular-nums;
+  font-size: 0.95rem;
+
+
+
+  font-weight: 900;
+
+
+
+
+
+
+
+  font-variant-numeric:
+
+
+
+    tabular-nums;
+
+
 
 }
 
 
 
-/\* =========================================================
 
-   Layout
 
-   ========================================================= \*/
+
+
+/* =========================================================
+
+
+
+   Layout
+
+
+
+   ========================================================= */
+
+
+
+
 
 
 
 .layout {
 
-  display: grid;
+
+
+  display: grid;
 
 
 
-  grid-template-columns:
-
-    minmax(270px, 320px)
-
-    minmax(0, 1fr);
 
 
 
-  gap: 1.3rem;
+
+  grid-template-columns:
 
 
 
-  align-items: start;
+    minmax(270px, 320px)
+
+
+
+    minmax(0, 1fr);
+
+
+
+
+
+
+
+  gap: 1.3rem;
+
+
+
+
+
+
+
+  align-items: start;
+
+
 
 }
 
 
 
-/\* =========================================================
 
-   Question panel
 
-   ========================================================= \*/
+
+
+/* =========================================================
+
+
+
+   Question panel
+
+
+
+   ========================================================= */
+
+
+
+
 
 
 
 .questionPanel {
 
-  position: sticky;
-
-  top: 1rem;
 
 
-
-  display: grid;
+  position: sticky;
 
 
 
-  gap: 0.8rem;
+  top: 1rem;
 
 
 
-  padding: 1rem;
 
 
 
-  border:
 
-    1px solid
-
-    var(--border-color);
+  display: grid;
 
 
 
-  border-radius: 20px;
 
 
 
-  background:
 
-    linear-gradient(
+  gap: 0.8rem;
 
-      145deg,
 
-      rgba(
 
-        42,
 
-        3,
 
-        105,
 
-        0.03
 
-      ),
+  padding: 1rem;
 
-      #ffffff 40%
 
-    );
+
+
+
+
+
+  border:
+
+
+
+    1px solid
+
+
+
+    var(--border-color);
+
+
+
+
+
+
+
+  border-radius: 20px;
+
+
+
+
+
+
+
+  background:
+
+
+
+    linear-gradient(
+
+
+
+      145deg,
+
+
+
+      rgba(
+
+
+
+        42,
+
+
+
+        3,
+
+
+
+        105,
+
+
+
+        0.03
+
+
+
+      ),
+
+
+
+      #ffffff 40%
+
+
+
+    );
+
+
 
 }
+
+
+
+
 
 
 
 .questionPanelHeader {
 
-  display: flex;
+
+
+  display: flex;
 
 
 
-  justify-content:
-
-    space-between;
 
 
 
-  align-items: center;
+
+  justify-content:
 
 
 
-  gap: 0.7rem;
+    space-between;
 
 
 
-  padding-bottom: 0.8rem;
 
 
 
-  border-bottom:
 
-    1px solid
+  align-items: center;
 
-    var(--border-color);
+
+
+
+
+
+
+  gap: 0.7rem;
+
+
+
+
+
+
+
+  padding-bottom: 0.8rem;
+
+
+
+
+
+
+
+  border-bottom:
+
+
+
+    1px solid
+
+
+
+    var(--border-color);
+
+
 
 }
+
+
+
+
 
 
 
 .questionPanelHeader h2 {
 
-  color: var(--main-color);
+
+
+  color: var(--main-color);
 
 
 
-  font-size: 1rem;
 
-  font-weight: 900;
+
+
+
+  font-size: 1rem;
+
+
+
+  font-weight: 900;
+
+
 
 }
+
+
+
+
 
 
 
 .questionPanelHeader span {
 
-  color:
 
-    rgba(
 
-      23,
-
-      23,
-
-      23,
-
-      0.55
-
-    );
+  color:
 
 
 
-  font-size: 0.72rem;
+    rgba(
 
-  font-weight: 800;
+
+
+      23,
+
+
+
+      23,
+
+
+
+      23,
+
+
+
+      0.55
+
+
+
+    );
+
+
+
+
+
+
+
+  font-size: 0.72rem;
+
+
+
+  font-weight: 800;
+
+
 
 }
+
+
+
+
 
 
 
 .questionList {
 
-  display: grid;
+
+
+  display: grid;
 
 
 
-  gap: 0.6rem;
 
 
 
-  max-height:
 
-    calc(
-
-      100vh - 220px
-
-    );
+  gap: 0.6rem;
 
 
 
-  max-height:
-
-    calc(
-
-      100dvh - 220px
-
-    );
 
 
 
-  overflow-y: auto;
+
+  max-height:
 
 
 
-  padding-right: 0.2rem;
+    calc(
+
+
+
+      100vh - 220px
+
+
+
+    );
+
+
+
+
+
+
+
+  max-height:
+
+
+
+    calc(
+
+
+
+      100dvh - 220px
+
+
+
+    );
+
+
+
+
+
+
+
+  overflow-y: auto;
+
+
+
+
+
+
+
+  padding-right: 0.2rem;
+
+
 
 }
+
+
+
+
 
 
 
 .questionItem {
 
-  width: 100%;
+
+
+  width: 100%;
 
 
 
-  display: grid;
 
 
 
-  grid-template-columns:
 
-    auto
-
-    minmax(0, 1fr)
-
-    auto;
+  display: grid;
 
 
 
-  gap: 0.65rem;
 
 
 
-  align-items: center;
+
+  grid-template-columns:
 
 
 
-  padding: 0.75rem;
+    auto
 
 
 
-  border:
-
-    1px solid
-
-    var(--border-color);
+    minmax(0, 1fr)
 
 
 
-  border-radius: 12px;
+    auto;
 
 
 
-  background: #ffffff;
 
 
 
-  color: var(--foreground);
+
+  gap: 0.65rem;
 
 
 
-  text-align: left;
 
 
 
-  cursor: pointer;
+
+  align-items: center;
 
 
 
-  transition:
 
-    transform 0.2s ease,
 
-    border-color 0.2s ease,
 
-    background-color 0.2s ease,
 
-    color 0.2s ease;
+  padding: 0.75rem;
+
+
+
+
+
+
+
+  border:
+
+
+
+    1px solid
+
+
+
+    var(--border-color);
+
+
+
+
+
+
+
+  border-radius: 12px;
+
+
+
+
+
+
+
+  background: #ffffff;
+
+
+
+
+
+
+
+  color: var(--foreground);
+
+
+
+
+
+
+
+  text-align: left;
+
+
+
+
+
+
+
+  cursor: pointer;
+
+
+
+
+
+
+
+  transition:
+
+
+
+    transform 0.2s ease,
+
+
+
+    border-color 0.2s ease,
+
+
+
+    background-color 0.2s ease,
+
+
+
+    color 0.2s ease;
+
+
 
 }
+
+
+
+
 
 
 
 .questionItem:hover:not(:disabled) {
 
-  transform:
-
-    translateY(-1px);
 
 
-
-  border-color:
-
-    rgba(
-
-      42,
-
-      3,
-
-      105,
-
-      0.28
-
-    );
+  transform:
 
 
 
-  background: var(--soft-purple);
+    translateY(-1px);
+
+
+
+
+
+
+
+  border-color:
+
+
+
+    rgba(
+
+
+
+      42,
+
+
+
+      3,
+
+
+
+      105,
+
+
+
+      0.28
+
+
+
+    );
+
+
+
+
+
+
+
+  background: var(--soft-purple);
+
+
 
 }
+
+
+
+
 
 
 
 .questionItemSelected {
 
-  border-color: var(--main-color);
+
+
+  border-color: var(--main-color);
 
 
 
-  background: var(--main-color);
 
 
 
-  color: #ffffff;
+
+  background: var(--main-color);
+
+
+
+
+
+
+
+  color: #ffffff;
+
+
 
 }
+
+
+
+
 
 
 
 .questionItemAnswered:not(
 
-  .questionItemSelected
+
+
+  .questionItemSelected
+
+
 
 ) {
 
-  border-color:
 
-    rgba(
 
-      42,
-
-      3,
-
-      105,
-
-      0.2
-
-    );
+  border-color:
 
 
 
-  background: var(--soft-purple);
+    rgba(
+
+
+
+      42,
+
+
+
+      3,
+
+
+
+      105,
+
+
+
+      0.2
+
+
+
+    );
+
+
+
+
+
+
+
+  background: var(--soft-purple);
+
+
 
 }
+
+
+
+
 
 
 
 .questionItemLocked {
 
-  opacity: 0.46;
+
+
+  opacity: 0.46;
 
 
 
-  cursor: not-allowed;
+
+
+
+
+  cursor: not-allowed;
+
+
 
 }
+
+
+
+
 
 
 
 .questionNumber {
 
-  width: 32px;
-
-  height: 32px;
 
 
-
-  display: inline-flex;
+  width: 32px;
 
 
 
-  align-items: center;
-
-  justify-content: center;
+  height: 32px;
 
 
 
-  border-radius: 9px;
 
 
 
-  background: var(--soft-purple);
+
+  display: inline-flex;
 
 
 
-  color: var(--main-color);
 
 
 
-  font-size: 0.72rem;
 
-  font-weight: 900;
+  align-items: center;
+
+
+
+  justify-content: center;
+
+
+
+
+
+
+
+  border-radius: 9px;
+
+
+
+
+
+
+
+  background: var(--soft-purple);
+
+
+
+
+
+
+
+  color: var(--main-color);
+
+
+
+
+
+
+
+  font-size: 0.72rem;
+
+
+
+  font-weight: 900;
+
+
 
 }
+
+
+
+
 
 
 
 .questionItemSelected
 
-  .questionNumber {
 
-  background:
 
-    rgba(
-
-      255,
-
-      255,
-
-      255,
-
-      0.16
-
-    );
+  .questionNumber {
 
 
 
-  color: #ffffff;
+  background:
+
+
+
+    rgba(
+
+
+
+      255,
+
+
+
+      255,
+
+
+
+      255,
+
+
+
+      0.16
+
+
+
+    );
+
+
+
+
+
+
+
+  color: #ffffff;
+
+
 
 }
+
+
+
+
 
 
 
 .questionContent {
 
-  min-width: 0;
+
+
+  min-width: 0;
 
 
 
-  display: grid;
 
 
 
-  gap: 0.12rem;
+
+  display: grid;
+
+
+
+
+
+
+
+  gap: 0.12rem;
+
+
 
 }
+
+
+
+
 
 
 
 .questionContent strong {
 
-  font-size: 0.72rem;
 
-  font-weight: 900;
+
+  font-size: 0.72rem;
+
+
+
+  font-weight: 900;
+
+
 
 }
+
+
+
+
 
 
 
 .questionContent small {
 
-  overflow: hidden;
+
+
+  overflow: hidden;
 
 
 
-  color:
-
-    rgba(
-
-      23,
-
-      23,
-
-      23,
-
-      0.56
-
-    );
 
 
 
-  font-size: 0.64rem;
 
-  line-height: 1.35;
-
-
-
-  text-overflow: ellipsis;
+  color:
 
 
 
-  white-space: nowrap;
+    rgba(
+
+
+
+      23,
+
+
+
+      23,
+
+
+
+      23,
+
+
+
+      0.56
+
+
+
+    );
+
+
+
+
+
+
+
+  font-size: 0.64rem;
+
+
+
+  line-height: 1.35;
+
+
+
+
+
+
+
+  text-overflow: ellipsis;
+
+
+
+
+
+
+
+  white-space: nowrap;
+
+
 
 }
+
+
+
+
 
 
 
 .questionItemSelected
 
-  .questionContent
 
-  small {
 
-  color:
+  .questionContent
 
-    rgba(
 
-      255,
 
-      255,
+  small {
 
-      255,
 
-      0.75
 
-    );
+  color:
+
+
+
+    rgba(
+
+
+
+      255,
+
+
+
+      255,
+
+
+
+      255,
+
+
+
+      0.75
+
+
+
+    );
+
+
 
 }
+
+
+
+
 
 
 
 .questionStatus {
 
-  font-size: 0.85rem;
 
-  font-weight: 900;
+
+  font-size: 0.85rem;
+
+
+
+  font-weight: 900;
+
+
 
 }
 
 
 
-/\* =========================================================
 
-   Question area
 
-   ========================================================= \*/
+
+
+/* =========================================================
+
+
+
+   Question area
+
+
+
+   ========================================================= */
+
+
+
+
 
 
 
 .questionArea {
 
-  min-width: 0;
+
+
+  min-width: 0;
 
 
 
-  padding: 1.5rem;
 
 
 
-  border:
 
-    1px solid
-
-    var(--border-color);
+  padding: 1.5rem;
 
 
 
-  border-radius: 20px;
 
 
 
-  background: #ffffff;
+
+  border:
+
+
+
+    1px solid
+
+
+
+    var(--border-color);
+
+
+
+
+
+
+
+  border-radius: 20px;
+
+
+
+
+
+
+
+  background: #ffffff;
+
+
 
 }
+
+
+
+
 
 
 
 .questionHeader {
 
-  display: flex;
+
+
+  display: flex;
 
 
 
-  justify-content:
-
-    space-between;
 
 
 
-  align-items:
 
-    flex-start;
-
-
-
-  gap: 1rem;
+  justify-content:
 
 
 
-  margin-bottom: 1rem;
-
-  padding-bottom: 1rem;
+    space-between;
 
 
 
-  border-bottom:
 
-    1px solid
 
-    var(--border-color);
+
+
+  align-items:
+
+
+
+    flex-start;
+
+
+
+
+
+
+
+  gap: 1rem;
+
+
+
+
+
+
+
+  margin-bottom: 1rem;
+
+
+
+  padding-bottom: 1rem;
+
+
+
+
+
+
+
+  border-bottom:
+
+
+
+    1px solid
+
+
+
+    var(--border-color);
+
+
 
 }
+
+
+
+
 
 
 
 .questionEyebrow {
 
-  display: block;
+
+
+  display: block;
 
 
 
-  margin-bottom: 0.5rem;
 
 
 
-  color:
 
-    rgba(
-
-      23,
-
-      23,
-
-      23,
-
-      0.55
-
-    );
+  margin-bottom: 0.5rem;
 
 
 
-  font-size: 0.72rem;
 
-  font-weight: 800;
+
+
+
+  color:
+
+
+
+    rgba(
+
+
+
+      23,
+
+
+
+      23,
+
+
+
+      23,
+
+
+
+      0.55
+
+
+
+    );
+
+
+
+
+
+
+
+  font-size: 0.72rem;
+
+
+
+  font-weight: 800;
+
+
 
 }
+
+
+
+
 
 
 
 .questionHeader h1 {
 
-  max-width: 1050px;
+
+
+  max-width: 1050px;
 
 
 
-  color: var(--main-color);
 
 
 
-  font-size:
 
-    clamp(
-
-      1.6rem,
-
-      3vw,
-
-      2.5rem
-
-    );
+  color: var(--main-color);
 
 
 
-  font-weight: 900;
-
-  line-height: 1.3;
 
 
 
-  overflow-wrap: anywhere;
+
+  font-size:
+
+
+
+    clamp(
+
+
+
+      1.6rem,
+
+
+
+      3vw,
+
+
+
+      2.5rem
+
+
+
+    );
+
+
+
+
+
+
+
+  font-weight: 900;
+
+
+
+  line-height: 1.3;
+
+
+
+
+
+
+
+  overflow-wrap: anywhere;
+
+
 
 }
+
+
+
+
 
 
 
 .pointsBadge {
 
-  flex-shrink: 0;
+
+
+  flex-shrink: 0;
 
 
 
-  padding:
-
-    0.55rem
-
-    0.75rem;
 
 
 
-  border-radius: 999px;
+
+  padding:
 
 
 
-  background: var(--soft-purple);
+    0.55rem
 
 
 
-  color: var(--main-color);
+    0.75rem;
 
 
 
-  font-size: 0.72rem;
 
-  font-weight: 900;
+
+
+
+  border-radius: 999px;
+
+
+
+
+
+
+
+  background: var(--soft-purple);
+
+
+
+
+
+
+
+  color: var(--main-color);
+
+
+
+
+
+
+
+  font-size: 0.72rem;
+
+
+
+  font-weight: 900;
+
+
 
 }
+
+
+
+
 
 
 
 .saveStatus {
 
-  min-height: 20px;
+
+
+  min-height: 20px;
 
 
 
-  margin-bottom: 0.7rem;
 
 
 
-  color:
 
-    rgba(
-
-      23,
-
-      23,
-
-      23,
-
-      0.5
-
-    );
+  margin-bottom: 0.7rem;
 
 
 
-  font-size: 0.68rem;
 
-  font-weight: 700;
+
+
+
+  color:
+
+
+
+    rgba(
+
+
+
+      23,
+
+
+
+      23,
+
+
+
+      23,
+
+
+
+      0.5
+
+
+
+    );
+
+
+
+
+
+
+
+  font-size: 0.68rem;
+
+
+
+  font-weight: 700;
+
+
 
 }
 
 
 
-/\* =========================================================
 
-   Choice instruction
 
-   ========================================================= \*/
+
+
+/* =========================================================
+
+
+
+   Choice instruction
+
+
+
+   ========================================================= */
+
+
+
+
 
 
 
 .choiceInstruction {
 
-  display: flex;
+
+
+  display: flex;
 
 
 
-  align-items: center;
 
 
 
-  flex-wrap: wrap;
+
+  align-items: center;
 
 
 
-  gap: 0.5rem;
 
 
 
-  margin-bottom: 0.8rem;
+
+  flex-wrap: wrap;
 
 
 
-  color:
-
-    rgba(
-
-      23,
-
-      23,
-
-      23,
-
-      0.62
-
-    );
 
 
 
-  font-size: 0.74rem;
+
+  gap: 0.5rem;
+
+
+
+
+
+
+
+  margin-bottom: 0.8rem;
+
+
+
+
+
+
+
+  color:
+
+
+
+    rgba(
+
+
+
+      23,
+
+
+
+      23,
+
+
+
+      23,
+
+
+
+      0.62
+
+
+
+    );
+
+
+
+
+
+
+
+  font-size: 0.74rem;
+
+
 
 }
+
+
+
+
 
 
 
 .choiceInstruction strong {
 
-  color: var(--main-color);
+
+
+  color: var(--main-color);
 
 
 
-  font-weight: 900;
+
+
+
+
+  font-weight: 900;
+
+
 
 }
+
+
+
+
 
 
 
 .choiceInstruction span {
 
-  font-weight: 600;
+
+
+  font-weight: 600;
+
+
 
 }
 
 
 
-/\* =========================================================
 
-   Choices
 
-   ========================================================= \*/
+
+
+/* =========================================================
+
+
+
+   Choices
+
+
+
+   ========================================================= */
+
+
+
+
 
 
 
 .choices {
 
-  display: grid;
+
+
+  display: grid;
 
 
 
-  gap: 0.75rem;
+
+
+
+
+  gap: 0.75rem;
+
+
 
 }
+
+
+
+
 
 
 
 .choiceButton {
 
-  width: 100%;
+
+
+  width: 100%;
 
 
 
-  min-width: 0;
 
 
 
-  display: grid;
+
+  min-width: 0;
 
 
 
-  grid-template-columns:
-
-    auto
-
-    minmax(0, 1fr);
 
 
 
-  gap: 0.8rem;
+
+  display: grid;
 
 
 
-  align-items: center;
 
 
 
-  padding: 0.9rem;
+
+  grid-template-columns:
 
 
 
-  border:
-
-    1px solid
-
-    var(--border-color);
+    auto
 
 
 
-  border-radius: 14px;
+    minmax(0, 1fr);
 
 
 
-  background: #ffffff;
 
 
 
-  color: var(--foreground);
+
+  gap: 0.8rem;
 
 
 
-  text-align: left;
 
 
 
-  cursor: pointer;
+
+  align-items: center;
 
 
 
-  transition:
 
-    transform 0.2s ease,
 
-    border-color 0.2s ease,
 
-    background-color 0.2s ease,
 
-    box-shadow 0.2s ease;
+  padding: 0.9rem;
+
+
+
+
+
+
+
+  border:
+
+
+
+    1px solid
+
+
+
+    var(--border-color);
+
+
+
+
+
+
+
+  border-radius: 14px;
+
+
+
+
+
+
+
+  background: #ffffff;
+
+
+
+
+
+
+
+  color: var(--foreground);
+
+
+
+
+
+
+
+  text-align: left;
+
+
+
+
+
+
+
+  cursor: pointer;
+
+
+
+
+
+
+
+  transition:
+
+
+
+    transform 0.2s ease,
+
+
+
+    border-color 0.2s ease,
+
+
+
+    background-color 0.2s ease,
+
+
+
+    box-shadow 0.2s ease;
+
+
 
 }
+
+
+
+
 
 
 
 .choiceButton:hover {
 
-  transform:
-
-    translateY(-1px);
 
 
-
-  border-color:
-
-    rgba(
-
-      42,
-
-      3,
-
-      105,
-
-      0.3
-
-    );
+  transform:
 
 
 
-  background: var(--soft-purple);
+    translateY(-1px);
+
+
+
+
+
+
+
+  border-color:
+
+
+
+    rgba(
+
+
+
+      42,
+
+
+
+      3,
+
+
+
+      105,
+
+
+
+      0.3
+
+
+
+    );
+
+
+
+
+
+
+
+  background: var(--soft-purple);
+
+
 
 }
+
+
+
+
 
 
 
 .choiceButtonSelected {
 
-  border-color: var(--main-color);
+
+
+  border-color: var(--main-color);
 
 
 
-  background: var(--soft-purple);
 
 
 
-  box-shadow:
 
-    0 0 0 1px
+  background: var(--soft-purple);
 
-    rgba(
 
-      42,
 
-      3,
 
-      105,
 
-      0.05
 
-    );
+
+  box-shadow:
+
+
+
+    0 0 0 1px
+
+
+
+    rgba(
+
+
+
+      42,
+
+
+
+      3,
+
+
+
+      105,
+
+
+
+      0.05
+
+
+
+    );
+
+
 
 }
+
+
+
+
 
 
 
 .choiceLetter {
 
-  width: 40px;
-
-  height: 40px;
 
 
-
-  display: inline-flex;
+  width: 40px;
 
 
 
-  align-items: center;
-
-  justify-content: center;
+  height: 40px;
 
 
 
-  flex-shrink: 0;
 
 
 
-  border:
 
-    1px solid
-
-    var(--border-color);
+  display: inline-flex;
 
 
 
-  border-radius: 11px;
 
 
 
-  background: #ffffff;
+
+  align-items: center;
 
 
 
-  color: var(--main-color);
+  justify-content: center;
 
 
 
-  font-size: 0.82rem;
 
-  font-weight: 900;
+
+
+
+  flex-shrink: 0;
+
+
+
+
+
+
+
+  border:
+
+
+
+    1px solid
+
+
+
+    var(--border-color);
+
+
+
+
+
+
+
+  border-radius: 11px;
+
+
+
+
+
+
+
+  background: #ffffff;
+
+
+
+
+
+
+
+  color: var(--main-color);
+
+
+
+
+
+
+
+  font-size: 0.82rem;
+
+
+
+  font-weight: 900;
+
+
 
 }
+
+
+
+
 
 
 
 .choiceButtonSelected
 
-  .choiceLetter {
-
-  border-color: var(--main-color);
 
 
-
-  background: var(--main-color);
+  .choiceLetter {
 
 
 
-  color: #ffffff;
+  border-color: var(--main-color);
+
+
+
+
+
+
+
+  background: var(--main-color);
+
+
+
+
+
+
+
+  color: #ffffff;
+
+
 
 }
+
+
+
+
 
 
 
 .choiceText {
 
-  min-width: 0;
+
+
+  min-width: 0;
 
 
 
-  color: var(--foreground);
 
 
 
-  font-size: 0.92rem;
 
-  font-weight: 700;
-
-  line-height: 1.5;
+  color: var(--foreground);
 
 
 
-  overflow-wrap: anywhere;
+
+
+
+
+  font-size: 0.92rem;
+
+
+
+  font-weight: 700;
+
+
+
+  line-height: 1.5;
+
+
+
+
+
+
+
+  overflow-wrap: anywhere;
+
+
 
 }
 
 
 
-/\* =========================================================
 
-   Multiple choice
 
-   ========================================================= \*/
+
+
+/* =========================================================
+
+
+
+   Multiple choice
+
+
+
+   ========================================================= */
+
+
+
+
 
 
 
 .multipleChoiceNotice {
 
-  display: grid;
+
+
+  display: grid;
 
 
 
-  grid-template-columns:
-
-    auto
-
-    minmax(0, 1fr);
 
 
 
-  align-items: center;
+
+  grid-template-columns:
 
 
 
-  gap: 0.8rem;
+    auto
 
 
 
-  margin-bottom: 1rem;
+    minmax(0, 1fr);
 
 
 
-  padding:
-
-    0.85rem
-
-    1rem;
 
 
 
-  border:
 
-    1px solid
-
-    rgba(
-
-      42,
-
-      3,
-
-      105,
-
-      0.18
-
-    );
+  align-items: center;
 
 
 
-  border-radius: 13px;
 
 
 
-  background: var(--soft-purple);
+
+  gap: 0.8rem;
+
+
+
+
+
+
+
+  margin-bottom: 1rem;
+
+
+
+
+
+
+
+  padding:
+
+
+
+    0.85rem
+
+
+
+    1rem;
+
+
+
+
+
+
+
+  border:
+
+
+
+    1px solid
+
+
+
+    rgba(
+
+
+
+      42,
+
+
+
+      3,
+
+
+
+      105,
+
+
+
+      0.18
+
+
+
+    );
+
+
+
+
+
+
+
+  border-radius: 13px;
+
+
+
+
+
+
+
+  background: var(--soft-purple);
+
+
 
 }
+
+
+
+
 
 
 
 .multipleChoiceNoticeIcon {
 
-  width: 38px;
-
-  height: 38px;
 
 
-
-  display: inline-flex;
+  width: 38px;
 
 
 
-  align-items: center;
-
-  justify-content: center;
+  height: 38px;
 
 
 
-  border-radius: 10px;
 
 
 
-  background: var(--main-color);
+
+  display: inline-flex;
 
 
 
-  color: #ffffff;
 
 
 
-  font-size: 0.9rem;
 
-  font-weight: 900;
+  align-items: center;
+
+
+
+  justify-content: center;
+
+
+
+
+
+
+
+  border-radius: 10px;
+
+
+
+
+
+
+
+  background: var(--main-color);
+
+
+
+
+
+
+
+  color: #ffffff;
+
+
+
+
+
+
+
+  font-size: 0.9rem;
+
+
+
+  font-weight: 900;
+
+
 
 }
+
+
+
+
 
 
 
 .multipleChoiceNotice strong {
 
-  display: block;
+
+
+  display: block;
 
 
 
-  margin-bottom: 0.2rem;
 
 
 
-  color: var(--main-color);
+
+  margin-bottom: 0.2rem;
 
 
 
-  font-size: 0.8rem;
 
-  font-weight: 900;
+
+
+
+  color: var(--main-color);
+
+
+
+
+
+
+
+  font-size: 0.8rem;
+
+
+
+  font-weight: 900;
+
+
 
 }
+
+
+
+
 
 
 
 .multipleChoiceNotice p {
 
-  color:
 
-    rgba(
 
-      23,
-
-      23,
-
-      23,
-
-      0.62
-
-    );
+  color:
 
 
 
-  font-size: 0.72rem;
+    rgba(
 
-  font-weight: 600;
 
-  line-height: 1.45;
+
+      23,
+
+
+
+      23,
+
+
+
+      23,
+
+
+
+      0.62
+
+
+
+    );
+
+
+
+
+
+
+
+  font-size: 0.72rem;
+
+
+
+  font-weight: 600;
+
+
+
+  line-height: 1.45;
+
+
 
 }
+
+
+
+
 
 
 
 .multipleChoiceButton {
 
-  grid-template-columns:
 
-    auto
 
-    auto
+  grid-template-columns:
 
-    minmax(0, 1fr);
+
+
+    auto
+
+
+
+    auto
+
+
+
+    minmax(0, 1fr);
+
+
 
 }
+
+
+
+
 
 
 
 .multipleChoiceCheck {
 
-  width: 28px;
-
-  height: 28px;
 
 
-
-  display: inline-flex;
+  width: 28px;
 
 
 
-  align-items: center;
-
-  justify-content: center;
+  height: 28px;
 
 
 
-  flex-shrink: 0;
 
 
 
-  border:
 
-    2px solid
-
-    rgba(
-
-      42,
-
-      3,
-
-      105,
-
-      0.3
-
-    );
+  display: inline-flex;
 
 
 
-  border-radius: 7px;
 
 
 
-  background: #ffffff;
+
+  align-items: center;
 
 
 
-  color: #ffffff;
+  justify-content: center;
 
 
 
-  font-size: 0.78rem;
-
-  font-weight: 900;
 
 
 
-  transition:
 
-    background-color 0.2s ease,
+  flex-shrink: 0;
 
-    border-color 0.2s ease,
 
-    transform 0.2s ease;
+
+
+
+
+
+  border:
+
+
+
+    2px solid
+
+
+
+    rgba(
+
+
+
+      42,
+
+
+
+      3,
+
+
+
+      105,
+
+
+
+      0.3
+
+
+
+    );
+
+
+
+
+
+
+
+  border-radius: 7px;
+
+
+
+
+
+
+
+  background: #ffffff;
+
+
+
+
+
+
+
+  color: #ffffff;
+
+
+
+
+
+
+
+  font-size: 0.78rem;
+
+
+
+  font-weight: 900;
+
+
+
+
+
+
+
+  transition:
+
+
+
+    background-color 0.2s ease,
+
+
+
+    border-color 0.2s ease,
+
+
+
+    transform 0.2s ease;
+
+
 
 }
+
+
+
+
 
 
 
 .multipleChoiceButton:hover
 
-  .multipleChoiceCheck {
 
-  border-color: var(--main-color);
+
+  .multipleChoiceCheck {
+
+
+
+  border-color: var(--main-color);
+
+
 
 }
+
+
+
+
 
 
 
 .choiceButtonSelected
 
-  .multipleChoiceCheck {
-
-  border-color: var(--main-color);
 
 
-
-  background: var(--main-color);
+  .multipleChoiceCheck {
 
 
 
-  transform:
+  border-color: var(--main-color);
 
-    scale(1.03);
+
+
+
+
+
+
+  background: var(--main-color);
+
+
+
+
+
+
+
+  transform:
+
+
+
+    scale(1.03);
+
+
 
 }
 
 
 
-/\* =========================================================
 
-   Development
 
-   ========================================================= \*/
+
+
+/* =========================================================
+
+
+
+   Development
+
+
+
+   ========================================================= */
+
+
+
+
 
 
 
 .developmentBox {
 
-  display: grid;
+
+
+  display: grid;
 
 
 
-  gap: 0.65rem;
+
+
+
+
+  gap: 0.65rem;
+
+
 
 }
+
+
+
+
 
 
 
 .developmentHeader {
 
-  display: flex;
+
+
+  display: flex;
 
 
 
-  justify-content:
-
-    space-between;
 
 
 
-  align-items: center;
+
+  justify-content:
 
 
 
-  gap: 1rem;
+    space-between;
+
+
+
+
+
+
+
+  align-items: center;
+
+
+
+
+
+
+
+  gap: 1rem;
+
+
 
 }
+
+
+
+
 
 
 
 .developmentHeader label {
 
-  color: var(--main-color);
+
+
+  color: var(--main-color);
 
 
 
-  font-size: 0.82rem;
 
-  font-weight: 900;
+
+
+
+  font-size: 0.82rem;
+
+
+
+  font-weight: 900;
+
+
 
 }
+
+
+
+
 
 
 
 .symbolToggleButton {
 
-  width: fit-content;
-
-  max-width: 100%;
 
 
-
-  min-height: 42px;
+  width: fit-content;
 
 
 
-  padding:
-
-    0.55rem
-
-    0.8rem;
+  max-width: 100%;
 
 
 
-  border:
-
-    1px solid
-
-    var(--border-color);
 
 
 
-  border-radius: 10px;
+
+  min-height: 42px;
 
 
 
-  background: #ffffff;
 
 
 
-  color: var(--main-color);
+
+  padding:
 
 
 
-  font-size: 0.72rem;
-
-  font-weight: 900;
+    0.55rem
 
 
 
-  line-height: 1.3;
+    0.8rem;
 
 
 
-  text-align: center;
 
 
 
-  white-space: normal;
+
+  border:
 
 
 
-  overflow-wrap: anywhere;
+    1px solid
 
 
 
-  cursor: pointer;
+    var(--border-color);
 
 
 
-  transition:
 
-    border-color 0.2s ease,
 
-    background-color 0.2s ease,
 
-    transform 0.2s ease;
+
+  border-radius: 10px;
+
+
+
+
+
+
+
+  background: #ffffff;
+
+
+
+
+
+
+
+  color: var(--main-color);
+
+
+
+
+
+
+
+  font-size: 0.72rem;
+
+
+
+  font-weight: 900;
+
+
+
+
+
+
+
+  line-height: 1.3;
+
+
+
+
+
+
+
+  text-align: center;
+
+
+
+
+
+
+
+  white-space: normal;
+
+
+
+
+
+
+
+  overflow-wrap: anywhere;
+
+
+
+
+
+
+
+  cursor: pointer;
+
+
+
+
+
+
+
+  transition:
+
+
+
+    border-color 0.2s ease,
+
+
+
+    background-color 0.2s ease,
+
+
+
+    transform 0.2s ease;
+
+
 
 }
+
+
+
+
 
 
 
 .symbolToggleButton:hover {
 
-  transform:
-
-    translateY(-1px);
 
 
-
-  border-color:
-
-    rgba(
-
-      42,
-
-      3,
-
-      105,
-
-      0.3
-
-    );
+  transform:
 
 
 
-  background: var(--soft-purple);
+    translateY(-1px);
+
+
+
+
+
+
+
+  border-color:
+
+
+
+    rgba(
+
+
+
+      42,
+
+
+
+      3,
+
+
+
+      105,
+
+
+
+      0.3
+
+
+
+    );
+
+
+
+
+
+
+
+  background: var(--soft-purple);
+
+
 
 }
+
+
+
+
 
 
 
 .developmentBox textarea {
 
-  width: 100%;
+
+
+  width: 100%;
 
 
 
-  min-height: 360px;
 
 
 
-  padding: 1rem;
+
+  min-height: 360px;
 
 
 
-  border:
-
-    1px solid
-
-    var(--border-color);
 
 
 
-  border-radius: 14px;
+
+  padding: 1rem;
 
 
 
-  background: #ffffff;
 
 
 
-  color: var(--foreground);
+
+  border:
 
 
 
-  resize: vertical;
+    1px solid
 
 
 
-  font: inherit;
-
-  line-height: 1.65;
+    var(--border-color);
 
 
 
-  outline: none;
 
 
 
-  transition:
 
-    border-color 0.2s ease,
+  border-radius: 14px;
 
-    box-shadow 0.2s ease;
+
+
+
+
+
+
+  background: #ffffff;
+
+
+
+
+
+
+
+  color: var(--foreground);
+
+
+
+
+
+
+
+  resize: vertical;
+
+
+
+
+
+
+
+  font: inherit;
+
+
+
+  line-height: 1.65;
+
+
+
+
+
+
+
+  outline: none;
+
+
+
+
+
+
+
+  transition:
+
+
+
+    border-color 0.2s ease,
+
+
+
+    box-shadow 0.2s ease;
+
+
 
 }
+
+
+
+
 
 
 
 .developmentBox textarea:focus {
 
-  border-color: var(--main-color);
+
+
+  border-color: var(--main-color);
 
 
 
-  box-shadow:
 
-    0 0 0 3px
 
-    var(--soft-purple);
+
+
+  box-shadow:
+
+
+
+    0 0 0 3px
+
+
+
+    var(--soft-purple);
+
+
 
 }
+
+
+
+
 
 
 
 .developmentBox > small {
 
-  color:
 
-    rgba(
 
-      23,
-
-      23,
-
-      23,
-
-      0.5
-
-    );
+  color:
 
 
 
-  font-size: 0.68rem;
+    rgba(
 
-  font-weight: 700;
+
+
+      23,
+
+
+
+      23,
+
+
+
+      23,
+
+
+
+      0.5
+
+
+
+    );
+
+
+
+
+
+
+
+  font-size: 0.68rem;
+
+
+
+  font-weight: 700;
+
+
 
 }
 
 
 
-/\* =========================================================
 
-   Special characters
 
-   ========================================================= \*/
+
+
+/* =========================================================
+
+
+
+   Special characters
+
+
+
+   ========================================================= */
+
+
+
+
 
 
 
 .specialCharactersPanel {
 
-  display: grid;
+
+
+  display: grid;
 
 
 
-  gap: 0.9rem;
 
 
 
-  padding: 0.9rem;
+
+  gap: 0.9rem;
 
 
 
-  border:
-
-    1px solid
-
-    var(--border-color);
 
 
 
-  border-radius: 14px;
+
+  padding: 0.9rem;
 
 
 
-  background:
 
-    rgba(
 
-      42,
 
-      3,
 
-      105,
+  border:
 
-      0.025
 
-    );
+
+    1px solid
+
+
+
+    var(--border-color);
+
+
+
+
+
+
+
+  border-radius: 14px;
+
+
+
+
+
+
+
+  background:
+
+
+
+    rgba(
+
+
+
+      42,
+
+
+
+      3,
+
+
+
+      105,
+
+
+
+      0.025
+
+
+
+    );
+
+
 
 }
+
+
+
+
 
 
 
 .specialCharacterButtons {
 
-  display: flex;
+
+
+  display: flex;
 
 
 
-  flex-wrap: wrap;
 
 
 
-  gap: 0.45rem;
+
+  flex-wrap: wrap;
+
+
+
+
+
+
+
+  gap: 0.45rem;
+
+
 
 }
+
+
+
+
 
 
 
 .specialCharacterButton {
 
-  min-width: 39px;
-
-  height: 37px;
 
 
-
-  display: inline-flex;
+  min-width: 39px;
 
 
 
-  align-items: center;
-
-  justify-content: center;
+  height: 37px;
 
 
 
-  padding:
-
-    0
-
-    0.55rem;
 
 
 
-  border:
 
-    1px solid
-
-    var(--border-color);
+  display: inline-flex;
 
 
 
-  border-radius: 9px;
 
 
 
-  background: #ffffff;
+
+  align-items: center;
 
 
 
-  color: var(--main-color);
+  justify-content: center;
 
 
 
-  font-size: 0.9rem;
-
-  font-weight: 900;
 
 
 
-  cursor: pointer;
+
+  padding:
 
 
 
-  transition:
+    0
 
-    transform 0.2s ease,
 
-    border-color 0.2s ease,
 
-    background-color 0.2s ease;
+    0.55rem;
+
+
+
+
+
+
+
+  border:
+
+
+
+    1px solid
+
+
+
+    var(--border-color);
+
+
+
+
+
+
+
+  border-radius: 9px;
+
+
+
+
+
+
+
+  background: #ffffff;
+
+
+
+
+
+
+
+  color: var(--main-color);
+
+
+
+
+
+
+
+  font-size: 0.9rem;
+
+
+
+  font-weight: 900;
+
+
+
+
+
+
+
+  cursor: pointer;
+
+
+
+
+
+
+
+  transition:
+
+
+
+    transform 0.2s ease,
+
+
+
+    border-color 0.2s ease,
+
+
+
+    background-color 0.2s ease;
+
+
 
 }
+
+
+
+
 
 
 
 .specialCharacterButton:hover {
 
-  transform:
-
-    translateY(-1px);
 
 
-
-  border-color:
-
-    rgba(
-
-      42,
-
-      3,
-
-      105,
-
-      0.3
-
-    );
+  transform:
 
 
 
-  background: var(--soft-purple);
+    translateY(-1px);
+
+
+
+
+
+
+
+  border-color:
+
+
+
+    rgba(
+
+
+
+      42,
+
+
+
+      3,
+
+
+
+      105,
+
+
+
+      0.3
+
+
+
+    );
+
+
+
+
+
+
+
+  background: var(--soft-purple);
+
+
 
 }
+
+
+
+
 
 
 
 .specialTools {
 
-  display: grid;
+
+
+  display: grid;
 
 
 
-  grid-template-columns:
-
-    repeat(
-
-      3,
-
-      minmax(
-
-        0,
-
-        1fr
-
-      )
-
-    );
 
 
 
-  gap: 0.75rem;
+
+  grid-template-columns:
+
+
+
+    repeat(
+
+
+
+      3,
+
+
+
+      minmax(
+
+
+
+        0,
+
+
+
+        1fr
+
+
+
+      )
+
+
+
+    );
+
+
+
+
+
+
+
+  gap: 0.75rem;
+
+
 
 }
+
+
+
+
 
 
 
 .specialTool {
 
-  min-width: 0;
+
+
+  min-width: 0;
+
+
 
 }
+
+
+
+
 
 
 
 .specialTool > span {
 
-  display: block;
+
+
+  display: block;
 
 
 
-  margin-bottom: 0.35rem;
 
 
 
-  color: var(--main-color);
+
+  margin-bottom: 0.35rem;
 
 
 
-  font-size: 0.68rem;
 
-  font-weight: 900;
+
+
+
+  color: var(--main-color);
+
+
+
+
+
+
+
+  font-size: 0.68rem;
+
+
+
+  font-weight: 900;
+
+
 
 }
+
+
+
+
 
 
 
 .specialToolRow {
 
-  display: grid;
+
+
+  display: grid;
 
 
 
-  grid-template-columns:
-
-    minmax(0, 1fr)
-
-    auto;
 
 
 
-  gap: 0.4rem;
+
+  grid-template-columns:
+
+
+
+    minmax(0, 1fr)
+
+
+
+    auto;
+
+
+
+
+
+
+
+  gap: 0.4rem;
+
+
 
 }
+
+
+
+
 
 
 
 .specialToolRow input,
 
+
+
 .fractionRow input {
 
-  width: 100%;
+
+
+  width: 100%;
 
 
 
-  min-width: 0;
-
-  min-height: 40px;
 
 
 
-  padding:
 
-    0
-
-    0.7rem;
+  min-width: 0;
 
 
 
-  border:
-
-    1px solid
-
-    var(--border-color);
+  min-height: 40px;
 
 
 
-  border-radius: 9px;
 
 
 
-  background: #ffffff;
+
+  padding:
 
 
 
-  color: var(--foreground);
+    0
 
 
 
-  outline: none;
+    0.7rem;
+
+
+
+
+
+
+
+  border:
+
+
+
+    1px solid
+
+
+
+    var(--border-color);
+
+
+
+
+
+
+
+  border-radius: 9px;
+
+
+
+
+
+
+
+  background: #ffffff;
+
+
+
+
+
+
+
+  color: var(--foreground);
+
+
+
+
+
+
+
+  outline: none;
+
+
 
 }
+
+
+
+
 
 
 
 .specialToolRow input:focus,
 
+
+
 .fractionRow input:focus {
 
-  border-color: var(--main-color);
+
+
+  border-color: var(--main-color);
 
 
 
-  box-shadow:
 
-    0 0 0 2px
 
-    var(--soft-purple);
+
+
+  box-shadow:
+
+
+
+    0 0 0 2px
+
+
+
+    var(--soft-purple);
+
+
 
 }
+
+
+
+
 
 
 
 .specialToolRow button,
 
+
+
 .fractionRow button {
 
-  min-height: 40px;
+
+
+  min-height: 40px;
 
 
 
-  padding:
-
-    0.55rem
-
-    0.8rem;
 
 
 
-  border: none;
+
+  padding:
 
 
 
-  border-radius: 9px;
+    0.55rem
 
 
 
-  background: var(--main-color);
+    0.8rem;
 
 
 
-  color: #ffffff;
 
 
 
-  font-size: 0.75rem;
 
-  font-weight: 900;
-
-  line-height: 1.25;
+  border: none;
 
 
 
-  text-align: center;
 
 
 
-  white-space: normal;
+
+  border-radius: 9px;
 
 
 
-  cursor: pointer;
+
+
+
+
+  background: var(--main-color);
+
+
+
+
+
+
+
+  color: #ffffff;
+
+
+
+
+
+
+
+  font-size: 0.75rem;
+
+
+
+  font-weight: 900;
+
+
+
+  line-height: 1.25;
+
+
+
+
+
+
+
+  text-align: center;
+
+
+
+
+
+
+
+  white-space: normal;
+
+
+
+
+
+
+
+  cursor: pointer;
+
+
 
 }
+
+
+
+
 
 
 
 .fractionRow {
 
-  display: grid;
+
+
+  display: grid;
 
 
 
-  grid-template-columns:
-
-    minmax(0, 1fr)
-
-    auto
-
-    minmax(0, 1fr)
-
-    auto;
 
 
 
-  align-items: center;
+
+  grid-template-columns:
 
 
 
-  gap: 0.4rem;
+    minmax(0, 1fr)
+
+
+
+    auto
+
+
+
+    minmax(0, 1fr)
+
+
+
+    auto;
+
+
+
+
+
+
+
+  align-items: center;
+
+
+
+
+
+
+
+  gap: 0.4rem;
+
+
 
 }
+
+
+
+
 
 
 
 .fractionRow > span {
 
-  color: var(--main-color);
+
+
+  color: var(--main-color);
 
 
 
-  font-size: 1rem;
 
-  font-weight: 900;
+
+
+
+  font-size: 1rem;
+
+
+
+  font-weight: 900;
+
+
 
 }
 
 
 
-/\* =========================================================
 
-   Message
 
-   ========================================================= \*/
+
+
+/* =========================================================
+
+
+
+   Message
+
+
+
+   ========================================================= */
+
+
+
+
 
 
 
 .message {
 
-  margin-top: 1rem;
+
+
+  margin-top: 1rem;
 
 
 
-  padding:
-
-    0.9rem
-
-    1rem;
 
 
 
-  border:
 
-    1px solid
-
-    var(--border-color);
+  padding:
 
 
 
-  border-radius: 12px;
+    0.9rem
 
 
 
-  background: var(--soft-purple);
+    1rem;
 
 
 
-  color: var(--main-color);
 
 
 
-  font-size: 0.78rem;
 
-  font-weight: 800;
+  border:
 
-  line-height: 1.5;
+
+
+    1px solid
+
+
+
+    var(--border-color);
+
+
+
+
+
+
+
+  border-radius: 12px;
+
+
+
+
+
+
+
+  background: var(--soft-purple);
+
+
+
+
+
+
+
+  color: var(--main-color);
+
+
+
+
+
+
+
+  font-size: 0.78rem;
+
+
+
+  font-weight: 800;
+
+
+
+  line-height: 1.5;
+
+
 
 }
 
 
 
-/\* =========================================================
 
-   Quiz actions
 
-   ========================================================= \*/
+
+
+/* =========================================================
+
+
+
+   Quiz actions
+
+
+
+   ========================================================= */
+
+
+
+
 
 
 
 .actions {
 
-  display: flex;
+
+
+  display: flex;
 
 
 
-  justify-content:
-
-    space-between;
 
 
 
-  align-items: center;
+
+  justify-content:
 
 
 
-  flex-wrap: wrap;
+    space-between;
 
 
 
-  gap: 0.8rem;
 
 
 
-  margin-top: 1.4rem;
+
+  align-items: center;
 
 
 
-  padding-top: 1rem;
 
 
 
-  border-top:
 
-    1px solid
+  flex-wrap: wrap;
 
-    var(--border-color);
+
+
+
+
+
+
+  gap: 0.8rem;
+
+
+
+
+
+
+
+  margin-top: 1.4rem;
+
+
+
+
+
+
+
+  padding-top: 1rem;
+
+
+
+
+
+
+
+  border-top:
+
+
+
+    1px solid
+
+
+
+    var(--border-color);
+
+
 
 }
 
 
 
-/\*
 
- \* Important for long i18n labels.
 
- \*
 
- \* Buttons may grow with their content instead of
 
- \* being squeezed by the flex container.
+/*
 
- \*/
+
+
+ * Important for long i18n labels.
+
+
+
+ *
+
+
+
+ * Buttons may grow with their content instead of
+
+
+
+ * being squeezed by the flex container.
+
+
+
+ */
+
+
+
+
 
 
 
 .actions
 
-  :global(.app-button) {
 
-  flex:
 
-    0
-
-    1
-
-    auto;
+  :global(.app-button) {
 
 
 
-  width: auto;
+  flex:
 
 
 
-  max-width: 100%;
+    0
+
+
+
+    1
+
+
+
+    auto;
+
+
+
+
+
+
+
+  width: auto;
+
+
+
+
+
+
+
+  max-width: 100%;
+
+
 
 }
 
 
 
-/\* =========================================================
 
-   Submitted / error
 
-   ========================================================= \*/
+
+
+/* =========================================================
+
+
+
+   Submitted / error
+
+
+
+   ========================================================= */
+
+
+
+
 
 
 
 .submittedCard,
 
+
+
 .errorCard {
 
-  width:
 
-    min(
 
-      680px,
-
-      100%
-
-    );
+  width:
 
 
 
-  margin:
-
-    5vh auto 0;
+    min(
 
 
 
-  padding: 2.5rem;
+      680px,
 
 
 
-  border:
-
-    1px solid
-
-    var(--border-color);
+      100%
 
 
 
-  border-radius: 28px;
+    );
 
 
 
-  background: #ffffff;
 
 
 
-  text-align: center;
+
+  margin:
 
 
 
-  box-shadow: var(--shadow);
+    5vh auto 0;
+
+
+
+
+
+
+
+  padding: 2.5rem;
+
+
+
+
+
+
+
+  border:
+
+
+
+    1px solid
+
+
+
+    var(--border-color);
+
+
+
+
+
+
+
+  border-radius: 28px;
+
+
+
+
+
+
+
+  background: #ffffff;
+
+
+
+
+
+
+
+  text-align: center;
+
+
+
+
+
+
+
+  box-shadow: var(--shadow);
+
+
 
 }
+
+
+
+
 
 
 
 .badge {
 
-  display: inline-flex;
+
+
+  display: inline-flex;
 
 
 
-  padding:
-
-    0.4rem
-
-    0.7rem;
 
 
 
-  border-radius: 999px;
+
+  padding:
 
 
 
-  background: var(--soft-purple);
+    0.4rem
 
 
 
-  color: var(--main-color);
+    0.7rem;
 
 
 
-  font-size: 0.72rem;
 
-  font-weight: 900;
+
+
+
+  border-radius: 999px;
+
+
+
+
+
+
+
+  background: var(--soft-purple);
+
+
+
+
+
+
+
+  color: var(--main-color);
+
+
+
+
+
+
+
+  font-size: 0.72rem;
+
+
+
+  font-weight: 900;
+
+
 
 }
+
+
+
+
 
 
 
 .submittedIcon {
 
-  width: 72px;
-
-  height: 72px;
 
 
-
-  display: flex;
+  width: 72px;
 
 
 
-  align-items: center;
-
-  justify-content: center;
+  height: 72px;
 
 
 
-  margin:
-
-    1.5rem auto;
 
 
 
-  border-radius: 50%;
+
+  display: flex;
 
 
 
-  background: var(--soft-purple);
 
 
 
-  color: var(--main-color);
+
+  align-items: center;
 
 
 
-  font-size: 2rem;
+  justify-content: center;
 
-  font-weight: 900;
+
+
+
+
+
+
+  margin:
+
+
+
+    1.5rem auto;
+
+
+
+
+
+
+
+  border-radius: 50%;
+
+
+
+
+
+
+
+  background: var(--soft-purple);
+
+
+
+
+
+
+
+  color: var(--main-color);
+
+
+
+
+
+
+
+  font-size: 2rem;
+
+
+
+  font-weight: 900;
+
+
 
 }
+
+
+
+
 
 
 
 .submittedCard h1,
 
+
+
 .errorCard h1 {
 
-  margin-bottom: 0.7rem;
+
+
+  margin-bottom: 0.7rem;
 
 
 
-  color: var(--main-color);
 
 
 
-  font-size: 2rem;
 
-  font-weight: 900;
+  color: var(--main-color);
+
+
+
+
+
+
+
+  font-size: 2rem;
+
+
+
+  font-weight: 900;
+
+
 
 }
+
+
+
+
 
 
 
 .submittedCard p,
 
+
+
 .errorCard p {
 
-  color:
 
-    rgba(
 
-      23,
-
-      23,
-
-      23,
-
-      0.62
-
-    );
+  color:
 
 
 
-  line-height: 1.6;
+    rgba(
+
+
+
+      23,
+
+
+
+      23,
+
+
+
+      23,
+
+
+
+      0.62
+
+
+
+    );
+
+
+
+
+
+
+
+  line-height: 1.6;
+
+
 
 }
+
+
+
+
 
 
 
 .submittedInfo {
 
-  display: grid;
+
+
+  display: grid;
 
 
 
-  grid-template-columns:
-
-    repeat(
-
-      2,
-
-      minmax(
-
-        0,
-
-        1fr
-
-      )
-
-    );
 
 
 
-  gap: 0.8rem;
+
+  grid-template-columns:
 
 
 
-  margin-top: 1.3rem;
+    repeat(
+
+
+
+      2,
+
+
+
+      minmax(
+
+
+
+        0,
+
+
+
+        1fr
+
+
+
+      )
+
+
+
+    );
+
+
+
+
+
+
+
+  gap: 0.8rem;
+
+
+
+
+
+
+
+  margin-top: 1.3rem;
+
+
 
 }
+
+
+
+
 
 
 
 .submittedInfo div {
 
-  min-width: 0;
+
+
+  min-width: 0;
 
 
 
-  padding: 0.9rem;
 
 
 
-  border:
 
-    1px solid
-
-    var(--border-color);
+  padding: 0.9rem;
 
 
 
-  border-radius: 13px;
 
 
 
-  background: var(--soft-purple);
+
+  border:
+
+
+
+    1px solid
+
+
+
+    var(--border-color);
+
+
+
+
+
+
+
+  border-radius: 13px;
+
+
+
+
+
+
+
+  background: var(--soft-purple);
+
+
 
 }
+
+
+
+
 
 
 
 .submittedInfo span {
 
-  display: block;
+
+
+  display: block;
 
 
 
-  margin-bottom: 0.3rem;
 
 
 
-  color:
 
-    rgba(
-
-      23,
-
-      23,
-
-      23,
-
-      0.52
-
-    );
+  margin-bottom: 0.3rem;
 
 
 
-  font-size: 0.68rem;
 
-  font-weight: 800;
+
+
+
+  color:
+
+
+
+    rgba(
+
+
+
+      23,
+
+
+
+      23,
+
+
+
+      23,
+
+
+
+      0.52
+
+
+
+    );
+
+
+
+
+
+
+
+  font-size: 0.68rem;
+
+
+
+  font-weight: 800;
+
+
 
 }
+
+
+
+
 
 
 
 .submittedInfo strong {
 
-  display: block;
+
+
+  display: block;
 
 
 
-  color: var(--main-color);
 
 
 
-  font-size: 0.8rem;
 
-  font-weight: 900;
-
+  color: var(--main-color);
 
 
-  overflow-wrap: anywhere;
+
+
+
+
+
+  font-size: 0.8rem;
+
+
+
+  font-weight: 900;
+
+
+
+
+
+
+
+  overflow-wrap: anywhere;
+
+
 
 }
 
 
 
-/\* =========================================================
 
-   Final result summary
 
-   ========================================================= \*/
+
+
+/* =========================================================
+
+
+
+   Final result summary
+
+
+
+   ========================================================= */
+
+
+
+
 
 
 
 .resultSummary {
 
-  display: grid;
+
+
+  display: grid;
 
 
 
-  grid-template-columns:
-
-    repeat(
-
-      3,
-
-      minmax(
-
-        0,
-
-        1fr
-
-      )
-
-    );
 
 
 
-  gap: 0.8rem;
+
+  grid-template-columns:
 
 
 
-  margin-top: 1.5rem;
+    repeat(
+
+
+
+      3,
+
+
+
+      minmax(
+
+
+
+        0,
+
+
+
+        1fr
+
+
+
+      )
+
+
+
+    );
+
+
+
+
+
+
+
+  gap: 0.8rem;
+
+
+
+
+
+
+
+  margin-top: 1.5rem;
+
+
 
 }
+
+
+
+
 
 
 
 .resultSummary > div {
 
-  min-width: 0;
+
+
+  min-width: 0;
 
 
 
-  display: flex;
 
 
 
-  flex-direction: column;
+
+  display: flex;
 
 
 
-  justify-content: center;
 
 
 
-  min-height: 82px;
+
+  flex-direction: column;
 
 
 
-  padding:
-
-    0.9rem
-
-    1rem;
 
 
 
-  border:
 
-    1px solid
-
-    var(--border-color);
+  justify-content: center;
 
 
 
-  border-radius: 13px;
 
 
 
-  background: var(--soft-purple);
+
+  min-height: 82px;
+
+
+
+
+
+
+
+  padding:
+
+
+
+    0.9rem
+
+
+
+    1rem;
+
+
+
+
+
+
+
+  border:
+
+
+
+    1px solid
+
+
+
+    var(--border-color);
+
+
+
+
+
+
+
+  border-radius: 13px;
+
+
+
+
+
+
+
+  background: var(--soft-purple);
+
+
 
 }
+
+
+
+
 
 
 
 .resultSummary span {
 
-  display: block;
+
+
+  display: block;
 
 
 
-  margin-bottom: 0.35rem;
 
 
 
-  color:
 
-    rgba(
-
-      23,
-
-      23,
-
-      23,
-
-      0.52
-
-    );
+  margin-bottom: 0.35rem;
 
 
 
-  font-size: 0.68rem;
 
-  font-weight: 800;
+
+
+
+  color:
+
+
+
+    rgba(
+
+
+
+      23,
+
+
+
+      23,
+
+
+
+      23,
+
+
+
+      0.52
+
+
+
+    );
+
+
+
+
+
+
+
+  font-size: 0.68rem;
+
+
+
+  font-weight: 800;
+
+
 
 }
+
+
+
+
 
 
 
 .resultSummary strong {
 
-  display: block;
+
+
+  display: block;
 
 
 
-  color: var(--main-color);
 
 
 
-  font-size: 0.82rem;
 
-  font-weight: 900;
-
-  line-height: 1.45;
+  color: var(--main-color);
 
 
 
-  overflow-wrap: anywhere;
+
+
+
+
+  font-size: 0.82rem;
+
+
+
+  font-weight: 900;
+
+
+
+  line-height: 1.45;
+
+
+
+
+
+
+
+  overflow-wrap: anywhere;
+
+
 
 }
 
 
 
-/\* =========================================================
 
-   Student information in final result
 
-   ========================================================= \*/
+
+
+/* =========================================================
+
+
+
+   Student information in final result
+
+
+
+   ========================================================= */
+
+
+
+
 
 
 
 .resultStudent small {
 
-  display: block;
+
+
+  display: block;
 
 
 
-  margin-top: 0.25rem;
 
 
 
-  color:
 
-    rgba(
-
-      23,
-
-      23,
-
-      23,
-
-      0.56
-
-    );
+  margin-top: 0.25rem;
 
 
 
-  font-size: 0.68rem;
-
-  font-weight: 600;
-
-  line-height: 1.4;
 
 
 
-  overflow-wrap: anywhere;
+
+  color:
+
+
+
+    rgba(
+
+
+
+      23,
+
+
+
+      23,
+
+
+
+      23,
+
+
+
+      0.56
+
+
+
+    );
+
+
+
+
+
+
+
+  font-size: 0.68rem;
+
+
+
+  font-weight: 600;
+
+
+
+  line-height: 1.4;
+
+
+
+
+
+
+
+  overflow-wrap: anywhere;
+
+
 
 }
 
 
 
-/\* =========================================================
 
-   Final result actions
 
-   ========================================================= \*/
+
+
+/* =========================================================
+
+
+
+   Final result actions
+
+
+
+   ========================================================= */
+
+
+
+
 
 
 
 .resultActions {
 
-  width: 100%;
+
+
+  width: 100%;
 
 
 
-  display: flex;
 
 
 
-  justify-content: center;
+
+  display: flex;
 
 
 
-  align-items: stretch;
 
 
 
-  flex-wrap: wrap;
+
+  justify-content: center;
 
 
 
-  gap: 0.9rem;
 
 
 
-  margin-top: 1.8rem;
+
+  align-items: stretch;
+
+
+
+
+
+
+
+  flex-wrap: wrap;
+
+
+
+
+
+
+
+  gap: 0.9rem;
+
+
+
+
+
+
+
+  margin-top: 1.8rem;
+
+
 
 }
+
+
+
+
 
 
 
 .resultActions
 
-  :global(.app-button) {
 
-  /\*
 
-   \* Do not use flex-shrink: 0 here.
-
-   \*
-
-   \* A long translated label needs room to adapt.
-
-   \*/
+  :global(.app-button) {
 
 
 
-  flex:
-
-    0
-
-    1
-
-    auto;
+  /*
 
 
 
-  width: auto;
+   * Do not use flex-shrink: 0 here.
 
 
 
-  min-width: 170px;
+   *
 
 
 
-  max-width: 100%;
+   * A long translated label needs room to adapt.
+
+
+
+   */
+
+
+
+
+
+
+
+  flex:
+
+
+
+    0
+
+
+
+    1
+
+
+
+    auto;
+
+
+
+
+
+
+
+  width: auto;
+
+
+
+
+
+
+
+  min-width: 170px;
+
+
+
+
+
+
+
+  max-width: 100%;
+
+
 
 }
 
 
 
-/\* =========================================================
 
-   Submit modal
 
-   ========================================================= \*/
+
+
+/* =========================================================
+
+
+
+   Submit modal
+
+
+
+   ========================================================= */
+
+
+
+
 
 
 
 .submitOverlay {
 
-  position: fixed;
+
+
+  position: fixed;
 
 
 
-  inset: 0;
 
 
 
-  z-index: 1500;
+
+  inset: 0;
 
 
 
-  display: flex;
 
 
 
-  align-items: center;
 
-  justify-content: center;
-
-
-
-  padding: 1.5rem;
+  z-index: 1500;
 
 
 
-  background:
-
-    rgba(
-
-      18,
-
-      11,
-
-      30,
-
-      0.54
-
-    );
 
 
 
-  backdrop-filter:
 
-    blur(8px);
-
+  display: flex;
 
 
-  -webkit-backdrop-filter:
 
-    blur(8px);
+
+
+
+
+  align-items: center;
+
+
+
+  justify-content: center;
+
+
+
+
+
+
+
+  padding: 1.5rem;
+
+
+
+
+
+
+
+  background:
+
+
+
+    rgba(
+
+
+
+      18,
+
+
+
+      11,
+
+
+
+      30,
+
+
+
+      0.54
+
+
+
+    );
+
+
+
+
+
+
+
+  backdrop-filter:
+
+
+
+    blur(8px);
+
+
+
+
+
+
+
+  -webkit-backdrop-filter:
+
+
+
+    blur(8px);
+
+
 
 }
+
+
+
+
 
 
 
 .submitModal {
 
-  width:
 
-    min(
 
-      580px,
-
-      100%
-
-    );
+  width:
 
 
 
-  max-height:
-
-    calc(
-
-      100vh - 3rem
-
-    );
+    min(
 
 
 
-  max-height:
-
-    calc(
-
-      100dvh - 3rem
-
-    );
+      580px,
 
 
 
-  overflow-y: auto;
+      100%
 
 
 
-  padding: 1.5rem;
+    );
 
 
 
-  border:
-
-    1px solid
-
-    var(--border-color);
 
 
 
-  border-radius: 24px;
+
+  max-height:
 
 
 
-  background: #ffffff;
+    calc(
 
 
 
-  box-shadow:
+      100vh - 3rem
 
-    0 28px 80px
 
-      rgba(
 
-        22,
+    );
 
-        6,
 
-        45,
 
-        0.3
 
-      ),
 
-    var(--shadow);
+
+
+  max-height:
+
+
+
+    calc(
+
+
+
+      100dvh - 3rem
+
+
+
+    );
+
+
+
+
+
+
+
+  overflow-y: auto;
+
+
+
+
+
+
+
+  padding: 1.5rem;
+
+
+
+
+
+
+
+  border:
+
+
+
+    1px solid
+
+
+
+    var(--border-color);
+
+
+
+
+
+
+
+  border-radius: 24px;
+
+
+
+
+
+
+
+  background: #ffffff;
+
+
+
+
+
+
+
+  box-shadow:
+
+
+
+    0 28px 80px
+
+
+
+      rgba(
+
+
+
+        22,
+
+
+
+        6,
+
+
+
+        45,
+
+
+
+        0.3
+
+
+
+      ),
+
+
+
+    var(--shadow);
+
+
 
 }
+
+
+
+
 
 
 
 .submitModalHeader {
 
-  display: flex;
+
+
+  display: flex;
 
 
 
-  justify-content:
-
-    space-between;
 
 
 
-  align-items:
 
-    flex-start;
-
-
-
-  gap: 1rem;
+  justify-content:
 
 
 
-  padding-bottom: 1rem;
+    space-between;
 
 
 
-  border-bottom:
 
-    1px solid
 
-    var(--border-color);
+
+
+  align-items:
+
+
+
+    flex-start;
+
+
+
+
+
+
+
+  gap: 1rem;
+
+
+
+
+
+
+
+  padding-bottom: 1rem;
+
+
+
+
+
+
+
+  border-bottom:
+
+
+
+    1px solid
+
+
+
+    var(--border-color);
+
+
 
 }
+
+
+
+
 
 
 
 .submitModalHeader h2 {
 
-  margin-top: 0.5rem;
+
+
+  margin-top: 0.5rem;
 
 
 
-  color: var(--main-color);
 
 
 
-  font-size: 1.7rem;
 
-  font-weight: 900;
-
-  line-height: 1.2;
+  color: var(--main-color);
 
 
 
-  overflow-wrap: anywhere;
+
+
+
+
+  font-size: 1.7rem;
+
+
+
+  font-weight: 900;
+
+
+
+  line-height: 1.2;
+
+
+
+
+
+
+
+  overflow-wrap: anywhere;
+
+
 
 }
+
+
+
+
 
 
 
 .submitClose {
 
-  width: 40px;
-
-  height: 40px;
 
 
-
-  display: inline-flex;
+  width: 40px;
 
 
 
-  align-items: center;
-
-  justify-content: center;
+  height: 40px;
 
 
 
-  flex-shrink: 0;
 
 
 
-  border:
 
-    1px solid
-
-    var(--border-color);
+  display: inline-flex;
 
 
 
-  border-radius: 12px;
 
 
 
-  background: #ffffff;
+
+  align-items: center;
 
 
 
-  color: var(--main-color);
+  justify-content: center;
 
 
 
-  font-size: 1.3rem;
-
-  font-weight: 800;
 
 
 
-  cursor: pointer;
+
+  flex-shrink: 0;
+
+
+
+
+
+
+
+  border:
+
+
+
+    1px solid
+
+
+
+    var(--border-color);
+
+
+
+
+
+
+
+  border-radius: 12px;
+
+
+
+
+
+
+
+  background: #ffffff;
+
+
+
+
+
+
+
+  color: var(--main-color);
+
+
+
+
+
+
+
+  font-size: 1.3rem;
+
+
+
+  font-weight: 800;
+
+
+
+
+
+
+
+  cursor: pointer;
+
+
 
 }
+
+
+
+
 
 
 
 .submitContent {
 
-  padding:
 
-    1.2rem
 
-    0;
+  padding:
+
+
+
+    1.2rem
+
+
+
+    0;
+
+
 
 }
+
+
+
+
 
 
 
 .submitContent > p {
 
-  color:
 
-    rgba(
 
-      23,
-
-      23,
-
-      23,
-
-      0.65
-
-    );
+  color:
 
 
 
-  font-size: 0.85rem;
+    rgba(
 
-  line-height: 1.6;
+
+
+      23,
+
+
+
+      23,
+
+
+
+      23,
+
+
+
+      0.65
+
+
+
+    );
+
+
+
+
+
+
+
+  font-size: 0.85rem;
+
+
+
+  line-height: 1.6;
+
+
 
 }
+
+
+
+
 
 
 
 .submitStudent {
 
-  display: grid;
+
+
+  display: grid;
 
 
 
-  gap: 0.15rem;
 
 
 
-  margin-top: 0.8rem;
+
+  gap: 0.15rem;
 
 
 
-  padding: 0.8rem;
 
 
 
-  border:
 
-    1px solid
-
-    var(--border-color);
+  margin-top: 0.8rem;
 
 
 
-  border-radius: 12px;
 
 
 
-  background: var(--soft-purple);
+
+  padding: 0.8rem;
+
+
+
+
+
+
+
+  border:
+
+
+
+    1px solid
+
+
+
+    var(--border-color);
+
+
+
+
+
+
+
+  border-radius: 12px;
+
+
+
+
+
+
+
+  background: var(--soft-purple);
+
+
 
 }
+
+
+
+
 
 
 
 .submitStudent span {
 
-  color: var(--main-color);
+
+
+  color: var(--main-color);
 
 
 
-  font-size: 0.82rem;
-
-  font-weight: 900;
 
 
 
-  overflow-wrap: anywhere;
+
+  font-size: 0.82rem;
+
+
+
+  font-weight: 900;
+
+
+
+
+
+
+
+  overflow-wrap: anywhere;
+
+
 
 }
+
+
+
+
 
 
 
 .submitStudent small {
 
-  color:
 
-    rgba(
 
-      23,
-
-      23,
-
-      23,
-
-      0.58
-
-    );
+  color:
 
 
 
-  font-size: 0.68rem;
+    rgba(
 
 
 
-  overflow-wrap: anywhere;
+      23,
+
+
+
+      23,
+
+
+
+      23,
+
+
+
+      0.58
+
+
+
+    );
+
+
+
+
+
+
+
+  font-size: 0.68rem;
+
+
+
+
+
+
+
+  overflow-wrap: anywhere;
+
+
 
 }
+
+
+
+
 
 
 
 .submitSummary {
 
-  display: grid;
+
+
+  display: grid;
 
 
 
-  grid-template-columns:
-
-    repeat(
-
-      2,
-
-      minmax(
-
-        0,
-
-        1fr
-
-      )
-
-    );
 
 
 
-  gap: 0.8rem;
+
+  grid-template-columns:
 
 
 
-  margin-top: 1rem;
+    repeat(
+
+
+
+      2,
+
+
+
+      minmax(
+
+
+
+        0,
+
+
+
+        1fr
+
+
+
+      )
+
+
+
+    );
+
+
+
+
+
+
+
+  gap: 0.8rem;
+
+
+
+
+
+
+
+  margin-top: 1rem;
+
+
 
 }
+
+
+
+
 
 
 
 .submitSummary div {
 
-  min-width: 0;
+
+
+  min-width: 0;
 
 
 
-  padding: 0.9rem;
 
 
 
-  border:
 
-    1px solid
-
-    var(--border-color);
+  padding: 0.9rem;
 
 
 
-  border-radius: 13px;
 
 
 
-  background: var(--soft-purple);
+
+  border:
+
+
+
+    1px solid
+
+
+
+    var(--border-color);
+
+
+
+
+
+
+
+  border-radius: 13px;
+
+
+
+
+
+
+
+  background: var(--soft-purple);
+
+
 
 }
+
+
+
+
 
 
 
 .submitSummary span {
 
-  display: block;
+
+
+  display: block;
 
 
 
-  margin-bottom: 0.3rem;
 
 
 
-  color:
 
-    rgba(
-
-      23,
-
-      23,
-
-      23,
-
-      0.52
-
-    );
+  margin-bottom: 0.3rem;
 
 
 
-  font-size: 0.68rem;
 
-  font-weight: 800;
+
+
+
+  color:
+
+
+
+    rgba(
+
+
+
+      23,
+
+
+
+      23,
+
+
+
+      23,
+
+
+
+      0.52
+
+
+
+    );
+
+
+
+
+
+
+
+  font-size: 0.68rem;
+
+
+
+  font-weight: 800;
+
+
 
 }
+
+
+
+
 
 
 
 .submitSummary strong {
 
-  display: block;
+
+
+  display: block;
 
 
 
-  color: var(--main-color);
 
 
 
-  font-size: 0.85rem;
 
-  font-weight: 900;
-
+  color: var(--main-color);
 
 
-  overflow-wrap: anywhere;
+
+
+
+
+
+  font-size: 0.85rem;
+
+
+
+  font-weight: 900;
+
+
+
+
+
+
+
+  overflow-wrap: anywhere;
+
+
 
 }
+
+
+
+
 
 
 
 .submitActions {
 
-  display: flex;
+
+
+  display: flex;
 
 
 
-  justify-content:
-
-    flex-end;
 
 
 
-  align-items: stretch;
+
+  justify-content:
 
 
 
-  flex-wrap: wrap;
+    flex-end;
 
 
 
-  gap: 0.8rem;
+
+
+
+
+  align-items: stretch;
+
+
+
+
+
+
+
+  flex-wrap: wrap;
+
+
+
+
+
+
+
+  gap: 0.8rem;
+
+
 
 }
+
+
+
+
 
 
 
 .submitActions
 
-  :global(.app-button) {
 
-  flex:
 
-    0
-
-    1
-
-    auto;
+  :global(.app-button) {
 
 
 
-  width: auto;
+  flex:
 
 
 
-  max-width: 100%;
+    0
+
+
+
+    1
+
+
+
+    auto;
+
+
+
+
+
+
+
+  width: auto;
+
+
+
+
+
+
+
+  max-width: 100%;
+
+
 
 }
 
 
 
-/\* =========================================================
 
-   Responsive - Tablet
 
-   ========================================================= \*/
 
-
-
-@media (
-
-  max-width: 1100px
-
-) {
-
-  .header {
-
-    grid-template-columns:
-
-      auto
-
-      1fr;
-
-  }
-
-
-
-  .studentIdentity {
-
-    justify-self: end;
-
-  }
-
-
-
-  .headerStats {
-
-    grid-column:
-
-      1 / -1;
-
-
-
-    justify-content:
-
-      flex-end;
-
-  }
-
-
-
-  .layout {
-
-    grid-template-columns:
-
-      1fr;
-
-  }
-
-
-
-  .questionPanel {
-
-    position: static;
-
-  }
-
-
-
-  .questionList {
-
-    display: flex;
-
-
-
-    max-height: none;
-
-
-
-    overflow-x: auto;
-
-    overflow-y: hidden;
-
-
-
-    padding-bottom: 0.25rem;
-
-  }
-
-
-
-  .questionItem {
-
-    min-width: 220px;
-
-  }
-
-
-
-  .specialTools {
-
-    grid-template-columns:
-
-      1fr;
-
-  }
-
-}
-
-
-
-/\* =========================================================
-
-   Responsive - Mobile
-
-   ========================================================= \*/
-
-
-
-@media (
-
-  max-width: 700px
-
-) {
-
-  .page {
-
-    padding: 0.6rem;
-
-  }
-
-
-
-  .card {
-
-    width: 100%;
-
-
-
-    padding: 1rem;
-
-
-
-    border-radius: 22px;
-
-  }
-
-
-
-  .header {
-
-    grid-template-columns:
-
-      1fr;
-
-
-
-    gap: 0.9rem;
-
-  }
-
-
-
-  .brandBlock,
-
-  .studentIdentity {
-
-    justify-self: start;
-
-  }
-
-
-
-  .studentIdentity {
-
-    width: 100%;
-
-  }
-
-
-
-  .headerStats {
-
-    width: 100%;
-
-
-
-    display: grid;
-
-
-
-    grid-template-columns:
-
-      repeat(
-
-        2,
-
-        minmax(
-
-          0,
-
-          1fr
-
-        )
-
-      );
-
-
-
-    gap: 0.6rem;
-
-  }
-
-
-
-  .timerBox,
-
-  .progressBox {
-
-    min-width: 0;
-
-  }
-
-
-
-  .questionPanel {
-
-    padding: 0.85rem;
-
-  }
-
-
-
-  .questionArea {
-
-    padding: 1rem;
-
-  }
-
-
-
-  .questionHeader {
-
-    flex-direction: column;
-
-
-
-    align-items: stretch;
-
-  }
-
-
-
-  .pointsBadge {
-
-    width: fit-content;
-
-  }
-
-
-
-  .developmentHeader {
-
-    align-items: stretch;
-
-
-
-    flex-direction: column;
-
-  }
-
-
-
-  .symbolToggleButton {
-
-    width: 100%;
-
-  }
-
-
-
-  .developmentBox textarea {
-
-    min-height: 300px;
-
-  }
-
-
-
-  .fractionRow {
-
-    grid-template-columns:
-
-      minmax(0, 1fr)
-
-      auto
-
-      minmax(0, 1fr);
-
-  }
-
-
-
-  .fractionRow button {
-
-    grid-column:
-
-      1 / -1;
-
-
-
-    width: 100%;
-
-  }
-
-
-
-  .multipleChoiceNotice {
-
-    grid-template-columns:
-
-      1fr;
-
-  }
-
-
-
-  .multipleChoiceNoticeIcon {
-
-    width: 34px;
-
-    height: 34px;
-
-  }
-
-
-
-  .multipleChoiceButton {
-
-    grid-template-columns:
-
-      auto
-
-      auto
-
-      minmax(0, 1fr);
-
-  }
-
-
-
-  /\* =====================================================
-
-     Main quiz navigation buttons
-
-     ===================================================== \*/
-
-
-
-  .actions {
-
-    width: 100%;
-
-
-
-    display: grid;
-
-
-
-    grid-template-columns:
-
-      1fr;
-
-
-
-    gap: 0.75rem;
-
-  }
-
-
-
-  .actions
-
-    :global(.app-button) {
-
-    width: 100%;
-
-
-
-    min-width: 0;
-
-
-
-    max-width: 100%;
-
-  }
-
-
-
-  /\* =====================================================
-
-     Submitted / result cards
-
-     ===================================================== \*/
-
-
-
-  .submittedCard,
-
-  .errorCard {
-
-    margin:
-
-      1.5rem auto
-
-      0;
-
-
-
-    padding: 1.4rem;
-
-  }
-
-
-
-  .submittedInfo,
-
-  .submitSummary {
-
-    grid-template-columns:
-
-      1fr;
-
-  }
-
-
-
-  .resultSummary {
-
-    grid-template-columns:
-
-      1fr;
-
-  }
-
-
-
-  /\*
-
-   \* Important fix for:
-
-   \* - Give feedback
-
-   \* - View correction
-
-   \* - other translated result buttons
-
-   \*/
-
-
-
-  .resultActions {
-
-    display: grid;
-
-
-
-    grid-template-columns:
-
-      1fr;
-
-
-
-    width: 100%;
-
-
-
-    gap: 0.75rem;
-
-  }
-
-
-
-  .resultActions
-
-    :global(.app-button) {
-
-    width: 100%;
-
-
-
-    min-width: 0;
-
-
-
-    max-width: 100%;
-
-  }
-
-
-
-  /\* =====================================================
-
-     Submit modal
-
-     ===================================================== \*/
-
-
-
-  .submitOverlay {
-
-    align-items: flex-end;
-
-
-
-    padding: 0;
-
-  }
-
-
-
-  .submitModal {
-
-    width: 100%;
-
-
-
-    max-height: 92vh;
-
-    max-height: 92dvh;
-
-
-
-    padding: 1.2rem;
-
-
-
-    border-right: none;
-
-    border-bottom: none;
-
-    border-left: none;
-
-
-
-    border-radius:
-
-      24px
-
-      24px
-
-      0
-
-      0;
-
-  }
-
-
-
-  .submitActions {
-
-    display: grid;
-
-
-
-    grid-template-columns:
-
-      1fr;
-
-
-
-    width: 100%;
-
-  }
-
-
-
-  .submitActions
-
-    :global(.app-button) {
-
-    width: 100%;
-
-
-
-    min-width: 0;
-
-
-
-    max-width: 100%;
-
-  }
-
-}
-
-
-
-/\* =========================================================
-
-   Responsive - Small mobile
-
-   ========================================================= \*/
-
-
-
-@media (
-
-  max-width: 480px
-
-) {
-
-  .page {
-
-    padding: 0.45rem;
-
-  }
-
-
-
-  .card {
-
-    padding: 0.85rem;
-
-  }
-
-
-
-  .questionItem {
-
-    min-width: 185px;
-
-  }
-
-
-
-  .headerStats {
-
-    grid-template-columns:
-
-      1fr;
-
-  }
-
-
-
-  .developmentBox textarea {
-
-    min-height: 250px;
-
-  }
-
-
-
-  .choiceButton {
-
-    padding: 0.75rem;
-
-  }
-
-
-
-  .multipleChoiceButton {
-
-    grid-template-columns:
-
-      auto
-
-      minmax(0, 1fr);
-
-
-
-    gap: 0.65rem;
-
-  }
-
-
-
-  .multipleChoiceButton
-
-    .choiceLetter {
-
-    display: none;
-
-  }
-
-
-
-  .multipleChoiceCheck {
-
-    width: 30px;
-
-    height: 30px;
-
-  }
-
-
-
-  .questionHeader h1 {
-
-    font-size:
-
-      clamp(
-
-        1.35rem,
-
-        7vw,
-
-        1.8rem
-
-      );
-
-  }
-
-
-
-  .submittedCard h1,
-
-  .errorCard h1 {
-
-    font-size: 1.65rem;
-
-  }
-
-
-
-  .submitModalHeader h2 {
-
-    font-size: 1.45rem;
-
-  }
-
-}
 
 /* =========================================================
-   Five-minute warning modal
+
+
+
+   Responsive - Tablet
+
+
+
    ========================================================= */
 
-.timeWarningOverlay {
-  position: fixed;
-  inset: 0;
-  z-index: 1200;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 1.2rem;
-  background: rgba(17, 10, 28, 0.62);
-  backdrop-filter: blur(4px);
+
+
+
+
+
+
+@media (
+
+
+
+  max-width: 1100px
+
+
+
+) {
+
+
+
+  .header {
+
+
+
+    grid-template-columns:
+
+
+
+      auto
+
+
+
+      1fr;
+
+
+
+  }
+
+
+
+
+
+
+
+  .studentIdentity {
+
+
+
+    justify-self: end;
+
+
+
+  }
+
+
+
+
+
+
+
+  .headerStats {
+
+
+
+    grid-column:
+
+
+
+      1 / -1;
+
+
+
+
+
+
+
+    justify-content:
+
+
+
+      flex-end;
+
+
+
+  }
+
+
+
+
+
+
+
+  .layout {
+
+
+
+    grid-template-columns:
+
+
+
+      1fr;
+
+
+
+  }
+
+
+
+
+
+
+
+  .questionPanel {
+
+
+
+    position: static;
+
+
+
+  }
+
+
+
+
+
+
+
+  .questionList {
+
+
+
+    display: flex;
+
+
+
+
+
+
+
+    max-height: none;
+
+
+
+
+
+
+
+    overflow-x: auto;
+
+
+
+    overflow-y: hidden;
+
+
+
+
+
+
+
+    padding-bottom: 0.25rem;
+
+
+
+  }
+
+
+
+
+
+
+
+  .questionItem {
+
+
+
+    min-width: 220px;
+
+
+
+  }
+
+
+
+
+
+
+
+  .specialTools {
+
+
+
+    grid-template-columns:
+
+
+
+      1fr;
+
+
+
+  }
+
+
+
 }
+
+
+
+
+
+
+
+/* =========================================================
+
+
+
+   Responsive - Mobile
+
+
+
+   ========================================================= */
+
+
+
+
+
+
+
+@media (
+
+
+
+  max-width: 700px
+
+
+
+) {
+
+
+
+  .page {
+
+
+
+    padding: 0.6rem;
+
+
+
+  }
+
+
+
+
+
+
+
+  .card {
+
+
+
+    width: 100%;
+
+
+
+
+
+
+
+    padding: 1rem;
+
+
+
+
+
+
+
+    border-radius: 22px;
+
+
+
+  }
+
+
+
+
+
+
+
+  .header {
+
+
+
+    grid-template-columns:
+
+
+
+      1fr;
+
+
+
+
+
+
+
+    gap: 0.9rem;
+
+
+
+  }
+
+
+
+
+
+
+
+  .brandBlock,
+
+
+
+  .studentIdentity {
+
+
+
+    justify-self: start;
+
+
+
+  }
+
+
+
+
+
+
+
+  .studentIdentity {
+
+
+
+    width: 100%;
+
+
+
+  }
+
+
+
+
+
+
+
+  .headerStats {
+
+
+
+    width: 100%;
+
+
+
+
+
+
+
+    display: grid;
+
+
+
+
+
+
+
+    grid-template-columns:
+
+
+
+      repeat(
+
+
+
+        2,
+
+
+
+        minmax(
+
+
+
+          0,
+
+
+
+          1fr
+
+
+
+        )
+
+
+
+      );
+
+
+
+
+
+
+
+    gap: 0.6rem;
+
+
+
+  }
+
+
+
+
+
+
+
+  .timerBox,
+
+
+
+  .progressBox {
+
+
+
+    min-width: 0;
+
+
+
+  }
+
+
+
+
+
+
+
+  .questionPanel {
+
+
+
+    padding: 0.85rem;
+
+
+
+  }
+
+
+
+
+
+
+
+  .questionArea {
+
+
+
+    padding: 1rem;
+
+
+
+  }
+
+
+
+
+
+
+
+  .questionHeader {
+
+
+
+    flex-direction: column;
+
+
+
+
+
+
+
+    align-items: stretch;
+
+
+
+  }
+
+
+
+
+
+
+
+  .pointsBadge {
+
+
+
+    width: fit-content;
+
+
+
+  }
+
+
+
+
+
+
+
+  .developmentHeader {
+
+
+
+    align-items: stretch;
+
+
+
+
+
+
+
+    flex-direction: column;
+
+
+
+  }
+
+
+
+
+
+
+
+  .symbolToggleButton {
+
+
+
+    width: 100%;
+
+
+
+  }
+
+
+
+
+
+
+
+  .developmentBox textarea {
+
+
+
+    min-height: 300px;
+
+
+
+  }
+
+
+
+
+
+
+
+  .fractionRow {
+
+
+
+    grid-template-columns:
+
+
+
+      minmax(0, 1fr)
+
+
+
+      auto
+
+
+
+      minmax(0, 1fr);
+
+
+
+  }
+
+
+
+
+
+
+
+  .fractionRow button {
+
+
+
+    grid-column:
+
+
+
+      1 / -1;
+
+
+
+
+
+
+
+    width: 100%;
+
+
+
+  }
+
+
+
+
+
+
+
+  .multipleChoiceNotice {
+
+
+
+    grid-template-columns:
+
+
+
+      1fr;
+
+
+
+  }
+
+
+
+
+
+
+
+  .multipleChoiceNoticeIcon {
+
+
+
+    width: 34px;
+
+
+
+    height: 34px;
+
+
+
+  }
+
+
+
+
+
+
+
+  .multipleChoiceButton {
+
+
+
+    grid-template-columns:
+
+
+
+      auto
+
+
+
+      auto
+
+
+
+      minmax(0, 1fr);
+
+
+
+  }
+
+
+
+
+
+
+
+  /* =====================================================
+
+
+
+     Main quiz navigation buttons
+
+
+
+     ===================================================== */
+
+
+
+
+
+
+
+  .actions {
+
+
+
+    width: 100%;
+
+
+
+
+
+
+
+    display: grid;
+
+
+
+
+
+
+
+    grid-template-columns:
+
+
+
+      1fr;
+
+
+
+
+
+
+
+    gap: 0.75rem;
+
+
+
+  }
+
+
+
+
+
+
+
+  .actions
+
+
+
+    :global(.app-button) {
+
+
+
+    width: 100%;
+
+
+
+
+
+
+
+    min-width: 0;
+
+
+
+
+
+
+
+    max-width: 100%;
+
+
+
+  }
+
+
+
+
+
+
+
+  /* =====================================================
+
+
+
+     Submitted / result cards
+
+
+
+     ===================================================== */
+
+
+
+
+
+
+
+  .submittedCard,
+
+
+
+  .errorCard {
+
+
+
+    margin:
+
+
+
+      1.5rem auto
+
+
+
+      0;
+
+
+
+
+
+
+
+    padding: 1.4rem;
+
+
+
+  }
+
+
+
+
+
+
+
+  .submittedInfo,
+
+
+
+  .submitSummary {
+
+
+
+    grid-template-columns:
+
+
+
+      1fr;
+
+
+
+  }
+
+
+
+
+
+
+
+  .resultSummary {
+
+
+
+    grid-template-columns:
+
+
+
+      1fr;
+
+
+
+  }
+
+
+
+
+
+
+
+  /*
+
+
+
+   * Important fix for:
+
+
+
+   * - Give feedback
+
+
+
+   * - View correction
+
+
+
+   * - other translated result buttons
+
+
+
+   */
+
+
+
+
+
+
+
+  .resultActions {
+
+
+
+    display: grid;
+
+
+
+
+
+
+
+    grid-template-columns:
+
+
+
+      1fr;
+
+
+
+
+
+
+
+    width: 100%;
+
+
+
+
+
+
+
+    gap: 0.75rem;
+
+
+
+  }
+
+
+
+
+
+
+
+  .resultActions
+
+
+
+    :global(.app-button) {
+
+
+
+    width: 100%;
+
+
+
+
+
+
+
+    min-width: 0;
+
+
+
+
+
+
+
+    max-width: 100%;
+
+
+
+  }
+
+
+
+
+
+
+
+  /* =====================================================
+
+
+
+     Submit modal
+
+
+
+     ===================================================== */
+
+
+
+
+
+
+
+  .submitOverlay {
+
+
+
+    align-items: flex-end;
+
+
+
+
+
+
+
+    padding: 0;
+
+
+
+  }
+
+
+
+
+
+
+
+  .submitModal {
+
+
+
+    width: 100%;
+
+
+
+
+
+
+
+    max-height: 92vh;
+
+
+
+    max-height: 92dvh;
+
+
+
+
+
+
+
+    padding: 1.2rem;
+
+
+
+
+
+
+
+    border-right: none;
+
+
+
+    border-bottom: none;
+
+
+
+    border-left: none;
+
+
+
+
+
+
+
+    border-radius:
+
+
+
+      24px
+
+
+
+      24px
+
+
+
+      0
+
+
+
+      0;
+
+
+
+  }
+
+
+
+
+
+
+
+  .submitActions {
+
+
+
+    display: grid;
+
+
+
+
+
+
+
+    grid-template-columns:
+
+
+
+      1fr;
+
+
+
+
+
+
+
+    width: 100%;
+
+
+
+  }
+
+
+
+
+
+
+
+  .submitActions
+
+
+
+    :global(.app-button) {
+
+
+
+    width: 100%;
+
+
+
+
+
+
+
+    min-width: 0;
+
+
+
+
+
+
+
+    max-width: 100%;
+
+
+
+  }
+
+
+
+}
+
+
+
+
+
+
+
+/* =========================================================
+
+
+
+   Responsive - Small mobile
+
+
+
+   ========================================================= */
+
+
+
+
+
+
+
+@media (
+
+
+
+  max-width: 480px
+
+
+
+) {
+
+
+
+  .page {
+
+
+
+    padding: 0.45rem;
+
+
+
+  }
+
+
+
+
+
+
+
+  .card {
+
+
+
+    padding: 0.85rem;
+
+
+
+  }
+
+
+
+
+
+
+
+  .questionItem {
+
+
+
+    min-width: 185px;
+
+
+
+  }
+
+
+
+
+
+
+
+  .headerStats {
+
+
+
+    grid-template-columns:
+
+
+
+      1fr;
+
+
+
+  }
+
+
+
+
+
+
+
+  .developmentBox textarea {
+
+
+
+    min-height: 250px;
+
+
+
+  }
+
+
+
+
+
+
+
+  .choiceButton {
+
+
+
+    padding: 0.75rem;
+
+
+
+  }
+
+
+
+
+
+
+
+  .multipleChoiceButton {
+
+
+
+    grid-template-columns:
+
+
+
+      auto
+
+
+
+      minmax(0, 1fr);
+
+
+
+
+
+
+
+    gap: 0.65rem;
+
+
+
+  }
+
+
+
+
+
+
+
+  .multipleChoiceButton
+
+
+
+    .choiceLetter {
+
+
+
+    display: none;
+
+
+
+  }
+
+
+
+
+
+
+
+  .multipleChoiceCheck {
+
+
+
+    width: 30px;
+
+
+
+    height: 30px;
+
+
+
+  }
+
+
+
+
+
+
+
+  .questionHeader h1 {
+
+
+
+    font-size:
+
+
+
+      clamp(
+
+
+
+        1.35rem,
+
+
+
+        7vw,
+
+
+
+        1.8rem
+
+
+
+      );
+
+
+
+  }
+
+
+
+
+
+
+
+  .submittedCard h1,
+
+
+
+  .errorCard h1 {
+
+
+
+    font-size: 1.65rem;
+
+
+
+  }
+
+
+
+
+
+
+
+  .submitModalHeader h2 {
+
+
+
+    font-size: 1.45rem;
+
+
+
+  }
+
+
+
+}
+
+
+
+/* =========================================================
+
+   Five-minute warning modal
+
+   ========================================================= */
+
+
+
+.timeWarningOverlay {
+
+  position: fixed;
+
+  inset: 0;
+
+  z-index: 1200;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  padding: 1.2rem;
+
+  background: rgba(17, 10, 28, 0.62);
+
+  backdrop-filter: blur(4px);
+
+}
+
+
 
 .timeWarningModal {
+
   width: min(500px, 100%);
+
   padding: 2rem;
+
   border: 1px solid rgba(42, 3, 105, 0.18);
+
   border-radius: 24px;
+
   background: #ffffff;
+
   text-align: center;
+
   box-shadow: 0 24px 70px rgba(17, 10, 28, 0.24);
+
 }
+
+
 
 .timeWarningIcon {
+
   width: 64px;
+
   height: 64px;
+
   display: inline-flex;
+
   align-items: center;
+
   justify-content: center;
+
   margin-bottom: 1rem;
+
   border-radius: 50%;
+
   background: var(--main-color);
+
   color: #ffffff;
+
   font-size: 1.45rem;
+
   font-weight: 900;
+
 }
+
+
 
 .timeWarningModal h2 {
+
   margin: 0;
+
   color: var(--main-color);
+
   font-size: clamp(1.35rem, 4vw, 1.8rem);
+
   font-weight: 900;
+
   line-height: 1.25;
+
 }
+
+
 
 .timeWarningModal p {
+
   max-width: 390px;
+
   margin: 0.7rem auto 0;
+
   color: rgba(23, 23, 23, 0.66);
+
   font-size: 0.88rem;
+
   font-weight: 650;
+
   line-height: 1.55;
+
 }
+
+
 
 .timeWarningTimer {
+
   width: fit-content;
+
   min-width: 150px;
+
   margin: 1.3rem auto;
+
   padding: 0.8rem 1rem;
+
   border: 1px solid rgba(42, 3, 105, 0.16);
+
   border-radius: 14px;
+
   background: var(--soft-purple);
+
   color: var(--main-color);
+
   font-size: 1.25rem;
+
   font-weight: 900;
+
   font-variant-numeric: tabular-nums;
+
 }
+
+
 
 .timeWarningButton {
+
   min-width: 140px;
+
   min-height: 46px;
+
   padding: 0.7rem 1.2rem;
+
   border: none;
+
   border-radius: 12px;
+
   background: var(--main-color);
+
   color: #ffffff;
+
   font: inherit;
+
   font-size: 0.86rem;
+
   font-weight: 900;
+
   cursor: pointer;
+
   transition:
+
     transform 0.2s ease,
+
     box-shadow 0.2s ease;
+
 }
+
+
 
 .timeWarningButton:hover {
+
   transform: translateY(-1px);
+
   box-shadow: 0 10px 24px rgba(42, 3, 105, 0.2);
+
 }
+
+
 
 .timeWarningButton:focus-visible {
+
   outline: 3px solid rgba(42, 3, 105, 0.22);
+
   outline-offset: 3px;
+
 }
+
+
 
 @media (max-width: 560px) {
+
   .timeWarningOverlay {
+
     padding: 0.9rem;
+
   }
+
+
 
   .timeWarningModal {
+
     padding: 1.6rem 1.1rem;
+
     border-radius: 20px;
+
   }
+
+
 
   .timeWarningIcon {
+
     width: 56px;
+
     height: 56px;
+
     font-size: 1.25rem;
+
   }
 
+
+
   .timeWarningTimer,
+
   .timeWarningButton {
+
     width: 100%;
+
   }
+
 }
+
 
