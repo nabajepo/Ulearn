@@ -1184,8 +1184,7 @@
 "attempts": {
     "grading": {
       "unauthorized": "Ntimwemerewe gukosora iki kigeragezo."
-    }
-  },
+    },
   "pin": {
     "incorrect": "NIP wanditse si yo.",
     "invalidFormat": "NIP itegerezwa kuba igizwe n’imibare 6.",
@@ -1210,7 +1209,7 @@
     "serverError": "Habaye ikibazo. Subira ugerageze.",
     "created": "Igikorwa cawe carakozwe.",
     "resumed": "Wasubiye mu gikorwa cawe."
-  },
+  }},
   "attemptGrading": {
   "loading": {
     "title": "Gufungura inyishu z'umunyeshure",

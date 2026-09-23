@@ -901,7 +901,7 @@
   "infoTitle": "Keep your PIN private",
   "infoText": "Your PIN protects your quiz attempt. Do not share it with other students.",
   "invalid": "Your PIN must contain exactly 6 digits.",
-  "incorrectPin": "Incorrect PIN.",
+  "incorrect": "Incorrect PIN.",
   "attemptsRemaining": "Attempts remaining",
   "locked": "Too many incorrect PIN attempts. Please try again in 15 minutes.",
   "resetRequired": "Your PIN must be reset before you can resume this quiz."
@@ -1190,8 +1190,7 @@
   "attempts": {
     "grading": {
       "unauthorized": "You are not authorized to grade this attempt."
-    }
-  },
+    },
   "pin": {
     "incorrect": "The PIN is incorrect.",
     "invalidFormat": "The PIN must contain exactly 6 digits.",
@@ -1216,7 +1215,7 @@
     "serverError": "Something went wrong. Please try again.",
     "created": "Your attempt has been created.",
     "resumed": "Your attempt has been resumed."
-  },
+  }},
   "attemptGrading": {
   "loading": {
     "title": "Opening student attempt",

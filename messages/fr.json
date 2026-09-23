@@ -893,7 +893,7 @@
   "infoTitle": "Gardez votre NIP confidentiel",
   "infoText": "Votre NIP protège votre tentative de quiz. Ne le partagez pas avec d'autres étudiants.",
   "invalid": "Votre NIP doit contenir exactement 6 chiffres.",
-  "incorrectPin": "NIP incorrect.",
+  "incorrect": "NIP incorrect.",
   "attemptsRemaining": "Tentatives restantes",
   "locked": "Trop de tentatives incorrectes. Veuillez réessayer dans 15 minutes.",
   "resetRequired": "Votre NIP doit être réinitialisé avant que vous puissiez reprendre ce quiz."
@@ -1182,8 +1182,7 @@
 "attempts": {
     "grading": {
       "unauthorized": "Vous n’êtes pas autorisé à corriger cette tentative."
-    }
-  },
+    },
   "pin": {
     "incorrect": "Le NIP est incorrect.",
     "invalidFormat": "Le NIP doit contenir exactement 6 chiffres.",
@@ -1208,7 +1207,7 @@
     "serverError": "Une erreur est survenue. Veuillez réessayer.",
     "created": "Votre tentative a été créée.",
     "resumed": "Votre tentative a été reprise."
-  },
+  }},
   "attemptGrading": {
   "loading": {
     "title": "Ouverture de la tentative",
@@ -1438,7 +1437,7 @@
     "forgot": "J’ai oublié mon NIP",
     "invalid": "Le NIP doit contenir exactement 6 chiffres.",
     "mismatch": "Les deux NIP ne correspondent pas.",
-    "incorrectPin": "Le NIP est incorrect.",
+    "incorrect": "Le NIP est incorrect.",
     "locked": "Trop de tentatives incorrectes. Réessayez dans {seconds} secondes.",
     "show": "Afficher le NIP",
 "hide": "Masquer le NIP",
