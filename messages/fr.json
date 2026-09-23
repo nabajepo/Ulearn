@@ -1457,7 +1457,8 @@
     "invalidCode": "Le code temporaire doit contenir exactement 6 chiffres.",
     "resetting": "Réinitialisation...",
     "confirm": "Définir le nouveau NIP",
-    "approvedDescription": "Entrez le code temporaire reçu, puis choisissez un nouveau NIP."
+    "approvedDescription": "Entrez le code temporaire reçu, puis choisissez un nouveau NIP.",
+    "waitingDescription": "En attente de confirmation de la réinitialisation..."
   },
 
   "completed": {

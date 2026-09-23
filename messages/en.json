@@ -1465,7 +1465,8 @@
     "invalidCode": "The temporary code must contain exactly 6 digits.",
     "resetting": "Resetting...",
     "confirm": "Set new PIN",
-"approvedDescription": "Enter the temporary code you received, then choose a new PIN."
+    "approvedDescription": "Enter the temporary code you received, then choose a new PIN.",
+    "waitingDescription":"Waiting for reset confirmation..."
   },
 
   "completed": {

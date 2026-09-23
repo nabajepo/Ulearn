@@ -1458,7 +1458,8 @@
     "invalidCode": "Kode y’igihe gito itegerezwa kuba igizwe n’imibare 6.",
     "resetting": "NIP iriko irahindurwa...",
     "confirm": "Shiraho NIP nshasha",
-    "approvedDescription": "Injiza kode y'agateganyo waronse, hanyuma uhitemwo NIP nshasha."
+    "approvedDescription": "Injiza kode y'agateganyo waronse, hanyuma uhitemwo NIP nshasha.",
+    "waitingDescription": "Turindiriye kwemezwa ko gusubiramwo..."
   },
 
   "completed": {
