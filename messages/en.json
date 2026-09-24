@@ -1492,7 +1492,8 @@
     "quizNotFound": "This quiz could not be found.",
     "invalidName": "Please enter your full name.",
     "invalidEmail": "Please enter a valid email address.",
-    "generic": "Something went wrong. Please try again."
+    "generic": "Something went wrong. Please try again.",
+    "missingLocalSession": "This quiz was already started in another browser or on another device. Your previous answers are not available in this browser. You must restart the quiz."
   }
 }
 

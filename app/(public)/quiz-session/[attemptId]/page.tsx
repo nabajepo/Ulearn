@@ -17,7 +17,6 @@ import HelpSupport from "@/components/HelpSupport";
 
 import {
   getAttempt,
-  saveAttemptAnswer,
   submitAttempt,
   type Attempt,
 } from "@/lib/services/attempts";
@@ -57,8 +56,24 @@ type SubmissionState =
   | "submitting"
   | "submitted";
 
+type LocalQuizSessionData = {
+  attemptId: string;
+  currentIndex: number;
+  answers: Attempt["answers"];
+  savedAt: string;
+};
+
 const FIVE_MINUTES_MS =
   5 * 60 * 1000;
+
+const LOCAL_SESSION_PREFIX =
+  "ulearn:quiz-session:";
+
+function getLocalSessionKey(
+  attemptId: string
+) {
+  return `${LOCAL_SESSION_PREFIX}${attemptId}`;
+}
 
 /* =========================================================
    Special characters
@@ -376,14 +391,6 @@ export default function QuizSessionPage() {
   ] =
     useState("");
 
-  const saveTimeoutRef =
-    useRef<
-      ReturnType<
-        typeof setTimeout
-      > |
-      null
-    >(null);
-
   const autoSubmittedRef =
     useRef(false);
 
@@ -453,8 +460,72 @@ export default function QuizSessionPage() {
           return;
         }
 
+        let restoredAttempt =
+          attemptData;
+
+        let restoredIndex =
+          0;
+
+        if (
+          attemptData.status ===
+          "in_progress"
+        ) {
+          try {
+            const rawLocalSession =
+              window.localStorage.getItem(
+                getLocalSessionKey(
+                  attemptData.id
+                )
+              );
+
+            if (
+              rawLocalSession
+            ) {
+              const localSession =
+                JSON.parse(
+                  rawLocalSession
+                ) as LocalQuizSessionData;
+
+              if (
+                localSession.attemptId ===
+                  attemptData.id &&
+                localSession.answers &&
+                typeof localSession.answers ===
+                  "object"
+              ) {
+                restoredAttempt = {
+                  ...attemptData,
+
+                  answers: {
+                    ...attemptData.answers,
+                    ...localSession.answers,
+                  },
+                };
+
+                if (
+                  Number.isInteger(
+                    localSession.currentIndex
+                  ) &&
+                  localSession.currentIndex >=
+                    0 &&
+                  localSession.currentIndex <
+                    attemptData.questionOrder.length
+                ) {
+                  restoredIndex =
+                    localSession.currentIndex;
+                }
+              }
+            }
+          } catch (error) {
+            console.error(
+              "Unable to restore local quiz session:",
+              error
+            );
+          }
+        }
+
         setAttempt(
-          attemptData
+          restoredAttempt
         );
 
         setQuiz(
@@ -465,16 +536,20 @@ export default function QuizSessionPage() {
           questionData
         );
 
+        setCurrentIndex(
+          restoredIndex
+        );
+
         const initialDrafts:
           Record<string, string> =
           {};
 
         for (
           const questionId of
-          attemptData.questionOrder
+          restoredAttempt.questionOrder
         ) {
           const answer =
-            attemptData.answers[
+            restoredAttempt.answers[
               questionId
             ];
 
@@ -554,6 +629,54 @@ export default function QuizSessionPage() {
       );
     };
   }, []);
+
+  /* =========================================================
+     Local quiz progress
+     ========================================================= */
+
+  useEffect(() => {
+    if (
+      !attempt ||
+      attempt.status !==
+        "in_progress"
+    ) {
+      return;
+    }
+
+    const localSession:
+      LocalQuizSessionData = {
+        attemptId:
+          attempt.id,
+
+        currentIndex,
+
+        answers:
+          attempt.answers,
+
+        savedAt:
+          new Date()
+            .toISOString(),
+      };
+
+    try {
+      window.localStorage.setItem(
+        getLocalSessionKey(
+          attempt.id
+        ),
+        JSON.stringify(
+          localSession
+        )
+      );
+    } catch (error) {
+      console.error(
+        "Unable to save local quiz session:",
+        error
+      );
+    }
+  }, [
+    attempt,
+    currentIndex,
+  ]);
 
   /* =========================================================
      Ordered questions
@@ -811,7 +934,10 @@ export default function QuizSessionPage() {
       currentQuestion.type !==
         "development" ||
       attempt.status !==
-        "in_progress"
+        "in_progress" ||
+      remainingMs <= 0 ||
+      submissionState ===
+        "submitting"
     ) {
       return;
     }
@@ -824,110 +950,49 @@ export default function QuizSessionPage() {
       value
     );
 
-    if (
-      saveTimeoutRef.current
-    ) {
-      clearTimeout(
-        saveTimeoutRef.current
-      );
-    }
+    const updatedAt =
+      new Date()
+        .toISOString();
 
-    setSavingState(
-      "saving"
+    setAttempt(
+      (
+        current
+      ) => {
+        if (
+          !current
+        ) {
+          return current;
+        }
+
+        return {
+          ...current,
+
+          answers: {
+            ...current.answers,
+
+            [questionId]: {
+              developmentAnswer:
+                value,
+
+              updatedAt,
+            },
+          },
+        };
+      }
     );
 
-    saveTimeoutRef.current =
-      setTimeout(
-        async () => {
-          try {
-            const result =
-              await saveAttemptAnswer(
-                attempt.id,
-                questionId,
-                {
-                  developmentAnswer:
-                    value,
-                }
-              );
+    setSavingState(
+      "saved"
+    );
 
-            if (
-              !result.success
-            ) {
-              setMessage(
-                t(
-                  "quizSession.messages.saveError"
-                )
-              );
-
-              setSavingState(
-                ""
-              );
-
-              return;
-            }
-
-            const updatedAt =
-              new Date()
-                .toISOString();
-
-            setAttempt(
-              (
-                current
-              ) => {
-                if (
-                  !current
-                ) {
-                  return current;
-                }
-
-                return {
-                  ...current,
-
-                  answers: {
-                    ...current.answers,
-
-                    [questionId]: {
-                      developmentAnswer:
-                        value,
-
-                      updatedAt,
-                    },
-                  },
-                };
-              }
-            );
-
-            setSavingState(
-              "saved"
-            );
-
-            window.setTimeout(
-              () => {
-                setSavingState(
-                  ""
-                );
-              },
-              1000
-            );
-          } catch (error) {
-            console.error(
-              "Unable to save development answer:",
-              error
-            );
-
-            setMessage(
-              t(
-                "quizSession.messages.saveError"
-              )
-            );
-
-            setSavingState(
-              ""
-            );
-          }
-        },
-        600
-      );
+    window.setTimeout(
+      () => {
+        setSavingState(
+          ""
+        );
+      },
+      1000
+    );
   }
 
   /* =========================================================
@@ -1091,7 +1156,7 @@ export default function QuizSessionPage() {
      QCM answer
      ========================================================= */
 
-  async function handleQcmAnswer(
+  function handleQcmAnswer(
     originalChoiceIndex:
       number
   ) {
@@ -1101,114 +1166,71 @@ export default function QuizSessionPage() {
       currentQuestion.type !==
         "qcm" ||
       attempt.status !==
-        "in_progress"
+        "in_progress" ||
+      remainingMs <= 0 ||
+      submissionState ===
+        "submitting"
     ) {
       return;
     }
-
-    setSavingState(
-      "saving"
-    );
 
     setMessage(
       ""
     );
 
-    try {
-      const result =
-        await saveAttemptAnswer(
-          attempt.id,
-          currentQuestion.id,
-          {
-            selectedChoiceIndex:
-              originalChoiceIndex,
-          }
-        );
+    const questionId =
+      currentQuestion.id;
 
-      if (
-        !result.success
-      ) {
-        setMessage(
-          t(
-            "quizSession.messages.saveError"
-          )
-        );
+    const updatedAt =
+      new Date()
+        .toISOString();
 
+    setAttempt(
+      (
+        current
+      ) => {
+        if (
+          !current
+        ) {
+          return current;
+        }
+
+        return {
+          ...current,
+
+          answers: {
+            ...current.answers,
+
+            [questionId]: {
+              selectedChoiceIndex:
+                originalChoiceIndex,
+
+              updatedAt,
+            },
+          },
+        };
+      }
+    );
+
+    setSavingState(
+      "saved"
+    );
+
+    window.setTimeout(
+      () => {
         setSavingState(
           ""
         );
-
-        return;
-      }
-
-      const updatedAt =
-        new Date()
-          .toISOString();
-
-      setAttempt(
-        (
-          current
-        ) => {
-          if (
-            !current
-          ) {
-            return current;
-          }
-
-          return {
-            ...current,
-
-            answers: {
-              ...current.answers,
-
-              [
-                currentQuestion.id
-              ]: {
-                selectedChoiceIndex:
-                  originalChoiceIndex,
-
-                updatedAt,
-              },
-            },
-          };
-        }
-      );
-
-      setSavingState(
-        "saved"
-      );
-
-      window.setTimeout(
-        () => {
-          setSavingState(
-            ""
-          );
-        },
-        1000
-      );
-    } catch (error) {
-      console.error(
-        "Unable to save QCM answer:",
-        error
-      );
-
-      setMessage(
-        t(
-          "quizSession.messages.saveError"
-        )
-      );
-
-      setSavingState(
-        ""
-      );
-    }
+      },
+      1000
+    );
   }
 
   /* =========================================================
      Multiple-choice answer
      ========================================================= */
 
-  async function handleMultipleChoiceAnswer(
+  function handleMultipleChoiceAnswer(
     originalChoiceIndex:
       number
   ) {
@@ -1218,7 +1240,10 @@ export default function QuizSessionPage() {
       currentQuestion.type !==
         "multiple_choice" ||
       attempt.status !==
-        "in_progress"
+        "in_progress" ||
+      remainingMs <= 0 ||
+      submissionState ===
+        "submitting"
     ) {
       return;
     }
@@ -1257,102 +1282,56 @@ export default function QuizSessionPage() {
         second
     );
 
-    setSavingState(
-      "saving"
-    );
-
     setMessage(
       ""
     );
 
-    try {
-      const result =
-        await saveAttemptAnswer(
-          attempt.id,
-          currentQuestion.id,
-          {
-            selectedChoiceIndexes:
-              nextIndexes,
-          }
-        );
+    const questionId =
+      currentQuestion.id;
 
-      if (
-        !result.success
-      ) {
-        setMessage(
-          t(
-            "quizSession.messages.saveError"
-          )
-        );
+    const updatedAt =
+      new Date()
+        .toISOString();
 
+    setAttempt(
+      (
+        current
+      ) => {
+        if (
+          !current
+        ) {
+          return current;
+        }
+
+        return {
+          ...current,
+
+          answers: {
+            ...current.answers,
+
+            [questionId]: {
+              selectedChoiceIndexes:
+                nextIndexes,
+
+              updatedAt,
+            },
+          },
+        };
+      }
+    );
+
+    setSavingState(
+      "saved"
+    );
+
+    window.setTimeout(
+      () => {
         setSavingState(
           ""
         );
-
-        return;
-      }
-
-      const updatedAt =
-        new Date()
-          .toISOString();
-
-      setAttempt(
-        (
-          current
-        ) => {
-          if (
-            !current
-          ) {
-            return current;
-          }
-
-          return {
-            ...current,
-
-            answers: {
-              ...current.answers,
-
-              [
-                currentQuestion.id
-              ]: {
-                selectedChoiceIndexes:
-                  nextIndexes,
-
-                updatedAt,
-              },
-            },
-          };
-        }
-      );
-
-      setSavingState(
-        "saved"
-      );
-
-      window.setTimeout(
-        () => {
-          setSavingState(
-            ""
-          );
-        },
-        1000
-      );
-    } catch (error) {
-      console.error(
-        "Unable to save multiple-choice answer:",
-        error
-      );
-
-      setMessage(
-        t(
-          "quizSession.messages.saveError"
-        )
-      );
-
-      setSavingState(
-        ""
-      );
-    }
+      },
+      1000
+    );
   }
 
   /* =========================================================
@@ -1434,21 +1413,33 @@ export default function QuizSessionPage() {
       return;
     }
 
-    if (
-      saveTimeoutRef.current
-    ) {
-      clearTimeout(
-        saveTimeoutRef.current
-      );
+    const finalAnswers = {
+      ...attempt.answers,
+    };
 
-      saveTimeoutRef.current =
-        null;
+    for (
+      const [
+        questionId,
+        developmentAnswer,
+      ] of Object.entries(
+        developmentDraftsRef.current
+      )
+    ) {
+      finalAnswers[
+        questionId
+      ] = {
+        developmentAnswer,
+
+        updatedAt:
+          new Date()
+            .toISOString(),
+      };
     }
 
     const result =
       await submitAttempt(
         attempt.id,
-        developmentDraftsRef.current
+        finalAnswers
       );
 
     if (
@@ -1497,6 +1488,19 @@ export default function QuizSessionPage() {
         };
       }
     );
+
+    try {
+      window.localStorage.removeItem(
+        getLocalSessionKey(
+          attempt.id
+        )
+      );
+    } catch (error) {
+      console.error(
+        "Unable to clear local quiz session:",
+        error
+      );
+    }
 
     setSubmissionState(
       "submitted"
@@ -1681,22 +1685,6 @@ export default function QuizSessionPage() {
     submitModalOpen,
     submissionState,
   ]);
-
-  /* =========================================================
-     Cleanup
-     ========================================================= */
-
-  useEffect(() => {
-    return () => {
-      if (
-        saveTimeoutRef.current
-      ) {
-        clearTimeout(
-          saveTimeoutRef.current
-        );
-      }
-    };
-  }, []);
 
   /* =========================================================
      Loading

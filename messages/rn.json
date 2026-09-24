@@ -1485,7 +1485,8 @@
     "quizNotFound": "Iki kibazo nticabonetse.",
     "invalidName": "Andika amazina yawe yose.",
     "invalidEmail": "Andika aderesi ya imeyili ikora.",
-    "generic": "Habaye ikibazo. Subira ugerageze."
+    "generic": "Habaye ikibazo. Subira ugerageze.",
+    "missingLocalSession": "Iki kibazo camaze gutangurirwa mu yindi navigateur canke ku kindi gikoresho. Inyishu zawe za mbere ntiziri muri iyi navigateur. Utegerezwa gusubira gutangura quiz."
   }
 }
 }

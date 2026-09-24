@@ -1484,7 +1484,8 @@
     "quizNotFound": "Ce quiz est introuvable.",
     "invalidName": "Veuillez entrer votre nom complet.",
     "invalidEmail": "Veuillez entrer une adresse courriel valide.",
-    "generic": "Une erreur est survenue. Veuillez réessayer."
+    "generic": "Une erreur est survenue. Veuillez réessayer.",
+    "missingLocalSession": "Ce quiz a déjà été commencé dans un autre navigateur ou sur un autre appareil. Les réponses précédentes ne sont pas disponibles sur ce navigateur. Vous devez recommencer le quiz."
   }
 }
 }

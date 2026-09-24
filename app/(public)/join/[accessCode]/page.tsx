@@ -222,6 +222,51 @@ const PIN_LENGTH = 6;
 
 const RESET_STATUS_POLL_MS = 5000;
 
+const LOCAL_SESSION_PREFIX =
+  "ulearn:quiz-session:";
+
+function getLocalSessionKey(
+  attemptId: string
+) {
+  return `${LOCAL_SESSION_PREFIX}${attemptId}`;
+}
+
+function hasLocalQuizSession(
+  attemptId: string
+) {
+  try {
+    const raw =
+      window.localStorage.getItem(
+        getLocalSessionKey(
+          attemptId
+        )
+      );
+
+    if (!raw) {
+      return false;
+    }
+
+    const parsed =
+      JSON.parse(raw) as {
+        attemptId?: unknown;
+        answers?: unknown;
+      };
+
+    return (
+      parsed.attemptId === attemptId &&
+      parsed.answers !== null &&
+      typeof parsed.answers === "object"
+    );
+  } catch (error) {
+    console.error(
+      "Unable to read local quiz session:",
+      error
+    );
+
+    return false;
+  }
+}
+
 
 
 /* =========================================================
@@ -250,7 +295,7 @@ function onlyDigits(value: string) {
 
 function isValidEmail(email: string) {
 
-  return /^[^\s@]+@[^\s@]+.[^\s@]+$/.test(email);
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
 }
 
@@ -2238,12 +2283,22 @@ export default function JoinQuizPage() {
 
       }
 
+      if (
+        !hasLocalQuizSession(
+          data.attemptId
+        )
+      ) {
+        setError(
+          t(
+            "join.errors.missingLocalSession"
+          )
+        );
 
+        return;
+      }
 
       router.push(
-
         `/quiz-session/${data.attemptId}`
-
       );
 
     } catch (resumeError) {
@@ -2908,12 +2963,22 @@ export default function JoinQuizPage() {
 
       }
 
+      if (
+        !hasLocalQuizSession(
+          data.attemptId
+        )
+      ) {
+        setError(
+          t(
+            "join.errors.missingLocalSession"
+          )
+        );
 
+        return;
+      }
 
       router.push(
-
         `/quiz-session/${data.attemptId}`
-
       );
 
     } catch (resetError) {
