@@ -33,7 +33,10 @@
       "label": "Akarorero k’ikibazo",
       "type": "QCM",
       "title": "Ibibazo vy’imibare y’ishimikiro",
-      "question": "2 + 2 bingana iki ?"
+      "question": "2 + 2 bingana iki ?",
+      "progress": "Ikibazo",
+      "questionLabel": "Ikibazo uriko",
+      "saved": "Inyishu yatowe"
     },
 
     "process": {
@@ -65,6 +68,16 @@
         "question": "ULearn ni iki?",
         "answer": "ULearn ni urubuga rufasha abarimu gukora amasuzuma kandi rugafasha abanyeshure kwiga biciye mu myimenyerezo itunganijwe."
       },
+      "studentSession": {
+  "badge": "Ivy’ingenzi ku banyeshure",
+  "question": "Noshobora guhindura navigateur canke igikoresho nkiri muri quiz?",
+  "answer":
+    "Oya. Umaze gutangura quiz, bandanya ukoresha navigateur n’igikoresho watanguriyeko gushika wohereje inyishu zawe. Aho ugeze habikwa vy’agateganyo muri iyo navigateur kugira ushobore kubandanya inyuma yo gusubiramwo urupapuro canke gusubiramwo NIP.",
+  "browser":
+    "Guma kuri navigateur n’igikoresho watanguriyeko mu kiringo cose ca quiz.",
+  "pin":"Niwibagira NIP yawe, koresha uburyo bwo kuyisubiramwo. Umwigisha amaze kwemeza ubusabe bwawe kandi code y’agateganyo imaze kwemezwa, urashobora gushiraho NIP nshasha hanyuma ukabandanya kuri iyo navigateur nyene."
+},
+
 
       "who": {
         "question": "ULearn yagenewe bande?",
@@ -105,7 +118,7 @@
 
     "start": {
       "title": "Witeguye gukora ikibazo cawe ca mbere?",
-      "description": "Injira hanyuma utangure gukora isuzuma ryawe rya mbere kuri ULearn."
+      "description": "Injira hanyuma utangure gukora isuzuma ryanyu rya mbere kuri ULearn."
     }
   },
 
@@ -116,11 +129,11 @@
 
     "signIn": {
       "title": "Kaze kuri ULearn",
-      "subtitle": "Injiza amakuru yawe yo kwinjira"
+      "subtitle": "Injiza amakuru yanyu yo kwinjira"
     },
 
     "signUp": {
-      "title": "Fungura konti yawe",
+      "title": "Fungura konti yanyu",
       "subtitle": "Bifata umwanya muto cane"
     }
   },
@@ -182,10 +195,10 @@
       "actionPlaceholder": "Akarorero: gukora quiz nshasha",
       "descriptionLabel": "Habaye iki?",
       "descriptionPlaceholder": "Sigura ikibazo, ubutumwa bw'ikosa canke ikintu kitagenze nk'uko wari witeze...",
-      "emailLabel": "Email yawe",
+      "emailLabel": "Email yanyu",
       "emailPlaceholder": "izina@akarorero.com",
       "optional": "Si ngombwa",
-      "emailHelp": "Shiramwo email yawe nimba ushaka ko tugusubiza.",
+      "emailHelp": "Shiramwo email yanyu nimba ushaka ko tugusubiza.",
       "characters": "inyuguti",
       "submit": "Rungika raporo",
       "preparing": "Turiko turategura raporo..."
@@ -198,7 +211,7 @@
 
     "success": {
       "title": "Raporo yateguwe",
-      "text": "Urakoze. Raporo yawe yateguwe neza.",
+      "text": "Urakoze. Raporo yanyu yateguwe neza.",
       "temporaryNotice": "Kurungika raporo kuri email bizongerwako mu kindi gice c'iterambere."
     },
 
@@ -221,7 +234,7 @@
   "loadingCreateTitle": "Gukora Quiz",
   "loadingCreateSubtitle": "Turiko turafungura aho ukorera quiz...",
   "loadingOpenTitle": "Gufungura Quiz",
-  "loadingOpenSubtitle": "Turiko turazana quiz yawe...",
+  "loadingOpenSubtitle": "Turiko turazana quiz yanyu...",
   "accessUnavailable": "Ntushobora kwinjira",
   "loadError": "Ntivyashobotse gufungura urupapuro rwawe.",
   "welcome": "Kaze",
@@ -229,10 +242,10 @@
 
   "create": {
     "title": "Kora Quiz",
-    "description": "Kora quiz yawe ishobora kugira gushika ku bibazo 50: QCM 40 n’ibibazo 10 bisaba inyishu zanditse.",
+    "description": "Kora quiz yanyu ishobora kugira gushika ku bibazo 50: QCM 40 n’ibibazo 10 bisaba inyishu zanditse.",
     "button": "Kora Quiz Nshasha",
     "alreadyCreated": "Quiz Yamaze Gukorwa",
-    "deleteCurrent": "Siba quiz yawe iriho nimba ushaka gukora iyindi.",
+    "deleteCurrent": "Siba quiz yanyu iriho nimba ushaka gukora iyindi.",
     "limit": "Muri iyi verisiyo ushobora gukora quiz imwe gusa."
   },
   "feedback": {
@@ -246,10 +259,10 @@
 
   "quizzes": {
     "title": "Quiz",
-    "description": "Raba quiz yawe, hindura ivyayo, uyitangure canke urabe abanyeshure bayikoresha.",
+    "description": "Raba quiz yanyu, hindura ivyayo, uyitangure canke urabe abanyeshure bayikoresha.",
     "open": "Fungura Quiz",
     "none": "Nta Quiz Iriho",
-    "manage": "Ushobora gutunganya quiz yawe iriho hano.",
+    "manage": "Ushobora gutunganya quiz yanyu iriho hano.",
     "createFirst": "Banza ukore quiz kugira iki gice gikore."
   }
 },
@@ -267,13 +280,13 @@
 "quizCreate": {
   "badge": "Igenamiterere rya quiz",
   "title": "Kora Quiz",
-  "subtitle": "Tunganya quiz yawe. Amatariki yose ya quiz ategerezwa kuba imbere y’igihe konti y’umwigisha izorangirira.",
+  "subtitle": "Tunganya quiz yanyu. Amatariki yose ya quiz ategerezwa kuba imbere y’igihe konti y’umwigisha izorangirira.",
   "backDashboard": "Subira ku rubuga nyamukuru",
   "accountValidUntil": "Konti izokora gushika",
 
   "loading": {
     "preparing": "Turiko turategura urupapuro rwo gukora quiz...",
-    "creatingTitle": "Turiko turakora quiz yawe",
+    "creatingTitle": "Turiko turakora quiz yanyu",
     "creatingSubtitle": "Turiko turabika igenamiterere rya quiz...",
     "returning": "Turiko turasubira ku rubuga nyamukuru..."
   },
@@ -382,13 +395,13 @@
     "titleRequired": "Umutwe wa quiz urakenewe.",
     "questionRange": "Igitigiri c’ibibazo gitegerezwa kuba hagati ya 1 na",
     "minimumPoints": "Quiz itegerezwa kugira nibura amanota 10.",
-    "accountExpired": "Konti yawe y’umwigisha yararangiye.",
+    "accountExpired": "Konti yanyu y’umwigisha yararangiye.",
     "startPast": "Itariki n’isaha yo gutangura ntibishobora kuba mu gihe carenganye.",
-    "startAfterExpiration": "Itariki yo gutangura ntishobora kurenga igihe konti yawe izorangirira.",
+    "startAfterExpiration": "Itariki yo gutangura ntishobora kurenga igihe konti yanyu izorangirira.",
     "sessionEndRequired": "Itariki n’isaha yo kurangiza isuzuma birakenewe.",
     "deadlineRequired": "Igihe ntarengwa co gutanga inyishu kirakenewe.",
     "deadlinePast": "Igihe ntarengwa ntigishobora kuba mu gihe carenganye.",
-    "deadlineAfterExpiration": "Igihe ntarengwa ca quiz ntigishobora kurenga igihe konti yawe izorangirira.",
+    "deadlineAfterExpiration": "Igihe ntarengwa ca quiz ntigishobora kurenga igihe konti yanyu izorangirira.",
     "sessionEndAfterStart": "Igihe co kurangiza gitegerezwa kuba inyuma y’igihe co gutangura.",
     "deadlineAfterStart": "Igihe ntarengwa gitegerezwa kuba inyuma y’igihe quiz itangurira.",
     "sessionStartRequired": "Isuzuma ryateguwe ritegerezwa kugira itariki n’isaha yo gutangura.",
@@ -492,7 +505,7 @@
     "launchError": "Ntivyashobotse gutangaza quiz.",
     "deleteError": "Ntivyashobotse gusiba quiz.",
     "deadlinePassed": "Igihe ntarengwa ca quiz cararangiye. Fungura igenamiterere rya quiz uhitemwo ikindi gihe imbere yo kuyitangaza.",
-    "accountExpired": "Konti yawe y’umwigisha yararangiye. Iyi quiz ntigishobora gutangazwa."
+    "accountExpired": "Konti yanyu y’umwigisha yararangiye. Iyi quiz ntigishobora gutangazwa."
   },
 
   "actions": {
@@ -656,7 +669,7 @@
     "status": {
       "inProgress": "Ariko arakora",
       "waitingCorrection": "Gukosora",
-      "graded": "Vyakozwe amanota"
+      "graded": "Yarakosowe"
     },
 
     "actions": {
@@ -872,7 +885,7 @@
   "checkNow": "Suzuma ubu",
   "approvedTitle": "Ubusabe bwemejwe",
   "approvedDescription": "Umwigisha wawe yemeje ubusabe. Injiza kode y'igihe gito yaguhaye hanyuma uhitemwo PIN nshasha.",
-  "approvedMessage": "Umwigisha wawe yakoze kode y'igihe gito. Musabe iyo kode kugira usubiremwo PIN yawe.",
+  "approvedMessage": "Umwigisha wawe yakoze kode y'igihe gito. Musabe iyo kode kugira usubiremwo PIN yanyu.",
   "codeLabel": "Kode y'igihe gito y'imibare 6",
   "codeHelp": "Injiza kode y'igihe gito y'imibare 6 wahawe n'umwigisha wawe.",
   "newPinLabel": "PIN nshasha y'imibare 6",
@@ -887,23 +900,23 @@
   "resetButton": "Subiramwo PIN yanje",
   "back": "Subira inyuma",
   "resettingTitle": "Turiko turasubiramwo PIN",
-  "resettingSubtitle": "Turiko turahindura PIN yawe kugira usubire kubandanya ikigeragezo...",
+  "resettingSubtitle": "Turiko turahindura PIN yanyu kugira usubire kubandanya ikigeragezo...",
   "error": "Ntibishobotse gusubiramwo PIN ubu. Subira ugerageze."
 },
  "pin": {
   "label": "PIN y'imibare 6",
-  "help": "Hitamwo PIN yawe bwite igizwe n'imibare 6. Uzoyikenera kugira usubire kubandanya ikibazo cawe niwava kuri uru rupapuro.",
-  "infoTitle": "Gumiza PIN yawe mw'ibanga",
-  "infoText": "PIN yawe irakingira ikigeragezo cawe. Ntuyisangize abandi banyeshure.",
-  "invalid": "PIN yawe itegerezwa kuba igizwe n'imibare 6 neza na neza.",
+  "help": "Hitamwo PIN yanyu bwite igizwe n'imibare 6. Uzoyikenera kugira usubire kubandanya ikibazo cawe niwava kuri uru rupapuro.",
+  "infoTitle": "Gumiza PIN yanyu mw'ibanga",
+  "infoText": "PIN yanyu irakingira ikigeragezo cawe. Ntuyisangize abandi banyeshure.",
+  "invalid": "PIN yanyu itegerezwa kuba igizwe n'imibare 6 neza na neza.",
   "incorrect": "PIN si yo.",
   "attemptsRemaining": "Igerageza risigaye",
   "locked": "Wagerageje PIN itari yo incuro nyinshi. Subira ugerageze inyuma y'iminota 15.",
-  "resetRequired": "PIN yawe itegerezwa gusubirwamwo imbere y'uko ubandanya iki kibazo."
+  "resetRequired": "PIN yanyu itegerezwa gusubirwamwo imbere y'uko ubandanya iki kibazo."
 },
   "starting": {
     "title": "Tugira dutanguze quiz...",
-    "subtitle": "Turiko turategura session yawe ya quiz..."
+    "subtitle": "Turiko turategura session yanyu ya quiz..."
   },
 
   "notFound": {
@@ -947,8 +960,8 @@
 
   "student": {
     "badge": "Kumenyekanisha umunyeshure",
-    "title": "Shiramwo amakuru yawe",
-    "description": "Izina ryawe na email yawe bizokoreshwa mu kumenya quiz yawe.",
+    "title": "Shiramwo amakuru yanyu",
+    "description": "Izina ryanyu na email yanyu bizokoreshwa mu kumenya quiz yanyu.",
     "name": "Izina ryose",
     "namePlaceholder": "Akarorero: Jean Dupont",
     "email": "Email",
@@ -957,8 +970,8 @@
   },
 
   "validation": {
-    "nameRequired": "Shiramwo izina ryawe ryose.",
-    "emailRequired": "Shiramwo email yawe.",
+    "nameRequired": "Shiramwo izina ryanyu ryose.",
+    "emailRequired": "Shiramwo email yanyu.",
     "invalidEmail": "Shiramwo email yemewe."
   },
 
@@ -971,17 +984,17 @@
   }
 },
 "quizSession": {
-  "loading": "Turiko turazana session ya quiz yawe...",
+  "loading": "Turiko turazana session ya quiz yanyu...",
 
   "access": {
     "title": "Quiz ntiboneka",
     "text": "Iyi session ya quiz ntiboneka canke ntiyashoboye kuzanwa.",
     "notFound": "Iki kigeragezo ca quiz nticabonetse.",
-    "loadError": "Ntivyashobotse kuzana session ya quiz yawe."
+    "loadError": "Ntivyashobotse kuzana session ya quiz yanyu."
   },
   "timeWarning": {
     "title": "Hasigaye iminota 5",
-    "text": "Ikibazo cawe kizorungikwa ubwaco igihe isaha izoshika kuri zero. Raba neza ko wishuye ibibazo vyawe.",
+    "text": "Ikibazo cawe kizorungikwa ubwaco igihe isaha izoshika kuri zero. Raba neza ko wishuye ibibazo vyanyu.",
     "acknowledge": "Sawa"
   },
 
@@ -1004,8 +1017,8 @@
   "question": {
     "label": "Ikibazo",
     "points": "amanota",
-    "developmentAnswer": "Inyishu yawe",
-    "developmentPlaceholder": "Andika inyishu yawe hano..."
+    "developmentAnswer": "Inyishu yanyu",
+    "developmentPlaceholder": "Andika inyishu yanyu hano..."
   },
 
   "choiceInstructions": {
@@ -1016,8 +1029,8 @@
   },
   "result": {
   "completedTitle": "Quiz yarangiye",
-  "completedText": "Quiz yawe yakosowe neza.",
-  "scoreHiddenText": "Quiz yawe yakosowe. Umwigisha yahisemwo kuterekana amanota ya nyuma.",
+  "completedText": "Quiz yanyu yakosowe neza.",
+  "scoreHiddenText": "Quiz yanyu yakosowe. Umwigisha yahisemwo kuterekana amanota ya nyuma.",
   "submittedTitle": "Quiz yatanzwe",
   "pendingText": "Umwigisha wawe aracarindiriye gukosora ibibazo bisaba inyishu zanditse imbere y’uko amanota ya nyuma aboneka.",
   "score": "Amanota",
@@ -1079,7 +1092,7 @@
   },
 
   "messages": {
-    "saveError": "Ntivyashobotse kubika inyishu yawe. Subira ugerageze.",
+    "saveError": "Ntivyashobotse kubika inyishu yanyu. Subira ugerageze.",
     "submitError": "Ntivyashobotse gutanga quiz. Subira ugerageze."
   }
 },
@@ -1094,7 +1107,7 @@
   },
 
   "rating": {
-    "label": "Amanota yawe",
+    "label": "Amanota yanyu",
     "help": "Hitamwo amanota kuva ku nyenyeri 1 gushika kuri 5.",
     "star": "inyenyeri",
     "stars": "inyenyeri",
@@ -1121,8 +1134,8 @@
     "ratingRequired": "Hitamwo amanota kuva ku nyenyeri 1 gushika kuri 5.",
     "commentRequired": "Andika iciyumviro cawe.",
     "commentTooShort": "Tanga amakuru yiyongereye gatoyi mu ciyumviro cawe.",
-    "studentIdentityMissing": "Amakuru ajanye n’igerageza rya quiz yawe ntiyabonetse.",
-    "teacherLoading": "Konti yawe y’umwigisha iracariko irazanwa.",
+    "studentIdentityMissing": "Amakuru ajanye n’igerageza rya quiz yanyu ntiyabonetse.",
+    "teacherLoading": "Konti yanyu y’umwigisha iracariko irazanwa.",
     "teacherRequired": "Utegerezwa kuba winjiye nk’umwigisha kugira utange iciyumviro.",
     "studentAlreadySubmitted": "Iciyumviro caramaze gutangwa kuri iri gerageza rya quiz.",
     "teacherAlreadySubmitted": "Waramaze gutanga iciyumviro.",
@@ -1172,7 +1185,7 @@
 
   "access": {
     "title": "Iciyumviro ntikiboneka",
-    "text": "Ntivyashobotse kuzana konti yawe y’umwigisha."
+    "text": "Ntivyashobotse kuzana konti yanyu y’umwigisha."
   },
 
   "actions": {
@@ -1189,8 +1202,8 @@
     "incorrect": "NIP wanditse si yo.",
     "invalidFormat": "NIP itegerezwa kuba igizwe n’imibare 6.",
     "locked": "Wagerageje kenshi NIP itari yo. Subira ugerageze mu nyuma.",
-    "resetRequired": "NIP yawe itegerezwa guhindurwa.",
-    "credentialError": "Ntivyashobotse kugenzura NIP yawe."
+    "resetRequired": "NIP yanyu itegerezwa guhindurwa.",
+    "credentialError": "Ntivyashobotse kugenzura NIP yanyu."
   },
   "start": {
     "invalidRequest": "Icisabisho ntigikora.",
@@ -1205,7 +1218,7 @@
     "alreadyGraded": "Iki gikorwa caramaze gukosorwa.",
     "invalidStatus": "Iki gikorwa ntigishobora gusubirwamwo.",
     "expired": "Igihe c’iki gikorwa cararangiye.",
-    "authenticationRequired": "Andika NIP yawe kugira usubire muri iki gikorwa.",
+    "authenticationRequired": "Andika NIP yanyu kugira usubire muri iki gikorwa.",
     "serverError": "Habaye ikibazo. Subira ugerageze.",
     "created": "Igikorwa cawe carakozwe.",
     "resumed": "Wasubiye mu gikorwa cawe."
@@ -1220,6 +1233,22 @@
     "pdfTitle": "Gutegura PDF",
     "pdfSubtitle": "Turiko turategura ikosorwa rya quiz muri PDF..."
   },
+  "search": {
+  "label": "Rondera ikibazo",
+  "placeholder": "Rondera ukoresheje inomero canke amajambo ari mu kibazo...",
+  "clear": "Hanagura ivyo warondera",
+  "filterLabel": "Toranya ibibazo ukurikije ubwoko",
+  "filters": {
+    "all": "Vyose",
+    "development": "Insiguro",
+    "qcm": "QCM",
+    "multipleChoice": "Inyishu nyinshi"
+  },
+  "results": "Ibibazo vyerekanwa:",
+  "reset": "Subiramwo ukurondera",
+  "noResultsTitle": "Nta kibazo cabonetse",
+  "noResultsText": "Gerageza ayandi majambo canke uhindure ubwoko bw'ibibazo."
+},
    "pdf": {
       "notReady": "Banza urangize gukosora imbere yo gukuraho PDF yakosowe."
     }
@@ -1332,7 +1361,7 @@
 
     "badge": "Ikosorwa ry'ikibazo",
 
-    "title": "Ikosorwa ryawe",
+    "title": "Ikosorwa ryanyu",
 
     "student": {
       "label": "Umunyeshure"
@@ -1371,7 +1400,7 @@
         "development": "Inyishu yanditswe"
       },
 
-      "yourAnswer": "Inyishu yawe",
+      "yourAnswer": "Inyishu yanyu",
       "yourChoice": "Ico wahisemwo",
       "correct": "Inyishu nziza",
       "noAnswer": "Nta nyishu yatanzwe kuri iki kibazo.",
@@ -1415,21 +1444,21 @@
 
   "identity": {
     "title": "Iyandikishe",
-    "description": "Andika amazina yawe yose n’aderesi ya imeyili kugira utangure canke usubire mu kibazo cawe.",
+    "description": "Andika amazina yanyu yose n’aderesi ya imeyili kugira utangure canke usubire mu kibazo cawe.",
     "name": "Amazina yose",
-    "namePlaceholder": "Amazina yawe yose",
+    "namePlaceholder": "Amazina yanyu yose",
     "email": "Aderesi ya imeyili",
     "emailPlaceholder": "wewe@akarorero.com"
   },
 
   "new": {
-    "title": "Shiraho NIP yawe",
+    "title": "Shiraho NIP yanyu",
     "description": "Hitamwo NIP igizwe n’imibare 6. Irakingira igikorwa cawe kandi izogufasha gusubira aho wari ugeze."
   },
 
   "existing": {
     "title": "Subira mu kibazo cawe",
-    "description": "Hari igikorwa camaze gutangurwa n’iyi aderesi ya imeyili. Andika NIP yawe kugira usubire neza aho wari ugeze."
+    "description": "Hari igikorwa camaze gutangurwa n’iyi aderesi ya imeyili. Andika NIP yanyu kugira usubire neza aho wari ugeze."
   },
 
   "pin": {
@@ -1483,10 +1512,10 @@
   "errors": {
     "invalidQuiz": "Ihuza ry’iki kibazo ntirikora.",
     "quizNotFound": "Iki kibazo nticabonetse.",
-    "invalidName": "Andika amazina yawe yose.",
+    "invalidName": "Andika amazina yanyu yose.",
     "invalidEmail": "Andika aderesi ya imeyili ikora.",
     "generic": "Habaye ikibazo. Subira ugerageze.",
-    "missingLocalSession": "Iki kibazo camaze gutangurirwa mu yindi navigateur canke ku kindi gikoresho. Inyishu zawe za mbere ntiziri muri iyi navigateur. Utegerezwa gusubira gutangura quiz."
+    "missingLocalSession": "Iyi quiz yatanguriwe mu yindi navigateur canke ku kindi gikoresho. Subira kuri navigateur canke ku gikoresho watanguriyeko quiz kugira ngo ukomeze n’inyishu zawe za mbere. Nimba utagishobora kuhagera, vugana n’umwigisha wawe canke ukoreshe iyindi aderesi ya email kugira ngo utangure iyindi quiz."
   }
 }
 }

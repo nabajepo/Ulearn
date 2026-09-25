@@ -10,17 +10,31 @@ import {
   type AppStats,
 } from "@/lib/services/stats";
 
-import { LIMITS } from "@/lib/services/limits";
+import {
+  LIMITS,
+} from "@/lib/services/limits";
 
-import { useLanguage } from "@/hooks/useLanguage";
+import {
+  useLanguage,
+} from "@/hooks/useLanguage";
 
 export default function PlatformStats() {
-  const { t } = useLanguage();
+  const {
+    t,
+  } = useLanguage();
 
-  const [stats, setStats] =
-    useState<AppStats | null>(null);
+  const [
+    stats,
+    setStats,
+  ] =
+    useState<AppStats | null>(
+      null
+    );
 
-  const [loading, setLoading] =
+  const [
+    loading,
+    setLoading,
+  ] =
     useState(true);
 
   useEffect(() => {
@@ -65,6 +79,10 @@ export default function PlatformStats() {
 
   return (
     <div className="platform-stats">
+      {/* ===============================================
+          Active teachers
+          =============================================== */}
+
       <article className="stat-card">
         <span>
           {t(
@@ -73,10 +91,19 @@ export default function PlatformStats() {
         </span>
 
         <strong>
-          {stats.activeTeachers} /{" "}
-          {LIMITS.MAX_TEACHERS}
+          {
+            stats.activeTeachers
+          }{" "}
+          /{" "}
+          {
+            LIMITS.MAX_TEACHERS
+          }
         </strong>
       </article>
+
+      {/* ===============================================
+          Total teachers who have used ULearn
+          =============================================== */}
 
       <article className="stat-card">
         <span>
@@ -86,32 +113,8 @@ export default function PlatformStats() {
         </span>
 
         <strong>
-          {stats.totalTeachers}
-        </strong>
-      </article>
-
-      <article className="stat-card">
-        <span>
-          {t(
-            "platformStats.activeQuizzes"
-          )}
-        </span>
-
-        <strong>
-          {stats.activeQuizzes}
-        </strong>
-      </article>
-
-      <article className="stat-card">
-        <span>
-          {t(
-            "platformStats.totalQuizzesCreated"
-          )}
-        </span>
-
-        <strong>
           {
-            stats.totalQuizzesCreated
+            stats.totalTeachers
           }
         </strong>
       </article>

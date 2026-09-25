@@ -544,11 +544,11 @@ export function getTeacherWelcomeEmailTemplate(
       </p>
 
       <p style="line-height: 1.7;">
-        Konti yawe y'umwigisha kuri ULearn yarakozwe neza.
+        Konti yanyu y'umwigisha kuri ULearn yarakozwe neza.
       </p>
 
       <p style="line-height: 1.7;">
-        Konti yawe izomara
+        Konti yanyu izomara
         <strong>${LIMITS.ACCOUNT_DURATION_DAYS} imisi</strong>
         kandi izorangira kuri:
       </p>
@@ -581,7 +581,7 @@ export function getTeacherWelcomeEmailTemplate(
       </p>
 
       <p style="line-height: 1.7;">
-        Imbere y'uko konti yawe irangira, urabe neza ko
+        Imbere y'uko konti yanyu irangira, urabe neza ko
         quiz zawe zarangiye kandi zakosowe.
       </p>
     </section>
@@ -628,7 +628,7 @@ KIRUNDI
 
 Amahoro ${rawTeacherName},
 
-Konti yawe y'umwigisha kuri ULearn yarakozwe neza.
+Konti yanyu y'umwigisha kuri ULearn yarakozwe neza.
 
 Igihe konti imara: imisi ${LIMITS.ACCOUNT_DURATION_DAYS}
 Igihe izorangirira: ${expirationKirundi}
@@ -636,7 +636,7 @@ Quiz ushobora kugira: ${LIMITS.MAX_QUIZZES_PER_TEACHER}
 Abanyeshure kuri quiz: ${LIMITS.MAX_STUDENTS_PER_QUIZ}
 Ibibazo kuri quiz: ${LIMITS.MAX_QUESTIONS_PER_QUIZ}
 
-Imbere y'uko konti yawe irangira, urabe neza ko quiz zawe
+Imbere y'uko konti yanyu irangira, urabe neza ko quiz zawe
 zarangiye kandi zakosowe.
   `.trim();
 
@@ -821,7 +821,7 @@ export function getTeacherLoginEmailTemplate(
       </p>
 
       <p style="line-height: 1.7;">
-        Hari ukwinjira gushasha kwabonywe kuri konti yawe
+        Hari ukwinjira gushasha kwabonywe kuri konti yanyu
         y'umwigisha ya ULearn.
       </p>
 
@@ -842,7 +842,7 @@ export function getTeacherLoginEmailTemplate(
       </p>
 
       <p style="line-height: 1.7;">
-        Nimba utazi uku kwinjira, kingira konti yawe
+        Nimba utazi uku kwinjira, kingira konti yanyu
         yo kwemeza umwirondoro ningoga.
       </p>
     </section>
@@ -885,13 +885,13 @@ KIRUNDI
 
 Amahoro ${rawTeacherName},
 
-Hari ukwinjira gushasha kwabonywe kuri konti yawe y'umwigisha ya ULearn.
+Hari ukwinjira gushasha kwabonywe kuri konti yanyu y'umwigisha ya ULearn.
 
 Itariki n'isaha: ${loginKirundi}
 
 Nimba ari wewe winjiye, nta kindi utegerezwa gukora.
 
-Nimba utazi uku kwinjira, kingira konti yawe yo kwemeza umwirondoro ningoga.
+Nimba utazi uku kwinjira, kingira konti yanyu yo kwemeza umwirondoro ningoga.
   `.trim();
 
   return {

@@ -21,10 +21,7 @@ import {
   LIMITS,
 } from "@/lib/services/limits";
 
-import {
-  decreaseActiveQuizzes,
-  increaseQuizStats,
-} from "@/lib/services/stats";
+
 
 import {
   getTeacher,
@@ -2276,8 +2273,6 @@ export async function createQuiz(
     quizDocument.id
   );
 
-  await increaseQuizStats();
-
   return {
     success:
       true,
@@ -3160,11 +3155,7 @@ export async function deleteQuiz(
     null
   );
 
-  /* =====================================================
-     Global statistics
-     ===================================================== */
-
-  await decreaseActiveQuizzes();
+  
 
   return {
     success:

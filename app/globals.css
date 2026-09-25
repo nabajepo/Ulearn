@@ -528,18 +528,20 @@ p {
   color:
     var(--main-color);
 }
-
 /* =========================================================
    PlatformStats
    ========================================================= */
 
 .platform-stats {
+  width:
+    100%;
+
   display:
     grid;
 
   grid-template-columns:
     repeat(
-      4,
+      2,
       minmax(
         0,
         1fr
@@ -551,11 +553,26 @@ p {
 }
 
 .stat-card {
+  width:
+    100%;
+
   min-width:
     0;
 
+  min-height:
+    150px;
+
+  display:
+    flex;
+
+  flex-direction:
+    column;
+
+  justify-content:
+    center;
+
   padding:
-    1.8rem;
+    2rem;
 
   border:
     1px solid
@@ -569,6 +586,27 @@ p {
 
   box-shadow:
     var(--small-shadow);
+
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease,
+    border-color 0.25s ease;
+}
+
+.stat-card:hover {
+  transform:
+    translateY(-4px);
+
+  border-color:
+    rgba(
+      42,
+      3,
+      105,
+      0.24
+    );
+
+  box-shadow:
+    var(--shadow);
 }
 
 .stat-card span {
@@ -576,7 +614,7 @@ p {
     block;
 
   margin-bottom:
-    0.8rem;
+    0.9rem;
 
   color:
     rgba(
@@ -588,6 +626,12 @@ p {
 
   font-size:
     1rem;
+
+  font-weight:
+    600;
+
+  line-height:
+    1.5;
 }
 
 .stat-card strong {
@@ -598,13 +642,69 @@ p {
     var(--main-color);
 
   font-size:
-    2.2rem;
+    clamp(
+      2rem,
+      4vw,
+      2.6rem
+    );
 
   font-weight:
     900;
 
+  line-height:
+    1.1;
+
   overflow-wrap:
     anywhere;
+}
+
+/* =========================================================
+   PlatformStats - Responsive
+   ========================================================= */
+
+@media (
+  max-width: 768px
+) {
+  .platform-stats {
+    grid-template-columns:
+      1fr;
+
+    gap:
+      1rem;
+  }
+
+  .stat-card {
+    min-height:
+      130px;
+
+    padding:
+      1.5rem;
+  }
+}
+
+@media (
+  max-width: 420px
+) {
+  .stat-card {
+    min-height:
+      120px;
+
+    padding:
+      1.3rem;
+
+    border-radius:
+      20px;
+  }
+
+  .stat-card span {
+    font-size:
+      0.9rem;
+  }
+
+  .stat-card strong {
+    font-size:
+      2rem;
+  }
 }
 
 /* =========================================================
@@ -2925,24 +3025,7 @@ p {
     1.45;
 }
 
-/* =========================================================
-   Responsive <= 992
-   ========================================================= */
 
-@media (
-  max-width: 992px
-) {
-  .platform-stats {
-    grid-template-columns:
-      repeat(
-        2,
-        minmax(
-          0,
-          1fr
-        )
-      );
-  }
-}
 
 /* =========================================================
    Responsive <= 768

@@ -320,25 +320,25 @@ function getEmailCopy(
         "Mwigisha",
 
       warningSubject:
-        "ULearn: konti yawe igiye kurangira",
+        "ULearn: konti yanyu igiye kurangira",
 
       warningTitle:
-        "Konti yawe igiye kurangira",
+        "Konti yanyu igiye kurangira",
 
       warningIntro:
-        "Konti yawe y’umwigisha ya ULearn y’igihe gito igiye kurangira.",
+        "Konti yanyu y’umwigisha ya ULearn y’igihe gito igiye kurangira.",
 
       warningExpirationLabel:
         "Igihe izorangirira",
 
       warningAction:
-        "Turagusavye urangize gukosora ibisigaye imbere y’uko konti yawe irangira.",
+        "Turabasavyeurangize gukosora ibisigaye imbere y’uko konti yanyu irangira.",
 
       warningArchive:
-        "Konti niyarangira, ULearn izotegura ubwayo archive ya nyuma y’amakosorwa hanyuma iyikurungikire kuri email.",
+        "Konti niyarangira, ULearn izotegura ubwayo archive ya nyuma y’amakosorwa hanyuma iyibarungikire kuri email.",
 
       finalSubjectNoQuiz:
-        "Konti yawe ya ULearn yarangiye",
+        "Konti yanyu ya ULearn yarangiye",
 
       finalSubjectWithQuiz:
         (
@@ -347,10 +347,10 @@ function getEmailCopy(
           `ULearn - Amakosorwa ya nyuma - ${quizTitle}`,
 
       finalTitle:
-        "Konti yawe ya ULearn yarangiye",
+        "Konti yanyu ya ULearn yarangiye",
 
       finalIntro:
-        "Konti yawe y’umwigisha ya ULearn yashitse ku gihe co kurangira.",
+        "Konti yanyu y’umwigisha ya ULearn yashitse ku gihe co kurangira.",
 
       finalArchive:
         (
@@ -359,7 +359,7 @@ function getEmailCopy(
           `Archive ya nyuma irimwo PDF z’amakosorwa y’abanyeshure kuri « ${quizTitle} » iri kumwe n’iyi email.`,
 
       finalNoQuiz:
-        "Nta quiz yari ifatanye na konti yawe igihe yarangira, rero nta archive y’amakosorwa iri kumwe n’iyi email.",
+        "Nta quiz yari ifatanye na konti yanyu igihe yarangira, rero nta archive y’amakosorwa iri kumwe n’iyi email.",
 
       copiesLabel:
         "Igitigiri c’amakopi",

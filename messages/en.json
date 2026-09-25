@@ -33,7 +33,10 @@
       "label": "Quiz Preview",
       "type": "QCM",
       "title": "Basic Math Quiz",
-      "question": "What is 2 + 2 ?"
+      "question": "What is 2 + 2 ?",
+      "progress": "Question",
+      "questionLabel": "Current question",
+      "saved": "Answer selected"
     },
 
     "process": {
@@ -60,6 +63,15 @@
     "faq": {
       "tag": "FAQ",
       "title": "Frequently Asked Questions",
+      "studentSession": {
+  "badge": "Important for students",
+  "question": "Can I change browser or device during a quiz?",
+  "answer":
+    "No. Once you start a quiz, continue on the same browser and the same device until you submit it. Your progress is temporarily saved in that browser so you can recover it after refreshing the page or resetting your PIN.",
+  "browser":
+    "Stay on the same browser and the same device for the entire attempt.",
+  "pin":"If you forget your PIN, use the reset procedure. After your teacher approves the request and the temporary code is validated, you can choose a new PIN and resume your attempt in that same browser."
+},
 
       "what": {
         "question": "What is ULearn?",
@@ -1229,7 +1241,22 @@
   "pdf": {
       "notReady": "Complete the grading before downloading the corrected PDF."
     }
-  ,
+  ,"search": {
+  "label": "Search questions",
+  "placeholder": "Search by question number or text...",
+  "clear": "Clear search",
+  "filterLabel": "Filter questions by type",
+  "filters": {
+    "all": "All",
+    "development": "Development",
+    "qcm": "QCM",
+    "multipleChoice": "Multiple choice"
+  },
+  "results": "Questions displayed:",
+  "reset": "Reset search",
+  "noResultsTitle": "No questions found",
+  "noResultsText": "Try another search or change the question type filter."
+},
 
   "access": {
     "title": "Grading unavailable",
@@ -1493,7 +1520,7 @@
     "invalidName": "Please enter your full name.",
     "invalidEmail": "Please enter a valid email address.",
     "generic": "Something went wrong. Please try again.",
-    "missingLocalSession": "This quiz was already started in another browser or on another device. Your previous answers are not available in this browser. You must restart the quiz."
+    "missingLocalSession": "This quiz was started in another browser or on another device. Please return to the browser or device where you started the quiz to continue with your previous answers. If you can no longer access it, contact your teacher or use another email address to start a new attempt."
   }
 }
 

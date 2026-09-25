@@ -231,15 +231,38 @@ function getLocalSessionKey(
   return `${LOCAL_SESSION_PREFIX}${attemptId}`;
 }
 
+function createLocalQuizSession(
+  attemptId: string
+) {
+  try {
+    window.localStorage.setItem(
+      getLocalSessionKey(attemptId),
+      JSON.stringify({
+        attemptId,
+        currentIndex: 0,
+        answers: {},
+        savedAt: new Date().toISOString(),
+      })
+    );
+
+    return true;
+  } catch (error) {
+    console.error(
+      "Unable to create local quiz session:",
+      error
+    );
+
+    return false;
+  }
+}
+
 function hasLocalQuizSession(
   attemptId: string
 ) {
   try {
     const raw =
       window.localStorage.getItem(
-        getLocalSessionKey(
-          attemptId
-        )
+        getLocalSessionKey(attemptId)
       );
 
     if (!raw) {
@@ -249,11 +272,13 @@ function hasLocalQuizSession(
     const parsed =
       JSON.parse(raw) as {
         attemptId?: unknown;
+        currentIndex?: unknown;
         answers?: unknown;
       };
 
     return (
       parsed.attemptId === attemptId &&
+      typeof parsed.currentIndex === "number" &&
       parsed.answers !== null &&
       typeof parsed.answers === "object"
     );
@@ -295,7 +320,7 @@ function onlyDigits(value: string) {
 
 function isValidEmail(email: string) {
 
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  return /^[^\s@]+@[^\s@]+.[^\s@]+$/.test(email);
 
 }
 
@@ -1947,6 +1972,21 @@ export default function JoinQuizPage() {
 
 
 
+      const localSessionCreated =
+        createLocalQuizSession(
+          data.attemptId
+        );
+
+      if (!localSessionCreated) {
+        setError(
+          t(
+            "join.errors.generic"
+          )
+        );
+
+        return;
+      }
+
       router.push(
 
         `/quiz-session/${data.attemptId}`
@@ -2283,6 +2323,8 @@ export default function JoinQuizPage() {
 
       }
 
+
+
       if (
         !hasLocalQuizSession(
           data.attemptId
@@ -2298,7 +2340,9 @@ export default function JoinQuizPage() {
       }
 
       router.push(
+
         `/quiz-session/${data.attemptId}`
+
       );
 
     } catch (resumeError) {
@@ -2963,6 +3007,8 @@ export default function JoinQuizPage() {
 
       }
 
+
+
       if (
         !hasLocalQuizSession(
           data.attemptId
@@ -2978,7 +3024,9 @@ export default function JoinQuizPage() {
       }
 
       router.push(
+
         `/quiz-session/${data.attemptId}`
+
       );
 
     } catch (resetError) {

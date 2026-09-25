@@ -8,10 +8,6 @@
     var(--page-gradient);
 }
 
-/* =========================================================
-   Main card
-   ========================================================= */
-
 .card {
   width:
     min(
@@ -34,10 +30,6 @@
   box-shadow:
     var(--shadow);
 }
-
-/* =========================================================
-   Top bar
-   ========================================================= */
 
 .topBar {
   display: flex;
@@ -119,10 +111,6 @@
   font-size: 0.66rem;
 }
 
-/* =========================================================
-   Header
-   ========================================================= */
-
 .header {
   margin-bottom: 1.4rem;
 }
@@ -164,10 +152,6 @@
 
   overflow-wrap: anywhere;
 }
-
-/* =========================================================
-   Student card
-   ========================================================= */
 
 .studentCard {
   display: flex;
@@ -264,10 +248,6 @@
   overflow-wrap: anywhere;
 }
 
-/* =========================================================
-   Summary
-   ========================================================= */
-
 .summary {
   display: grid;
 
@@ -336,10 +316,6 @@
   overflow-wrap: anywhere;
 }
 
-/* =========================================================
-   Section heading
-   ========================================================= */
-
 .questionsSection {
   margin-top: 1.5rem;
 }
@@ -377,18 +353,335 @@
 }
 
 /* =========================================================
-   Question list
+   Search / filters
    ========================================================= */
+
+.questionSearchPanel {
+  display: grid;
+
+  gap: 0.9rem;
+
+  margin-bottom: 1.2rem;
+
+  padding: 1rem;
+
+  border:
+    1px solid
+    var(--border-color);
+
+  border-radius: 16px;
+
+  background:
+    rgba(
+      42,
+      3,
+      105,
+      0.025
+    );
+}
+
+.searchField {
+  display: grid;
+
+  gap: 0.45rem;
+}
+
+.searchLabel {
+  color:
+    var(--main-color);
+
+  font-size: 0.72rem;
+  font-weight: 900;
+}
+
+.searchInputWrapper {
+  min-width: 0;
+
+  display: grid;
+
+  grid-template-columns:
+    auto
+    minmax(
+      0,
+      1fr
+    )
+    auto;
+
+  align-items: center;
+
+  gap: 0.6rem;
+
+  min-height: 50px;
+
+  padding:
+    0
+    0.8rem;
+
+  border:
+    1px solid
+    var(--border-color);
+
+  border-radius: 13px;
+
+  background: #ffffff;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.searchInputWrapper:focus-within {
+  border-color:
+    var(--main-color);
+
+  box-shadow:
+    0 0 0
+    3px
+    rgba(
+      42,
+      3,
+      105,
+      0.08
+    );
+}
+
+.searchIcon {
+  color:
+    var(--main-color);
+
+  font-size: 1.25rem;
+  font-weight: 900;
+
+  line-height: 1;
+}
+
+.searchInputWrapper input {
+  width: 100%;
+
+  min-width: 0;
+
+  border: 0;
+
+  background: transparent;
+
+  color:
+    var(--foreground);
+
+  font: inherit;
+
+  font-size: 0.85rem;
+  font-weight: 700;
+
+  outline: none;
+}
+
+.searchInputWrapper input::placeholder {
+  color:
+    rgba(
+      23,
+      23,
+      23,
+      0.42
+    );
+}
+
+.searchInputWrapper input::-webkit-search-cancel-button {
+  display: none;
+}
+
+.clearSearchButton {
+  width: 34px;
+  height: 34px;
+
+  display: inline-flex;
+
+  align-items: center;
+  justify-content: center;
+
+  flex-shrink: 0;
+
+  border:
+    1px solid
+    var(--border-color);
+
+  border-radius: 50%;
+
+  background:
+    var(--soft-purple);
+
+  color:
+    var(--main-color);
+
+  cursor: pointer;
+
+  font-size: 1.1rem;
+  font-weight: 900;
+
+  line-height: 1;
+}
+
+.filterGroup {
+  display: flex;
+
+  align-items: center;
+
+  flex-wrap: wrap;
+
+  gap: 0.55rem;
+}
+
+.filterButton {
+  min-height: 38px;
+
+  padding:
+    0.5rem
+    0.8rem;
+
+  border:
+    1px solid
+    var(--border-color);
+
+  border-radius: 999px;
+
+  background: #ffffff;
+
+  color:
+    var(--main-color);
+
+  cursor: pointer;
+
+  font-size: 0.7rem;
+  font-weight: 900;
+}
+
+.filterButton:hover {
+  border-color:
+    rgba(
+      42,
+      3,
+      105,
+      0.35
+    );
+
+  background:
+    var(--soft-purple);
+}
+
+.filterButtonActive {
+  border-color:
+    var(--main-color);
+
+  background:
+    var(--main-color);
+
+  color: #ffffff;
+}
+
+.filterButtonActive:hover {
+  background:
+    var(--main-color);
+
+  color: #ffffff;
+}
+
+.searchResultInfo {
+  display: flex;
+
+  align-items: center;
+  justify-content: space-between;
+
+  flex-wrap: wrap;
+
+  gap: 0.7rem;
+
+  color:
+    rgba(
+      23,
+      23,
+      23,
+      0.58
+    );
+
+  font-size: 0.7rem;
+  font-weight: 700;
+}
+
+.searchResultInfo strong {
+  color:
+    var(--main-color);
+
+  font-weight: 900;
+}
+
+.resetSearchButton {
+  border: 0;
+
+  background: transparent;
+
+  color:
+    var(--main-color);
+
+  cursor: pointer;
+
+  font-size: 0.7rem;
+  font-weight: 900;
+
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.noSearchResults {
+  padding: 2rem 1rem;
+
+  border:
+    1px dashed
+    var(--border-color);
+
+  border-radius: 16px;
+
+  background:
+    rgba(
+      42,
+      3,
+      105,
+      0.02
+    );
+
+  text-align: center;
+}
+
+.noSearchResults strong {
+  display: block;
+
+  margin-bottom: 0.4rem;
+
+  color:
+    var(--main-color);
+
+  font-size: 0.95rem;
+  font-weight: 900;
+}
+
+.noSearchResults p {
+  margin: 0;
+
+  color:
+    rgba(
+      23,
+      23,
+      23,
+      0.55
+    );
+
+  font-size: 0.76rem;
+  line-height: 1.5;
+}
 
 .questionList {
   display: grid;
 
   gap: 1rem;
 }
-
-/* =========================================================
-   Question card
-   ========================================================= */
 
 .questionCard {
   min-width: 0;
@@ -487,10 +780,6 @@
   overflow-wrap: anywhere;
 }
 
-/* =========================================================
-   Answers
-   ========================================================= */
-
 .answerBlock {
   display: grid;
 
@@ -558,10 +847,6 @@
 
   font-style: italic;
 }
-
-/* =========================================================
-   Choices
-   ========================================================= */
 
 .choiceList {
   display: grid;
@@ -714,10 +999,6 @@
   color: #ffffff;
 }
 
-/* =========================================================
-   Automatic result
-   ========================================================= */
-
 .automaticResult {
   display: flex;
 
@@ -765,10 +1046,6 @@
   font-size: 0.82rem;
   font-weight: 900;
 }
-
-/* =========================================================
-   Development grading
-   ========================================================= */
 
 .gradingBox {
   display: grid;
@@ -899,10 +1176,6 @@
   white-space: nowrap;
 }
 
-/* =========================================================
-   Messages
-   ========================================================= */
-
 .warningMessage,
 .errorMessage,
 .successMessage {
@@ -954,10 +1227,6 @@
   color:
     var(--main-color);
 }
-
-/* =========================================================
-   Final score section
-   ========================================================= */
 
 .finalSection {
   display: grid;
@@ -1086,10 +1355,6 @@
   overflow-wrap: anywhere;
 }
 
-/* =========================================================
-   Footer actions
-   ========================================================= */
-
 .actions {
   display: flex;
 
@@ -1105,9 +1370,6 @@
 
   padding-top: 0.2rem;
 }
-/* =========================================================
-   Grading actions
-   ========================================================= */
 
 .gradingActions {
   display: flex;
@@ -1120,40 +1382,6 @@
 
   gap: 0.8rem;
 }
-
-@media (
-  max-width: 700px
-) {
-  .gradingActions {
-    width: 100%;
-
-    display: grid;
-
-    grid-template-columns: 1fr;
-
-    gap: 0.75rem;
-  }
-
-  .gradingActions
-    :global(.app-button) {
-    width: 100%;
-
-    min-width: 0;
-  }
-}
-/*
- * IMPORTANT:
- *
- * Do not force the fixed global
- * app-button-action width here.
- *
- * Translations can be longer:
- * "Finalize grading"
- * "Finaliser la correction"
- * etc.
- *
- * The button is allowed to grow.
- */
 
 .actions
   :global(.app-button) {
@@ -1175,6 +1403,7 @@
   padding-left: 1.25rem;
   padding-right: 1.25rem;
 }
+
 .actionGroup {
   display: flex;
   align-items: center;
@@ -1184,27 +1413,6 @@
 
   flex-wrap: wrap;
 }
-
-@media (
-  max-width: 700px
-) {
-  .actionGroup {
-    display: grid;
-
-    grid-template-columns:
-      1fr;
-
-    width: 100%;
-  }
-
-  .actionGroup
-    :global(.app-button) {
-    width: 100%;
-  }
-}
-/* =========================================================
-   Access card
-   ========================================================= */
 
 .accessCard {
   width:
@@ -1282,10 +1490,6 @@
   max-width: 100%;
 }
 
-/* =========================================================
-   Tablet
-   ========================================================= */
-
 @media (
   max-width: 1000px
 ) {
@@ -1306,13 +1510,40 @@
   }
 }
 
-/* =========================================================
-   Mobile
-   ========================================================= */
-
 @media (
   max-width: 700px
 ) {
+  .gradingActions {
+    width: 100%;
+
+    display: grid;
+
+    grid-template-columns: 1fr;
+
+    gap: 0.75rem;
+  }
+
+  .gradingActions
+    :global(.app-button) {
+    width: 100%;
+
+    min-width: 0;
+  }
+
+  .actionGroup {
+    display: grid;
+
+    grid-template-columns:
+      1fr;
+
+    width: 100%;
+  }
+
+  .actionGroup
+    :global(.app-button) {
+    width: 100%;
+  }
+
   .page {
     padding: 0.8rem;
   }
@@ -1322,10 +1553,6 @@
 
     border-radius: 22px;
   }
-
-  /* =====================================================
-     Top bar
-     ===================================================== */
 
   .topBar {
     align-items: stretch;
@@ -1350,10 +1577,6 @@
     align-self: stretch;
   }
 
-  /* =====================================================
-     Header
-     ===================================================== */
-
   .header h1 {
     font-size:
       clamp(
@@ -1366,26 +1589,31 @@
       -1px;
   }
 
-  /* =====================================================
-     Student
-     ===================================================== */
-
   .studentCard {
     align-items: flex-start;
   }
-
-  /* =====================================================
-     Summary
-     ===================================================== */
 
   .summary {
     grid-template-columns:
       1fr;
   }
 
-  /* =====================================================
-     Questions
-     ===================================================== */
+  .filterGroup {
+    display: grid;
+
+    grid-template-columns:
+      repeat(
+        2,
+        minmax(
+          0,
+          1fr
+        )
+      );
+  }
+
+  .filterButton {
+    width: 100%;
+  }
 
   .questionHeader {
     flex-direction: column;
@@ -1412,10 +1640,6 @@
       flex-start;
   }
 
-  /* =====================================================
-     Development grading
-     ===================================================== */
-
   .gradingBox {
     grid-template-columns:
       1fr;
@@ -1430,18 +1654,10 @@
     width: 120px;
   }
 
-  /* =====================================================
-     Final score
-     ===================================================== */
-
   .finalBreakdown {
     grid-template-columns:
       1fr;
   }
-
-  /* =====================================================
-     Footer actions
-     ===================================================== */
 
   .actions {
     display: grid;
@@ -1463,10 +1679,6 @@
     max-width: 100%;
   }
 
-  /* =====================================================
-     Access
-     ===================================================== */
-
   .accessCard
     :global(.app-button) {
     width: 100%;
@@ -1474,10 +1686,6 @@
     min-width: 0;
   }
 }
-
-/* =========================================================
-   Small phones
-   ========================================================= */
 
 @media (
   max-width: 480px
@@ -1499,6 +1707,21 @@
   .studentAvatar {
     width: 44px;
     height: 44px;
+  }
+
+  .questionSearchPanel {
+    padding: 0.8rem;
+  }
+
+  .filterGroup {
+    grid-template-columns:
+      1fr;
+  }
+
+  .searchResultInfo {
+    align-items: flex-start;
+
+    flex-direction: column;
   }
 
   .questionCard {

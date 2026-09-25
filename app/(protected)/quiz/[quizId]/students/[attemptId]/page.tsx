@@ -7,22 +7,11 @@
  *
  * Protected teacher page used to inspect and grade one student attempt.
  *
- * Responsibilities:
- * • Verify that the authenticated teacher owns the quiz and attempt.
- * • Load the quiz, attempt and questions.
- * • Respect the frozen question order stored inside the attempt.
- * • Display student answers.
- * • Display correct answers to the teacher.
- * • Display automatic grading for QCM / multiple choice.
- * • Allow manual grading of development questions.
- * • Prevent development scores from exceeding question points.
- * • Save grading through lib/services/attempts.ts.
- * • Allow an already graded development attempt to be updated.
- * • Generate and download a professional corrected PDF.
- *
- * IMPORTANT:
- * Firestore writes are intentionally NOT performed directly from this page.
- * Grading logic belongs to lib/services/attempts.ts.
+ * Search added:
+ * • Search by question text or displayed question number.
+ * • Filter by All / Development / QCM / Multiple choice.
+ * • Search/filter only changes what is displayed; grading calculations still
+ *   use the complete frozen question order.
  * ============================================================================
  */
 
@@ -80,16 +69,19 @@ import styles from "./AttemptGradingPage.module.css";
    ========================================================= */
 
 type DevelopmentScores =
-  Record<
-    string,
-    number
-  >;
+  Record<string, number>;
 
 type ProcessingAction =
   | ""
   | "back"
   | "saving"
   | "pdf";
+
+type QuestionFilter =
+  | "all"
+  | "development"
+  | "qcm"
+  | "multiple_choice";
 
 /* =========================================================
    Helpers
@@ -189,24 +181,15 @@ function getPdfLanguage(
 
 function calculateQuestionAutomaticScore(
   question: Question,
-
   answer:
     AttemptAnswer | undefined
 ) {
-  /* =====================================================
-     Development
-     ===================================================== */
-
   if (
     question.type ===
     "development"
   ) {
     return 0;
   }
-
-  /* =====================================================
-     QCM
-     ===================================================== */
 
   if (
     question.type ===
@@ -226,10 +209,6 @@ function calculateQuestionAutomaticScore(
       ? question.points
       : 0;
   }
-
-  /* =====================================================
-     Multiple choice
-     ===================================================== */
 
   if (
     !Array.isArray(
@@ -424,6 +403,20 @@ export default function AttemptGradingPage() {
   ] =
     useState("");
 
+  const [
+    questionSearch,
+    setQuestionSearch,
+  ] =
+    useState("");
+
+  const [
+    questionFilter,
+    setQuestionFilter,
+  ] =
+    useState<QuestionFilter>(
+      "all"
+    );
+
   /* =========================================================
      Load page
      ========================================================= */
@@ -482,10 +475,6 @@ export default function AttemptGradingPage() {
         setQuestions(
           questionData
         );
-
-        /* ===================================================
-           Development scores
-           =================================================== */
 
         const loadedScores:
           DevelopmentScores =
@@ -644,6 +633,61 @@ export default function AttemptGradingPage() {
     ]);
 
   /* =========================================================
+     Search / filter
+     ========================================================= */
+
+  const visibleQuestions =
+    useMemo(() => {
+      const normalizedSearch =
+        questionSearch
+          .trim()
+          .toLocaleLowerCase();
+
+      return orderedQuestions.filter(
+        (
+          question,
+          index
+        ) => {
+          const matchesType =
+            questionFilter ===
+              "all" ||
+            question.type ===
+              questionFilter;
+
+          if (
+            !matchesType
+          ) {
+            return false;
+          }
+
+          if (
+            !normalizedSearch
+          ) {
+            return true;
+          }
+
+          const questionNumber =
+            String(
+              index +
+                1
+            );
+
+          const searchableText =
+            `${questionNumber} ${question.text}`
+              .toLocaleLowerCase();
+
+          return searchableText.includes(
+            normalizedSearch
+          );
+        }
+      );
+    }, [
+      orderedQuestions,
+      questionSearch,
+      questionFilter,
+    ]);
+
+  /* =========================================================
      Development questions
      ========================================================= */
 
@@ -708,10 +752,6 @@ export default function AttemptGradingPage() {
       orderedQuestions,
     ]);
 
-  /* =========================================================
-     Automatic score
-     ========================================================= */
-
   const calculatedAutomaticScore =
     useMemo(() => {
       return roundScore(
@@ -730,10 +770,6 @@ export default function AttemptGradingPage() {
     }, [
       automaticQuestionScores,
     ]);
-
-  /* =========================================================
-     Manual score
-     ========================================================= */
 
   const calculatedManualScore =
     useMemo(() => {
@@ -765,10 +801,6 @@ export default function AttemptGradingPage() {
       developmentScores,
     ]);
 
-  /* =========================================================
-     Final score
-     ========================================================= */
-
   const calculatedFinalScore =
     useMemo(() => {
       if (
@@ -780,7 +812,6 @@ export default function AttemptGradingPage() {
       return roundScore(
         Math.min(
           quiz.totalPoints,
-
           calculatedAutomaticScore +
             calculatedManualScore
         )
@@ -790,10 +821,6 @@ export default function AttemptGradingPage() {
       calculatedAutomaticScore,
       calculatedManualScore,
     ]);
-
-  /* =========================================================
-     Percentage
-     ========================================================= */
 
   const percentage =
     useMemo(() => {
@@ -817,10 +844,6 @@ export default function AttemptGradingPage() {
       calculatedFinalScore,
     ]);
 
-  /* =========================================================
-     Grading permission
-     ========================================================= */
-
   const canEditGrading =
     Boolean(
       attempt &&
@@ -832,17 +855,6 @@ export default function AttemptGradingPage() {
       )
     );
 
-  /* =========================================================
-     PDF permission
-     ========================================================= */
-
-  /*
-   * The PDF button is ALWAYS visible.
-   *
-   * It becomes active only after the grading has been
-   * finalized and a finalScore exists.
-   */
-
   const canDownloadPdf =
     Boolean(
       attempt &&
@@ -851,10 +863,6 @@ export default function AttemptGradingPage() {
       typeof attempt.finalScore ===
         "number"
     );
-
-  /* =========================================================
-     Student initials
-     ========================================================= */
 
   const studentInitials =
     useMemo(() => {
@@ -972,10 +980,6 @@ export default function AttemptGradingPage() {
     );
   }
 
-  /* =========================================================
-     Access
-     ========================================================= */
-
   const accessAllowed =
     Boolean(
       teacher &&
@@ -1053,10 +1057,6 @@ export default function AttemptGradingPage() {
     );
   }
 
-  /* =========================================================
-     Status
-     ========================================================= */
-
   function getStatusLabel() {
     if (
       attempt.status ===
@@ -1081,13 +1081,8 @@ export default function AttemptGradingPage() {
     );
   }
 
-  /* =========================================================
-     Development score change
-     ========================================================= */
-
   function handleDevelopmentScoreChange(
     question: Question,
-
     event:
       ChangeEvent<HTMLInputElement>
   ) {
@@ -1119,7 +1114,6 @@ export default function AttemptGradingPage() {
           previous
         ) => ({
           ...previous,
-
           [question.id]:
             0,
         })
@@ -1154,16 +1148,11 @@ export default function AttemptGradingPage() {
         previous
       ) => ({
         ...previous,
-
         [question.id]:
           safeScore,
       })
     );
   }
-
-  /* =========================================================
-     Validate development scores
-     ========================================================= */
 
   function validateDevelopmentScores() {
     for (
@@ -1198,10 +1187,6 @@ export default function AttemptGradingPage() {
 
     return true;
   }
-
-  /* =========================================================
-     Save grading
-     ========================================================= */
 
   async function handleSaveGrading() {
     if (
@@ -1267,7 +1252,6 @@ export default function AttemptGradingPage() {
           {
             teacherId:
               teacher.id,
-
             developmentScores:
               normalizedScores,
           }
@@ -1323,10 +1307,6 @@ export default function AttemptGradingPage() {
     }
   }
 
-  /* =========================================================
-     PDF download
-     ========================================================= */
-
   async function handleDownloadPdf() {
     if (
       processing ||
@@ -1358,18 +1338,10 @@ export default function AttemptGradingPage() {
       const pdfDocument =
         (
           <AttemptCorrectionPdf
-            quiz={
-              quiz
-            }
-            attempt={
-              attempt
-            }
-            questions={
-              questions
-            }
-            language={
-              pdfLanguage
-            }
+            quiz={quiz}
+            attempt={attempt}
+            questions={questions}
+            language={pdfLanguage}
           />
         );
 
@@ -1403,7 +1375,6 @@ export default function AttemptGradingPage() {
         );
 
       link.click();
-
       link.remove();
 
       window.setTimeout(
@@ -1432,10 +1403,6 @@ export default function AttemptGradingPage() {
     }
   }
 
-  /* =========================================================
-     Back
-     ========================================================= */
-
   function handleBack() {
     if (
       processing
@@ -1452,10 +1419,6 @@ export default function AttemptGradingPage() {
     );
   }
 
-  /* =========================================================
-     UI
-     ========================================================= */
-
   return (
     <main
       className={
@@ -1467,10 +1430,6 @@ export default function AttemptGradingPage() {
           styles.card
         }
       >
-        {/* =================================================
-            Top bar
-            ================================================= */}
-
         <div
           className={
             styles.topBar
@@ -1497,10 +1456,6 @@ export default function AttemptGradingPage() {
             {getStatusLabel()}
           </span>
         </div>
-
-        {/* =================================================
-            Header
-            ================================================= */}
 
         <header
           className={
@@ -1531,10 +1486,6 @@ export default function AttemptGradingPage() {
             </p>
           </div>
         </header>
-
-        {/* =================================================
-            Student
-            ================================================= */}
 
         <section
           className={
@@ -1577,10 +1528,6 @@ export default function AttemptGradingPage() {
           </div>
         </section>
 
-        {/* =================================================
-            Summary
-            ================================================= */}
-
         <section
           className={
             styles.summary
@@ -1592,7 +1539,6 @@ export default function AttemptGradingPage() {
                 "attemptGrading.summary.status"
               )}
             </span>
-
             <strong>
               {getStatusLabel()}
             </strong>
@@ -1604,7 +1550,6 @@ export default function AttemptGradingPage() {
                 "attemptGrading.summary.automaticScore"
               )}
             </span>
-
             <strong>
               {
                 calculatedAutomaticScore
@@ -1622,7 +1567,6 @@ export default function AttemptGradingPage() {
                 "attemptGrading.summary.manualScore"
               )}
             </span>
-
             <strong>
               {
                 calculatedManualScore
@@ -1636,7 +1580,6 @@ export default function AttemptGradingPage() {
                 "attemptGrading.summary.finalScore"
               )}
             </span>
-
             <strong>
               {
                 calculatedFinalScore
@@ -1654,7 +1597,6 @@ export default function AttemptGradingPage() {
                 "attemptGrading.summary.percentage"
               )}
             </span>
-
             <strong>
               {
                 percentage
@@ -1669,7 +1611,6 @@ export default function AttemptGradingPage() {
                 "attemptGrading.summary.questions"
               )}
             </span>
-
             <strong>
               {
                 orderedQuestions.length
@@ -1677,10 +1618,6 @@ export default function AttemptGradingPage() {
             </strong>
           </article>
         </section>
-
-        {/* =================================================
-            Attempt not submitted
-            ================================================= */}
 
         {!canEditGrading && (
           <p
@@ -1693,10 +1630,6 @@ export default function AttemptGradingPage() {
             )}
           </p>
         )}
-
-        {/* =================================================
-            Questions
-            ================================================= */}
 
         <section
           className={
@@ -1723,44 +1656,445 @@ export default function AttemptGradingPage() {
 
           <div
             className={
-              styles.questionList
+              styles.questionSearchPanel
             }
           >
-            {orderedQuestions.map(
-              (
-                question,
-                index
-              ) => {
-                const answer =
-                  attempt.answers[
-                    question.id
-                  ];
+            <label
+              className={
+                styles.searchField
+              }
+            >
+              <span
+                className={
+                  styles.searchLabel
+                }
+              >
+                {t(
+                  "attemptGrading.search.label"
+                )}
+              </span>
 
-                const automaticScore =
-                  automaticQuestionScores[
-                    question.id
-                  ] ??
-                  0;
+              <div
+                className={
+                  styles.searchInputWrapper
+                }
+              >
+                <span
+                  className={
+                    styles.searchIcon
+                  }
+                  aria-hidden="true"
+                >
+                  ⌕
+                </span>
 
-                /* =========================================
-                   Development
-                   ========================================= */
+                <input
+                  type="search"
+                  value={
+                    questionSearch
+                  }
+                  onChange={(
+                    event
+                  ) => {
+                    setQuestionSearch(
+                      event.target.value
+                    );
+                  }}
+                  placeholder={t(
+                    "attemptGrading.search.placeholder"
+                  )}
+                  aria-label={t(
+                    "attemptGrading.search.label"
+                  )}
+                />
 
-                if (
-                  question.type ===
-                  "development"
-                ) {
-                  const studentAnswer =
-                    answer
-                      ?.developmentAnswer
-                      ?.trim() ||
-                    "";
+                {questionSearch && (
+                  <button
+                    type="button"
+                    className={
+                      styles.clearSearchButton
+                    }
+                    onClick={() => {
+                      setQuestionSearch(
+                        ""
+                      );
+                    }}
+                    aria-label={t(
+                      "attemptGrading.search.clear"
+                    )}
+                    title={t(
+                      "attemptGrading.search.clear"
+                    )}
+                  >
+                    ×
+                  </button>
+                )}
+              </div>
+            </label>
 
-                  const developmentScore =
-                    developmentScores[
+            <div
+              className={
+                styles.filterGroup
+              }
+              role="group"
+              aria-label={t(
+                "attemptGrading.search.filterLabel"
+              )}
+            >
+              {(
+                [
+                  [
+                    "all",
+                    "attemptGrading.search.filters.all",
+                  ],
+                  [
+                    "development",
+                    "attemptGrading.search.filters.development",
+                  ],
+                  [
+                    "qcm",
+                    "attemptGrading.search.filters.qcm",
+                  ],
+                  [
+                    "multiple_choice",
+                    "attemptGrading.search.filters.multipleChoice",
+                  ],
+                ] as const
+              ).map(
+                ([
+                  value,
+                  labelKey,
+                ]) => (
+                  <button
+                    key={
+                      value
+                    }
+                    type="button"
+                    className={`${styles.filterButton} ${
+                      questionFilter ===
+                      value
+                        ? styles.filterButtonActive
+                        : ""
+                    }`}
+                    onClick={() => {
+                      setQuestionFilter(
+                        value
+                      );
+                    }}
+                    aria-pressed={
+                      questionFilter ===
+                      value
+                    }
+                  >
+                    {t(
+                      labelKey
+                    )}
+                  </button>
+                )
+              )}
+            </div>
+
+            <div
+              className={
+                styles.searchResultInfo
+              }
+              aria-live="polite"
+            >
+              <span>
+                {t(
+                  "attemptGrading.search.results"
+                )}{" "}
+                <strong>
+                  {
+                    visibleQuestions.length
+                  }
+                  {" / "}
+                  {
+                    orderedQuestions.length
+                  }
+                </strong>
+              </span>
+
+              {(questionSearch ||
+                questionFilter !==
+                  "all") && (
+                <button
+                  type="button"
+                  className={
+                    styles.resetSearchButton
+                  }
+                  onClick={() => {
+                    setQuestionSearch(
+                      ""
+                    );
+                    setQuestionFilter(
+                      "all"
+                    );
+                  }}
+                >
+                  {t(
+                    "attemptGrading.search.reset"
+                  )}
+                </button>
+              )}
+            </div>
+          </div>
+
+          {visibleQuestions.length ===
+          0 ? (
+            <div
+              className={
+                styles.noSearchResults
+              }
+            >
+              <strong>
+                {t(
+                  "attemptGrading.search.noResultsTitle"
+                )}
+              </strong>
+
+              <p>
+                {t(
+                  "attemptGrading.search.noResultsText"
+                )}
+              </p>
+            </div>
+          ) : (
+            <div
+              className={
+                styles.questionList
+              }
+            >
+              {visibleQuestions.map(
+                (
+                  question
+                ) => {
+                  const originalIndex =
+                    orderedQuestions.findIndex(
+                      (
+                        item
+                      ) =>
+                        item.id ===
+                        question.id
+                    );
+
+                  const answer =
+                    attempt.answers[
+                      question.id
+                    ];
+
+                  const automaticScore =
+                    automaticQuestionScores[
                       question.id
                     ] ??
                     0;
+
+                  if (
+                    question.type ===
+                    "development"
+                  ) {
+                    const studentAnswer =
+                      answer
+                        ?.developmentAnswer
+                        ?.trim() ||
+                      "";
+
+                    const developmentScore =
+                      developmentScores[
+                        question.id
+                      ] ??
+                      0;
+
+                    return (
+                      <article
+                        key={
+                          question.id
+                        }
+                        className={
+                          styles.questionCard
+                        }
+                      >
+                        <div
+                          className={
+                            styles.questionHeader
+                          }
+                        >
+                          <div>
+                            <span
+                              className={
+                                styles.questionNumber
+                              }
+                            >
+                              {t(
+                                "attemptGrading.questions.question"
+                              )}{" "}
+                              {
+                                originalIndex +
+                                1
+                              }
+                            </span>
+
+                            <h3>
+                              {
+                                question.text
+                              }
+                            </h3>
+                          </div>
+
+                          <span
+                            className={
+                              styles.questionPoints
+                            }
+                          >
+                            {
+                              developmentScore
+                            }
+                            {" / "}
+                            {
+                              question.points
+                            }
+                          </span>
+                        </div>
+
+                        <span
+                          className={
+                            styles.typeBadge
+                          }
+                        >
+                          {t(
+                            "attemptGrading.questions.types.development"
+                          )}
+                        </span>
+
+                        <div
+                          className={
+                            styles.answerBlock
+                          }
+                        >
+                          <span>
+                            {t(
+                              "attemptGrading.questions.studentAnswer"
+                            )}
+                          </span>
+
+                          {studentAnswer ? (
+                            <p
+                              className={
+                                styles.developmentAnswer
+                              }
+                            >
+                              {
+                                studentAnswer
+                              }
+                            </p>
+                          ) : (
+                            <p
+                              className={
+                                styles.noAnswer
+                              }
+                            >
+                              {t(
+                                "attemptGrading.questions.noAnswer"
+                              )}
+                            </p>
+                          )}
+                        </div>
+
+                        <div
+                          className={
+                            styles.gradingBox
+                          }
+                        >
+                          <div>
+                            <label
+                              htmlFor={`grade-${question.id}`}
+                            >
+                              {t(
+                                "attemptGrading.questions.manualGrade"
+                              )}
+                            </label>
+
+                            <small>
+                              {t(
+                                "attemptGrading.questions.maximum"
+                              )}{" "}
+                              {
+                                question.points
+                              }
+                            </small>
+                          </div>
+
+                          <div
+                            className={
+                              styles.gradeInputRow
+                            }
+                          >
+                            <input
+                              id={`grade-${question.id}`}
+                              type="number"
+                              min={
+                                0
+                              }
+                              max={
+                                question.points
+                              }
+                              step="0.01"
+                              value={
+                                developmentScore
+                              }
+                              disabled={
+                                !canEditGrading
+                              }
+                              onChange={(
+                                event
+                              ) =>
+                                handleDevelopmentScoreChange(
+                                  question,
+                                  event
+                                )
+                              }
+                            />
+
+                            <span>
+                              /{" "}
+                              {
+                                question.points
+                              }
+                            </span>
+                          </div>
+                        </div>
+                      </article>
+                    );
+                  }
+
+                  const selectedIndexes =
+                    question.type ===
+                    "qcm"
+                      ? typeof answer
+                          ?.selectedChoiceIndex ===
+                        "number"
+                        ? [
+                            answer
+                              .selectedChoiceIndex,
+                          ]
+                        : []
+                      : Array.isArray(
+                            answer
+                              ?.selectedChoiceIndexes
+                          )
+                        ? answer
+                            .selectedChoiceIndexes
+                        : [];
+
+                  const correctIndexes =
+                    question.type ===
+                    "qcm"
+                      ? [
+                          question
+                            .correctChoiceIndex,
+                        ]
+                      : question
+                          .correctChoiceIndexes;
 
                   return (
                     <article
@@ -1786,7 +2120,7 @@ export default function AttemptGradingPage() {
                               "attemptGrading.questions.question"
                             )}{" "}
                             {
-                              index +
+                              originalIndex +
                               1
                             }
                           </span>
@@ -1804,7 +2138,7 @@ export default function AttemptGradingPage() {
                           }
                         >
                           {
-                            developmentScore
+                            automaticScore
                           }
                           {" / "}
                           {
@@ -1818,337 +2152,139 @@ export default function AttemptGradingPage() {
                           styles.typeBadge
                         }
                       >
-                        {t(
-                          "attemptGrading.questions.types.development"
-                        )}
+                        {question.type ===
+                        "qcm"
+                          ? t(
+                              "attemptGrading.questions.types.qcm"
+                            )
+                          : t(
+                              "attemptGrading.questions.types.multipleChoice"
+                            )}
                       </span>
 
                       <div
                         className={
-                          styles.answerBlock
+                          styles.choiceList
+                        }
+                      >
+                        {question.choices.map(
+                          (
+                            choice,
+                            choiceIndex
+                          ) => {
+                            const selected =
+                              selectedIndexes.includes(
+                                choiceIndex
+                              );
+
+                            const correct =
+                              correctIndexes.includes(
+                                choiceIndex
+                              );
+
+                            return (
+                              <div
+                                key={
+                                  choiceIndex
+                                }
+                                className={`${styles.choiceItem} ${
+                                  correct
+                                    ? styles.choiceCorrect
+                                    : ""
+                                } ${
+                                  selected
+                                    ? styles.choiceSelected
+                                    : ""
+                                }`}
+                              >
+                                <span
+                                  className={
+                                    styles.choiceLetter
+                                  }
+                                >
+                                  {getChoiceLetter(
+                                    choiceIndex
+                                  )}
+                                </span>
+
+                                <span
+                                  className={
+                                    styles.choiceText
+                                  }
+                                >
+                                  {
+                                    choice
+                                  }
+                                </span>
+
+                                <div
+                                  className={
+                                    styles.choiceLabels
+                                  }
+                                >
+                                  {selected && (
+                                    <span>
+                                      {t(
+                                        "attemptGrading.questions.selected"
+                                      )}
+                                    </span>
+                                  )}
+
+                                  {correct && (
+                                    <strong>
+                                      {t(
+                                        "attemptGrading.questions.correct"
+                                      )}
+                                    </strong>
+                                  )}
+                                </div>
+                              </div>
+                            );
+                          }
+                        )}
+                      </div>
+
+                      {selectedIndexes.length ===
+                        0 && (
+                        <p
+                          className={
+                            styles.noAnswer
+                          }
+                        >
+                          {t(
+                            "attemptGrading.questions.noAnswer"
+                          )}
+                        </p>
+                      )}
+
+                      <div
+                        className={
+                          styles.automaticResult
                         }
                       >
                         <span>
                           {t(
-                            "attemptGrading.questions.studentAnswer"
+                            "attemptGrading.questions.automaticGrade"
                           )}
                         </span>
 
-                        {studentAnswer ? (
-                          <p
-                            className={
-                              styles.developmentAnswer
-                            }
-                          >
-                            {
-                              studentAnswer
-                            }
-                          </p>
-                        ) : (
-                          <p
-                            className={
-                              styles.noAnswer
-                            }
-                          >
-                            {t(
-                              "attemptGrading.questions.noAnswer"
-                            )}
-                          </p>
-                        )}
-                      </div>
-
-                      <div
-                        className={
-                          styles.gradingBox
-                        }
-                      >
-                        <div>
-                          <label
-                            htmlFor={`grade-${question.id}`}
-                          >
-                            {t(
-                              "attemptGrading.questions.manualGrade"
-                            )}
-                          </label>
-
-                          <small>
-                            {t(
-                              "attemptGrading.questions.maximum"
-                            )}{" "}
-                            {
-                              question.points
-                            }
-                          </small>
-                        </div>
-
-                        <div
-                          className={
-                            styles.gradeInputRow
+                        <strong>
+                          {
+                            automaticScore
                           }
-                        >
-                          <input
-                            id={`grade-${question.id}`}
-                            type="number"
-                            min={
-                              0
-                            }
-                            max={
-                              question.points
-                            }
-                            step="0.01"
-                            value={
-                              developmentScore
-                            }
-                            disabled={
-                              !canEditGrading
-                            }
-                            onChange={(
-                              event
-                            ) =>
-                              handleDevelopmentScoreChange(
-                                question,
-                                event
-                              )
-                            }
-                          />
-
-                          <span>
-                            /{" "}
-                            {
-                              question.points
-                            }
-                          </span>
-                        </div>
+                          {" / "}
+                          {
+                            question.points
+                          }
+                        </strong>
                       </div>
                     </article>
                   );
                 }
-
-                /* =========================================
-                   QCM / Multiple choice
-                   ========================================= */
-
-                const selectedIndexes =
-                  question.type ===
-                  "qcm"
-                    ? typeof answer
-                        ?.selectedChoiceIndex ===
-                      "number"
-                      ? [
-                          answer
-                            .selectedChoiceIndex,
-                        ]
-                      : []
-                    : Array.isArray(
-                          answer
-                            ?.selectedChoiceIndexes
-                        )
-                      ? answer
-                          .selectedChoiceIndexes
-                      : [];
-
-                const correctIndexes =
-                  question.type ===
-                  "qcm"
-                    ? [
-                        question
-                          .correctChoiceIndex,
-                      ]
-                    : question
-                        .correctChoiceIndexes;
-
-                return (
-                  <article
-                    key={
-                      question.id
-                    }
-                    className={
-                      styles.questionCard
-                    }
-                  >
-                    <div
-                      className={
-                        styles.questionHeader
-                      }
-                    >
-                      <div>
-                        <span
-                          className={
-                            styles.questionNumber
-                          }
-                        >
-                          {t(
-                            "attemptGrading.questions.question"
-                          )}{" "}
-                          {
-                            index +
-                              1
-                          }
-                        </span>
-
-                        <h3>
-                          {
-                            question.text
-                          }
-                        </h3>
-                      </div>
-
-                      <span
-                        className={
-                          styles.questionPoints
-                        }
-                      >
-                        {
-                          automaticScore
-                        }
-                        {" / "}
-                        {
-                          question.points
-                        }
-                      </span>
-                    </div>
-
-                    <span
-                      className={
-                        styles.typeBadge
-                      }
-                    >
-                      {question.type ===
-                      "qcm"
-                        ? t(
-                            "attemptGrading.questions.types.qcm"
-                          )
-                        : t(
-                            "attemptGrading.questions.types.multipleChoice"
-                          )}
-                    </span>
-
-                    <div
-                      className={
-                        styles.choiceList
-                      }
-                    >
-                      {question.choices.map(
-                        (
-                          choice,
-                          choiceIndex
-                        ) => {
-                          const selected =
-                            selectedIndexes.includes(
-                              choiceIndex
-                            );
-
-                          const correct =
-                            correctIndexes.includes(
-                              choiceIndex
-                            );
-
-                          return (
-                            <div
-                              key={
-                                choiceIndex
-                              }
-                              className={`${styles.choiceItem} ${
-                                correct
-                                  ? styles.choiceCorrect
-                                  : ""
-                              } ${
-                                selected
-                                  ? styles.choiceSelected
-                                  : ""
-                              }`}
-                            >
-                              <span
-                                className={
-                                  styles.choiceLetter
-                                }
-                              >
-                                {getChoiceLetter(
-                                  choiceIndex
-                                )}
-                              </span>
-
-                              <span
-                                className={
-                                  styles.choiceText
-                                }
-                              >
-                                {
-                                  choice
-                                }
-                              </span>
-
-                              <div
-                                className={
-                                  styles.choiceLabels
-                                }
-                              >
-                                {selected && (
-                                  <span>
-                                    {t(
-                                      "attemptGrading.questions.selected"
-                                    )}
-                                  </span>
-                                )}
-
-                                {correct && (
-                                  <strong>
-                                    {t(
-                                      "attemptGrading.questions.correct"
-                                    )}
-                                  </strong>
-                                )}
-                              </div>
-                            </div>
-                          );
-                        }
-                      )}
-                    </div>
-
-                    {selectedIndexes.length ===
-                      0 && (
-                      <p
-                        className={
-                          styles.noAnswer
-                        }
-                      >
-                        {t(
-                          "attemptGrading.questions.noAnswer"
-                        )}
-                      </p>
-                    )}
-
-                    <div
-                      className={
-                        styles.automaticResult
-                      }
-                    >
-                      <span>
-                        {t(
-                          "attemptGrading.questions.automaticGrade"
-                        )}
-                      </span>
-
-                      <strong>
-                        {
-                          automaticScore
-                        }
-                        {" / "}
-                        {
-                          question.points
-                        }
-                      </strong>
-                    </div>
-                  </article>
-                );
-              }
-            )}
-          </div>
+              )}
+            </div>
+          )}
         </section>
-
-        {/* =================================================
-            Messages
-            ================================================= */}
 
         {message && (
           <p
@@ -2175,10 +2311,6 @@ export default function AttemptGradingPage() {
             }
           </p>
         )}
-
-        {/* =================================================
-            Final score
-            ================================================= */}
 
         <section
           className={
@@ -2249,10 +2381,6 @@ export default function AttemptGradingPage() {
           </div>
         </section>
 
-        {/* =================================================
-            Actions
-            ================================================= */}
-
         <footer
           className={
             styles.actions
@@ -2276,14 +2404,6 @@ export default function AttemptGradingPage() {
               styles.gradingActions
             }
           >
-            {/* =============================================
-                PDF
-
-                Always visible.
-
-                Disabled until the attempt is graded.
-                ============================================= */}
-
             <button
               type="button"
               className="app-button app-button-secondary"
@@ -2308,10 +2428,6 @@ export default function AttemptGradingPage() {
                 "attemptGrading.actions.downloadPdf"
               )}
             </button>
-
-            {/* =============================================
-                Manual grading
-                ============================================= */}
 
             {developmentQuestions.length >
               0 && (

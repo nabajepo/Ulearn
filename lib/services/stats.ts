@@ -17,18 +17,14 @@ import { db } from "@/lib/firebase";
  *
  * Current statistics:
  * - activeTeachers is calculated directly from the users collection.
- * - activeQuizzes is stored as a counter.
  *
  * Historical statistics:
  * - totalTeachers counts all teacher accounts ever created.
- * - totalQuizzesCreated counts all quizzes ever created.
  */
 
 export type AppStats = {
   activeTeachers: number;
   totalTeachers: number;
-  activeQuizzes: number;
-  totalQuizzesCreated: number;
 };
 
 const STATS_COLLECTION = "appStats";
@@ -48,14 +44,12 @@ const statsRef = doc(
 /**
  * Default statistics.
  *
- * activeTeachers is not taken from this document anymore.
- * It is calculated from the users collection.
+ * activeTeachers is not stored as a counter.
+ * It is calculated directly from the users collection.
  */
 const defaultStats: AppStats = {
   activeTeachers: 0,
   totalTeachers: 0,
-  activeQuizzes: 0,
-  totalQuizzesCreated: 0,
 };
 
 /* =========================================================
@@ -118,8 +112,8 @@ export async function getActiveTeachersCount():
  *
  * activeTeachers comes directly from users.
  *
- * The other statistics continue to come from
- * appStats/main.
+ * totalTeachers comes from appStats/main
+ * because it is a historical counter.
  */
 export async function getAppStats():
   Promise<AppStats> {
@@ -152,21 +146,6 @@ export async function getAppStats():
       "number"
         ? data.totalTeachers
         : 0,
-
-    activeQuizzes:
-      typeof data.activeQuizzes ===
-      "number"
-        ? Math.max(
-            0,
-            data.activeQuizzes
-          )
-        : 0,
-
-    totalQuizzesCreated:
-      typeof data.totalQuizzesCreated ===
-      "number"
-        ? data.totalQuizzesCreated
-        : 0,
   };
 }
 
@@ -195,56 +174,10 @@ export async function increaseTeacherStats() {
 /**
  * Kept temporarily for compatibility with existing code.
  *
- * activeTeachers is now calculated directly from
+ * activeTeachers is calculated directly from
  * the users collection, so deleting a teacher does
  * not require changing an activeTeachers counter.
  */
 export async function decreaseActiveTeachers() {
   return;
-}
-
-/* =========================================================
-   Quiz statistics
-   ========================================================= */
-
-/**
- * Called when a quiz is created.
- *
- * activeQuizzes increases because the quiz
- * currently exists.
- *
- * totalQuizzesCreated increases because this
- * is a historical counter.
- */
-export async function increaseQuizStats() {
-  await ensureStatsDocumentExists();
-
-  await updateDoc(
-    statsRef,
-    {
-      activeQuizzes:
-        increment(1),
-
-      totalQuizzesCreated:
-        increment(1),
-    }
-  );
-}
-
-/**
- * Called when a quiz is deleted.
- *
- * totalQuizzesCreated is NOT decreased because
- * it represents historical quiz creation.
- */
-export async function decreaseActiveQuizzes() {
-  await ensureStatsDocumentExists();
-
-  await updateDoc(
-    statsRef,
-    {
-      activeQuizzes:
-        increment(-1),
-    }
-  );
 }

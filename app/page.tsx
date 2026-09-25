@@ -165,6 +165,10 @@ export default function Home() {
               </div>
             </div>
 
+            {/* =============================================
+                Improved quiz preview
+                ============================================= */}
+
             <div
               className={
                 styles.heroCard
@@ -175,17 +179,43 @@ export default function Home() {
                   styles.heroCardTop
                 }
               >
-                <span>
-                  {t(
-                    "home.preview.label"
-                  )}
-                </span>
+                <div>
+                  <span
+                    className={
+                      styles.previewEyebrow
+                    }
+                  >
+                    {t(
+                      "home.preview.label"
+                    )}
+                  </span>
 
-                <strong>
+                  <div
+                    className={
+                      styles.previewProgress
+                    }
+                  >
+                    <span>
+                      {t(
+                        "home.preview.progress"
+                      )}
+                    </span>
+
+                    <strong>
+                      1 / 10
+                    </strong>
+                  </div>
+                </div>
+
+                <span
+                  className={
+                    styles.previewTypeBadge
+                  }
+                >
                   {t(
                     "home.preview.type"
                   )}
-                </strong>
+                </span>
               </div>
 
               <div
@@ -193,54 +223,147 @@ export default function Home() {
                   styles.quizPreview
                 }
               >
-                <h3>
-                  {t(
-                    "home.preview.title"
-                  )}
-                </h3>
+                <div
+                  className={
+                    styles.previewQuestionHeader
+                  }
+                >
+                  <span
+                    className={
+                      styles.questionNumber
+                    }
+                  >
+                    01
+                  </span>
 
-                <p>
+                  <div>
+                    <span
+                      className={
+                        styles.questionLabel
+                      }
+                    >
+                      {t(
+                        "home.preview.questionLabel"
+                      )}
+                    </span>
+
+                    <h3>
+                      {t(
+                        "home.preview.title"
+                      )}
+                    </h3>
+                  </div>
+                </div>
+
+                <p
+                  className={
+                    styles.previewQuestion
+                  }
+                >
                   {t(
                     "home.preview.question"
                   )}
                 </p>
 
                 <div
-                  className={`${styles.answer} ${styles.activeAnswer}`}
+                  className={
+                    styles.previewAnswers
+                  }
                 >
-                  4
+                  <div
+                    className={`${styles.answer} ${styles.activeAnswer}`}
+                  >
+                    <span
+                      className={
+                        styles.answerLetter
+                      }
+                    >
+                      A
+                    </span>
+
+                    <span>
+                      4
+                    </span>
+
+                    <span
+                      className={
+                        styles.answerCheck
+                      }
+                      aria-hidden="true"
+                    >
+                      ✓
+                    </span>
+                  </div>
+
+                  <div
+                    className={
+                      styles.answer
+                    }
+                  >
+                    <span
+                      className={
+                        styles.answerLetter
+                      }
+                    >
+                      B
+                    </span>
+
+                    <span>
+                      6
+                    </span>
+                  </div>
+
+                  <div
+                    className={
+                      styles.answer
+                    }
+                  >
+                    <span
+                      className={
+                        styles.answerLetter
+                      }
+                    >
+                      C
+                    </span>
+
+                    <span>
+                      8
+                    </span>
+                  </div>
                 </div>
 
                 <div
                   className={
-                    styles.answer
+                    styles.previewFooter
                   }
                 >
-                  6
-                </div>
+                  <span
+                    className={
+                      styles.previewStatusDot
+                    }
+                    aria-hidden="true"
+                  />
 
-                <div
-                  className={
-                    styles.answer
-                  }
-                >
-                  8
+                  <span>
+                    {t(
+                      "home.preview.saved"
+                    )}
+                  </span>
                 </div>
               </div>
             </div>
           </section>
         </Reveal>
 
-       {/* =================================================
+        {/* =================================================
             Student quiz access
             ================================================= */}
 
         <Reveal>
-            <section id="findAQuiz">
-              <JoinQuizBox />
-            </section>
+          <section id="findAQuiz">
+            <JoinQuizBox />
+          </section>
         </Reveal>
-
 
         {/* =================================================
             Process
@@ -511,6 +634,84 @@ export default function Home() {
                     "home.faq.free.answer"
                   )}
                 </p>
+              </article>
+
+              {/* ===========================================
+                  Student browser + PIN information
+                  =========================================== */}
+
+              <article
+                className={`${styles.faqCard} ${styles.studentSafetyCard}`}
+              >
+                <span
+                  className={
+                    styles.faqNotice
+                  }
+                >
+                  {t(
+                    "home.faq.studentSession.badge"
+                  )}
+                </span>
+
+                <h3>
+                  {t(
+                    "home.faq.studentSession.question"
+                  )}
+                </h3>
+
+                <p>
+                  {t(
+                    "home.faq.studentSession.answer"
+                  )}
+                </p>
+
+                <div
+                  className={
+                    styles.studentSessionNotes
+                  }
+                >
+                  <div
+                    className={
+                      styles.studentSessionNote
+                    }
+                  >
+                    <span
+                      className={
+                        styles.noteIcon
+                      }
+                      aria-hidden="true"
+                    >
+                      ◉
+                    </span>
+
+                    <span>
+                      {t(
+                        "home.faq.studentSession.browser"
+                      )}
+                    </span>
+                  </div>
+
+                  <div
+                    className={
+                      styles.studentSessionNote
+                    }
+                  >
+                    <span
+                      className={
+                        styles.noteIcon
+                      }
+                      aria-hidden="true"
+                    >
+                      #
+                    </span>
+
+                    <span>
+                      {t(
+                        "home.faq.studentSession.pin"
+                      )}
+                    </span>
+                  </div>
+                </div>
               </article>
             </div>
           </section>

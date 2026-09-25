@@ -33,7 +33,10 @@
       "label": "Aperçu du quiz",
       "type": "QCM",
       "title": "Quiz de mathématiques de base",
-      "question": "Combien font 2 + 2 ?"
+      "question": "Combien font 2 + 2 ?",
+      "progress": "Question",
+      "questionLabel": "Question actuelle",
+      "saved": "Réponse sélectionnée"
     },
 
     "process": {
@@ -60,6 +63,15 @@
     "faq": {
       "tag": "FAQ",
       "title": "Questions fréquemment posées",
+      "studentSession": {
+  "badge": "Important pour les étudiants",
+  "question": "Puis-je changer de navigateur ou d’appareil pendant un quiz ?",
+  "answer":
+    "Non. Une fois le quiz commencé, continuez sur le même navigateur et le même appareil jusqu’à la soumission. Votre progression est sauvegardée temporairement dans ce navigateur afin de pouvoir reprendre après une actualisation de la page ou une réinitialisation du NIP.",
+  "browser":
+    "Restez sur le même navigateur et le même appareil pendant toute la tentative.",
+  "pin":"Si vous oubliez votre NIP, utilisez la procédure de réinitialisation. Après l’approbation de l’enseignant et la validation du code temporaire, vous pourrez définir un nouveau NIP et reprendre votre tentative sur ce même navigateur."
+},
 
       "what": {
         "question": "Qu’est-ce que ULearn ?",
@@ -1218,6 +1230,22 @@
     "pdfTitle": "Préparation du PDF",
     "pdfSubtitle": "Génération de la copie corrigée..."
   },
+  "search": {
+  "label": "Rechercher une question",
+  "placeholder": "Rechercher par numéro ou par texte de la question...",
+  "clear": "Effacer la recherche",
+  "filterLabel": "Filtrer les questions par type",
+  "filters": {
+    "all": "Toutes",
+    "development": "Développement",
+    "qcm": "QCM",
+    "multipleChoice": "Choix multiples"
+  },
+  "results": "Questions affichées :",
+  "reset": "Réinitialiser la recherche",
+  "noResultsTitle": "Aucune question trouvée",
+  "noResultsText": "Essayez une autre recherche ou changez le filtre du type de question."
+},
    "pdf": {
       "notReady": "Terminez la correction avant de télécharger le PDF corrigé."
     }
@@ -1485,7 +1513,7 @@
     "invalidName": "Veuillez entrer votre nom complet.",
     "invalidEmail": "Veuillez entrer une adresse courriel valide.",
     "generic": "Une erreur est survenue. Veuillez réessayer.",
-    "missingLocalSession": "Ce quiz a déjà été commencé dans un autre navigateur ou sur un autre appareil. Les réponses précédentes ne sont pas disponibles sur ce navigateur. Vous devez recommencer le quiz."
+    "missingLocalSession": "Ce quiz a été commencé dans un autre navigateur ou sur un autre appareil. Veuillez retourner sur le navigateur ou l’appareil où vous avez commencé le quiz afin de continuer avec vos réponses précédentes. Si vous n’y avez plus accès, contactez votre professeur ou utilisez une autre adresse courriel pour commencer une nouvelle tentative."
   }
 }
 }
